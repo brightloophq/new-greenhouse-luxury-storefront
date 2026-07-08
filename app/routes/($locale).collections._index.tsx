@@ -3,6 +3,18 @@ import type {Route} from './+types/collections._index';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
+
+export const meta: Route.MetaFunction = () => {
+  return [
+    {title: 'Luxury Floral Collections | The New Greenhouse'},
+    {
+      name: 'description',
+      content:
+        'Explore signature bouquets, sympathy flowers, wedding florals, corporate flowers, plants, and luxury gifting collections from The New Greenhouse.',
+    },
+  ];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -46,8 +58,23 @@ export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
+    <div className="collections commerce-page">
+      <section className="commerce-hero commerce-hero-split">
+        <div>
+          <p className="greenhouse-kicker">Curated by occasion</p>
+          <h1>Luxury floral collections for every meaningful moment.</h1>
+          <p>
+            Explore signature arrangements, sympathy florals, wedding design,
+            plants, corporate flowers, and premium gifting from Kingston&apos;s
+            trusted floral house.
+          </p>
+        </div>
+        <img
+          src={botanicalBanner}
+          alt="Botanical luxury floral arrangement"
+          loading="eager"
+        />
+      </section>
       <PaginatedResourceSection<CollectionFragment>
         connection={collections}
         resourcesClassName="collections-grid"
@@ -81,13 +108,16 @@ function CollectionItem({
       {collection?.image && (
         <Image
           alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
+          aspectRatio="4/3"
           data={collection.image}
           loading={index < 3 ? 'eager' : undefined}
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h5>{collection.title}</h5>
+      <span className="collection-item-copy">
+        <small>Collection</small>
+        <h5>{collection.title}</h5>
+      </span>
     </Link>
   );
 }

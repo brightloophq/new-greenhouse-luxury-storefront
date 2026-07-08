@@ -7,6 +7,7 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {cx} from '~/components/ui';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -25,18 +26,31 @@ export function Header({
 }: HeaderProps) {
   const {shop, menu} = header;
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
-    </header>
+    <div className="luxury-shell-header">
+      <div className="announcement-bar">
+        <span>
+          Same-day delivery available across Kingston &amp; St. Andrew for
+          orders placed before 2PM.
+        </span>
+      </div>
+      <header className="header">
+        <NavLink
+          className="header-logo"
+          prefetch="intent"
+          to="/"
+          end
+        >
+          <strong>{shop.name}</strong>
+        </NavLink>
+        <HeaderMenu
+          menu={menu}
+          viewport="desktop"
+          primaryDomainUrl={header.shop.primaryDomain.url}
+          publicStoreDomain={publicStoreDomain}
+        />
+        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+      </header>
+    </div>
   );
 }
 
@@ -54,6 +68,8 @@ export function HeaderMenu({
   const className = `header-menu-${viewport}`;
   const {close} = useAside();
 
+  const isDesktop = viewport === 'desktop';
+
   return (
     <nav className={className} role="navigation">
       {viewport === 'mobile' && (
@@ -61,7 +77,7 @@ export function HeaderMenu({
           end
           onClick={close}
           prefetch="intent"
-          style={activeLinkStyle}
+          className={navLinkClass}
           to="/"
         >
           Home
@@ -79,18 +95,51 @@ export function HeaderMenu({
             : item.url;
         return (
           <NavLink
-            className="header-menu-item"
+            className={({isActive, isPending}) =>
+              cx('header-menu-item', navStateClass({isActive, isPending}))
+            }
             end
             key={item.id}
             onClick={close}
             prefetch="intent"
-            style={activeLinkStyle}
             to={url}
           >
             {item.title}
           </NavLink>
         );
       })}
+      {isDesktop && (
+        <div className="header-mega-panel">
+          <div>
+            <span>Shop the house</span>
+            <NavLink prefetch="intent" to="/collections/all">
+              New arrivals
+            </NavLink>
+            <NavLink prefetch="intent" to="/collections">
+              Collections
+            </NavLink>
+            <NavLink prefetch="intent" to="/search">
+              Find a bloom
+            </NavLink>
+          </div>
+          <div>
+            <span>Occasions</span>
+            <NavLink prefetch="intent" to="/collections/all">
+              Birthday
+            </NavLink>
+            <NavLink prefetch="intent" to="/collections/all">
+              Anniversary
+            </NavLink>
+            <NavLink prefetch="intent" to="/collections/all">
+              Thank you
+            </NavLink>
+          </div>
+          <p>
+            A refined floral atelier for sculptural arrangements, botanical
+            gifts, and memorable delivery moments.
+          </p>
+        </div>
+      )}
     </nav>
   );
 }
@@ -102,7 +151,7 @@ function HeaderCtas({
   return (
     <nav className="header-ctas" role="navigation">
       <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
+      <NavLink prefetch="intent" to="/account" className={navLinkClass}>
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
             {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
@@ -122,7 +171,7 @@ function HeaderMenuMobileToggle() {
       className="header-menu-mobile-toggle reset"
       onClick={() => open('mobile')}
     >
-      <h3>☰</h3>
+      Menu
     </button>
   );
 }
@@ -217,15 +266,22 @@ const FALLBACK_HEADER_MENU = {
   ],
 };
 
-function activeLinkStyle({
+function navStateClass({
   isActive,
   isPending,
 }: {
   isActive: boolean;
   isPending: boolean;
 }) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'black',
-  };
+  return cx(isActive && 'is-active', isPending && 'is-pending');
+}
+
+function navLinkClass({
+  isActive,
+  isPending,
+}: {
+  isActive: boolean;
+  isPending: boolean;
+}) {
+  return navStateClass({isActive, isPending});
 }

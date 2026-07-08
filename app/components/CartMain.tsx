@@ -13,7 +13,7 @@ export type CartMainProps = {
 };
 
 export type LineItemChildrenMap = {[parentId: string]: CartLine[]};
-/** Returns a map of all line items and their children. */
+
 function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
   const children: LineItemChildrenMap = {};
   for (const line of lines) {
@@ -32,15 +32,9 @@ function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
   }
   return children;
 }
-/**
- * The main cart component that displays the cart items and summary.
- * It is used by both the /cart route and the cart aside dialog.
- */
-export function CartMain({layout, cart: originalCart}: CartMainProps) {
-  // The useOptimisticCart hook applies pending actions to the cart
-  // so the user immediately sees feedback when they modify the cart.
-  const cart = useOptimisticCart(originalCart);
 
+export function CartMain({layout, cart: originalCart}: CartMainProps) {
+  const cart = useOptimisticCart(originalCart);
   const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
   const withDiscount =
     cart &&
@@ -54,7 +48,15 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
       className={className}
       aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
     >
-      <CartEmpty hidden={linesCount} layout={layout} />
+      <div className="cart-luxury-header">
+        <p className="greenhouse-kicker">Your selection</p>
+        <h2>{layout === 'page' ? 'Shopping cart' : 'Cart'}</h2>
+        <p>
+          Every arrangement is prepared with care, presentation, and a refined
+          delivery experience.
+        </p>
+      </div>
+      <CartEmpty hidden={linesCount} />
       <div className="cart-details">
         <p id="cart-lines" className="sr-only">
           Line items
@@ -62,7 +64,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         <div>
           <ul aria-labelledby="cart-lines">
             {(cart?.lines?.nodes ?? []).map((line) => {
-              // we do not render non-parent lines at the root of the cart
               if (
                 'parentRelationship' in line &&
                 line.parentRelationship?.parent
@@ -80,29 +81,38 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
             })}
           </ul>
         </div>
+        {cartHasItems && (
+          <div className="cart-luxury-notes">
+            <label htmlFor={`cart-gift-note-${layout}`}>Gift message</label>
+            <textarea
+              id={`cart-gift-note-${layout}`}
+              placeholder="Add a note for the recipient"
+              rows={3}
+            />
+            <p>Same-day delivery windows are confirmed by our Kingston team.</p>
+          </div>
+        )}
         {cartHasItems && <CartSummary cart={cart} layout={layout} />}
       </div>
     </section>
   );
 }
 
-function CartEmpty({
-  hidden = false,
-}: {
-  hidden: boolean;
-  layout?: CartMainProps['layout'];
-}) {
+function CartEmpty({hidden = false}: {hidden: boolean}) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div hidden={hidden} className="cart-empty-state">
+      <p className="cart-empty-copy">
+        Looks like you haven&apos;t added anything yet. Let&apos;s get you
+        started with something beautiful.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        className="greenhouse-button greenhouse-button-dark"
+        to="/collections"
+        onClick={close}
+        prefetch="viewport"
+      >
+        Continue shopping
       </Link>
     </div>
   );

@@ -1,6 +1,7 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+import {cx} from '~/components/ui';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -18,6 +19,13 @@ export function Footer({
       <Await resolve={footerPromise}>
         {(footer) => (
           <footer className="footer">
+            <div className="footer-brand">
+              <p>The New Greenhouse</p>
+              <span>
+                Luxury florals, botanical gifts, and composed moments for
+                memorable rooms.
+              </span>
+            </div>
             {footer?.menu && header.shop.primaryDomain?.url && (
               <FooterMenu
                 menu={footer.menu}
@@ -62,7 +70,7 @@ function FooterMenu({
             end
             key={item.id}
             prefetch="intent"
-            style={activeLinkStyle}
+            className={navLinkClass}
             to={url}
           >
             {item.title}
@@ -115,15 +123,12 @@ const FALLBACK_FOOTER_MENU = {
   ],
 };
 
-function activeLinkStyle({
+function navLinkClass({
   isActive,
   isPending,
 }: {
   isActive: boolean;
   isPending: boolean;
 }) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
+  return cx(isActive && 'is-active', isPending && 'is-pending');
 }

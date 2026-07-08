@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -12,10 +12,19 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
+import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `${data?.product.seo.title || data?.product.title || 'Luxury Flowers'} | The New Greenhouse`},
+    {
+      name: 'description',
+      content:
+        data?.product.seo.description ||
+        data?.product.description ||
+        'Luxury floral arrangements handcrafted by The New Greenhouse in Kingston, Jamaica.',
+    },
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -95,31 +104,98 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, vendor} = product;
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
+    <div className="product commerce-product">
+      <section className="product-gallery" aria-label={`${title} imagery`}>
+        <ProductImage image={selectedVariant?.image} />
+        <div className="product-gallery-secondary">
+          <img
+            src={occasionBanner}
+            alt="Luxury floral arrangement styled with gifting details"
+            loading="lazy"
+          />
+          <img
+            src={botanicalBanner}
+            alt="Botanical floral arrangement with deep greenery"
+            loading="lazy"
+          />
+        </div>
+      </section>
+      <aside className="product-main">
+        <p className="greenhouse-kicker">{vendor || 'The New Greenhouse'}</p>
         <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
+        <div className="product-price-block">
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+        </div>
+        <p className="product-delivery-note">
+          Same-day delivery may be available across Kingston &amp; St. Andrew
+          for orders placed before 2PM.
+        </p>
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
-      </div>
+        <div className="product-gift-message">
+          <label htmlFor="gift-message">Gift message</label>
+          <textarea
+            id="gift-message"
+            name="gift-message"
+            placeholder="Add a note for the recipient"
+            rows={3}
+          />
+          <small>UI preview only. Final gifting notes are confirmed at checkout.</small>
+        </div>
+        <div className="product-trust-grid" aria-label="Purchase assurances">
+          <span>Secure checkout</span>
+          <span>Handcrafted in Kingston</span>
+          <span>Carefully presented</span>
+        </div>
+        <div className="product-story">
+          <details open>
+            <summary>Luxury product story</summary>
+            <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+          </details>
+          <details>
+            <summary>Flower care</summary>
+            <p>
+              Refresh water daily, keep blooms away from direct sunlight, and
+              remove fading stems to preserve the arrangement.
+            </p>
+          </details>
+          <details>
+            <summary>Delivery estimate</summary>
+            <p>
+              Our team confirms timing after purchase and prepares each order
+              with care for local delivery or collection.
+            </p>
+          </details>
+        </div>
+      </aside>
+      <section className="product-commerce-section product-pairings">
+        <div>
+          <p className="greenhouse-kicker">Perfect pairings</p>
+          <h2>Complete the gesture.</h2>
+        </div>
+        <div className="product-mini-grid">
+          <Link to="/collections/all">Luxury gift basket</Link>
+          <Link to="/collections/all">Premium vase upgrade</Link>
+          <Link to="/collections/all">Corporate floral note</Link>
+        </div>
+      </section>
+      <section className="product-commerce-section product-recently-viewed">
+        <div>
+          <p className="greenhouse-kicker">Recently viewed</p>
+          <h2>Continue exploring the collection.</h2>
+        </div>
+        <Link className="greenhouse-button greenhouse-button-dark" to="/collections/all">
+          View all arrangements
+        </Link>
+      </section>
       <Analytics.ProductView
         data={{
           products: [

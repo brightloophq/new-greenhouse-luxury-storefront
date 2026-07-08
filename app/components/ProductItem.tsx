@@ -26,19 +26,27 @@ export function ProductItem({
       prefetch="intent"
       to={variantUrl}
     >
-      {image && (
-        <Image
-          alt={image.altText || product.title}
-          aspectRatio="1/1"
-          data={image}
-          loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
+      <span className="product-item-media">
+        {image ? (
+          <Image
+            alt={image.altText || product.title}
+            aspectRatio="4/5"
+            data={image}
+            loading={loading}
+            sizes="(min-width: 80em) 320px, (min-width: 45em) 25vw, 50vw"
+          />
+        ) : (
+          <span className="product-item-placeholder" aria-hidden="true" />
+        )}
+        <span className="product-item-badge">The Greenhouse Edit</span>
+        <span className="product-item-quick">View arrangement</span>
+      </span>
+      <span className="product-item-copy">
+        <span className="product-item-title">{product.title}</span>
+        <small>
+          <Money data={product.priceRange.minVariantPrice} />
+        </small>
+      </span>
     </Link>
   );
 }

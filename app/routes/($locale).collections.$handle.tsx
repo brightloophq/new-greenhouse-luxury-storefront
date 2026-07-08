@@ -5,9 +5,18 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import type {ProductItemFragment} from 'storefrontapi.generated';
+import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  return [
+    {title: `${data?.collection.title ?? 'Collection'} | The New Greenhouse`},
+    {
+      name: 'description',
+      content:
+        data?.collection.description ||
+        'Shop luxury floral arrangements from The New Greenhouse in Kingston, Jamaica.',
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -69,9 +78,44 @@ export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collection">
-      <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
+    <div className="collection commerce-page">
+      <section className="commerce-hero collection-hero">
+        <div>
+          <p className="greenhouse-kicker">The collection</p>
+          <h1>{collection.title}</h1>
+          <p className="collection-description">
+            {collection.description ||
+              'A considered edit of luxury florals, selected for polished gifting, meaningful gestures, and refined spaces.'}
+          </p>
+        </div>
+        <img
+          src={occasionBanner}
+          alt={`${collection.title} editorial floral banner`}
+          loading="eager"
+        />
+      </section>
+      <section className="collection-controls" aria-label="Collection filters">
+        <div>
+          <span>Occasion</span>
+          <button type="button">Birthday</button>
+          <button type="button">Sympathy</button>
+          <button type="button">Corporate</button>
+        </div>
+        <div>
+          <span>Season</span>
+          <button type="button">Fresh today</button>
+          <button type="button">Signature</button>
+        </div>
+        <div>
+          <span>Sort</span>
+          <select aria-label="Sort products" defaultValue="featured">
+            <option value="featured">Featured</option>
+            <option value="newest">Newest arrivals</option>
+            <option value="price-low">Price: low to high</option>
+            <option value="price-high">Price: high to low</option>
+          </select>
+        </div>
+      </section>
       <PaginatedResourceSection<ProductItemFragment>
         connection={collection.products}
         resourcesClassName="products-grid"

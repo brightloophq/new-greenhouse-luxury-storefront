@@ -4,3 +4,27 @@
  */
 
 @import 'tailwindcss';
+
+@theme {
+  --color-greenhouse-background: #090909;
+  --color-greenhouse-surface: #111111;
+  --color-greenhouse-surface-2: #181818;
+  --color-greenhouse-gold: #c8a45b;
+  --color-greenhouse-soft-gold: #e2c27a;
+  --color-greenhouse-warm-white: #f7f4ef;
+  --color-greenhouse-light-gray: #bfbfbf;
+  --color-greenhouse-muted-gray: #7e7e7e;
+  --color-greenhouse-accent-green: #234938;
+  --color-greenhouse-success: #3d5a45;
+  --color-greenhouse-warning: #9a7839;
+  --color-greenhouse-error: #7a3038;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --spacing-greenhouse-section: clamp(3rem, 6vw, 5rem);
+  --spacing-greenhouse-gutter: clamp(1rem, 3vw, 2.5rem);
+  --radius-greenhouse-control: 4px;
+  --radius-greenhouse-card: 6px;
+  --radius-greenhouse-large: 10px;
+  --shadow-greenhouse-soft: 0 18px 50px rgb(21 21 17 / 8%);
+  --shadow-greenhouse-elevated: 0 28px 80px rgb(9 9 9 / 18%);
+}
