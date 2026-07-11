@@ -1,0 +1,614 @@
+/* ==========================================================================
+   The New Greenhouse — Global Shell (M3)
+   Luxury editorial shell: announcement, sticky nav, mega menu, drawers,
+   search overlay, mobile navigation. Tokens only. New ng-shell-/ng-drawer-/
+   ng-mega- namespace so legacy shell CSS in app.css never conflicts.
+   ========================================================================== */
+
+@import './shell/footer.css';
+
+/* Body scroll lock while a drawer is open */
+.ng-scroll-locked {
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Header + announcement
+   -------------------------------------------------------------------------- */
+.ng-shell-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--ng-z-sticky);
+  color: var(--ng-text-inverse);
+}
+
+.ng-shell-announcement {
+  align-items: center;
+  background: var(--ng-color-background);
+  border-bottom: 1px solid var(--ng-border-inverse);
+  color: var(--ng-color-soft-gold);
+  display: flex;
+  gap: var(--ng-space-3);
+  justify-content: center;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  overflow: hidden;
+  padding: 0 var(--ng-space-4);
+  height: 2.25rem;
+  text-transform: uppercase;
+  transition:
+    height var(--ng-duration-standard) var(--ng-ease-luxury),
+    opacity var(--ng-duration-standard) var(--ng-ease-standard),
+    border-color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+
+.ng-shell-announcement-sep {
+  color: var(--ng-color-luxury-gold);
+}
+
+/* Announcement collapses once the page is scrolled */
+.ng-shell-header.is-solid .ng-shell-announcement {
+  height: 0;
+  opacity: 0;
+  border-color: transparent;
+}
+
+.ng-shell-nav {
+  position: relative;
+  /* Translucent at the top but opaque enough that ivory text keeps WCAG AA on
+     light pages (over the dark hero it reads as glass; solid on scroll). */
+  background: color-mix(in srgb, var(--ng-color-background) 68%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid transparent;
+  transition:
+    background var(--ng-duration-standard) var(--ng-ease-standard),
+    border-color var(--ng-duration-standard) var(--ng-ease-standard),
+    box-shadow var(--ng-duration-standard) var(--ng-ease-standard);
+}
+
+.ng-shell-header.is-solid .ng-shell-nav {
+  background: color-mix(in srgb, var(--ng-color-background) 97%, transparent);
+  border-bottom-color: var(--ng-border-inverse);
+  box-shadow: var(--ng-shadow-lg);
+}
+
+.ng-shell-nav-inner {
+  align-items: center;
+  display: grid;
+  gap: var(--ng-space-4);
+  grid-template-columns: 1fr auto 1fr;
+  height: 4.5rem;
+  margin-inline: auto;
+  max-width: var(--ng-container-xl);
+  padding-inline: var(--ng-container-gutter);
+  width: 100%;
+}
+
+.ng-shell-nav-left {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-6);
+  justify-self: start;
+  min-width: 0;
+}
+
+.ng-shell-logo {
+  color: var(--ng-text-inverse);
+  justify-self: center;
+  text-align: center;
+}
+.ng-shell-logo:hover {
+  color: var(--ng-color-soft-gold);
+  text-decoration: none;
+}
+.ng-shell-logo-mark {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Header icon buttons / actions inherit the inverse (light) colour */
+.ng-shell-header .ng-icon-button,
+.ng-shell-cart,
+.ng-shell-action-account {
+  color: var(--ng-text-inverse);
+}
+.ng-shell-header .ng-icon-button:hover,
+.ng-shell-cart:hover,
+.ng-shell-action-account:hover {
+  color: var(--ng-color-soft-gold);
+}
+
+.ng-shell-actions {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-1);
+  justify-self: end;
+}
+
+.ng-shell-action-account {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  display: inline-flex;
+  gap: var(--ng-space-2);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-nav);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-nav);
+  padding: var(--ng-space-2);
+  text-transform: uppercase;
+  transition: var(--ng-transition-color);
+}
+.ng-shell-action-account:hover {
+  text-decoration: none;
+}
+
+.ng-shell-cart {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  min-height: var(--ng-button-height-md);
+  padding: var(--ng-space-2);
+  position: relative;
+  transition: var(--ng-transition-color);
+}
+.ng-shell-cart-count {
+  align-items: center;
+  background: var(--ng-color-luxury-gold);
+  border-radius: var(--ng-radius-pill);
+  color: var(--ng-color-background);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: 0.6rem;
+  font-weight: 800;
+  height: 1.05rem;
+  justify-content: center;
+  min-width: 1.05rem;
+  padding: 0 0.28rem;
+  position: absolute;
+  right: 0;
+  top: 0.35rem;
+}
+
+.ng-shell-burger {
+  color: var(--ng-text-inverse);
+}
+
+/* --------------------------------------------------------------------------
+   Desktop primary nav + mega menu
+   -------------------------------------------------------------------------- */
+.ng-shell-primary-list {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ng-shell-primary-item {
+  margin: 0;
+}
+
+.ng-shell-navlink {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--ng-text-inverse);
+  cursor: pointer;
+  display: inline-flex;
+  gap: var(--ng-space-1);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-nav);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-nav);
+  line-height: 1;
+  padding: var(--ng-space-3) 0;
+  position: relative;
+  text-transform: uppercase;
+  transition: var(--ng-transition-color);
+}
+.ng-shell-navlink::after {
+  background: var(--ng-color-luxury-gold);
+  bottom: 0.35rem;
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-duration-standard) var(--ng-ease-luxury);
+}
+.ng-shell-navlink:hover,
+.ng-shell-navlink.is-active,
+.ng-shell-navlink.is-open {
+  color: var(--ng-color-soft-gold);
+  text-decoration: none;
+}
+.ng-shell-navlink:hover::after,
+.ng-shell-navlink.is-active::after,
+.ng-shell-navlink.is-open::after {
+  transform: scaleX(1);
+}
+.ng-shell-mega-caret {
+  transition: transform var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-shell-navlink.is-open .ng-shell-mega-caret {
+  transform: rotate(180deg);
+}
+
+.ng-mega {
+  background: var(--ng-color-background);
+  border-top: 1px solid var(--ng-border-inverse);
+  box-shadow: var(--ng-shadow-lg);
+  color: var(--ng-text-inverse);
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--ng-duration-standard) var(--ng-ease-standard),
+    transform var(--ng-duration-standard) var(--ng-ease-luxury);
+  visibility: hidden;
+  z-index: var(--ng-z-dropdown);
+}
+.ng-mega.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+.ng-mega-inner {
+  display: grid;
+  gap: var(--ng-space-12);
+  grid-template-columns: 1fr auto;
+  margin-inline: auto;
+  max-width: var(--ng-container-xl);
+  padding: var(--ng-space-10) var(--ng-container-gutter);
+}
+.ng-mega-columns {
+  display: grid;
+  gap: var(--ng-space-10);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.ng-mega-column ul {
+  display: grid;
+  gap: var(--ng-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ng-mega-column-title {
+  color: var(--ng-color-luxury-gold);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 800;
+  letter-spacing: var(--ng-letter-label);
+  margin: 0 0 var(--ng-space-4);
+  text-transform: uppercase;
+}
+.ng-mega-link {
+  color: var(--ng-color-light-gray);
+  font-family: var(--ng-font-heading);
+  font-size: 1.1rem;
+  transition: var(--ng-transition-color);
+}
+.ng-mega-link:hover {
+  color: var(--ng-text-inverse);
+  text-decoration: none;
+}
+
+.ng-mega-feature {
+  align-items: stretch;
+  border: 1px solid var(--ng-border-inverse);
+  border-radius: var(--ng-radius-md);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 18rem;
+  overflow: clip;
+  transition: border-color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-mega-feature:hover {
+  border-color: var(--ng-color-luxury-gold);
+  text-decoration: none;
+}
+.ng-mega-feature-media {
+  aspect-ratio: var(--ng-ratio-collection);
+  overflow: hidden;
+}
+.ng-mega-feature-media img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  transition: transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+.ng-mega-feature:hover .ng-mega-feature-media img {
+  transform: scale(1.04);
+}
+.ng-mega-feature-copy {
+  display: grid;
+  gap: var(--ng-space-1);
+  padding: var(--ng-space-4);
+}
+.ng-mega-feature-eyebrow {
+  color: var(--ng-color-luxury-gold);
+  font-size: var(--ng-font-size-label);
+  font-weight: 800;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+.ng-mega-feature-title {
+  font-family: var(--ng-font-heading);
+  font-size: 1.35rem;
+}
+.ng-mega-feature-cta {
+  color: var(--ng-color-light-gray);
+  font-size: var(--ng-font-size-small);
+}
+
+/* --------------------------------------------------------------------------
+   Drawers (cart / mobile / search) — shared shell
+   -------------------------------------------------------------------------- */
+.ng-drawer-overlay {
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  visibility: hidden;
+  z-index: var(--ng-z-drawer);
+}
+.ng-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+.ng-drawer-scrim {
+  background: color-mix(in srgb, var(--ng-color-background) 62%, transparent);
+  border: 0;
+  cursor: pointer;
+  inset: 0;
+  opacity: 0;
+  position: absolute;
+  transition: opacity var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-drawer-overlay.is-open .ng-drawer-scrim {
+  backdrop-filter: blur(3px);
+  opacity: 1;
+}
+
+.ng-drawer {
+  background: var(--ng-bg-page);
+  color: var(--ng-text-primary);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  transition: transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+.ng-drawer[data-position='right'],
+.ng-drawer[data-position='left'] {
+  block-size: 100%;
+  inline-size: min(28rem, 100vw);
+  top: 0;
+}
+.ng-drawer[data-position='right'] {
+  right: 0;
+  transform: translateX(100%);
+}
+.ng-drawer[data-position='left'] {
+  left: 0;
+  transform: translateX(-100%);
+}
+.ng-drawer[data-position='top'] {
+  inline-size: 100%;
+  left: 0;
+  max-block-size: 90vh;
+  top: 0;
+  transform: translateY(-100%);
+}
+.ng-drawer-overlay.is-open .ng-drawer {
+  transform: none;
+}
+
+.ng-drawer-header {
+  align-items: center;
+  border-bottom: 1px solid var(--ng-border-subtle);
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: var(--ng-space-5) var(--ng-space-6);
+}
+.ng-drawer-heading {
+  font-family: var(--ng-font-heading);
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+.ng-drawer-close {
+  color: var(--ng-text-primary);
+}
+.ng-drawer-close:hover {
+  color: var(--ng-gold-text);
+}
+.ng-drawer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--ng-space-6);
+}
+.ng-drawer-loading {
+  color: var(--ng-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Search overlay
+   -------------------------------------------------------------------------- */
+.ng-drawer[data-position='top'] .ng-drawer-body {
+  margin-inline: auto;
+  max-width: var(--ng-container-md);
+  width: 100%;
+}
+.ng-search-field {
+  align-items: center;
+  border-bottom: 1px solid var(--ng-border-strong);
+  display: flex;
+  gap: var(--ng-space-3);
+  padding-bottom: var(--ng-space-3);
+}
+.ng-search-icon {
+  color: var(--ng-text-muted);
+  flex: 0 0 auto;
+}
+.ng-search-field input {
+  background: transparent;
+  border: 0;
+  color: var(--ng-text-primary);
+  flex: 1 1 auto;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  min-width: 0;
+  outline: 0;
+  padding: var(--ng-space-2) 0;
+}
+.ng-search-field input::placeholder {
+  color: var(--ng-text-muted);
+}
+.ng-search-submit {
+  background: var(--ng-color-background);
+  border: 0;
+  border-radius: var(--ng-radius-sm);
+  color: var(--ng-text-inverse);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: var(--ng-font-size-button);
+  font-weight: 800;
+  letter-spacing: var(--ng-letter-nav);
+  min-height: var(--ng-button-height-sm);
+  padding: 0 var(--ng-space-5);
+  text-transform: uppercase;
+}
+.ng-search-status {
+  color: var(--ng-text-muted);
+  padding: var(--ng-space-8) 0;
+  text-align: center;
+}
+.ng-search-results {
+  padding-top: var(--ng-space-6);
+}
+.ng-search-viewall {
+  color: var(--ng-gold-text);
+  display: inline-block;
+  font-weight: 700;
+  margin-top: var(--ng-space-4);
+}
+/* Style the predictive-search internals rendered by SearchResultsPredictive */
+.ng-search-results .predictive-search-result h5 {
+  color: var(--ng-color-luxury-gold);
+}
+.ng-search-results ul {
+  list-style: none;
+  margin: 0 0 var(--ng-space-6);
+  padding: 0;
+}
+.ng-search-results a {
+  color: var(--ng-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation
+   -------------------------------------------------------------------------- */
+.ng-mobilenav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-6);
+}
+.ng-mobilenav-primary {
+  display: grid;
+  gap: var(--ng-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ng-mobilenav-link {
+  color: var(--ng-text-primary);
+  display: block;
+  font-family: var(--ng-font-heading);
+  font-size: 1.5rem;
+  padding: var(--ng-space-2) 0;
+}
+.ng-mobilenav-link:hover {
+  color: var(--ng-gold-text);
+  text-decoration: none;
+}
+.ng-mobilenav-sublist {
+  display: grid;
+  gap: var(--ng-space-2);
+  list-style: none;
+  margin: 0;
+  padding: var(--ng-space-1) 0 var(--ng-space-2);
+}
+.ng-mobilenav-sublink {
+  color: var(--ng-text-secondary);
+  font-size: var(--ng-font-size-body);
+}
+.ng-mobilenav-sublink:hover {
+  color: var(--ng-text-primary);
+  text-decoration: none;
+}
+.ng-mobilenav-footer {
+  border-top: 1px solid var(--ng-border-subtle);
+  display: grid;
+  gap: var(--ng-space-3);
+  padding-top: var(--ng-space-6);
+}
+.ng-mobilenav-account,
+.ng-mobilenav-contact {
+  align-items: center;
+  color: var(--ng-text-primary);
+  display: inline-flex;
+  gap: var(--ng-space-2);
+  font-size: var(--ng-font-size-small);
+}
+.ng-mobilenav-note {
+  color: var(--ng-text-muted);
+  font-size: var(--ng-font-size-caption);
+}
+
+/* --------------------------------------------------------------------------
+   Cart drawer presentation (chrome only; cart logic is M6)
+   The drawer already provides the heading, so suppress CartMain's own header.
+   -------------------------------------------------------------------------- */
+.ng-drawer .cart-luxury-header {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 64rem) {
+  .ng-shell-primary,
+  .ng-shell-action-account .ng-shell-action-label {
+    display: none;
+  }
+}
+@media (min-width: 64.001rem) {
+  .ng-shell-burger {
+    display: none;
+  }
+}
+@media (max-width: 48rem) {
+  .ng-mega-inner {
+    grid-template-columns: 1fr;
+    gap: var(--ng-space-8);
+  }
+  .ng-mega-feature {
+    display: none;
+  }
+}

@@ -10,21 +10,24 @@
   --page-gutter: clamp(1rem, 3vw, 2.5rem);
   --space-section: clamp(2.25rem, 6vw, 4.75rem);
   --space-stack: clamp(0.75rem, 2vw, 1.4rem);
-  --color-botanical: #123c2c;
+  /* Brand colors reference the canonical chain (tailwind @theme → --ng-*).
+     These are the legacy names kept for existing .greenhouse-* CSS; do not
+     reintroduce literal brand hexes here. See design-system.css. */
+  --color-botanical: var(--color-greenhouse-accent-green);
   --color-leaf: #2f6b4f;
   --color-sage: #dfe8df;
-  --color-ivory: #fcf8ee;
-  --color-pearl: #f6efe2;
+  --color-ivory: var(--color-greenhouse-warm-white);
+  --color-pearl: #f4efe7;
   --color-mist: #ece7dd;
-  --color-ink: #151511;
-  --color-black: #060605;
-  --color-gold: #c7a15a;
-  --color-champagne: #ead7b8;
+  --color-ink: var(--color-greenhouse-charcoal);
+  --color-black: var(--color-greenhouse-background);
+  --color-gold: var(--color-greenhouse-gold);
+  --color-champagne: var(--color-greenhouse-soft-gold);
   --color-blush: #ead3cb;
-  --color-muted: #746f63;
-  --color-line: #ded6c8;
-  --color-line-strong: #c5b99f;
-  --color-surface: #fffdf7;
+  --color-muted: var(--color-greenhouse-muted-gray);
+  --color-line: #e2d8c8;
+  --color-line-strong: #c3b191;
+  --color-surface: #fffdf8;
   --color-dark: var(--color-black);
   --color-light: var(--color-ivory);
   --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -32,8 +35,8 @@
   --radius-control: 4px;
   --radius-card: 6px;
   --shadow-soft: 0 18px 50px rgb(21 21 17 / 8%);
-  --shadow-lifted: 0 28px 80px rgb(6 6 5 / 18%);
-  --shadow-gold: 0 22px 70px rgb(199 161 90 / 18%);
+  --shadow-lifted: 0 28px 80px rgb(9 9 9 / 18%);
+  --shadow-gold: 0 22px 70px rgb(200 169 106 / 18%);
   --transition-standard: 180ms ease;
 }
 
@@ -635,8 +638,8 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 */
 .home {
-  background: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
   margin: 0 calc(var(--page-gutter) * -1);
 }
 
@@ -647,8 +650,8 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-home-announcement {
   align-items: center;
-  background: var(--ng-color-luxury-gold, #c8a45b);
-  color: var(--ng-color-background, #090909);
+  background: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
   display: flex;
   font-size: 0.68rem;
   font-weight: 800;
@@ -663,13 +666,20 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-kicker {
-  color: var(--ng-color-luxury-gold, #c8a45b);
+  /* Default: gold on LIGHT pages (PDP, collections, cart) — WCAG AA. */
+  color: var(--ng-gold-text);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   line-height: 1.4;
   margin: 0;
   text-transform: uppercase;
+}
+
+/* The homepage wrapper is dark, so kickers there use the brighter luxury gold
+   (WCAG AA on the black background). */
+.home .greenhouse-kicker {
+  color: var(--ng-color-luxury-gold);
 }
 
 .greenhouse-section-heading {
@@ -700,10 +710,10 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-button {
   align-items: center;
-  background: var(--ng-color-warm-white, #f7f4ef);
-  border: 1px solid var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-warm-white);
+  border: 1px solid var(--ng-color-warm-white);
   border-radius: var(--ng-radius-control, 2px);
-  color: var(--ng-color-background, #090909) !important;
+  color: var(--ng-color-background) !important;
   display: inline-flex;
   font-size: 0.72rem;
   font-weight: 800;
@@ -739,9 +749,9 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-button:hover {
-  background: var(--ng-color-luxury-gold, #c8a45b);
-  border-color: var(--ng-color-luxury-gold, #c8a45b);
-  color: var(--ng-color-background, #090909) !important;
+  background: var(--ng-color-luxury-gold);
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background) !important;
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -752,24 +762,24 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-button-secondary {
   background: transparent;
-  border-color: color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 68%, transparent);
-  color: var(--ng-color-warm-white, #f7f4ef) !important;
+  border-color: color-mix(in srgb, var(--ng-color-luxury-gold) 68%, transparent);
+  color: var(--ng-color-warm-white) !important;
 }
 
 .greenhouse-button-secondary:hover {
-  background: var(--ng-color-warm-white, #f7f4ef);
-  border-color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-warm-white);
+  border-color: var(--ng-color-warm-white);
 }
 
 .greenhouse-button-dark {
-  background: var(--ng-color-background, #090909);
-  border-color: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef) !important;
+  background: var(--ng-color-background);
+  border-color: var(--ng-color-background);
+  color: var(--ng-color-warm-white) !important;
 }
 
 .greenhouse-hero {
-  background: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
   display: grid;
   min-height: min(78vh, 620px);
   overflow: hidden;
@@ -792,7 +802,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-hero::after {
-  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 42%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold) 42%, transparent);
   bottom: clamp(0.8rem, 3vw, 1.65rem);
   content: '';
   left: clamp(0.8rem, 3vw, 1.65rem);
@@ -830,7 +840,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-hero-panel h1 {
-  color: var(--ng-color-warm-white, #f7f4ef);
+  color: var(--ng-color-warm-white);
   font-size: clamp(2.375rem, 6vw, 3.5rem);
   letter-spacing: 0;
   line-height: 0.95;
@@ -839,7 +849,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-hero-panel p:not(.greenhouse-kicker) {
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 82%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 82%, transparent);
   font-size: clamp(0.98rem, 2vw, 1.15rem);
   line-height: 1.6;
   max-width: 540px;
@@ -853,7 +863,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-hero-slogan {
-  color: var(--ng-color-luxury-gold, #c8a45b);
+  color: var(--ng-color-luxury-gold);
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.15em;
@@ -905,8 +915,8 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-product-row {
-  background: var(--ng-color-warm-white, #f7f4ef);
-  color: var(--ng-color-background, #090909);
+  background: var(--ng-color-warm-white);
+  color: var(--ng-color-background);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
   padding-top: clamp(2.75rem, 7vw, 5.5rem);
 }
@@ -923,8 +933,8 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-featured-collections {
-  background: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
   padding-top: clamp(2.75rem, 7vw, 5.5rem);
 }
@@ -941,9 +951,9 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-banner-card {
-  background: var(--ng-color-surface, #111111);
-  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 28%, transparent);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-surface);
+  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold) 28%, transparent);
+  color: var(--ng-color-warm-white);
   display: grid;
   min-height: clamp(250px, 34vw, 390px);
   overflow: hidden;
@@ -968,7 +978,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-banner-card:hover {
-  color: var(--ng-color-warm-white, #f7f4ef);
+  color: var(--ng-color-warm-white);
   text-decoration: none;
 }
 
@@ -986,7 +996,7 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-banner-card span {
   bottom: clamp(4rem, 6vw, 5.25rem);
-  color: var(--ng-color-soft-gold, #e2c27a);
+  color: var(--ng-color-soft-gold);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -1088,8 +1098,8 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-occasions {
-  background: var(--ng-color-warm-white, #f7f4ef);
-  color: var(--ng-color-background, #090909);
+  background: var(--ng-color-warm-white);
+  color: var(--ng-color-background);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
   padding-top: clamp(2.75rem, 7vw, 5.5rem);
 }
@@ -1104,8 +1114,8 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-occasion-grid a {
   background: #fffaf1;
-  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 24%, var(--ng-color-warm-white, #f7f4ef));
-  color: var(--ng-color-background, #090909);
+  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold) 24%, var(--ng-color-warm-white));
+  color: var(--ng-color-background);
   display: grid;
   font-family: var(--font-serif);
   gap: 0.75rem;
@@ -1119,7 +1129,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-occasion-grid a::after {
-  background: var(--ng-color-luxury-gold, #c8a45b);
+  background: var(--ng-color-luxury-gold);
   bottom: 1rem;
   content: '';
   height: 1px;
@@ -1137,7 +1147,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-occasion-grid small {
-  color: var(--ng-color-muted-gray, #7e7e7e);
+  color: var(--ng-color-muted-gray);
   font-family: var(--font-sans);
   font-size: 0.68rem;
   font-weight: 800;
@@ -1146,7 +1156,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-occasion-grid a:hover {
-  border-color: var(--ng-color-luxury-gold, #c8a45b);
+  border-color: var(--ng-color-luxury-gold);
   box-shadow: var(--ng-shadow-soft, 0 18px 50px rgb(0 0 0 / 10%));
   text-decoration: none;
   transform: translateY(-3px);
@@ -1176,9 +1186,9 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-newsletter {
-  background: var(--ng-color-background, #090909);
-  border-top: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 28%, transparent);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  border-top: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold) 28%, transparent);
+  color: var(--ng-color-warm-white);
   display: grid;
   justify-items: center;
   padding-bottom: clamp(3rem, 8vw, 6rem);
@@ -1192,7 +1202,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-newsletter > p:not(.greenhouse-kicker) {
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 72%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 72%, transparent);
   line-height: 1.6;
   margin-top: 0.85rem;
   max-width: 520px;
@@ -1208,19 +1218,19 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-newsletter-form input {
   background: transparent;
-  border-color: color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 48%, transparent);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  border-color: color-mix(in srgb, var(--ng-color-luxury-gold) 48%, transparent);
+  color: var(--ng-color-warm-white);
   margin: 0;
 }
 
 .greenhouse-newsletter-form input::placeholder {
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 50%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 50%, transparent);
 }
 
 .greenhouse-newsletter-form button {
-  background: var(--ng-color-luxury-gold, #c8a45b);
-  border-color: var(--ng-color-luxury-gold, #c8a45b);
-  color: var(--ng-color-background, #090909);
+  background: var(--ng-color-luxury-gold);
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
   min-height: 3rem;
 }
 
@@ -1231,8 +1241,8 @@ button.reset:hover:not(:has(> *)) {
 .greenhouse-editorial,
 .greenhouse-corporate {
   align-items: stretch;
-  background: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
   display: grid;
   gap: clamp(1rem, 3vw, 1.5rem);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
@@ -1260,14 +1270,14 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-editorial p:not(.greenhouse-kicker),
 .greenhouse-corporate p:not(.greenhouse-kicker) {
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 76%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 76%, transparent);
   line-height: 1.65;
   max-width: 520px;
 }
 
 .greenhouse-editorial-media,
 .greenhouse-corporate-media {
-  background: var(--ng-color-surface, #111111);
+  background: var(--ng-color-surface);
   overflow: hidden;
 }
 
@@ -1286,17 +1296,17 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-corporate {
-  background: var(--ng-color-warm-white, #f7f4ef);
-  color: var(--ng-color-background, #090909);
+  background: var(--ng-color-warm-white);
+  color: var(--ng-color-background);
 }
 
 .greenhouse-corporate p:not(.greenhouse-kicker) {
-  color: var(--ng-color-muted-gray, #7e7e7e);
+  color: var(--ng-color-muted-gray);
 }
 
 .greenhouse-heritage {
-  background: var(--ng-color-accent-green, #234938);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-accent-green);
+  color: var(--ng-color-warm-white);
   display: grid;
   gap: clamp(1.25rem, 4vw, 3rem);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
@@ -1305,15 +1315,15 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-heritage > p {
   align-self: end;
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 78%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 78%, transparent);
   font-size: clamp(1rem, 1.8vw, 1.2rem);
   line-height: 1.65;
   max-width: 580px;
 }
 
 .greenhouse-testimonials {
-  background: var(--ng-color-background, #090909);
-  color: var(--ng-color-warm-white, #f7f4ef);
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
   padding-bottom: clamp(2.75rem, 7vw, 5.5rem);
   padding-top: clamp(2.75rem, 7vw, 5.5rem);
 }
@@ -1326,8 +1336,8 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-testimonial-grid figure {
-  background: var(--ng-color-surface, #111111);
-  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 24%, transparent);
+  background: var(--ng-color-surface);
+  border: 1px solid color-mix(in srgb, var(--ng-color-luxury-gold) 24%, transparent);
   display: grid;
   gap: clamp(1.2rem, 3vw, 2rem);
   margin: 0;
@@ -1336,7 +1346,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-testimonial-grid blockquote {
-  color: color-mix(in srgb, var(--ng-color-warm-white, #f7f4ef) 88%, transparent);
+  color: color-mix(in srgb, var(--ng-color-warm-white) 88%, transparent);
   font-family: var(--font-serif);
   font-size: clamp(1.25rem, 2.4vw, 1.8rem);
   line-height: 1.18;
@@ -1345,7 +1355,7 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-testimonial-grid figcaption {
   align-self: end;
-  color: var(--ng-color-luxury-gold, #c8a45b);
+  color: var(--ng-color-luxury-gold);
   display: grid;
   font-size: 0.74rem;
   font-weight: 800;
@@ -1355,7 +1365,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-testimonial-grid figcaption span {
-  color: var(--ng-color-muted-gray, #7e7e7e);
+  color: var(--ng-color-muted-gray);
 }
 
 .greenhouse-fallback-product img,
@@ -1366,7 +1376,7 @@ button.reset:hover:not(:has(> *)) {
 
 .greenhouse-product-row .product-item {
   background: #fffaf1;
-  border-color: color-mix(in srgb, var(--ng-color-luxury-gold, #c8a45b) 20%, var(--ng-color-warm-white, #f7f4ef));
+  border-color: color-mix(in srgb, var(--ng-color-luxury-gold) 20%, var(--ng-color-warm-white));
 }
 
 .greenhouse-product-row .product-item h4 {
@@ -1374,7 +1384,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .greenhouse-product-row .product-item small {
-  color: var(--ng-color-muted-gray, #7e7e7e);
+  color: var(--ng-color-muted-gray);
 }
 
 .greenhouse-featured-collections,

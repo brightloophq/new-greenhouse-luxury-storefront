@@ -1,0 +1,416 @@
+/* ==========================================================================
+   Commerce components — The New Greenhouse M2 library
+   Tokens only. Reuses existing .ng-product-card / .ng-collection-card /
+   .ng-image-frame / .ng-ratio-* / .ng-price / .ng-badge / .ng-card-body.
+   New classes defined below.
+   ========================================================================== */
+
+/* .ng-visually-hidden is defined once in chrome.css (canonical). */
+
+/* --------------------------------------------------------------------------
+   PriceBlock
+   -------------------------------------------------------------------------- */
+.ng-price-block {
+  align-items: baseline;
+  color: var(--ng-text-primary);
+  column-gap: var(--ng-space-2);
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: var(--ng-space-1);
+}
+
+.ng-price-current {
+  color: var(--ng-text-primary);
+  font-size: var(--ng-font-size-price);
+}
+
+.ng-price-block-sm .ng-price-current {
+  font-size: var(--ng-font-size-caption);
+}
+
+.ng-price-block-lg .ng-price-current {
+  font-size: var(--ng-font-size-body-l);
+}
+
+.ng-price-unit {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-inline-start: calc(var(--ng-space-1) * -1);
+}
+
+.ng-price-compare {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: line-through;
+}
+
+.ng-price-discount {
+  align-items: center;
+  background: var(--ng-color-accent-green);
+  border-radius: var(--ng-radius-pill);
+  color: var(--ng-text-inverse);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  min-height: 1.4rem;
+  padding-inline: var(--ng-space-2);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   QuantityStepper
+   -------------------------------------------------------------------------- */
+.ng-qty-stepper {
+  align-items: stretch;
+  background: var(--ng-bg-surface);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-sm);
+  display: inline-flex;
+  min-height: var(--ng-input-height-md);
+  overflow: hidden;
+  width: max-content;
+}
+
+.ng-qty-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--ng-text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--ng-font-size-body-l);
+  justify-content: center;
+  line-height: 1;
+  min-height: var(--ng-input-height-md);
+  transition: var(--ng-transition-color);
+  width: var(--ng-input-height-md);
+}
+
+.ng-qty-button:hover:not(:disabled) {
+  background: var(--ng-bg-surface-muted);
+  color: var(--ng-gold-text);
+}
+
+.ng-qty-button:disabled {
+  cursor: not-allowed;
+  opacity: var(--ng-opacity-disabled);
+}
+
+.ng-qty-button:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ng-focus-ring);
+  outline: 0;
+}
+
+.ng-qty-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  background: transparent;
+  border: 0;
+  border-inline: 1px solid var(--ng-border-subtle);
+  color: var(--ng-text-primary);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  min-width: 2.75rem;
+  padding: 0 var(--ng-space-2);
+  text-align: center;
+  width: 3.25rem;
+}
+
+.ng-qty-input::-webkit-outer-spin-button,
+.ng-qty-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.ng-qty-input:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ng-focus-ring);
+  outline: 0;
+}
+
+.ng-qty-input:disabled {
+  cursor: not-allowed;
+  opacity: var(--ng-opacity-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Swatch + SwatchGroup
+   -------------------------------------------------------------------------- */
+.ng-swatch-group {
+  display: grid;
+  gap: var(--ng-space-3);
+}
+
+.ng-swatch-group-label {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-2);
+}
+
+.ng-swatch-group-selection {
+  color: var(--ng-text-secondary);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+}
+
+.ng-swatch-group-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+}
+
+.ng-swatch {
+  background: transparent;
+  border: 0;
+  border-radius: var(--ng-radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  padding: var(--ng-space-1);
+  position: relative;
+  transition: var(--ng-transition-transform);
+}
+
+.ng-swatch:hover:not(.ng-swatch-unavailable) {
+  transform: translateY(-1px);
+}
+
+.ng-swatch-dot {
+  background-color: var(--ng-bg-surface-muted);
+  background-position: center;
+  background-size: cover;
+  block-size: 1.75rem;
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-pill);
+  box-shadow: 0 0 0 2px transparent;
+  display: block;
+  inline-size: 1.75rem;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow var(--ng-duration-standard) var(--ng-ease-standard);
+}
+
+.ng-swatch-dot[data-empty] {
+  background-color: var(--ng-bg-surface);
+}
+
+.ng-swatch-selected .ng-swatch-dot {
+  border-color: var(--ng-color-luxury-gold);
+  box-shadow: 0 0 0 2px var(--ng-color-luxury-gold);
+}
+
+.ng-swatch:focus-visible {
+  outline: 0;
+}
+
+.ng-swatch:focus-visible .ng-swatch-dot {
+  box-shadow: 0 0 0 2px var(--ng-bg-page), 0 0 0 4px var(--ng-focus-ring);
+}
+
+.ng-swatch-unavailable {
+  cursor: not-allowed;
+}
+
+.ng-swatch-unavailable .ng-swatch-dot {
+  opacity: var(--ng-opacity-disabled);
+}
+
+/* Diagonal "sold out" stroke on unavailable options */
+.ng-swatch-unavailable .ng-swatch-dot::after {
+  background: var(--ng-color-error);
+  content: "";
+  inset-block: 0;
+  inset-inline-start: 50%;
+  position: absolute;
+  transform: translateX(-50%) rotate(45deg);
+  transform-origin: center;
+  width: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   ProductCard (extends existing .ng-product-card)
+   -------------------------------------------------------------------------- */
+.ng-product-card-x {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ng-product-card-media {
+  border-radius: 0;
+}
+
+.ng-product-card-badge {
+  inset-block-start: var(--ng-space-3);
+  inset-inline-start: var(--ng-space-3);
+  position: absolute;
+  z-index: 2;
+}
+
+.ng-product-card-action {
+  inset-block-end: var(--ng-space-3);
+  inset-inline-end: var(--ng-space-3);
+  opacity: 0;
+  position: absolute;
+  transform: translateY(var(--ng-space-2));
+  transition: var(--ng-transition-opacity), var(--ng-transition-transform);
+  z-index: 3;
+}
+
+.ng-product-card-x:hover .ng-product-card-action,
+.ng-product-card-x:focus-within .ng-product-card-action {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Subtle "quick view" affordance revealed on hover */
+.ng-product-card-quickview {
+  background: rgb(9 9 9 / 68%);
+  border-radius: var(--ng-radius-pill);
+  color: var(--ng-text-inverse);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 800;
+  inset-block-end: var(--ng-space-3);
+  inset-inline-start: var(--ng-space-3);
+  letter-spacing: var(--ng-letter-label);
+  opacity: 0;
+  padding: var(--ng-space-1) var(--ng-space-3);
+  position: absolute;
+  text-transform: uppercase;
+  transform: translateY(var(--ng-space-2));
+  transition: var(--ng-transition-opacity), var(--ng-transition-transform);
+  z-index: 2;
+}
+
+.ng-product-card-x:hover .ng-product-card-quickview,
+.ng-product-card-x:focus-within .ng-product-card-quickview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ng-product-card-body {
+  display: grid;
+  gap: var(--ng-space-2);
+}
+
+.ng-product-card-eyebrow {
+  display: block;
+}
+
+.ng-product-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ng-product-card-link:focus-visible {
+  border-radius: var(--ng-radius-xs);
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 3px;
+}
+
+/* Stretch the title link over the whole card for a large hit target,
+   while badge/action/quickview sit above via higher z-index. */
+.ng-product-card-link::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.ng-product-card-title {
+  color: var(--ng-text-primary);
+  display: block;
+  transition: var(--ng-transition-color);
+}
+
+.ng-product-card-x:hover .ng-product-card-title {
+  color: var(--ng-gold-text);
+}
+
+.ng-product-card-price {
+  margin-block-start: var(--ng-space-1);
+}
+
+/* --------------------------------------------------------------------------
+   CollectionCard (extends existing .ng-collection-card)
+   -------------------------------------------------------------------------- */
+.ng-collection-card-x {
+  position: relative;
+}
+
+.ng-collection-card-media {
+  border-radius: 0;
+}
+
+.ng-collection-card-overlay {
+  align-content: end;
+  background: linear-gradient(
+    to top,
+    rgb(9 9 9 / 78%) 0%,
+    rgb(9 9 9 / 36%) 42%,
+    rgb(9 9 9 / 0%) 78%
+  );
+  display: grid;
+  gap: var(--ng-space-2);
+  inset: 0;
+  padding: var(--ng-card-padding-md);
+  position: absolute;
+  z-index: 1;
+}
+
+.ng-collection-card-eyebrow {
+  color: var(--ng-color-luxury-gold);
+  display: block;
+}
+
+.ng-collection-card-link {
+  color: var(--ng-text-inverse);
+  text-decoration: none;
+}
+
+.ng-collection-card-link:focus-visible {
+  border-radius: var(--ng-radius-xs);
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 4px;
+}
+
+.ng-collection-card-link::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.ng-collection-card-title {
+  color: var(--ng-text-inverse);
+  display: block;
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h3);
+  line-height: var(--ng-line-heading);
+}
+
+.ng-collection-card-desc {
+  color: var(--ng-text-inverse);
+  font-size: var(--ng-font-size-small);
+  line-height: 1.5;
+  max-width: 42ch;
+  opacity: var(--ng-opacity-muted);
+}
+
+.ng-collection-card-count {
+  color: var(--ng-color-luxury-gold);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

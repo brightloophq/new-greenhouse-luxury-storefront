@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useEffect, useRef, useState} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
@@ -7,7 +7,9 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import {cx} from '~/components/ui';
+import {useScrolled} from '~/lib/useScrolled';
+import {cx, Icon, IconButton} from '~/components/ui';
+import megaFeatureImage from '~/assets/greenhouse-occasion-banner-1600.jpg';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -16,201 +18,254 @@ interface HeaderProps {
   publicStoreDomain: string;
 }
 
-type Viewport = 'desktop' | 'mobile';
+type MegaLink = {label: string; to: string};
+type MegaColumn = {title: string; links: MegaLink[]};
 
-export function Header({
-  header,
-  isLoggedIn,
-  cart,
-  publicStoreDomain,
-}: HeaderProps) {
-  const {shop, menu} = header;
+const MEGA_COLUMNS: MegaColumn[] = [
+  {
+    title: 'Occasions',
+    links: [
+      {label: 'Birthday', to: '/collections/birthday-flowers'},
+      {label: 'Anniversary', to: '/collections/anniversary-flowers'},
+      {label: 'Love & Romance', to: '/collections/love-romance'},
+      {label: 'Sympathy', to: '/collections/sympathy'},
+      {label: 'Weddings', to: '/collections/wedding-flowers'},
+      {label: 'Gift Baskets', to: '/collections/gift-baskets'},
+    ],
+  },
+  {
+    title: 'The Collection',
+    links: [
+      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
+      {label: 'Tropical Flowers', to: '/collections/tropical-flowers'},
+      {label: 'Plants', to: '/collections/plants'},
+      {label: 'Same-Day Delivery', to: '/collections/same-day-delivery'},
+      {label: 'Shop All', to: '/collections/all'},
+    ],
+  },
+  {
+    title: 'Wholesale & Trade',
+    links: [
+      {label: 'Wholesale Flowers', to: '/collections/all'},
+      {label: 'Weddings & Events', to: '/pages/wedding-events'},
+      {label: 'Corporate Floral', to: '/pages/corporate-flowers'},
+      {label: 'Bulk & Standing Orders', to: '/pages/contact'},
+    ],
+  },
+];
+
+type PrimaryItem = {label: string; to?: string; mega?: boolean};
+
+const PRIMARY_NAV: PrimaryItem[] = [
+  {label: 'Shop', to: '/collections', mega: true},
+  {label: 'Weddings', to: '/pages/wedding-events'},
+  {label: 'Corporate', to: '/pages/corporate-flowers'},
+  {label: 'Wholesale', to: '/collections/all'},
+  {label: 'About', to: '/pages/about-us'},
+];
+
+export function Header({header, isLoggedIn, cart}: HeaderProps) {
+  const {shop} = header;
+  const scrolled = useScrolled(24);
+  const {open} = useAside();
+
   return (
-    <div className="luxury-shell-header">
-      <div className="announcement-bar">
-        <span>
-          Same-day delivery available across Kingston &amp; St. Andrew for
-          orders placed before 2PM.
-        </span>
+    <div className={cx('ng-shell-header', scrolled && 'is-solid')}>
+      <div className="ng-shell-announcement" role="status">
+        <span>Same-day delivery across Kingston &amp; St. Andrew — order before 2PM</span>
+        <span aria-hidden="true" className="ng-shell-announcement-sep">·</span>
+        <span>Luxury florals since 1984</span>
       </div>
-      <header className="header">
-        <NavLink
-          className="header-logo"
-          prefetch="intent"
-          to="/"
-          end
-        >
-          <strong>{shop.name}</strong>
-        </NavLink>
-        <HeaderMenu
-          menu={menu}
-          viewport="desktop"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
-        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+
+      <header className="ng-shell-nav">
+        <div className="ng-shell-nav-inner">
+          <div className="ng-shell-nav-left">
+            <IconButton
+              className="ng-shell-burger"
+              aria-label="Open menu"
+              onClick={() => open('mobile')}
+            >
+              <Icon name="menu" />
+            </IconButton>
+            <DesktopNav />
+          </div>
+
+          <NavLink className="ng-shell-logo" prefetch="intent" to="/" end>
+            <span className="ng-shell-logo-mark">{shop.name || 'The New Greenhouse'}</span>
+          </NavLink>
+
+          <div className="ng-shell-actions">
+            <IconButton aria-label="Search" onClick={() => open('search')}>
+              <Icon name="search" />
+            </IconButton>
+            <NavLink className="ng-shell-action-account" prefetch="intent" to="/account">
+              <Icon name="user" />
+              <span className="ng-shell-action-label">
+                <Suspense fallback="Sign in">
+                  <Await resolve={isLoggedIn} errorElement="Sign in">
+                    {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
+                  </Await>
+                </Suspense>
+              </span>
+            </NavLink>
+            <CartToggle cart={cart} />
+          </div>
+        </div>
       </header>
     </div>
   );
 }
 
-export function HeaderMenu({
-  menu,
-  primaryDomainUrl,
-  viewport,
-  publicStoreDomain,
-}: {
-  menu: HeaderProps['header']['menu'];
-  primaryDomainUrl: HeaderProps['header']['shop']['primaryDomain']['url'];
-  viewport: Viewport;
-  publicStoreDomain: HeaderProps['publicStoreDomain'];
-}) {
-  const className = `header-menu-${viewport}`;
-  const {close} = useAside();
+function DesktopNav() {
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isDesktop = viewport === 'desktop';
+  const clearTimer = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+  const scheduleClose = () => {
+    clearTimer();
+    closeTimer.current = setTimeout(() => setOpenLabel(null), 120);
+  };
 
-  return (
-    <nav className={className} role="navigation">
-      {viewport === 'mobile' && (
-        <NavLink
-          end
-          onClick={close}
-          prefetch="intent"
-          className={navLinkClass}
-          to="/"
-        >
-          Home
-        </NavLink>
-      )}
-      {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
-        if (!item.url) return null;
-
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        return (
-          <NavLink
-            className={({isActive, isPending}) =>
-              cx('header-menu-item', navStateClass({isActive, isPending}))
-            }
-            end
-            key={item.id}
-            onClick={close}
-            prefetch="intent"
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
-      {isDesktop && (
-        <div className="header-mega-panel">
-          <div>
-            <span>Shop the house</span>
-            <NavLink prefetch="intent" to="/collections/all">
-              New arrivals
-            </NavLink>
-            <NavLink prefetch="intent" to="/collections">
-              Collections
-            </NavLink>
-            <NavLink prefetch="intent" to="/search">
-              Find a bloom
-            </NavLink>
-          </div>
-          <div>
-            <span>Occasions</span>
-            <NavLink prefetch="intent" to="/collections/all">
-              Birthday
-            </NavLink>
-            <NavLink prefetch="intent" to="/collections/all">
-              Anniversary
-            </NavLink>
-            <NavLink prefetch="intent" to="/collections/all">
-              Thank you
-            </NavLink>
-          </div>
-          <p>
-            A refined floral atelier for sculptural arrangements, botanical
-            gifts, and memorable delivery moments.
-          </p>
-        </div>
-      )}
-    </nav>
-  );
-}
-
-function HeaderCtas({
-  isLoggedIn,
-  cart,
-}: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
-  return (
-    <nav className="header-ctas" role="navigation">
-      <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" className={navLinkClass}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
-      <SearchToggle />
-      <CartToggle cart={cart} />
-    </nav>
-  );
-}
-
-function HeaderMenuMobileToggle() {
-  const {open} = useAside();
-  return (
-    <button
-      className="header-menu-mobile-toggle reset"
-      onClick={() => open('mobile')}
-    >
-      Menu
-    </button>
-  );
-}
-
-function SearchToggle() {
-  const {open} = useAside();
-  return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
-    </button>
-  );
-}
-
-function CartBadge({count}: {count: number}) {
-  const {open} = useAside();
-  const {publish, shop, cart, prevCart} = useAnalytics();
+  // Close mega on Escape and on focus leaving the nav.
+  useEffect(() => {
+    if (!openLabel) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenLabel(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [openLabel]);
 
   return (
-    <a
-      href="/cart"
-      onClick={(e) => {
-        e.preventDefault();
-        open('cart');
-        publish('cart_viewed', {
-          cart,
-          prevCart,
-          shop,
-          url: window.location.href || '',
-        } as CartViewPayload);
+    <nav
+      className="ng-shell-primary"
+      aria-label="Primary"
+      ref={navRef}
+      onBlur={(e) => {
+        if (!navRef.current?.contains(e.relatedTarget as Node)) setOpenLabel(null);
       }}
     >
-      Cart <span aria-label={`(items: ${count})`}>{count}</span>
-    </a>
+      <ul className="ng-shell-primary-list">
+        {PRIMARY_NAV.map((item) => {
+          const isOpen = openLabel === item.label;
+          if (item.mega) {
+            return (
+              <li
+                key={item.label}
+                className="ng-shell-primary-item has-mega"
+                onPointerEnter={() => {
+                  clearTimer();
+                  setOpenLabel(item.label);
+                }}
+                onPointerLeave={scheduleClose}
+              >
+                <button
+                  type="button"
+                  className={cx('ng-shell-navlink', 'ng-shell-mega-trigger', isOpen && 'is-open')}
+                  aria-expanded={isOpen}
+                  aria-haspopup="true"
+                  onClick={() => setOpenLabel(isOpen ? null : item.label)}
+                  onFocus={() => {
+                    clearTimer();
+                    setOpenLabel(item.label);
+                  }}
+                >
+                  {item.label}
+                  <Icon name="chevron-down" size="xs" className="ng-shell-mega-caret" />
+                </button>
+                <MegaPanel
+                  open={isOpen}
+                  onPointerEnter={clearTimer}
+                  onPointerLeave={scheduleClose}
+                  onClose={() => setOpenLabel(null)}
+                />
+              </li>
+            );
+          }
+          return (
+            <li key={item.label} className="ng-shell-primary-item">
+              <NavLink
+                to={item.to!}
+                prefetch="intent"
+                className={({isActive}) => cx('ng-shell-navlink', isActive && 'is-active')}
+                onFocus={() => setOpenLabel(null)}
+              >
+                {item.label}
+              </NavLink>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+function MegaPanel({
+  open,
+  onPointerEnter,
+  onPointerLeave,
+  onClose,
+}: {
+  open: boolean;
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className={cx('ng-mega', open && 'is-open')}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      hidden={!open}
+    >
+      <div className="ng-mega-inner">
+        <div className="ng-mega-columns">
+          {MEGA_COLUMNS.map((col) => (
+            <div className="ng-mega-column" key={col.title}>
+              <p className="ng-mega-column-title">{col.title}</p>
+              <ul>
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <NavLink
+                      to={link.to}
+                      prefetch="intent"
+                      className="ng-mega-link"
+                      onClick={onClose}
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <NavLink
+          to="/collections/luxury-bouquets"
+          prefetch="intent"
+          className="ng-mega-feature"
+          onClick={onClose}
+        >
+          <span className="ng-mega-feature-media">
+            <img src={megaFeatureImage} alt="" loading="lazy" />
+          </span>
+          <span className="ng-mega-feature-copy">
+            <span className="ng-mega-feature-eyebrow">House arrangements</span>
+            <span className="ng-mega-feature-title">Signature Bouquets</span>
+            <span className="ng-mega-feature-cta">Shop the edit →</span>
+          </span>
+        </NavLink>
+      </div>
+    </div>
   );
 }
 
 function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
   return (
-    <Suspense fallback={<CartBadge count={0} />}>
+    <Suspense fallback={<CartButton count={0} />}>
       <Await resolve={cart}>
         <CartBanner />
       </Await>
@@ -221,67 +276,33 @@ function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
 function CartBanner() {
   const originalCart = useAsyncValue() as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
-  return <CartBadge count={cart?.totalQuantity ?? 0} />;
+  return <CartButton count={cart?.totalQuantity ?? 0} />;
 }
 
-const FALLBACK_HEADER_MENU = {
-  id: 'gid://shopify/Menu/199655587896',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/461609500728',
-      resourceId: null,
-      tags: [],
-      title: 'Collections',
-      type: 'HTTP',
-      url: '/collections',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609533496',
-      resourceId: null,
-      tags: [],
-      title: 'Blog',
-      type: 'HTTP',
-      url: '/blogs/journal',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609566264',
-      resourceId: null,
-      tags: [],
-      title: 'Policies',
-      type: 'HTTP',
-      url: '/policies',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461609599032',
-      resourceId: 'gid://shopify/Page/92591030328',
-      tags: [],
-      title: 'About',
-      type: 'PAGE',
-      url: '/pages/about',
-      items: [],
-    },
-  ],
-};
-
-function navStateClass({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return cx(isActive && 'is-active', isPending && 'is-pending');
+function CartButton({count}: {count: number}) {
+  const {open} = useAside();
+  const {publish, shop, cart, prevCart} = useAnalytics();
+  return (
+    <button
+      type="button"
+      className="ng-shell-cart"
+      aria-label={`Cart, ${count} item${count === 1 ? '' : 's'}`}
+      onClick={() => {
+        open('cart');
+        publish('cart_viewed', {
+          cart,
+          prevCart,
+          shop,
+          url: window.location.href || '',
+        } as CartViewPayload);
+      }}
+    >
+      <Icon name="bag" />
+      {count > 0 ? <span className="ng-shell-cart-count">{count}</span> : null}
+    </button>
+  );
 }
 
-function navLinkClass({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return navStateClass({isActive, isPending});
-}
+// Consumed by the mobile-navigation drawer in PageLayout.
+export {MEGA_COLUMNS, PRIMARY_NAV};
+export type {MegaColumn, PrimaryItem};

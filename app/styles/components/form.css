@@ -1,0 +1,84 @@
+/* Form molecules — new classes only.
+   Base controls (.ng-field, .ng-input, .ng-select, .ng-textarea, .ng-checkbox,
+   .ng-radio, .ng-error-text) live in design-system.css and are reused as-is. */
+
+.ng-field-label {
+  align-items: baseline;
+  color: var(--ng-text-primary);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 500;
+  gap: var(--ng-space-1);
+  letter-spacing: var(--ng-letter-label);
+  line-height: var(--ng-line-heading);
+}
+
+.ng-field-required {
+  color: var(--ng-color-error);
+  font-size: inherit;
+  line-height: 1;
+}
+
+.ng-field-hint {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  line-height: var(--ng-line-body);
+}
+
+/* Inline checkbox / radio + label */
+.ng-checkbox-field {
+  align-items: flex-start;
+  color: var(--ng-text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-body);
+  gap: var(--ng-space-3);
+  line-height: var(--ng-line-body);
+}
+
+.ng-checkbox-field .ng-checkbox,
+.ng-checkbox-field .ng-radio {
+  flex: none;
+  /* nudge control to sit on the first text line */
+  margin-block-start: 0.15em;
+}
+
+.ng-checkbox-field-label {
+  min-inline-size: 0;
+}
+
+/* Fieldset grouping */
+.ng-fieldset {
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-md);
+  display: grid;
+  gap: var(--ng-space-4);
+  margin: 0;
+  min-inline-size: 0;
+  padding: var(--ng-space-6);
+}
+
+.ng-fieldset-legend {
+  color: var(--ng-text-primary);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h4);
+  line-height: var(--ng-line-heading);
+  padding-inline: var(--ng-space-2);
+}
+
+/* Screen-reader-only label utility (scoped to this system) */
+.ng-sr-only {
+  block-size: 1px;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  inline-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+}

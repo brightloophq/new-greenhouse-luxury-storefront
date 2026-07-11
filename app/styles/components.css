@@ -1,0 +1,9 @@
+/*
+ * M2 component library styles.
+ * Aggregates the per-group component stylesheets. Loaded after design-system.css
+ * (which defines the base ng-* primitives + tokens these build on).
+ */
+@import './components/chrome.css';
+@import './components/form.css';
+@import './components/commerce.css';
+@import './components/content.css';

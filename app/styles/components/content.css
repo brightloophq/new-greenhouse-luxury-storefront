@@ -1,0 +1,600 @@
+/* ==========================================================================
+   Content / editorial blocks (M2)
+   Tokens only. Class prefix: ng-. Light by default; dark tone variants where
+   noted. Motion via --ng-transition-* / --ng-duration-* / --ng-ease-*.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SectionHeading
+   -------------------------------------------------------------------------- */
+.ng-section-heading {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-4) var(--ng-space-8);
+  justify-content: space-between;
+}
+
+.ng-section-heading-text {
+  display: grid;
+  gap: var(--ng-space-3);
+  max-width: 46rem;
+}
+
+.ng-section-heading-center {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ng-section-heading-center .ng-section-heading-text {
+  justify-items: center;
+  margin-inline: auto;
+}
+
+.ng-section-heading-eyebrow {
+  color: var(--ng-gold-text);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-section-heading-title {
+  margin: 0;
+}
+
+.ng-section-heading-description {
+  color: var(--ng-text-secondary);
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+  margin: 0;
+}
+
+.ng-section-heading-action {
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Banner — image with overlaid content
+   -------------------------------------------------------------------------- */
+.ng-banner {
+  border-radius: var(--ng-radius-lg);
+  color: var(--ng-text-inverse);
+  display: grid;
+  isolation: isolate;
+  overflow: clip;
+  position: relative;
+  width: 100%;
+}
+
+.ng-banner-media,
+.ng-banner-scrim {
+  grid-area: 1 / 1;
+  height: 100%;
+  width: 100%;
+}
+
+.ng-banner-media {
+  z-index: 0;
+}
+
+.ng-banner-media > img,
+.ng-banner-media > picture,
+.ng-banner-media > picture > img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.ng-banner-scrim {
+  z-index: 1;
+}
+
+.ng-banner-overlay-dark {
+  background: linear-gradient(
+    to top,
+    rgb(9 9 9 / 78%),
+    rgb(9 9 9 / 42%) 45%,
+    rgb(9 9 9 / 22%)
+  );
+}
+
+.ng-banner-overlay-light {
+  background: linear-gradient(
+    to top,
+    rgb(250 248 244 / 82%),
+    rgb(250 248 244 / 46%) 45%,
+    rgb(250 248 244 / 24%)
+  );
+}
+
+.ng-banner-overlay-none {
+  background: transparent;
+}
+
+.ng-banner-overlay-light ~ .ng-banner-content {
+  color: var(--ng-text-primary);
+}
+
+.ng-banner-content {
+  align-content: end;
+  display: grid;
+  gap: var(--ng-space-4);
+  grid-area: 1 / 1;
+  justify-items: start;
+  max-width: 44rem;
+  padding: clamp(var(--ng-space-6), 5vw, var(--ng-space-16));
+  position: relative;
+  z-index: 2;
+}
+
+.ng-banner-center .ng-banner-content {
+  justify-items: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.ng-banner-sm {
+  min-height: 18rem;
+}
+
+.ng-banner-md {
+  min-height: 26rem;
+}
+
+.ng-banner-lg {
+  min-height: 34rem;
+}
+
+.ng-banner-hero {
+  min-height: min(82vh, 48rem);
+}
+
+.ng-banner-eyebrow {
+  color: var(--ng-color-luxury-gold);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-banner-overlay-light ~ .ng-banner-content .ng-banner-eyebrow {
+  color: var(--ng-gold-text);
+}
+
+.ng-banner-title {
+  margin: 0;
+}
+
+.ng-banner-description {
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+  margin: 0;
+  max-width: 38rem;
+  opacity: 0.92;
+}
+
+.ng-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+  margin-top: var(--ng-space-2);
+}
+
+.ng-banner-center .ng-banner-actions {
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   CTA band
+   -------------------------------------------------------------------------- */
+.ng-cta {
+  border-radius: var(--ng-radius-lg);
+  padding: clamp(var(--ng-space-8), 5vw, var(--ng-space-16));
+}
+
+.ng-cta-inner {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-6) var(--ng-space-10);
+  justify-content: space-between;
+  margin-inline: auto;
+  max-width: var(--ng-container-md);
+}
+
+.ng-cta-text {
+  display: grid;
+  gap: var(--ng-space-3);
+  max-width: 42rem;
+}
+
+.ng-cta-title {
+  margin: 0;
+}
+
+.ng-cta-description {
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+  margin: 0;
+}
+
+.ng-cta-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+}
+
+.ng-cta-light {
+  background: var(--ng-bg-surface-muted);
+  color: var(--ng-text-primary);
+}
+
+.ng-cta-light .ng-cta-description {
+  color: var(--ng-text-secondary);
+}
+
+.ng-cta-dark {
+  background: var(--ng-bg-inverse);
+  color: var(--ng-text-inverse);
+}
+
+.ng-cta-dark .ng-cta-description {
+  color: var(--ng-text-inverse);
+  opacity: var(--ng-opacity-muted);
+}
+
+.ng-cta-gold {
+  background: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
+}
+
+.ng-cta-gold .ng-cta-description {
+  color: var(--ng-color-background);
+  opacity: 0.82;
+}
+
+/* --------------------------------------------------------------------------
+   Testimonial — extends existing .ng-testimonial-card
+   -------------------------------------------------------------------------- */
+.ng-testimonial {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-5);
+  margin: 0;
+}
+
+.ng-testimonial-grid {
+  display: grid;
+  gap: var(--ng-grid-gap-lg);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+  .ng-testimonial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .ng-testimonial-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ng-testimonial-rating {
+  color: var(--ng-color-luxury-gold);
+  display: flex;
+  gap: var(--ng-space-1);
+  letter-spacing: 0.1em;
+}
+
+.ng-testimonial-quote {
+  color: var(--ng-text-primary);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h4);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ng-testimonial-quote::before {
+  content: "\201C";
+}
+
+.ng-testimonial-quote::after {
+  content: "\201D";
+}
+
+.ng-testimonial-caption {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-3);
+  margin-top: auto;
+}
+
+.ng-testimonial-avatar {
+  align-items: center;
+  aspect-ratio: 1;
+  background: var(--ng-bg-surface-muted);
+  border-radius: var(--ng-radius-pill);
+  display: inline-flex;
+  inline-size: 2.75rem;
+  justify-content: center;
+  overflow: clip;
+}
+
+.ng-testimonial-avatar > img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.ng-testimonial-attribution {
+  display: grid;
+  gap: var(--ng-space-1);
+}
+
+.ng-testimonial-author {
+  color: var(--ng-text-primary);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ng-testimonial-context {
+  color: var(--ng-text-muted);
+  font-size: var(--ng-font-size-caption);
+}
+
+/* --------------------------------------------------------------------------
+   Trust signals
+   -------------------------------------------------------------------------- */
+.ng-trust-grid {
+  display: grid;
+  gap: var(--ng-grid-gap-md);
+  grid-template-columns: 1fr;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 40rem) {
+  .ng-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .ng-trust-grid {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+}
+
+.ng-trust-item {
+  align-items: center;
+  color: var(--ng-text-primary);
+  display: flex;
+  gap: var(--ng-space-3);
+}
+
+.ng-trust-icon {
+  align-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-pill);
+  color: var(--ng-gold-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  inline-size: 2.75rem;
+  justify-content: center;
+}
+
+.ng-trust-icon > svg {
+  block-size: var(--ng-icon-md);
+  inline-size: var(--ng-icon-md);
+}
+
+.ng-trust-text {
+  display: grid;
+  gap: var(--ng-space-1);
+}
+
+.ng-trust-label {
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.ng-trust-detail {
+  color: var(--ng-text-muted);
+  font-size: var(--ng-font-size-caption);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Editorial split (image / text)
+   -------------------------------------------------------------------------- */
+.ng-editorial {
+  align-items: center;
+  display: grid;
+  gap: var(--ng-grid-gap-lg);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+  .ng-editorial {
+    gap: clamp(var(--ng-space-8), 5vw, var(--ng-space-16));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ng-editorial-reverse .ng-editorial-media {
+    order: 2;
+  }
+}
+
+.ng-editorial-media {
+  min-width: 0;
+}
+
+.ng-editorial-media > img,
+.ng-editorial-media > picture,
+.ng-editorial-media > picture > img {
+  border-radius: var(--ng-radius-md);
+  max-width: 100%;
+}
+
+.ng-editorial-body {
+  display: grid;
+  gap: var(--ng-space-4);
+}
+
+.ng-editorial-eyebrow {
+  color: var(--ng-gold-text);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-editorial-title {
+  margin: 0;
+}
+
+.ng-editorial-text {
+  color: var(--ng-text-secondary);
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+}
+
+.ng-editorial-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+  margin-top: var(--ng-space-2);
+}
+
+.ng-editorial-muted {
+  background: var(--ng-bg-surface-muted);
+  border-radius: var(--ng-radius-lg);
+  padding: clamp(var(--ng-space-6), 4vw, var(--ng-space-12));
+}
+
+.ng-editorial-dark {
+  background: var(--ng-bg-inverse);
+  border-radius: var(--ng-radius-lg);
+  color: var(--ng-text-inverse);
+  padding: clamp(var(--ng-space-6), 4vw, var(--ng-space-12));
+}
+
+.ng-editorial-dark .ng-editorial-eyebrow {
+  color: var(--ng-color-luxury-gold);
+}
+
+.ng-editorial-dark .ng-editorial-text {
+  color: var(--ng-text-inverse);
+  opacity: var(--ng-opacity-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Accordion
+   -------------------------------------------------------------------------- */
+.ng-accordion {
+  border-top: 1px solid var(--ng-border-subtle);
+  width: 100%;
+}
+
+.ng-accordion-item {
+  border-bottom: 1px solid var(--ng-border-subtle);
+}
+
+.ng-accordion-header {
+  font: inherit;
+  margin: 0;
+}
+
+.ng-accordion-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--ng-text-primary);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-body-l);
+  font-weight: 600;
+  gap: var(--ng-space-4);
+  justify-content: space-between;
+  padding: var(--ng-space-5) 0;
+  text-align: left;
+  transition: var(--ng-transition-color);
+  width: 100%;
+}
+
+.ng-accordion-trigger:hover {
+  color: var(--ng-gold-text);
+}
+
+.ng-accordion-trigger:focus-visible {
+  border-radius: var(--ng-radius-sm);
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 2px;
+}
+
+.ng-accordion-title {
+  min-width: 0;
+}
+
+.ng-accordion-icon {
+  block-size: var(--ng-icon-sm);
+  flex-shrink: 0;
+  inline-size: var(--ng-icon-sm);
+  position: relative;
+}
+
+.ng-accordion-icon::before,
+.ng-accordion-icon::after {
+  background: currentColor;
+  content: "";
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  position: absolute;
+  transition: transform var(--ng-duration-standard) var(--ng-ease-luxury),
+    opacity var(--ng-duration-standard) var(--ng-ease-standard);
+  translate: -50% -50%;
+}
+
+.ng-accordion-icon::before {
+  block-size: 1px;
+  inline-size: 100%;
+}
+
+.ng-accordion-icon::after {
+  block-size: 100%;
+  inline-size: 1px;
+}
+
+.ng-accordion-item.is-open .ng-accordion-icon::after {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+/* Open panels animate in; the `hidden` attribute keeps closed panels out of
+   the a11y tree and tab order (native display:none — no essential info hidden
+   behind motion). */
+.ng-accordion-item.is-open .ng-accordion-panel {
+  animation: ng-fade var(--ng-duration-standard) var(--ng-ease-standard) both;
+}
+
+.ng-accordion-panel-inner {
+  color: var(--ng-text-secondary);
+  line-height: var(--ng-line-body);
+  padding-block-end: var(--ng-space-5);
+}

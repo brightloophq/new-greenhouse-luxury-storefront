@@ -5,15 +5,20 @@ import type {
   FooterQuery,
   HeaderQuery,
 } from 'storefrontapi.generated';
-import {Aside} from '~/components/Aside';
+import {Aside, useAside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
-import {Header, HeaderMenu} from '~/components/Header';
+import {
+  Header,
+  MEGA_COLUMNS,
+  PRIMARY_NAV,
+} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import {Accordion, AccordionItem, Icon} from '~/components/ui';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -36,7 +41,7 @@ export function PageLayout({
     <Aside.Provider>
       <CartAside cart={cart} />
       <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <MobileNavAside isLoggedIn={isLoggedIn} />
       {header && (
         <Header
           header={header}
@@ -57,12 +62,10 @@ export function PageLayout({
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+    <Aside type="cart" heading="Your cart" position="right">
+      <Suspense fallback={<p className="ng-drawer-loading">Loading cart …</p>}>
         <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
+          {(resolved) => <CartMain cart={resolved} layout="aside" />}
         </Await>
       </Suspense>
     </Aside>
@@ -72,24 +75,27 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
 function SearchAside() {
   const queriesDatalistId = useId();
   return (
-    <Aside type="search" heading="SEARCH">
-      <div className="predictive-search">
-        <br />
-        <SearchFormPredictive>
+    <Aside type="search" heading="Search" position="top">
+      <div className="ng-search">
+        <SearchFormPredictive className="ng-search-form">
           {({fetchResults, goToSearch, inputRef}) => (
-            <>
+            <div className="ng-search-field">
+              <Icon name="search" className="ng-search-icon" />
               <input
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Search flowers, occasions, collections…"
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
+                data-autofocus
+                aria-label="Search"
               />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
-            </>
+              <button type="button" className="ng-search-submit" onClick={goToSearch}>
+                Search
+              </button>
+            </div>
           )}
         </SearchFormPredictive>
 
@@ -98,15 +104,17 @@ function SearchAside() {
             const {articles, collections, pages, products, queries} = items;
 
             if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
+              return <div className="ng-search-status">Searching…</div>;
             }
-
             if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
+              return (
+                <div className="ng-search-status">
+                  <SearchResultsPredictive.Empty term={term} />
+                </div>
+              );
             }
-
             return (
-              <>
+              <div className="ng-search-results">
                 <SearchResultsPredictive.Queries
                   queries={queries}
                   queriesDatalistId={queriesDatalistId}
@@ -133,16 +141,14 @@ function SearchAside() {
                 />
                 {term.current && total ? (
                   <Link
+                    className="ng-search-viewall"
                     onClick={closeSearch}
                     to={`${SEARCH_ENDPOINT}?q=${term.current}`}
                   >
-                    <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
-                    </p>
+                    View all results for <q>{term.current}</q> →
                   </Link>
                 ) : null}
-              </>
+              </div>
             );
           }}
         </SearchResultsPredictive>
@@ -151,24 +157,69 @@ function SearchAside() {
   );
 }
 
-function MobileMenuAside({
-  header,
-  publicStoreDomain,
-}: {
-  header: PageLayoutProps['header'];
-  publicStoreDomain: PageLayoutProps['publicStoreDomain'];
-}) {
+function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']}) {
+  const {close} = useAside();
   return (
-    header.menu &&
-    header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
-          menu={header.menu}
-          viewport="mobile"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
-      </Aside>
-    )
+    <Aside type="mobile" heading="Menu" position="left">
+      <nav className="ng-mobilenav" aria-label="Mobile">
+        <ul className="ng-mobilenav-primary">
+          <li>
+            <Link to="/" prefetch="intent" onClick={close} className="ng-mobilenav-link">
+              Home
+            </Link>
+          </li>
+          {PRIMARY_NAV.filter((i) => !i.mega).map((item) => (
+            <li key={item.label}>
+              <Link
+                to={item.to!}
+                prefetch="intent"
+                onClick={close}
+                className="ng-mobilenav-link"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <Accordion className="ng-mobilenav-accordion">
+          {MEGA_COLUMNS.map((col) => (
+            <AccordionItem key={col.title} title={col.title}>
+              <ul className="ng-mobilenav-sublist">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.to}
+                      prefetch="intent"
+                      onClick={close}
+                      className="ng-mobilenav-sublink"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </AccordionItem>
+          ))}
+        </Accordion>
+
+        <div className="ng-mobilenav-footer">
+          <Link to="/account" prefetch="intent" onClick={close} className="ng-mobilenav-account">
+            <Icon name="user" size="sm" />
+            <Suspense fallback="Sign in">
+              <Await resolve={isLoggedIn} errorElement="Sign in">
+                {(loggedIn) => (loggedIn ? 'My account' : 'Sign in')}
+              </Await>
+            </Suspense>
+          </Link>
+          <a href="mailto:info@thenewgreenhouseja.com" className="ng-mobilenav-contact">
+            <Icon name="mail" size="sm" /> info@thenewgreenhouseja.com
+          </a>
+          <p className="ng-mobilenav-note">
+            Same-day delivery across Kingston &amp; St. Andrew before 2PM.
+          </p>
+        </div>
+      </nav>
+    </Aside>
   );
 }

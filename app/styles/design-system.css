@@ -1,34 +1,39 @@
 :root {
   color-scheme: light;
 
-  /* Core palette */
-  --ng-color-background: #090909;
-  --ng-color-surface: #111111;
-  --ng-color-surface-2: #181818;
-  --ng-color-luxury-gold: #c8a45b;
-  --ng-color-soft-gold: #e2c27a;
-  --ng-color-warm-white: #f7f4ef;
-  --ng-color-light-gray: #bfbfbf;
-  --ng-color-muted-gray: #7e7e7e;
-  --ng-color-accent-green: #234938;
-  --ng-color-success: #3d5a45;
-  --ng-color-warning: #9a7839;
-  --ng-color-error: #7a3038;
+  /* Core palette — references the single source of truth in tailwind.css @theme.
+     Do not hardcode brand hexes here; change them in tailwind.css. */
+  --ng-color-background: var(--color-greenhouse-background); /* #090909 */
+  --ng-color-surface: var(--color-greenhouse-surface); /* #111111 */
+  --ng-color-surface-2: var(--color-greenhouse-surface-2); /* #181818 */
+  --ng-color-luxury-gold: var(--color-greenhouse-gold); /* #C8A96A */
+  --ng-color-soft-gold: var(--color-greenhouse-soft-gold);
+  --ng-color-warm-white: var(--color-greenhouse-warm-white); /* #FAF8F4 ivory */
+  --ng-color-light-gray: var(--color-greenhouse-light-gray);
+  --ng-color-muted-gray: var(--color-greenhouse-muted-gray);
+  --ng-color-accent-green: var(--color-greenhouse-accent-green); /* #4D6A50 */
+  --ng-color-charcoal: var(--color-greenhouse-charcoal); /* #222222 */
+  --ng-color-success: var(--color-greenhouse-success);
+  --ng-color-warning: var(--color-greenhouse-warning);
+  --ng-color-error: var(--color-greenhouse-error);
 
   /* Semantic colors */
   --ng-bg-page: var(--ng-color-warm-white);
   --ng-bg-inverse: var(--ng-color-background);
-  --ng-bg-surface: #fffaf2;
-  --ng-bg-surface-muted: #f1eadf;
+  --ng-bg-surface: #fffdf8;
+  --ng-bg-surface-muted: #f1ece2;
   --ng-bg-surface-dark: var(--ng-color-surface);
-  --ng-text-primary: #12110f;
-  --ng-text-secondary: #5f5a52;
+  --ng-text-primary: var(--ng-color-charcoal); /* #222222 Deep Charcoal */
+  --ng-text-secondary: #565049;
   --ng-text-muted: var(--ng-color-muted-gray);
   --ng-text-inverse: var(--ng-color-warm-white);
-  --ng-border-subtle: #ddd2c0;
-  --ng-border-strong: #bca986;
-  --ng-border-inverse: rgb(200 164 91 / 42%);
+  --ng-border-subtle: #e2d8c8;
+  --ng-border-strong: #c3b191;
+  --ng-border-inverse: rgb(200 169 106 / 42%);
   --ng-focus-ring: var(--ng-color-soft-gold);
+  /* Accessible gold for small text on LIGHT backgrounds (WCAG AA 4.74:1 on ivory).
+     Use --ng-color-luxury-gold for gold on DARK / decorative / borders / buttons. */
+  --ng-gold-text: #8a6a2a;
 
   /* Typography */
   --ng-font-heading: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -252,7 +257,7 @@
 }
 
 .ng-label {
-  color: var(--ng-color-luxury-gold);
+  color: var(--ng-gold-text); /* AA on light; override to luxury-gold on dark surfaces */
   font-size: var(--ng-font-size-label);
   letter-spacing: var(--ng-letter-label);
 }

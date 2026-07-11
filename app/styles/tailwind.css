@@ -5,16 +5,24 @@
 
 @import 'tailwindcss';
 
+/*
+ * SINGLE SOURCE OF TRUTH for the brand palette.
+ * These @theme tokens are emitted as :root CSS variables and are referenced by
+ * design-system.css (--ng-color-*) and, transitively, the legacy --color-* aliases.
+ * Values follow CLAUDE.md exactly. Change the brand here and nowhere else.
+ */
 @theme {
+  --color-greenhouse-black: #090909; /* Primary — CLAUDE.md */
   --color-greenhouse-background: #090909;
   --color-greenhouse-surface: #111111;
   --color-greenhouse-surface-2: #181818;
-  --color-greenhouse-gold: #c8a45b;
-  --color-greenhouse-soft-gold: #e2c27a;
-  --color-greenhouse-warm-white: #f7f4ef;
+  --color-greenhouse-gold: #c8a96a; /* Champagne Gold — CLAUDE.md */
+  --color-greenhouse-soft-gold: #e0c88f; /* lighter champagne tint of gold */
+  --color-greenhouse-warm-white: #faf8f4; /* Warm Ivory (background) — CLAUDE.md */
+  --color-greenhouse-charcoal: #222222; /* Deep Charcoal (text) — CLAUDE.md */
   --color-greenhouse-light-gray: #bfbfbf;
   --color-greenhouse-muted-gray: #7e7e7e;
-  --color-greenhouse-accent-green: #234938;
+  --color-greenhouse-accent-green: #4d6a50; /* Botanical Green (accent) — CLAUDE.md */
   --color-greenhouse-success: #3d5a45;
   --color-greenhouse-warning: #9a7839;
   --color-greenhouse-error: #7a3038;

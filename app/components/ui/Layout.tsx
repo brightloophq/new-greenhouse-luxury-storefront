@@ -39,3 +39,22 @@ export function Stack({className, ...props}: React.HTMLAttributes<HTMLDivElement
 export function Cluster({className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cx('ng-cluster', className)} {...props} />;
 }
+
+type GridCols = 2 | 3 | 4;
+
+const gridClasses: Record<GridCols, string> = {
+  2: 'ng-grid-2',
+  3: 'ng-grid-3',
+  4: 'ng-grid-4',
+};
+
+export type GridProps = React.HTMLAttributes<HTMLDivElement> & {
+  cols?: GridCols;
+};
+
+/** Responsive grid: collapses to 1 column on small screens (see .ng-grid* tokens). */
+export function Grid({className, cols = 3, ...props}: GridProps) {
+  return (
+    <div className={cx('ng-grid', gridClasses[cols], className)} {...props} />
+  );
+}

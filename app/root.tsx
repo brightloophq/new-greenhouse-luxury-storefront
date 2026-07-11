@@ -16,7 +16,13 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import designSystemStyles from '~/styles/design-system.css?url';
+import componentStyles from '~/styles/components.css?url';
+import shellStyles from '~/styles/shell.css?url';
+import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
+// Critical font faces preloaded to minimise FOUT on the above-the-fold hero
+import interBody from '~/assets/fonts/inter-400.woff2?url';
+import cormorantDisplay from '~/assets/fonts/cormorant-600.woff2?url';
 import {PageLayout} from './components/PageLayout';
 
 export type RootLoader = typeof loader;
@@ -62,6 +68,20 @@ export function links() {
     {
       rel: 'preconnect',
       href: 'https://shop.app',
+    },
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: interBody,
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: cormorantDisplay,
+      crossOrigin: 'anonymous',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
@@ -151,10 +171,13 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link rel="stylesheet" href={fontStyles}></link>
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <link rel="stylesheet" href={designSystemStyles}></link>
+        <link rel="stylesheet" href={componentStyles}></link>
+        <link rel="stylesheet" href={shellStyles}></link>
         <Meta />
         <Links />
       </head>
