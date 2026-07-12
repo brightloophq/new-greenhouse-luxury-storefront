@@ -75,6 +75,7 @@ export default function Homepage() {
       <HomeAnnouncement />
       <HomeHero collection={data.featuredCollection} />
       <FeaturedCollections collection={data.featuredCollection} />
+      <ShopByFlower />
       <ShopByOccasion />
       <ProductRow
         id="best-sellers"
@@ -239,6 +240,36 @@ function FeaturedCollections({
             <img src={card.image} alt={card.alt} loading="lazy" />
             <span>{card.eyebrow}</span>
             <strong>{card.title}</strong>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ShopByFlower() {
+  const flowers = [
+    {label: 'Roses', to: '/collections/roses'},
+    {label: 'Orchids', to: '/collections/orchids'},
+    {label: 'Lilies', to: '/collections/lilies'},
+    {label: 'Greenery & Fillers', to: '/collections/greenery-and-fillers'},
+  ];
+
+  return (
+    <section
+      className="greenhouse-occasions"
+      aria-labelledby="shop-by-flower-title"
+    >
+      <div className="greenhouse-section-heading">
+        <p className="greenhouse-kicker">Shop by flower</p>
+        <h2 id="shop-by-flower-title">Choose your bloom.</h2>
+        <Link to="/collections/all-flowers">All flowers</Link>
+      </div>
+      <div className="greenhouse-occasion-grid">
+        {flowers.map((flower) => (
+          <Link key={flower.label} to={flower.to}>
+            <span>{flower.label}</span>
+            <small>Explore</small>
           </Link>
         ))}
       </div>

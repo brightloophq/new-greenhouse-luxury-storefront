@@ -141,14 +141,11 @@ export default function Product() {
           selectedVariant={selectedVariant}
         />
         <div className="product-gift-message">
-          <label htmlFor="gift-message">Gift message</label>
-          <textarea
-            id="gift-message"
-            name="gift-message"
-            placeholder="Add a note for the recipient"
-            rows={3}
-          />
-          <small>UI preview only. Final gifting notes are confirmed at checkout.</small>
+          <p className="product-gift-message-title">Sending as a gift?</p>
+          <small>
+            Add your personal gift message and delivery date during checkout —
+            we hand-write every note in Kingston.
+          </small>
         </div>
         <div className="product-trust-grid" aria-label="Purchase assurances">
           <span>Secure checkout</span>
