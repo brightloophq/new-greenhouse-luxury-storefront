@@ -10,7 +10,10 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "codegen": "shopify hydrogen codegen && react-router typegen"
+    "codegen": "shopify hydrogen codegen && react-router typegen",
+    "test": "vitest run",
+    "flowers:optimize": "node scripts/optimize-flowers.mjs",
+    "pages:optimize": "node scripts/optimize-pages.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
@@ -55,8 +58,10 @@
     "globals": "^15.14.0",
     "graphql-config": "^5.0.3",
     "prettier": "^3.4.2",
+    "sharp": "^0.35.3",
     "typescript": "^5.9.2",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": "^22 || ^24"

@@ -16,8 +16,14 @@ import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
 import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 
 export const meta: Route.MetaFunction = ({data}) => {
+  // Use the Shopify SEO title verbatim when set (it may already include the
+  // brand); otherwise append the brand to the product title. Prevents the
+  // "… | The New Greenhouse | The New Greenhouse" doubling.
+  const pageTitle = data?.product.seo.title
+    ? data.product.seo.title
+    : `${data?.product.title || 'Luxury Flowers'} | The New Greenhouse`;
   return [
-    {title: `${data?.product.seo.title || data?.product.title || 'Luxury Flowers'} | The New Greenhouse`},
+    {title: pageTitle},
     {
       name: 'description',
       content:

@@ -9,7 +9,12 @@ import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
 import {cx, Icon, IconButton} from '~/components/ui';
-import megaFeatureImage from '~/assets/greenhouse-occasion-banner-1600.jpg';
+import {
+  FLOWER_VARIETIES,
+  flowerCategoryPath,
+  flowerFamilyPath,
+} from '~/lib/flowerCategories';
+import {hasFlowerImages} from '~/data/flowers';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -19,7 +24,7 @@ interface HeaderProps {
 }
 
 type MegaLink = {label: string; to: string};
-type MegaColumn = {title: string; links: MegaLink[]};
+type MegaColumn = {title: string; links: MegaLink[]; variant?: 'flowers'};
 
 const MEGA_COLUMNS: MegaColumn[] = [
   {
@@ -34,24 +39,32 @@ const MEGA_COLUMNS: MegaColumn[] = [
     ],
   },
   {
-    title: 'Shop Flowers',
+    title: 'Flower Varieties',
+    variant: 'flowers',
+    // Families with uploaded imagery → their image library page; the rest →
+    // the filtered "all flowers" catalog. Both are valid routes (never a 404).
+    links: FLOWER_VARIETIES.map((f) => ({
+      label: f.name,
+      to: hasFlowerImages(f.handle)
+        ? flowerFamilyPath(f.handle)
+        : flowerCategoryPath(f.handle),
+    })),
+  },
+  {
+    title: 'Featured Shopping',
     links: [
-      {label: 'All Flowers', to: '/collections/all-flowers'},
-      {label: 'Roses', to: '/collections/roses'},
-      {label: 'Orchids', to: '/collections/orchids'},
-      {label: 'Lilies', to: '/collections/lilies'},
-      {label: 'Greenery & Fillers', to: '/collections/greenery-and-fillers'},
+      {label: 'Flower Guide', to: '/flowers'},
+      {label: 'Gift Bouquets', to: flowerCategoryPath('gift-bouquets')},
       {label: 'Shop All', to: '/collections/all'},
+      {label: 'Bulk Flowers', to: '/collections/bulk-flowers'},
     ],
   },
   {
-    title: 'Wholesale & Trade',
+    title: 'Services',
     links: [
-      {label: 'Bulk Flowers', to: '/collections/bulk-flowers'},
-      {label: 'Wholesale Roses', to: '/collections/wholesale-roses'},
-      {label: 'Florist Essentials', to: '/collections/florist-essentials'},
-      {label: 'Floral Supplies', to: '/collections/floral-supplies'},
-      {label: 'Corporate Gifting', to: '/collections/corporate-gifting'},
+      {label: 'Weddings', to: '/pages/wedding-events'},
+      {label: 'Corporate', to: '/pages/corporate-flowers'},
+      {label: 'Wholesale', to: '/collections/bulk-flowers'},
     ],
   },
 ];
@@ -226,7 +239,13 @@ function MegaPanel({
       <div className="ng-mega-inner">
         <div className="ng-mega-columns">
           {MEGA_COLUMNS.map((col) => (
-            <div className="ng-mega-column" key={col.title}>
+            <div
+              className={cx(
+                'ng-mega-column',
+                col.variant === 'flowers' && 'ng-mega-column--flowers',
+              )}
+              key={col.title}
+            >
               <p className="ng-mega-column-title">{col.title}</p>
               <ul>
                 {col.links.map((link) => (
@@ -245,21 +264,6 @@ function MegaPanel({
             </div>
           ))}
         </div>
-        <NavLink
-          to="/collections/all-flowers"
-          prefetch="intent"
-          className="ng-mega-feature"
-          onClick={onClose}
-        >
-          <span className="ng-mega-feature-media">
-            <img src={megaFeatureImage} alt="" loading="lazy" />
-          </span>
-          <span className="ng-mega-feature-copy">
-            <span className="ng-mega-feature-eyebrow">House arrangements</span>
-            <span className="ng-mega-feature-title">Signature Bouquets</span>
-            <span className="ng-mega-feature-cta">Shop the edit →</span>
-          </span>
-        </NavLink>
       </div>
     </div>
   );

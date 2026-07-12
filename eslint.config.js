@@ -36,6 +36,7 @@ export default [
       // Hydrogen storefront's React/browser config.
       'commerce-manager/**',
       'catalog/**',
+      'scripts/**',
     ],
   },
   ...fixupConfigRules(
@@ -240,6 +241,11 @@ export default [
         ...globals.node,
         ...globals.jest,
       },
+    },
+    settings: {
+      // Tests use Vitest (Jest-compatible API); pin a version so the jest
+      // plugin's rules load without a Jest install to auto-detect.
+      jest: {version: 28},
     },
   },
   {

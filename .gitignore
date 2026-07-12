@@ -20,3 +20,6 @@ reports/private/
 *.secret
 .tng-token
 .access-token
+
+# Raw flower source images (optimized WebP in public/ are the committed artifacts)
+source-images/

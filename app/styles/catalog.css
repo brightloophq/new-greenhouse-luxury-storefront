@@ -6,6 +6,7 @@
 @import './catalog/hero.css';
 @import './catalog/filters.css';
 @import './catalog/grid.css';
+@import './catalog/categories.css';
 
 /* Page + layout ---------------------------------------------------------- */
 .ng-catalog-page {
@@ -26,12 +27,15 @@
 }
 
 .ng-catalog-sidebar {
-  display: none; /* mobile: filters live in the drawer */
+  display: none; /* mobile + tablet: filters live in the slide-out drawer */
 }
 
-@media (min-width: 64rem) {
+/* Persistent filter sidebar only on desktop (≥1280px), per layout spec:
+   300px filter rail + fluid product grid. Below 1280px the toolbar "Filters"
+   button + slide-out drawer are used, and the grid takes the full width. */
+@media (min-width: 80rem) {
   .ng-catalog-layout {
-    grid-template-columns: 16rem minmax(0, 1fr);
+    grid-template-columns: 300px minmax(0, 1fr);
     align-items: start;
   }
 
@@ -41,6 +45,11 @@
     top: calc(var(--ng-space-16));
     max-block-size: calc(100vh - var(--ng-space-20));
     overflow-y: auto;
+    /* Critical: a sticky grid item with the default min-width:auto expands to
+       its content width and overflows its fixed track, rendering ON TOP of the
+       product grid. Cap it to the track so the grid is never overlapped. */
+    min-inline-size: 0;
+    max-inline-size: 100%;
     padding-right: var(--ng-space-2);
   }
 }

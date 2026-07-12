@@ -19,6 +19,8 @@ import designSystemStyles from '~/styles/design-system.css?url';
 import componentStyles from '~/styles/components.css?url';
 import shellStyles from '~/styles/shell.css?url';
 import catalogStyles from '~/styles/catalog.css?url';
+import flowerStyles from '~/styles/flowers.css?url';
+import pageStyles from '~/styles/pages.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 // Critical font faces preloaded to minimise FOUT on the above-the-fold hero
@@ -180,6 +182,8 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={componentStyles}></link>
         <link rel="stylesheet" href={shellStyles}></link>
         <link rel="stylesheet" href={catalogStyles}></link>
+        <link rel="stylesheet" href={flowerStyles}></link>
+        <link rel="stylesheet" href={pageStyles}></link>
         <Meta />
         <Links />
       </head>

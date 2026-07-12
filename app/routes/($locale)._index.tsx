@@ -7,6 +7,7 @@ import type {
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
 import {MockShopNotice} from '~/components/MockShopNotice';
+import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
 import heroEditorial from '~/assets/greenhouse-hero-editorial-1920.jpg';
 import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
@@ -249,10 +250,12 @@ function FeaturedCollections({
 
 function ShopByFlower() {
   const flowers = [
-    {label: 'Roses', to: '/collections/roses'},
-    {label: 'Orchids', to: '/collections/orchids'},
-    {label: 'Lilies', to: '/collections/lilies'},
-    {label: 'Greenery & Fillers', to: '/collections/greenery-and-fillers'},
+    {label: 'Alstroemeria', to: flowerFamilyPath('alstroemeria')},
+    {label: 'Roses - In Stock', to: flowerCategoryPath('roses-in-stock')},
+    {label: 'Orchids', to: flowerCategoryPath('orchids')},
+    {label: 'Lilies', to: flowerCategoryPath('lilies')},
+    {label: 'Hydrangea', to: flowerCategoryPath('hydrangea')},
+    {label: 'Tulips', to: flowerCategoryPath('tulips')},
   ];
 
   return (

@@ -1,3 +1,43 @@
+/* --------------------------------------------------------------------------
+   Global responsive baseline (Responsive Recovery Sprint)
+   Root fix for cross-device overflow: border-box makes width:100% + padding
+   safe (previously `main`, inputs, and cards overflowed the viewport), and
+   media elements are capped to their container so they can never force the
+   page wider. These are foundational, not cosmetic — they preserve the
+   existing black/gold/ivory design while removing horizontal scrolling.
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Media never exceeds its container. Class rules (e.g. object-fit covers with
+   an explicit height) retain higher specificity and still win where needed. */
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+/* Long product names, prices, breadcrumbs, and menu labels wrap safely
+   instead of pushing their container past the viewport edge. */
+body {
+  overflow-wrap: break-word;
+}
+
 body {
   font-family:
     Inter,

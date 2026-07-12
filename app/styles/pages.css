@@ -1,0 +1,201 @@
+/* Editorial content pages — Weddings, Corporate, About. Shares one layout
+   (app/components/EditorialPage.tsx). Luxury black/ivory/gold, CLS-safe media. */
+
+.ng-editorial {
+  color: var(--ng-text-primary, #222);
+}
+
+/* Hero -------------------------------------------------------------------- */
+.ng-editorial-hero {
+  align-items: end;
+  background: var(--ng-color-background, #090909);
+  display: grid;
+  min-height: clamp(360px, 62vh, 620px);
+  overflow: hidden;
+  position: relative;
+}
+.ng-editorial-hero-img {
+  block-size: 100%;
+  inline-size: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+}
+.ng-editorial-hero-overlay {
+  inset: 0;
+  position: absolute;
+  background: linear-gradient(
+    180deg,
+    rgb(9 9 9 / 20%) 0%,
+    rgb(9 9 9 / 30%) 45%,
+    rgb(9 9 9 / 78%) 100%
+  );
+}
+.ng-editorial-hero-copy {
+  color: var(--ng-color-warm-white, #faf8f4);
+  margin-inline: auto;
+  max-width: var(--ng-container-xl, 1320px);
+  padding: clamp(2rem, 6vw, 4.5rem) var(--ng-container-gutter, 1.25rem);
+  position: relative;
+  width: 100%;
+}
+.ng-editorial-eyebrow {
+  color: var(--ng-color-soft-gold, #d8bd86);
+  font-family: var(--ng-font-body, Inter, sans-serif);
+  font-size: var(--ng-font-size-label, 0.72rem);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+.ng-editorial-title {
+  font-family: var(--ng-font-heading, serif);
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 400;
+  line-height: 1.02;
+  margin: 0 0 1rem;
+  max-width: 16ch;
+}
+.ng-editorial-lead {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+  max-width: 52ch;
+}
+
+/* CTA button -------------------------------------------------------------- */
+.ng-editorial-cta {
+  align-items: center;
+  background: var(--ng-color-warm-white, #faf8f4);
+  border: 1px solid var(--ng-color-warm-white, #faf8f4);
+  border-radius: var(--ng-radius-sm, 4px);
+  color: var(--ng-color-background, #090909);
+  display: inline-flex;
+  font-family: var(--ng-font-body, Inter, sans-serif);
+  font-size: var(--ng-font-size-button, 0.78rem);
+  font-weight: 800;
+  gap: 0.5rem;
+  letter-spacing: 0.08em;
+  min-height: var(--ng-button-height-md, 2.75rem);
+  padding: 0 1.5rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+.ng-editorial-cta::after {
+  content: '→';
+}
+.ng-editorial-cta:hover {
+  background: var(--ng-color-luxury-gold, #c8a96a);
+  border-color: var(--ng-color-luxury-gold, #c8a96a);
+  color: var(--ng-color-background, #090909);
+  text-decoration: none;
+}
+.ng-editorial-cta-light {
+  background: var(--ng-color-background, #090909);
+  border-color: var(--ng-color-background, #090909);
+  color: var(--ng-color-warm-white, #faf8f4);
+}
+.ng-editorial-cta-light:hover {
+  background: var(--ng-color-accent-green, #4d6a50);
+  border-color: var(--ng-color-accent-green, #4d6a50);
+  color: var(--ng-color-warm-white, #faf8f4);
+}
+
+/* Shared section frame ---------------------------------------------------- */
+.ng-editorial-intro,
+.ng-editorial-features,
+.ng-editorial-band {
+  margin-inline: auto;
+  max-width: var(--ng-container-xl, 1320px);
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--ng-container-gutter, 1.25rem);
+}
+
+/* Intro / story ----------------------------------------------------------- */
+.ng-editorial-intro {
+  display: grid;
+  gap: clamp(1rem, 3vw, 3rem);
+}
+@media (min-width: 900px) {
+  .ng-editorial-intro {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+}
+.ng-editorial-intro-heading {
+  font-family: var(--ng-font-heading, serif);
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0;
+}
+.ng-editorial-intro-body {
+  color: var(--ng-text-secondary, #4a4a4a);
+  display: grid;
+  gap: 1rem;
+  font-size: clamp(1rem, 1.6vw, 1.08rem);
+  line-height: 1.7;
+}
+.ng-editorial-intro-body p {
+  margin: 0;
+}
+
+/* Features ---------------------------------------------------------------- */
+.ng-editorial-features {
+  border-top: 1px solid var(--ng-border-subtle, rgb(0 0 0 / 8%));
+}
+.ng-editorial-features-title {
+  font-family: var(--ng-font-heading, serif);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 400;
+  margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+}
+.ng-editorial-feature-grid {
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  grid-template-columns: 1fr;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 700px) {
+  .ng-editorial-feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.ng-editorial-feature {
+  border-top: 2px solid var(--ng-color-luxury-gold, #c8a96a);
+  margin: 0;
+  padding-top: 1rem;
+}
+.ng-editorial-feature-title {
+  font-family: var(--ng-font-heading, serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin: 0 0 0.5rem;
+}
+.ng-editorial-feature-body {
+  color: var(--ng-text-secondary, #4a4a4a);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Closing band ------------------------------------------------------------ */
+.ng-editorial-band {
+  align-items: center;
+  background: var(--ng-bg-surface-muted, #f4f1ea);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: none;
+  text-align: center;
+}
+.ng-editorial-band-note {
+  font-family: var(--ng-font-heading, serif);
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 400;
+  margin: 0;
+  max-width: 24ch;
+}

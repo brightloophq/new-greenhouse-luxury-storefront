@@ -54,6 +54,22 @@
   min-inline-size: 11rem;
 }
 
+/* Small screens: let the sort + filters controls wrap and the select shrink
+   so the toolbar never exceeds a narrow viewport (the 11rem select min would
+   otherwise force ~344px of controls into a ~256px column). */
+@media (max-width: 40rem) {
+  .ng-catalog-toolbar-controls {
+    flex-wrap: wrap;
+  }
+  .ng-catalog-toolbar-sort {
+    flex: 1 1 12rem;
+  }
+  .ng-catalog-toolbar-sort-select {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+}
+
 .ng-catalog-toolbar-filters {
   align-items: center;
   display: inline-flex;
@@ -64,8 +80,9 @@
   min-inline-size: 1.35rem;
 }
 
-/* The mobile trigger is hidden once the sidebar is available. */
-@media (min-width: 64rem) {
+/* The Filters trigger is hidden only once the desktop sidebar is available
+   (≥1280px). On mobile + tablet it opens the slide-out drawer. */
+@media (min-width: 80rem) {
   .ng-catalog-toolbar-filters {
     display: none;
   }
@@ -336,8 +353,9 @@
   }
 }
 
-/* The drawer is a mobile affordance only. */
-@media (min-width: 64rem) {
+/* The drawer is the mobile + tablet affordance; hidden once the desktop
+   sidebar takes over (≥1280px). */
+@media (min-width: 80rem) {
   .ng-catalog-filter-drawer {
     display: none;
   }

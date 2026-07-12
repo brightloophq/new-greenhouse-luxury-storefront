@@ -1,4 +1,5 @@
 import type {ProductFilter} from '@shopify/hydrogen/storefront-api-types';
+import {FLOWER_CATEGORIES} from '~/lib/flowerCategories';
 
 /**
  * Shared product fragment for catalog/collection grids. Includes a 2nd image for
@@ -85,21 +86,9 @@ export const FACETS: FacetDef[] = [
     key: 'flower',
     label: 'Flower Type',
     tagPrefix: 'flower',
-    options: [
-      {value: 'rose', label: 'Roses'},
-      {value: 'spray-rose', label: 'Spray Roses'},
-      {value: 'orchid', label: 'Orchids'},
-      {value: 'lily', label: 'Lilies'},
-      {value: 'calla-lily', label: 'Calla Lilies'},
-      {value: 'hydrangea', label: 'Hydrangeas'},
-      {value: 'chrysanthemum', label: 'Chrysanthemums'},
-      {value: 'carnation', label: 'Carnations'},
-      {value: 'anthurium', label: 'Anthurium'},
-      {value: 'heliconia', label: 'Heliconia'},
-      {value: 'bird-of-paradise', label: 'Bird of Paradise'},
-      {value: 'eucalyptus', label: 'Eucalyptus'},
-      {value: 'babys-breath', label: "Baby's Breath"},
-    ],
+    // Sourced from the single approved flower list (app/lib/flowerCategories.ts).
+    // Each value is the tag suffix filtered as `flower:<handle>`.
+    options: FLOWER_CATEGORIES.map((c) => ({value: c.handle, label: c.name})),
   },
   {
     key: 'color',

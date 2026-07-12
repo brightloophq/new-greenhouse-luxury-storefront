@@ -1,0 +1,176 @@
+/* Flower category browser — premium visual cards that replace the raw filter
+   grid as the default wholesale/all-flowers experience. CLS-safe (reserved
+   ratio), GPU-only hover motion (200–300ms), theme-agnostic imagery. */
+
+.ng-cat-intro {
+  margin-block-end: clamp(1.25rem, 3vw, 2rem);
+}
+.ng-cat-intro-title {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+  font-weight: 400;
+  margin: 0 0 0.35rem;
+}
+.ng-cat-intro-note {
+  color: var(--ng-text-muted);
+  font-size: var(--ng-font-size-small);
+  margin: 0;
+}
+
+.ng-cat-cards {
+  display: grid;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  .ng-cat-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1100px) {
+  .ng-cat-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.ng-cat-cards-item {
+  margin: 0;
+  min-width: 0;
+}
+
+.ng-cat-card {
+  background: var(--ng-bg-surface, #fbfaf7);
+  border: 1px solid var(--ng-border-subtle, rgb(0 0 0 / 6%));
+  border-radius: var(--ng-radius-md, 14px);
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  text-decoration: none;
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+  will-change: transform;
+}
+.ng-cat-card:hover,
+.ng-cat-card:focus-visible {
+  border-color: color-mix(in srgb, var(--ng-color-luxury-gold, #c8a96a) 45%, transparent);
+  box-shadow: 0 16px 34px rgb(9 9 9 / 12%);
+  text-decoration: none;
+  transform: translateY(-4px);
+}
+.ng-cat-card:focus-visible {
+  outline: 2px solid var(--ng-focus-ring, #c8a96a);
+  outline-offset: 3px;
+}
+.ng-cat-card.is-active {
+  border-color: var(--ng-color-luxury-gold, #c8a96a);
+  box-shadow: 0 0 0 1px var(--ng-color-luxury-gold, #c8a96a);
+}
+
+.ng-cat-card-media {
+  aspect-ratio: 4 / 5; /* portrait tile; reserves space → no layout shift */
+  background: var(--ng-bg-surface-muted, #f4f1ea);
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+.ng-cat-card-img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: contain; /* never crop flowers */
+  object-position: center;
+  transition: transform 300ms var(--ng-ease-luxury, ease);
+  will-change: transform;
+}
+.ng-cat-card:hover .ng-cat-card-img,
+.ng-cat-card:focus-visible .ng-cat-card-img {
+  transform: scale(1.03);
+}
+
+/* Elegant placeholder for varieties without imagery yet. */
+.ng-cat-card-placeholder {
+  align-items: center;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--ng-color-warm-white, #faf8f4) 0%, var(--ng-bg-surface-muted, #f4f1ea) 60%),
+    linear-gradient(160deg, color-mix(in srgb, var(--ng-color-luxury-gold, #c8a96a) 12%, transparent), transparent);
+  display: flex;
+  block-size: 100%;
+  inline-size: 100%;
+  justify-content: center;
+}
+.ng-cat-card-placeholder-mark {
+  color: color-mix(in srgb, var(--ng-color-luxury-gold, #c8a96a) 55%, transparent);
+  font-family: var(--ng-font-heading, serif);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  line-height: 1;
+}
+
+.ng-cat-card-body {
+  align-items: baseline;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.8rem 0.95rem 0.95rem;
+}
+.ng-cat-card-name {
+  font-family: var(--ng-font-heading, serif);
+  font-size: 1rem;
+  line-height: 1.2;
+  min-width: 0;
+}
+.ng-cat-card-cue {
+  color: var(--ng-gold-text, #a07d3e);
+  flex: none;
+  font-family: var(--ng-font-body, Inter, sans-serif);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  text-transform: uppercase;
+  transition: opacity 200ms ease;
+}
+.ng-cat-card:hover .ng-cat-card-cue,
+.ng-cat-card:focus-visible .ng-cat-card-cue,
+.ng-cat-card.is-active .ng-cat-card-cue {
+  opacity: 1;
+}
+
+/* "Back to all flowers" affordance shown above the filtered product grid. */
+.ng-cat-back {
+  align-items: center;
+  color: var(--ng-text-secondary);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  font-weight: 700;
+  gap: 0.4rem;
+  letter-spacing: 0.04em;
+  margin-block-end: var(--ng-space-4);
+  text-transform: uppercase;
+}
+.ng-cat-back::before {
+  content: '←';
+}
+.ng-cat-back:hover {
+  color: var(--ng-gold-text);
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-cat-card,
+  .ng-cat-card-img {
+    transition: none;
+  }
+  .ng-cat-card:hover,
+  .ng-cat-card:focus-visible {
+    transform: none;
+  }
+  .ng-cat-card:hover .ng-cat-card-img {
+    transform: none;
+  }
+}

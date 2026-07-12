@@ -26,10 +26,10 @@ interface FooterProps {
 // Static footer link data — editorial columns. Internal routes only.
 const SHOP_LINKS = [
   {to: '/collections/all-flowers', label: 'All flowers'},
-  {to: '/collections/roses', label: 'Roses'},
+  {to: '/collections/all-flowers?flower=roses-in-stock', label: 'Roses - In Stock'},
   {to: '/collections/birthday', label: 'Birthday flowers'},
   {to: '/collections/sympathy-and-funeral', label: 'Sympathy'},
-  {to: '/collections/bridal-bouquets', label: 'Wedding flowers'},
+  {to: '/pages/wedding-events', label: 'Wedding flowers'},
   {to: '/collections/all', label: 'Shop all'},
 ];
 

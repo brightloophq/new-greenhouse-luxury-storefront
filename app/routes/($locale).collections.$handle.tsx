@@ -1,17 +1,21 @@
-import {redirect, useLoaderData, useNavigation} from 'react-router';
+import {Link, redirect, useLoaderData, useNavigation} from 'react-router';
 import {useState} from 'react';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import type {
   ProductCollectionSortKeys,
   ProductFilter,
+  ProductSortKeys,
 } from '@shopify/hydrogen/storefront-api-types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {
   parseCatalogSearchParams,
   buildProductFilters,
+  buildProductQueryString,
   toCollectionSort,
+  toCatalogSort,
   countActiveFilters,
+  FACETS,
   CATALOG_PRODUCT_FRAGMENT,
 } from '~/lib/catalog';
 import type {CatalogProduct} from '~/components/catalog/types';
@@ -23,10 +27,27 @@ import {
 } from '~/components/catalog/Filters';
 import {CatalogToolbar} from '~/components/catalog/CatalogToolbar';
 import {CatalogResults} from '~/components/catalog/CatalogResults';
+import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
 
+/** Collections that use the visual category-browser experience. */
+const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
+
+function flowerLabelFor(handle?: string): string | undefined {
+  if (!handle) return undefined;
+  return FACETS.find((f) => f.key === 'flower')?.options.find(
+    (o) => o.value === handle,
+  )?.label;
+}
+
 export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.collection?.seo?.title || data?.collection?.title || 'Collection';
+  const isHub = data ? FLOWER_HUBS.has(data.collection.handle) : false;
+  // Title syncs with the active flower, else "All Flowers" on a hub, else the
+  // collection's own title.
+  const title =
+    data?.flowerLabel ||
+    (isHub ? 'All Flowers' : data?.collection?.seo?.title || data?.collection?.title) ||
+    'Collection';
   const description =
     data?.collection?.seo?.description ||
     data?.collection?.description ||
@@ -57,7 +78,25 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {sortKey, reverse} = toCollectionSort(sort);
   const paginationVariables = getPaginationVariables(request, {pageBy: 12});
 
-  const [{collection}] = await Promise.all([
+  const isHub = FLOWER_HUBS.has(handle);
+  // On a flower hub, the per-variety product view uses the top-level product
+  // search (query:"tag:'flower:X'"), which filters reliably — the Storefront
+  // `collection.products(filters:)` argument is ignored unless the collection
+  // has tag filters enabled in Shopify's Search & Discovery settings.
+  const catSort = toCatalogSort(sort);
+  const flowerPromise =
+    isHub && applied.flower
+      ? storefront.query(HUB_PRODUCTS_QUERY, {
+          variables: {
+            query: buildProductQueryString(applied),
+            sortKey: catSort.sortKey as ProductSortKeys,
+            reverse: catSort.reverse,
+            ...paginationVariables,
+          },
+        })
+      : Promise.resolve(null);
+
+  const [{collection}, flowerResult] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {
         handle,
@@ -67,6 +106,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         ...paginationVariables,
       },
     }),
+    flowerPromise,
   ]);
 
   if (!collection) {
@@ -75,7 +115,13 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
-  return {collection, applied, sort};
+  return {
+    collection,
+    applied,
+    sort,
+    flowerLabel: flowerLabelFor(applied.flower),
+    flowerProducts: flowerResult?.products ?? null,
+  };
 }
 
 function loadDeferredData({context}: Route.LoaderArgs) {
@@ -83,27 +129,50 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection, applied, sort} = useLoaderData<typeof loader>();
+  const {collection, applied, sort, flowerLabel, flowerProducts} =
+    useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [quickProduct, setQuickProduct] = useState<CatalogProduct | null>(null);
 
   const loading = navigation.state !== 'idle';
   const activeCount = countActiveFilters(applied);
-  const products = (collection.products.nodes ?? []) as CatalogProduct[];
+
+  const isHub = FLOWER_HUBS.has(collection.handle);
+  const activeFlower = applied.flower;
+  const hubPath = `/collections/${collection.handle}`;
+
+  // Hub flower views use the top-level product search connection (reliable tag
+  // filtering); everything else uses the collection's own products.
+  const productConnection =
+    isHub && activeFlower && flowerProducts ? flowerProducts : collection.products;
+  const products = (productConnection.nodes ?? []) as CatalogProduct[];
+
+  // On a flower hub the default view is the visual category browser ("All
+  // Flowers"); picking a variety (card or sidebar) switches to its products.
+  const showCategoryBrowser = isHub && !activeFlower;
+  const heading = activeFlower
+    ? flowerLabel ?? collection.title
+    : isHub
+      ? 'All Flowers'
+      : collection.title;
 
   const breadcrumbs = [
     {label: 'Home', to: '/'},
     {label: 'Collections', to: '/collections'},
-    {label: collection.title},
+    ...(isHub
+      ? activeFlower
+        ? [{label: 'All Flowers', to: hubPath}, {label: heading}]
+        : [{label: 'All Flowers'}]
+      : [{label: collection.title}]),
   ];
 
   return (
     <div className="ng-catalog-page">
       <CollectionHero
         breadcrumbs={breadcrumbs}
-        eyebrow="The Collection"
-        title={collection.title}
+        eyebrow={isHub ? 'Wholesale Flowers' : 'The Collection'}
+        title={heading}
         description={collection.description || undefined}
         image={
           collection.image
@@ -118,19 +187,42 @@ export default function Collection() {
         </aside>
 
         <div className="ng-catalog-main">
-          <CatalogToolbar
-            count={products.length}
-            sort={sort}
-            activeCount={activeCount}
-            onOpenFilters={() => setDrawerOpen(true)}
-          />
-          <ActiveFilterChips filters={applied} />
-          <CatalogResults
-            connection={collection.products}
-            loading={loading}
-            hasFilters={activeCount > 0}
-            onQuickView={setQuickProduct}
-          />
+          {showCategoryBrowser ? (
+            <section aria-label="Flower categories">
+              <div className="ng-cat-intro">
+                <h2 className="ng-cat-intro-title">Browse by variety</h2>
+                <p className="ng-cat-intro-note">
+                  Select a flower to view available stems — or refine with the
+                  filters.
+                </p>
+              </div>
+              <FlowerCategoryGrid
+                collectionHandle={collection.handle}
+                activeFlower={activeFlower}
+              />
+            </section>
+          ) : (
+            <>
+              {isHub ? (
+                <Link className="ng-cat-back" to={hubPath} preventScrollReset>
+                  All flowers
+                </Link>
+              ) : null}
+              <CatalogToolbar
+                count={products.length}
+                sort={sort}
+                activeCount={activeCount}
+                onOpenFilters={() => setDrawerOpen(true)}
+              />
+              <ActiveFilterChips filters={applied} />
+              <CatalogResults
+                connection={productConnection}
+                loading={loading}
+                hasFilters={activeCount > 0}
+                onQuickView={setQuickProduct}
+              />
+            </>
+          )}
         </div>
       </div>
 
@@ -200,6 +292,42 @@ const COLLECTION_QUERY = `#graphql
           endCursor
           startCursor
         }
+      }
+    }
+  }
+` as const;
+
+// Reliable tag-based product search for the hub's per-variety view.
+const HUB_PRODUCTS_QUERY = `#graphql
+  ${CATALOG_PRODUCT_FRAGMENT}
+  query HubProducts(
+    $country: CountryCode
+    $language: LanguageCode
+    $query: String
+    $sortKey: ProductSortKeys!
+    $reverse: Boolean
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  ) @inContext(country: $country, language: $language) {
+    products(
+      first: $first
+      last: $last
+      before: $startCursor
+      after: $endCursor
+      query: $query
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
+      nodes {
+        ...CatalogProductItem
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
       }
     }
   }

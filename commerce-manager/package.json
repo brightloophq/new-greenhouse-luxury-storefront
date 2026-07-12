@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Secure Shopify Admin GraphQL connection for The New Greenhouse (merchant-owned internal automation app). Client-credentials grant, in-memory tokens, dry-run by default, zero npm dependencies.",
-  "engines": {"node": ">=20"},
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test:connection": "node scripts/test-connection.js",
     "catalog:dry-run": "node scripts/catalog-dry-run.js",
@@ -19,6 +21,8 @@
     "publish:dry-run": "node scripts/publish.js",
     "publish:hydrogen": "node scripts/publish.js --commit",
     "plan": "node index.mjs plan",
-    "validate": "node index.mjs validate"
+    "validate": "node index.mjs validate",
+    "alstro:dry-run": "node scripts/alstroemeria-products.js",
+    "alstro:create": "node scripts/alstroemeria-products.js --commit"
   }
 }
