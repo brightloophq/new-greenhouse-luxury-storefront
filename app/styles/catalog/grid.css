@@ -1,0 +1,283 @@
+/* ==========================================================================
+   Catalog — Product grid, cards, skeleton, empty state, quick view (M4)
+   The New Greenhouse luxury storefront. Tokens only. Mobile-first.
+   Composes M2 primitives: .ng-product-card(-x) / .ng-image-frame /
+   .ng-ratio-product / .ng-skeleton / .ng-button* / .ng-badge.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Grid — 2 cols mobile → 3 → 4 desktop
+   -------------------------------------------------------------------------- */
+.ng-catalog-grid {
+  display: grid;
+  gap: var(--ng-grid-gap-md);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .ng-catalog-grid {
+    gap: var(--ng-grid-gap-lg);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .ng-catalog-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ng-catalog-grid-item {
+  display: flex;
+  min-width: 0;
+}
+
+.ng-catalog-grid-item > .ng-catalog-card {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Card media — hover image cross-fade (no layout shift)
+   The two images are absolutely stacked inside the ratio-locked frame.
+   -------------------------------------------------------------------------- */
+.ng-catalog-card-media {
+  inset: 0;
+  position: absolute;
+}
+
+.ng-catalog-card-img {
+  block-size: 100%;
+  inline-size: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+}
+
+.ng-catalog-card-img-primary {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity var(--ng-duration-standard) var(--ng-ease-standard),
+    transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+
+.ng-catalog-card-img-secondary {
+  opacity: 0;
+  transform: scale(1.02);
+  transition:
+    opacity var(--ng-duration-standard) var(--ng-ease-standard),
+    transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+
+/* Subtle zoom when there is no second image */
+.ng-product-card-x:hover .ng-catalog-card-media:not(.ng-catalog-card-media-swap) .ng-catalog-card-img-primary,
+.ng-product-card-x:focus-within .ng-catalog-card-media:not(.ng-catalog-card-media-swap) .ng-catalog-card-img-primary {
+  transform: scale(1.04);
+}
+
+/* Cross-fade to the second image */
+.ng-product-card-x:hover .ng-catalog-card-media-swap .ng-catalog-card-img-primary,
+.ng-product-card-x:focus-within .ng-catalog-card-media-swap .ng-catalog-card-img-primary {
+  opacity: 0;
+}
+
+.ng-product-card-x:hover .ng-catalog-card-media-swap .ng-catalog-card-img-secondary,
+.ng-product-card-x:focus-within .ng-catalog-card-media-swap .ng-catalog-card-img-secondary {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ng-catalog-card-noimg {
+  background: var(--ng-bg-surface-muted);
+  display: block;
+}
+
+.ng-catalog-price-from {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ng-catalog-quickview-btn {
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Skeleton grid
+   -------------------------------------------------------------------------- */
+.ng-catalog-skeleton-item {
+  display: grid;
+  gap: var(--ng-space-3);
+}
+
+.ng-catalog-skeleton-media {
+  border-radius: var(--ng-radius-md);
+  display: block;
+  width: 100%;
+}
+
+.ng-catalog-skeleton-line {
+  display: block;
+  height: 0.85rem;
+  width: 80%;
+}
+
+.ng-catalog-skeleton-line-short {
+  width: 45%;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state — generous whitespace, centered
+   -------------------------------------------------------------------------- */
+.ng-catalog-empty {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-4);
+  margin-inline: auto;
+  max-width: 44ch;
+  padding-block: var(--ng-section-editorial, var(--ng-space-16));
+  text-align: center;
+}
+
+.ng-catalog-empty-icon {
+  align-items: center;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-pill);
+  color: var(--ng-gold-text);
+  display: inline-flex;
+  height: 4rem;
+  justify-content: center;
+  width: 4rem;
+}
+
+.ng-catalog-empty-title {
+  color: var(--ng-text-primary);
+  margin: 0;
+}
+
+.ng-catalog-empty-text {
+  margin: 0;
+}
+
+.ng-catalog-empty-action {
+  margin-block-start: var(--ng-space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Quick view — modal + scrim
+   -------------------------------------------------------------------------- */
+.ng-catalog-quickview {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: var(--ng-space-4);
+  position: fixed;
+  z-index: var(--ng-z-modal);
+}
+
+.ng-catalog-quickview-scrim {
+  animation: ng-fade var(--ng-duration-standard) var(--ng-ease-standard) both;
+  background: rgb(9 9 9 / 62%);
+  inset: 0;
+  position: absolute;
+}
+
+.ng-catalog-quickview-dialog {
+  animation: ng-slide-up var(--ng-duration-reveal) var(--ng-ease-luxury) both;
+  background: var(--ng-bg-surface);
+  border-radius: var(--ng-radius-lg);
+  box-shadow: var(--ng-shadow-lg);
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  max-height: calc(100dvh - var(--ng-space-8));
+  max-width: 56rem;
+  overflow: auto;
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .ng-catalog-quickview-dialog {
+    grid-template-columns: 5fr 6fr;
+  }
+}
+
+.ng-catalog-quickview-close {
+  background: var(--ng-bg-surface);
+  border-radius: var(--ng-radius-pill);
+  inset-block-start: var(--ng-space-3);
+  inset-inline-end: var(--ng-space-3);
+  position: absolute;
+  z-index: 2;
+}
+
+.ng-catalog-quickview-media {
+  background: var(--ng-bg-surface-muted);
+  position: relative;
+}
+
+.ng-catalog-quickview-img {
+  aspect-ratio: var(--ng-ratio-product);
+  block-size: 100%;
+  display: block;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.ng-catalog-quickview-body {
+  display: grid;
+  gap: var(--ng-space-3);
+  padding: var(--ng-card-padding-lg);
+}
+
+.ng-catalog-quickview-vendor {
+  color: var(--ng-gold-text);
+  display: block;
+}
+
+.ng-catalog-quickview-title {
+  color: var(--ng-text-primary);
+  margin: 0;
+}
+
+.ng-catalog-quickview-availability {
+  color: var(--ng-color-accent-green);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.ng-catalog-quickview-availability.is-soldout {
+  color: var(--ng-color-error);
+}
+
+.ng-catalog-quickview-desc {
+  margin: 0;
+  max-width: 52ch;
+}
+
+.ng-catalog-quickview-cta {
+  justify-self: start;
+  margin-block-start: var(--ng-space-2);
+}
+
+/* Respect reduced motion — global handler resets most, but ensure the
+   dialog entrance never blocks visibility. */
+@media (prefers-reduced-motion: reduce) {
+  .ng-catalog-quickview-dialog,
+  .ng-catalog-quickview-scrim {
+    animation: none;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "tng-commerce-manager",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Secure Shopify Admin GraphQL connection for The New Greenhouse (merchant-owned internal automation app). Client-credentials grant, in-memory tokens, dry-run by default, zero npm dependencies.",
+  "engines": {"node": ">=20"},
+  "scripts": {
+    "test:connection": "node scripts/test-connection.js",
+    "catalog:dry-run": "node scripts/catalog-dry-run.js",
+    "catalog:pilot:dry-run": "node scripts/catalog-pilot.js",
+    "catalog:pilot:import": "node scripts/catalog-pilot.js --commit",
+    "catalog:full:dry-run": "node scripts/catalog-full.js",
+    "catalog:full:import": "node scripts/catalog-full.js --commit",
+    "collections:dry-run": "node scripts/collections.js",
+    "collections:import": "node scripts/collections.js --commit",
+    "metafields:dry-run": "node scripts/metafields.js",
+    "metafields:import": "node scripts/metafields.js --commit",
+    "publish:dry-run": "node scripts/publish.js",
+    "publish:hydrogen": "node scripts/publish.js --commit",
+    "plan": "node index.mjs plan",
+    "validate": "node index.mjs validate"
+  }
+}

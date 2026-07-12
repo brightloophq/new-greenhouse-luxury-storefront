@@ -25,20 +25,19 @@ interface FooterProps {
 
 // Static footer link data — editorial columns. Internal routes only.
 const SHOP_LINKS = [
-  {to: '/collections/luxury-bouquets', label: 'Luxury bouquets'},
-  {to: '/collections/birthday-flowers', label: 'Birthday flowers'},
-  {to: '/collections/wedding-flowers', label: 'Wedding flowers'},
-  {to: '/collections/sympathy', label: 'Sympathy'},
-  {to: '/collections/gift-baskets', label: 'Gift baskets'},
-  {to: '/collections', label: 'Shop all'},
+  {to: '/collections/all-flowers', label: 'All flowers'},
+  {to: '/collections/roses', label: 'Roses'},
+  {to: '/collections/birthday', label: 'Birthday flowers'},
+  {to: '/collections/sympathy-and-funeral', label: 'Sympathy'},
+  {to: '/collections/bridal-bouquets', label: 'Wedding flowers'},
+  {to: '/collections/all', label: 'Shop all'},
 ];
 
 const SERVICE_LINKS = [
   {to: '/pages/wedding-events', label: 'Weddings'},
-  {to: '/pages/corporate-flowers', label: 'Corporate'},
-  {to: '/collections/same-day-delivery', label: 'Same-day delivery'},
-  // TODO: dedicated wholesale page pending — points to all collection for now.
-  {to: '/collections/all', label: 'Wholesale'},
+  {to: '/collections/corporate-gifting', label: 'Corporate'},
+  {to: '/pages/delivery-information', label: 'Same-day delivery'},
+  {to: '/collections/bulk-flowers', label: 'Wholesale'},
 ];
 
 const COMPANY_LINKS = [

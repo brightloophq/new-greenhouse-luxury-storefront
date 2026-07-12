@@ -1,0 +1,109 @@
+/*
+ * M4 — Collections & Catalog experience.
+ * Aggregates the per-group catalog stylesheets + the page layout scaffolding.
+ * Loaded after components.css.
+ */
+@import './catalog/hero.css';
+@import './catalog/filters.css';
+@import './catalog/grid.css';
+
+/* Page + layout ---------------------------------------------------------- */
+.ng-catalog-page {
+  padding-bottom: var(--ng-section-standard);
+}
+
+.ng-catalog-layout {
+  display: grid;
+  gap: var(--ng-grid-gap-lg);
+  inline-size: 100%;
+  margin-inline: auto;
+  max-width: var(--ng-container-xl);
+  padding-inline: var(--ng-container-gutter);
+}
+
+.ng-catalog-main {
+  min-inline-size: 0; /* allow grid children to shrink */
+}
+
+.ng-catalog-sidebar {
+  display: none; /* mobile: filters live in the drawer */
+}
+
+@media (min-width: 64rem) {
+  .ng-catalog-layout {
+    grid-template-columns: 16rem minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ng-catalog-sidebar {
+    display: block;
+    position: sticky;
+    top: calc(var(--ng-space-16));
+    max-block-size: calc(100vh - var(--ng-space-20));
+    overflow-y: auto;
+    padding-right: var(--ng-space-2);
+  }
+}
+
+/* Results + load-more ---------------------------------------------------- */
+.ng-catalog-results {
+  transition: opacity var(--ng-duration-standard) var(--ng-ease-standard);
+}
+
+.ng-catalog-results.is-loading {
+  opacity: var(--ng-opacity-muted);
+  pointer-events: none;
+}
+
+.ng-catalog-loadmore {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--ng-space-8);
+}
+
+.ng-catalog-loadmore a {
+  text-decoration: none;
+}
+
+.ng-catalog-loadmore-btn {
+  align-items: center;
+  background: var(--ng-color-background);
+  border: 1px solid var(--ng-color-background);
+  border-radius: var(--ng-radius-sm);
+  color: var(--ng-color-warm-white);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-button);
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: var(--ng-letter-nav);
+  min-height: var(--ng-button-height-md);
+  padding: 0 var(--ng-space-6);
+  text-transform: uppercase;
+  transition: var(--ng-transition-color), var(--ng-transition-transform);
+}
+
+.ng-catalog-loadmore-btn:hover {
+  background: var(--ng-color-accent-green);
+  border-color: var(--ng-color-accent-green);
+  transform: translateY(-1px);
+}
+
+.ng-catalog-loadmore-btn-outline {
+  background: transparent;
+  border-color: var(--ng-border-strong);
+  color: var(--ng-text-primary);
+}
+
+.ng-catalog-loadmore-btn-outline:hover {
+  background: transparent;
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-text-primary);
+}
+
+/* Missing-image placeholder (collection cards / product cards) ----------- */
+.ng-catalog-card-noimg {
+  aspect-ratio: var(--ng-ratio-collection);
+  background: linear-gradient(135deg, var(--ng-bg-surface-muted), var(--ng-bg-surface));
+  inline-size: 100%;
+}

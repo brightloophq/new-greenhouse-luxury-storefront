@@ -107,7 +107,7 @@ function HomeHero({
 }) {
   const collectionUrl = collection?.handle
     ? `/collections/${collection.handle}`
-    : '/collections/all';
+    : '/collections/all-flowers';
 
   return (
     <section className="greenhouse-hero" aria-labelledby="greenhouse-hero-title">
@@ -130,7 +130,7 @@ function HomeHero({
           <Link className="greenhouse-button" to={collectionUrl}>
             Shop Arrangements
           </Link>
-          <Link className="greenhouse-button greenhouse-button-secondary" to="/collections">
+          <Link className="greenhouse-button greenhouse-button-secondary" to="/pages/contact">
             Request Custom Design
           </Link>
         </div>
@@ -189,7 +189,7 @@ function FeaturedCollections({
 }) {
   const featuredCollectionUrl = collection?.handle
     ? `/collections/${collection.handle}`
-    : '/collections/all';
+    : '/collections/all-flowers';
 
   const cards = [
     {
@@ -202,23 +202,23 @@ function FeaturedCollections({
     {
       title: 'Sympathy & Funeral',
       eyebrow: 'Quiet grace',
-      to: '/collections/all',
+      to: '/collections/sympathy-and-funeral',
       image: heroEditorial,
       alt: 'Ivory floral arrangement in a cinematic dark setting',
     },
     {
       title: 'Weddings & Events',
       eyebrow: 'Ceremonies in bloom',
-      to: '/collections',
+      to: '/pages/wedding-events',
       image: botanicalBanner,
       alt: 'Botanical floral arrangement with orchids and deep greenery',
     },
     {
-      title: 'Gift Baskets',
-      eyebrow: 'Considered gifting',
-      to: '/collections/all',
+      title: 'Wholesale Flowers',
+      eyebrow: 'By the box',
+      to: '/collections/bulk-flowers',
       image: occasionBanner,
-      alt: 'Luxury floral gift arrangement with ribboned package',
+      alt: 'Bulk wholesale flowers ready for florists and events',
     },
   ];
 
@@ -248,12 +248,12 @@ function FeaturedCollections({
 
 function ShopByOccasion() {
   const occasions = [
-    'Birthday',
-    'Anniversary',
-    'Sympathy',
-    'Congratulations',
-    'Romance',
-    'Corporate',
+    {label: 'Birthday', to: '/collections/birthday'},
+    {label: 'Anniversary', to: '/collections/anniversary'},
+    {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
+    {label: 'Congratulations', to: '/collections/congratulations'},
+    {label: 'Romance', to: '/collections/love-and-romance'},
+    {label: 'Corporate', to: '/collections/corporate-gifting'},
   ];
 
   return (
@@ -267,8 +267,8 @@ function ShopByOccasion() {
       </div>
       <div className="greenhouse-occasion-grid">
         {occasions.map((occasion) => (
-          <Link key={occasion} to="/collections/all">
-            <span>{occasion}</span>
+          <Link key={occasion.label} to={occasion.to}>
+            <span>{occasion.label}</span>
             <small>Explore</small>
           </Link>
         ))}
@@ -293,7 +293,7 @@ function WeddingEditorial() {
           atmosphere around your vows, venue, and the feeling you want guests to
           carry home.
         </p>
-        <Link className="greenhouse-button" to="/collections">
+        <Link className="greenhouse-button" to="/pages/wedding-events">
           Book a Floral Consultation
         </Link>
       </div>
@@ -328,7 +328,7 @@ function CorporateServices() {
           Weekly floral styling and event arrangements for Kingston hotels,
           offices, restaurants, embassies, boutiques, and private functions.
         </p>
-        <Link className="greenhouse-button greenhouse-button-dark" to="/collections">
+        <Link className="greenhouse-button greenhouse-button-dark" to="/collections/corporate-gifting">
           Explore Corporate Flowers
         </Link>
       </div>

@@ -1,179 +1,166 @@
-import {redirect, useLoaderData} from 'react-router';
+import {redirect, useLoaderData, useNavigation} from 'react-router';
+import {useState} from 'react';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import type {
+  ProductCollectionSortKeys,
+  ProductFilter,
+} from '@shopify/hydrogen/storefront-api-types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import {ProductItem} from '~/components/ProductItem';
-import type {ProductItemFragment} from 'storefrontapi.generated';
-import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
+import {
+  parseCatalogSearchParams,
+  buildProductFilters,
+  toCollectionSort,
+  countActiveFilters,
+  CATALOG_PRODUCT_FRAGMENT,
+} from '~/lib/catalog';
+import type {CatalogProduct} from '~/components/catalog/types';
+import {CollectionHero} from '~/components/catalog/CollectionHero';
+import {
+  FilterPanel,
+  FilterDrawer,
+  ActiveFilterChips,
+} from '~/components/catalog/Filters';
+import {CatalogToolbar} from '~/components/catalog/CatalogToolbar';
+import {CatalogResults} from '~/components/catalog/CatalogResults';
+import {QuickView} from '~/components/catalog/QuickView';
 
 export const meta: Route.MetaFunction = ({data}) => {
+  const title = data?.collection?.seo?.title || data?.collection?.title || 'Collection';
+  const description =
+    data?.collection?.seo?.description ||
+    data?.collection?.description ||
+    'Shop luxury and wholesale floral arrangements from The New Greenhouse in Kingston, Jamaica.';
   return [
-    {title: `${data?.collection.title ?? 'Collection'} | The New Greenhouse`},
-    {
-      name: 'description',
-      content:
-        data?.collection.description ||
-        'Shop luxury floral arrangements from The New Greenhouse in Kingston, Jamaica.',
-    },
+    {title: `${title} | The New Greenhouse`},
+    {name: 'description', content: description},
   ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
-  const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
-  });
 
   if (!handle) {
     throw redirect('/collections');
   }
 
+  const url = new URL(request.url);
+  const {filters: applied, sort} = parseCatalogSearchParams(url.searchParams);
+  const productFilters = buildProductFilters(applied);
+  const {sortKey, reverse} = toCollectionSort(sort);
+  const paginationVariables = getPaginationVariables(request, {pageBy: 12});
+
   const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
-      variables: {handle, ...paginationVariables},
-      // Add other queries here, so that they are loaded in parallel
+      variables: {
+        handle,
+        filters: productFilters,
+        sortKey: sortKey as ProductCollectionSortKeys,
+        reverse,
+        ...paginationVariables,
+      },
     }),
   ]);
 
   if (!collection) {
-    throw new Response(`Collection ${handle} not found`, {
-      status: 404,
-    });
+    throw new Response(`Collection ${handle} not found`, {status: 404});
   }
 
-  // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
-  return {
-    collection,
-  };
+  return {collection, applied, sort};
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
 function loadDeferredData({context}: Route.LoaderArgs) {
   return {};
 }
 
 export default function Collection() {
-  const {collection} = useLoaderData<typeof loader>();
+  const {collection, applied, sort} = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [quickProduct, setQuickProduct] = useState<CatalogProduct | null>(null);
+
+  const loading = navigation.state !== 'idle';
+  const activeCount = countActiveFilters(applied);
+  const products = (collection.products.nodes ?? []) as CatalogProduct[];
+
+  const breadcrumbs = [
+    {label: 'Home', to: '/'},
+    {label: 'Collections', to: '/collections'},
+    {label: collection.title},
+  ];
 
   return (
-    <div className="collection commerce-page">
-      <section className="commerce-hero collection-hero">
-        <div>
-          <p className="greenhouse-kicker">The collection</p>
-          <h1>{collection.title}</h1>
-          <p className="collection-description">
-            {collection.description ||
-              'A considered edit of luxury florals, selected for polished gifting, meaningful gestures, and refined spaces.'}
-          </p>
-        </div>
-        <img
-          src={occasionBanner}
-          alt={`${collection.title} editorial floral banner`}
-          loading="eager"
-        />
-      </section>
-      <section className="collection-controls" aria-label="Collection filters">
-        <div>
-          <span>Occasion</span>
-          <button type="button">Birthday</button>
-          <button type="button">Sympathy</button>
-          <button type="button">Corporate</button>
-        </div>
-        <div>
-          <span>Season</span>
-          <button type="button">Fresh today</button>
-          <button type="button">Signature</button>
-        </div>
-        <div>
-          <span>Sort</span>
-          <select aria-label="Sort products" defaultValue="featured">
-            <option value="featured">Featured</option>
-            <option value="newest">Newest arrivals</option>
-            <option value="price-low">Price: low to high</option>
-            <option value="price-high">Price: high to low</option>
-          </select>
-        </div>
-      </section>
-      <PaginatedResourceSection<ProductItemFragment>
-        connection={collection.products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
+    <div className="ng-catalog-page">
+      <CollectionHero
+        breadcrumbs={breadcrumbs}
+        eyebrow="The Collection"
+        title={collection.title}
+        description={collection.description || undefined}
+        image={
+          collection.image
+            ? {url: collection.image.url, altText: collection.image.altText}
+            : undefined
+        }
+      />
+
+      <div className="ng-catalog-layout">
+        <aside className="ng-catalog-sidebar" aria-label="Product filters">
+          <FilterPanel variant="sidebar" filters={applied} />
+        </aside>
+
+        <div className="ng-catalog-main">
+          <CatalogToolbar
+            count={products.length}
+            sort={sort}
+            activeCount={activeCount}
+            onOpenFilters={() => setDrawerOpen(true)}
           />
-        )}
-      </PaginatedResourceSection>
+          <ActiveFilterChips filters={applied} />
+          <CatalogResults
+            connection={collection.products}
+            loading={loading}
+            hasFilters={activeCount > 0}
+            onQuickView={setQuickProduct}
+          />
+        </div>
+      </div>
+
+      <FilterDrawer
+        filters={applied}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
+      <QuickView
+        product={quickProduct}
+        open={Boolean(quickProduct)}
+        onClose={() => setQuickProduct(null)}
+      />
+
       <Analytics.CollectionView
-        data={{
-          collection: {
-            id: collection.id,
-            handle: collection.handle,
-          },
-        }}
+        data={{collection: {id: collection.id, handle: collection.handle}}}
       />
     </div>
   );
 }
 
-const PRODUCT_ITEM_FRAGMENT = `#graphql
-  fragment MoneyProductItem on MoneyV2 {
-    amount
-    currencyCode
-  }
-  fragment ProductItem on Product {
-    id
-    handle
-    title
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    priceRange {
-      minVariantPrice {
-        ...MoneyProductItem
-      }
-      maxVariantPrice {
-        ...MoneyProductItem
-      }
-    }
-  }
-` as const;
-
-// NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
 const COLLECTION_QUERY = `#graphql
-  ${PRODUCT_ITEM_FRAGMENT}
+  ${CATALOG_PRODUCT_FRAGMENT}
   query Collection(
     $handle: String!
     $country: CountryCode
     $language: LanguageCode
+    $filters: [ProductFilter!]
+    $sortKey: ProductCollectionSortKeys!
+    $reverse: Boolean
     $first: Int
     $last: Int
     $startCursor: String
@@ -184,14 +171,28 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      image {
+        id
+        url
+        altText
+        width
+        height
+      }
+      seo {
+        title
+        description
+      }
       products(
-        first: $first,
-        last: $last,
-        before: $startCursor,
+        first: $first
+        last: $last
+        before: $startCursor
         after: $endCursor
+        filters: $filters
+        sortKey: $sortKey
+        reverse: $reverse
       ) {
         nodes {
-          ...ProductItem
+          ...CatalogProductItem
         }
         pageInfo {
           hasPreviousPage

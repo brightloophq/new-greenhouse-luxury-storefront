@@ -4,6 +4,19 @@ node_modules
 /dist
 /public/build
 /.mf
-.env
 .shopify
 .react-router
+
+# Secrets, credentials & logs — NEVER commit.
+# .env* (including .env.example, which holds real values here) is always ignored.
+.env
+.env.*
+commerce-manager/.env
+commerce-manager/.env.*
+*.log
+reports/private/
+**/reports/private/
+*.token
+*.secret
+.tng-token
+.access-token

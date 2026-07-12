@@ -1,0 +1,38 @@
+Group,Collection Title,Handle,Type,Match Rule,Product Count
+Shop Flowers,All Flowers,all-flowers,smart (automated),Type is one of Fresh Cut Flowers/Greenery/Floral Filler/Floral Arrangement,48
+Shop Flowers,Roses,roses,smart (automated),Tag = flower:rose OR flower:spray-rose OR flower:garden-rose,13
+Shop Flowers,Orchids,orchids,smart (automated),Tag = flower:orchid,4
+Shop Flowers,Lilies,lilies,smart (automated),Tag = flower:lily OR flower:calla-lily,6
+Shop Flowers,Tropical Flowers,tropical-flowers,smart (automated),Tag = flower:anthurium/heliconia/ginger/bird-of-paradise/tropical-mixed,4
+Shop Flowers,Greenery and Fillers,greenery-and-fillers,smart (automated),Type = Greenery OR Floral Filler,8
+Shop by Color,White and Ivory,white-and-ivory,smart (automated),Tag = color:white-ivory,31
+Shop by Color,Red,red,smart (automated),Tag = color:red,7
+Shop by Color,Pink,pink,smart (automated),Tag = color:pink,14
+Shop by Color,Yellow and Orange,yellow-and-orange,smart (automated),Tag = color:yellow-orange,9
+Shop by Color,Purple,purple,smart (automated),Tag = color:purple,3
+Shop by Color,Green,green-flowers,smart (automated),Tag = color:green,20
+Shop by Color,Mixed Color,mixed-color,smart (automated),Tag = color:mixed,24
+Shop by Occasion,Birthday,birthday,smart (automated),Tag = occasion:birthday,13
+Shop by Occasion,Anniversary,anniversary,smart (automated),Tag = occasion:anniversary,12
+Shop by Occasion,Love and Romance,love-and-romance,smart (automated),Tag = occasion:romance,8
+Shop by Occasion,Sympathy and Funeral,sympathy-and-funeral,smart (automated),Tag = occasion:sympathy,25
+Shop by Occasion,Congratulations,congratulations,smart (automated),Tag = occasion:congratulations,18
+Shop by Occasion,New Baby,new-baby,smart (automated),Tag = occasion:new-baby,7
+Shop by Occasion,Get Well,get-well,smart (automated),Tag = occasion:get-well,6
+Shop by Occasion,Corporate Gifting,corporate-gifting,smart (automated),Tag = occasion:corporate,33
+Weddings & Events,Wedding Flowers,wedding-flowers,smart (automated),Type = Wedding Flowers,8
+Weddings & Events,Bridal Bouquets,bridal-bouquets,smart (automated),Type = Wedding Flowers AND subtype bridal,2
+Weddings & Events,Centerpieces,centerpieces,smart (automated),Tag = format:centerpiece,2
+Wholesale,Bulk Flowers,bulk-flowers,smart (automated),Tag = channel:wholesale,62
+Wholesale,Wholesale Roses,wholesale-roses,smart (automated),Tag = channel:wholesale AND flower:rose/spray-rose,7
+Wholesale,Wholesale Greenery,wholesale-greenery,smart (automated),Tag = channel:wholesale AND Type Greenery/Floral Filler,8
+Wholesale,Florist Essentials,florist-essentials,smart (automated),Tag = customer:florist,42
+Floral Supplies,Floral Supplies,floral-supplies,smart (automated),Type = Floral Supply,10
+Floral Supplies,Vases and Containers,vases-and-containers,smart (automated),Type = Floral Supply AND title vase/container/basket,3
+Floral Supplies,Ribbon,ribbon,smart (automated),Title contains ribbon,2
+Floral Supplies,Wrapping and Packaging,wrapping-and-packaging,smart (automated),Title contains wrap/packaging/box/cellophane,3
+Floral Supplies,Tools and Accessories,tools-and-accessories,smart (automated),Title contains shear/snip/tape/tool/wire/pick,2
+Plants & Gifts,Plants,plants,smart (automated),Type = Plant,3
+Plants & Gifts,Gift Baskets,gift-baskets,smart (automated),Type = Gift Basket,1
+Plants & Gifts,Add-ons,add-ons,smart (automated),Type = Gift Add-on,2
+Plants & Gifts,Corporate Gifts,corporate-gifts,smart (automated),Tag = occasion:corporate AND Type Plant/Gift Basket/Gift Add-on,4

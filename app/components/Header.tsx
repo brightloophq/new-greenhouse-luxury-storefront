@@ -25,31 +25,33 @@ const MEGA_COLUMNS: MegaColumn[] = [
   {
     title: 'Occasions',
     links: [
-      {label: 'Birthday', to: '/collections/birthday-flowers'},
-      {label: 'Anniversary', to: '/collections/anniversary-flowers'},
-      {label: 'Love & Romance', to: '/collections/love-romance'},
-      {label: 'Sympathy', to: '/collections/sympathy'},
-      {label: 'Weddings', to: '/collections/wedding-flowers'},
-      {label: 'Gift Baskets', to: '/collections/gift-baskets'},
+      {label: 'Birthday', to: '/collections/birthday'},
+      {label: 'Anniversary', to: '/collections/anniversary'},
+      {label: 'Love & Romance', to: '/collections/love-and-romance'},
+      {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
+      {label: 'Congratulations', to: '/collections/congratulations'},
+      {label: 'Get Well', to: '/collections/get-well'},
     ],
   },
   {
-    title: 'The Collection',
+    title: 'Shop Flowers',
     links: [
-      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
-      {label: 'Tropical Flowers', to: '/collections/tropical-flowers'},
-      {label: 'Plants', to: '/collections/plants'},
-      {label: 'Same-Day Delivery', to: '/collections/same-day-delivery'},
+      {label: 'All Flowers', to: '/collections/all-flowers'},
+      {label: 'Roses', to: '/collections/roses'},
+      {label: 'Orchids', to: '/collections/orchids'},
+      {label: 'Lilies', to: '/collections/lilies'},
+      {label: 'Greenery & Fillers', to: '/collections/greenery-and-fillers'},
       {label: 'Shop All', to: '/collections/all'},
     ],
   },
   {
     title: 'Wholesale & Trade',
     links: [
-      {label: 'Wholesale Flowers', to: '/collections/all'},
-      {label: 'Weddings & Events', to: '/pages/wedding-events'},
-      {label: 'Corporate Floral', to: '/pages/corporate-flowers'},
-      {label: 'Bulk & Standing Orders', to: '/pages/contact'},
+      {label: 'Bulk Flowers', to: '/collections/bulk-flowers'},
+      {label: 'Wholesale Roses', to: '/collections/wholesale-roses'},
+      {label: 'Florist Essentials', to: '/collections/florist-essentials'},
+      {label: 'Floral Supplies', to: '/collections/floral-supplies'},
+      {label: 'Corporate Gifting', to: '/collections/corporate-gifting'},
     ],
   },
 ];
@@ -60,7 +62,7 @@ const PRIMARY_NAV: PrimaryItem[] = [
   {label: 'Shop', to: '/collections', mega: true},
   {label: 'Weddings', to: '/pages/wedding-events'},
   {label: 'Corporate', to: '/pages/corporate-flowers'},
-  {label: 'Wholesale', to: '/collections/all'},
+  {label: 'Wholesale', to: '/collections/bulk-flowers'},
   {label: 'About', to: '/pages/about-us'},
 ];
 
@@ -244,7 +246,7 @@ function MegaPanel({
           ))}
         </div>
         <NavLink
-          to="/collections/luxury-bouquets"
+          to="/collections/all-flowers"
           prefetch="intent"
           className="ng-mega-feature"
           onClick={onClose}

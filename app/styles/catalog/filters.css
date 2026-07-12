@@ -1,0 +1,403 @@
+/* Catalog filter + sort UI (M4).
+   New classes only — consumes existing design tokens (design-system.css) and
+   M2 primitives. Prefix: .ng-catalog-*.
+   Desktop breakpoint follows the shell (64rem). */
+
+/* -------------------------------------------------------------------------- */
+/* Toolbar                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.ng-catalog-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3) var(--ng-space-5);
+  justify-content: space-between;
+  padding-block: var(--ng-space-3);
+}
+
+.ng-catalog-toolbar-count {
+  color: var(--ng-text-secondary);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  letter-spacing: var(--ng-letter-label);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ng-catalog-toolbar-count-num {
+  color: var(--ng-text-primary);
+  font-weight: 600;
+}
+
+.ng-catalog-toolbar-controls {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-3);
+}
+
+.ng-catalog-toolbar-sort {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--ng-space-2);
+}
+
+.ng-catalog-toolbar-sort-label {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-catalog-toolbar-sort-select {
+  min-inline-size: 11rem;
+}
+
+.ng-catalog-toolbar-filters {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--ng-space-2);
+}
+
+.ng-catalog-toolbar-filters-badge {
+  min-inline-size: 1.35rem;
+}
+
+/* The mobile trigger is hidden once the sidebar is available. */
+@media (min-width: 64rem) {
+  .ng-catalog-toolbar-filters {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Filter panel (shared by sidebar + drawer)                                  */
+/* -------------------------------------------------------------------------- */
+
+.ng-catalog-filters {
+  color: var(--ng-text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-5);
+}
+
+.ng-catalog-filters-head {
+  align-items: baseline;
+  display: flex;
+  gap: var(--ng-space-3);
+  justify-content: space-between;
+  min-block-size: var(--ng-space-6);
+}
+
+.ng-catalog-filters-title {
+  align-items: center;
+  color: var(--ng-text-primary);
+  display: inline-flex;
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h4);
+  gap: var(--ng-space-2);
+  line-height: var(--ng-line-heading);
+  margin: 0;
+}
+
+.ng-catalog-filters-clear {
+  color: var(--ng-gold-text);
+  flex: none;
+}
+
+.ng-catalog-filters-groups {
+  border-block-start: 1px solid var(--ng-border-subtle);
+}
+
+/* Radio / checkbox groups ------------------------------------------------- */
+
+.ng-catalog-filter-group {
+  border: 0;
+  margin: 0;
+  min-inline-size: 0;
+  padding: 0;
+}
+
+.ng-catalog-filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ng-catalog-filter-option,
+.ng-catalog-filter-toggle {
+  align-items: center;
+  border-radius: var(--ng-radius-sm);
+  color: var(--ng-text-secondary);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-body);
+  gap: var(--ng-space-3);
+  line-height: var(--ng-line-body);
+  padding-block: var(--ng-space-1);
+  transition: var(--ng-transition-color);
+}
+
+.ng-catalog-filter-option:hover,
+.ng-catalog-filter-toggle:hover {
+  color: var(--ng-text-primary);
+}
+
+/* Premium radio + checkbox (gold accent) */
+.ng-catalog-filter-radio,
+.ng-catalog-filter-check {
+  appearance: none;
+  background: var(--ng-bg-surface);
+  block-size: 1.1rem;
+  border: 1px solid var(--ng-border-strong);
+  cursor: pointer;
+  display: grid;
+  flex: none;
+  inline-size: 1.1rem;
+  margin: 0;
+  place-content: center;
+  transition: var(--ng-transition-color);
+}
+
+.ng-catalog-filter-radio {
+  border-radius: var(--ng-radius-pill);
+}
+
+.ng-catalog-filter-check {
+  border-radius: var(--ng-radius-xs);
+}
+
+.ng-catalog-filter-radio::before {
+  block-size: 0.5rem;
+  border-radius: var(--ng-radius-pill);
+  content: '';
+  inline-size: 0.5rem;
+  transform: scale(0);
+  transition: transform var(--ng-duration-fast) var(--ng-ease-luxury);
+}
+
+.ng-catalog-filter-check::before {
+  block-size: 0.6rem;
+  clip-path: polygon(14% 44%, 0 65%, 42% 100%, 100% 22%, 84% 8%, 40% 68%);
+  content: '';
+  inline-size: 0.6rem;
+  transform: scale(0);
+  transition: transform var(--ng-duration-fast) var(--ng-ease-luxury);
+}
+
+.ng-catalog-filter-radio::before,
+.ng-catalog-filter-check::before {
+  background: var(--ng-color-luxury-gold);
+}
+
+.ng-catalog-filter-radio:checked,
+.ng-catalog-filter-check:checked {
+  border-color: var(--ng-color-luxury-gold);
+}
+
+.ng-catalog-filter-radio:checked::before,
+.ng-catalog-filter-check:checked::before {
+  transform: scale(1);
+}
+
+.ng-catalog-filter-radio:focus-visible,
+.ng-catalog-filter-check:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 2px;
+}
+
+.ng-catalog-filter-option-label {
+  min-inline-size: 0;
+}
+
+/* Price group ------------------------------------------------------------- */
+
+.ng-catalog-filter-price {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-3);
+}
+
+.ng-catalog-filter-price-inputs {
+  align-items: end;
+  display: flex;
+  gap: var(--ng-space-2);
+}
+
+.ng-catalog-filter-price-field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ng-space-1);
+  min-inline-size: 0;
+}
+
+.ng-catalog-filter-price-label {
+  color: var(--ng-text-muted);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-catalog-filter-price-sep {
+  color: var(--ng-text-muted);
+  padding-block-end: var(--ng-space-3);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sidebar vs drawer variants                                                 */
+/* -------------------------------------------------------------------------- */
+
+.ng-catalog-filters--sidebar {
+  position: sticky;
+  top: var(--ng-space-6);
+}
+
+.ng-catalog-filters--drawer {
+  gap: var(--ng-space-4);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mobile drawer                                                              */
+/* -------------------------------------------------------------------------- */
+
+.ng-catalog-filter-drawer {
+  inset: 0;
+  position: fixed;
+  z-index: var(--ng-z-drawer);
+}
+
+.ng-catalog-filter-drawer-scrim {
+  animation: ng-catalog-scrim-in var(--ng-duration-standard) var(--ng-ease-standard);
+  appearance: none;
+  background: rgb(9 9 9 / 46%);
+  border: 0;
+  cursor: pointer;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+}
+
+.ng-catalog-filter-drawer-panel {
+  animation: ng-catalog-drawer-in var(--ng-duration-standard) var(--ng-ease-luxury);
+  background: var(--ng-bg-surface);
+  box-shadow: var(--ng-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  inline-size: min(88vw, 24rem);
+  inset-block: 0;
+  inset-inline-start: 0;
+  max-inline-size: 100%;
+  position: absolute;
+}
+
+.ng-catalog-filter-drawer-panel:focus {
+  outline: none;
+}
+
+.ng-catalog-filter-drawer-head {
+  align-items: center;
+  border-block-end: 1px solid var(--ng-border-subtle);
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  padding: var(--ng-space-4) var(--ng-space-5);
+}
+
+.ng-catalog-filter-drawer-title {
+  color: var(--ng-text-primary);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h4);
+  margin: 0;
+}
+
+.ng-catalog-filter-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--ng-space-5);
+}
+
+@keyframes ng-catalog-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ng-catalog-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+/* The drawer is a mobile affordance only. */
+@media (min-width: 64rem) {
+  .ng-catalog-filter-drawer {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Active filter chips                                                        */
+/* -------------------------------------------------------------------------- */
+
+.ng-catalog-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-2) var(--ng-space-3);
+  padding-block: var(--ng-space-2);
+}
+
+.ng-catalog-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ng-catalog-chip {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--ng-space-2);
+  padding-inline-end: var(--ng-space-1);
+}
+
+.ng-catalog-chip-label {
+  min-inline-size: 0;
+}
+
+.ng-catalog-chip-remove {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--ng-radius-pill);
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: var(--ng-space-1);
+  transition: var(--ng-transition-color);
+}
+
+.ng-catalog-chip-remove:hover {
+  color: var(--ng-gold-text);
+}
+
+.ng-catalog-chip-remove:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 1px;
+}
+
+.ng-catalog-chips-clear {
+  color: var(--ng-gold-text);
+}

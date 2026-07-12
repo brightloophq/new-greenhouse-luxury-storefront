@@ -1,0 +1,213 @@
+/* ==========================================================================
+   Catalog hero & merchandising (M4)
+   Tokens only. Class prefix: ng-catalog-. Mobile-first, responsive,
+   animation-ready (transitions via --ng-transition-* / --ng-duration-* /
+   --ng-ease-*; global .ng-motion-* reveal utilities may be layered on top).
+   Light (ivory) by default; the media hero uses an inverse-text overlay.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared wrapper — breadcrumbs + hero stack
+   -------------------------------------------------------------------------- */
+.ng-catalog-hero-wrap {
+  display: grid;
+  gap: var(--ng-space-6);
+  width: 100%;
+}
+
+.ng-catalog-hero-breadcrumbs {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Media hero — image with dark overlay + overlaid content
+   -------------------------------------------------------------------------- */
+.ng-catalog-hero--media {
+  border-radius: var(--ng-radius-lg);
+  color: var(--ng-text-inverse);
+  display: grid;
+  isolation: isolate;
+  min-height: 26rem;
+  overflow: clip;
+  position: relative;
+  width: 100%;
+}
+
+.ng-catalog-hero-media,
+.ng-catalog-hero-scrim {
+  grid-area: 1 / 1;
+  height: 100%;
+  width: 100%;
+}
+
+.ng-catalog-hero-media {
+  z-index: 0;
+}
+
+.ng-catalog-hero-img,
+.ng-catalog-hero-media > img,
+.ng-catalog-hero-media > picture,
+.ng-catalog-hero-media > picture > img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  transition: transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+
+.ng-catalog-hero-scrim {
+  background: linear-gradient(
+    to top,
+    rgb(9 9 9 / 80%),
+    rgb(9 9 9 / 46%) 45%,
+    rgb(9 9 9 / 24%)
+  );
+  z-index: 1;
+}
+
+.ng-catalog-hero-content {
+  align-content: end;
+  display: grid;
+  gap: var(--ng-space-4);
+  grid-area: 1 / 1;
+  justify-items: start;
+  max-width: 44rem;
+  padding: clamp(var(--ng-space-6), 5vw, var(--ng-space-16));
+  position: relative;
+  z-index: 2;
+}
+
+.ng-catalog-hero-eyebrow {
+  color: var(--ng-color-luxury-gold);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-catalog-hero-title {
+  color: inherit;
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-display-l);
+  font-weight: 400;
+  line-height: var(--ng-line-tight);
+  margin: 0;
+}
+
+.ng-catalog-hero-description {
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+  margin: 0;
+  max-width: 38rem;
+  opacity: 0.92;
+}
+
+@media (min-width: 48rem) {
+  .ng-catalog-hero--media {
+    min-height: 30rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Text hero — no image. Intentional, premium, generous whitespace.
+   -------------------------------------------------------------------------- */
+.ng-catalog-hero--text {
+  display: flex;
+  justify-content: center;
+  padding-block: clamp(var(--ng-space-10), 7vw, var(--ng-space-16));
+  padding-inline: var(--ng-space-4);
+  text-align: center;
+}
+
+.ng-catalog-hero-heading {
+  margin-inline: auto;
+  max-width: var(--ng-container-md, 52rem);
+  position: relative;
+}
+
+/* A restrained gold hairline anchors the text hero so it never reads empty. */
+.ng-catalog-hero-heading::after {
+  background: var(--ng-color-luxury-gold);
+  block-size: 1px;
+  content: "";
+  inline-size: var(--ng-space-12);
+  justify-self: center;
+  margin-block-start: var(--ng-space-6);
+  margin-inline: auto;
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   MerchandisingBlock — image variant reuses .ng-editorial; add breathing room
+   and rounded media. Plain variant is a centered muted band.
+   -------------------------------------------------------------------------- */
+.ng-catalog-merch {
+  width: 100%;
+}
+
+.ng-catalog-merch-img,
+.ng-catalog-merch .ng-editorial-media > img,
+.ng-catalog-merch .ng-editorial-media > picture > img {
+  aspect-ratio: var(--ng-ratio-editorial);
+  border-radius: var(--ng-radius-md);
+  display: block;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+/* Plain (no-image) promo band */
+.ng-catalog-merch--plain {
+  background: var(--ng-bg-surface-muted);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-lg);
+  display: flex;
+  justify-content: center;
+  padding: clamp(var(--ng-space-8), 5vw, var(--ng-space-16));
+}
+
+.ng-catalog-merch-inner {
+  display: grid;
+  gap: var(--ng-space-4);
+  justify-items: center;
+  max-width: 44rem;
+  text-align: center;
+}
+
+.ng-catalog-merch-eyebrow {
+  color: var(--ng-gold-text);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-label);
+  font-weight: 700;
+  letter-spacing: var(--ng-letter-label);
+  text-transform: uppercase;
+}
+
+.ng-catalog-merch-title {
+  margin: 0;
+}
+
+.ng-catalog-merch-description {
+  color: var(--ng-text-secondary);
+  font-size: var(--ng-font-size-body-l);
+  line-height: var(--ng-line-body);
+  margin: 0;
+  max-width: 40rem;
+}
+
+.ng-catalog-merch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+  justify-content: center;
+  margin-top: var(--ng-space-2);
+}
+
+/* --------------------------------------------------------------------------
+   CollectionsGridHeader — collections index hero
+   -------------------------------------------------------------------------- */
+.ng-catalog-index-header {
+  margin-inline: auto;
+  max-width: var(--ng-container-md, 52rem);
+  padding-block: clamp(var(--ng-space-8), 6vw, var(--ng-space-14));
+  padding-inline: var(--ng-space-4);
+}
