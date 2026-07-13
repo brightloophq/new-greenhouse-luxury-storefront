@@ -93,6 +93,24 @@
 }
 
 /* --------------------------------------------------------------------------
+   Product experience — one shared PDP (same variant / cart / checkout).
+   Deluxe = editorial (larger gallery, more air). Classic = functional (tighter,
+   balanced). Content differences (assurances, trade-vs-gift note, story label)
+   are handled in the route component.
+   -------------------------------------------------------------------------- */
+[data-experience='deluxe'] .product {
+  gap: clamp(2rem, 5vw, 5rem);
+}
+@media (min-width: 45em) {
+  [data-experience='deluxe'] .product {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+[data-experience='classic'] .product {
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+/* --------------------------------------------------------------------------
    Experience toggle — compact segmented control (Classic / Deluxe)
    -------------------------------------------------------------------------- */
 .ng-exp-toggle {

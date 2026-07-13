@@ -11,6 +11,7 @@ import {
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {useExperience} from '~/components/ExperienceProvider';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
 import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
@@ -111,6 +112,11 @@ export default function Product() {
   });
 
   const {title, descriptionHtml, vendor} = product;
+  const {experience} = useExperience();
+  const deluxe = experience === 'deluxe';
+  const assurances = deluxe
+    ? ['Secure checkout', 'Hand-tied in Kingston', 'Signature presentation']
+    : ['Wholesale pricing available', 'Fresh, graded stems', 'Island-wide delivery'];
 
   return (
     <div className="product commerce-product">
@@ -146,21 +152,34 @@ export default function Product() {
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <div className="product-gift-message">
-          <p className="product-gift-message-title">Sending as a gift?</p>
-          <small>
-            Add your personal gift message and delivery date during checkout —
-            we hand-write every note in Kingston.
-          </small>
-        </div>
+        {deluxe ? (
+          <div className="product-gift-message">
+            <p className="product-gift-message-title">Sending as a gift?</p>
+            <small>
+              Add your personal gift message and delivery date during checkout —
+              we hand-write every note in Kingston.
+            </small>
+          </div>
+        ) : (
+          <div className="product-gift-message">
+            <p className="product-gift-message-title">
+              Buying for a business or event?
+            </p>
+            <small>
+              Volume and standing-order pricing is available for florists,
+              planners, hotels and offices.{' '}
+              <Link to="/pages/contact">Ask about trade pricing →</Link>
+            </small>
+          </div>
+        )}
         <div className="product-trust-grid" aria-label="Purchase assurances">
-          <span>Secure checkout</span>
-          <span>Handcrafted in Kingston</span>
-          <span>Carefully presented</span>
+          {assurances.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
         </div>
         <div className="product-story">
           <details open>
-            <summary>Luxury product story</summary>
+            <summary>{deluxe ? 'The story' : 'Product details'}</summary>
             <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
           </details>
           <details>
