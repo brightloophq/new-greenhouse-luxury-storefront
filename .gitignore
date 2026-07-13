@@ -23,3 +23,6 @@ reports/private/
 
 # Raw flower source images (optimized WebP in public/ are the committed artifacts)
 source-images/
+
+# Image pipeline: keep large regenerable originals out of git (derivatives are committed).
+source-images/generated-originals/

@@ -30,12 +30,15 @@ function main() {
       tally.pending++;
       continue;
     }
-    // primary derivative (largest width, webp)
-    const w = fmt.widths[fmt.widths.length - 1];
-    const primary = join(PATHS.generated, row.experience, `${stem}-${w}.webp`);
-    if (!existsSync(primary)) issues.push('missing-derivative');
+    // Largest derivative that actually exists (widths above the source are
+    // intentionally skipped — never enlarge — so don't require the top width).
+    const existing = [...fmt.widths]
+      .sort((a, b) => b - a)
+      .map((w) => join(PATHS.generated, row.experience, `${stem}-${w}.webp`))
+      .filter((p) => existsSync(p));
+    if (existing.length === 0) issues.push('missing-derivative');
     else {
-      const sizeKb = statSync(primary).size / 1024;
+      const sizeKb = statSync(existing[0]).size / 1024;
       const cap = fmt.ratio === '16:9' ? MAX_HERO_KB : MAX_CARD_KB;
       if (sizeKb > cap) issues.push(`oversize(${sizeKb.toFixed(0)}KB>${cap})`);
     }

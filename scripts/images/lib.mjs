@@ -40,11 +40,13 @@ const CLASSIC_STD =
 
 const DELUXE_STD =
   'Photorealistic premium editorial floral photography. A finished luxury ' +
-  'arrangement with refined bouquet density and elegant wrapping, tied with a ' +
-  'champagne-gold and black New Greenhouse ribbon. Matte black, warm ivory or ' +
-  'refined neutral background with controlled champagne-gold accents and ' +
-  'realistic premium lighting. Editorial gifting composition with generous ' +
-  'negative space. Natural and true-to-life — not CGI, no artificial glow.';
+  'arrangement with refined bouquet density and elegant wrapping, finished with ' +
+  'a plain champagne-gold and black satin ribbon — the ribbon is smooth and ' +
+  'blank with absolutely no text, lettering, words, or writing on it. Matte ' +
+  'black, warm ivory or refined neutral background with controlled ' +
+  'champagne-gold accents and realistic premium lighting. Editorial gifting ' +
+  'composition with generous negative space. Natural and true-to-life — not ' +
+  'CGI, no artificial glow.';
 
 const NEGATIVE =
   'text, typography, letters, numbers, watermark, signature, logo, brand mark, ' +
