@@ -29,6 +29,7 @@ import {CatalogToolbar} from '~/components/catalog/CatalogToolbar';
 import {CatalogResults} from '~/components/catalog/CatalogResults';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
+import {useExperience} from '~/components/ExperienceProvider';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
@@ -138,9 +139,15 @@ export default function Collection() {
   const loading = navigation.state !== 'idle';
   const activeCount = countActiveFilters(applied);
 
+  const {experience} = useExperience();
   const isHub = FLOWER_HUBS.has(collection.handle);
   const activeFlower = applied.flower;
   const hubPath = `/collections/${collection.handle}`;
+  const heroEyebrow = isHub
+    ? experience === 'deluxe'
+      ? 'The Signature Collection'
+      : 'Wholesale Flowers'
+    : 'The Collection';
 
   // Hub flower views use the top-level product search connection (reliable tag
   // filtering); everything else uses the collection's own products.
@@ -171,7 +178,7 @@ export default function Collection() {
     <div className="ng-catalog-page">
       <CollectionHero
         breadcrumbs={breadcrumbs}
-        eyebrow={isHub ? 'Wholesale Flowers' : 'The Collection'}
+        eyebrow={heroEyebrow}
         title={heading}
         description={collection.description || undefined}
         image={
