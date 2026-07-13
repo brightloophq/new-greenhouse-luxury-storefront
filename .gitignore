@@ -33,3 +33,7 @@ source-images/flowers/*/
 
 # Luxury arrangement source originals (large, regenerable) — commit only optimized WebP.
 source-images/luxury/
+
+# internal review pages (not for the public storefront)
+public/flower-library.html
+public/pilot-review.html

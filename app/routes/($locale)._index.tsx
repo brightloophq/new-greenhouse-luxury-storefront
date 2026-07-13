@@ -153,7 +153,7 @@ function HomeHero({
   return (
     <section className="greenhouse-hero" aria-labelledby="greenhouse-hero-title">
       <div className="greenhouse-hero-media">
-        <img src={IMAGES[content.image]} alt={content.alt} />
+        <img src={content.imageSrc ?? IMAGES[content.image]} alt={content.alt} />
       </div>
       <div className="greenhouse-hero-panel">
         <p className="greenhouse-kicker">{content.kicker}</p>
@@ -240,7 +240,11 @@ function FeaturedCollections({
             key={card.title}
             to={card.to ?? featuredCollectionUrl}
           >
-            <img src={IMAGES[card.image]} alt={card.alt} loading="lazy" />
+            <img
+              src={card.imageSrc ?? IMAGES[card.image]}
+              alt={card.alt}
+              loading="lazy"
+            />
             <span>{card.eyebrow}</span>
             <strong>{card.title}</strong>
           </Link>
@@ -294,7 +298,11 @@ function Editorial({
           : 'greenhouse-corporate-media'
       }
     >
-      <img src={IMAGES[content.image]} alt={content.alt} loading="lazy" />
+      <img
+        src={content.imageSrc ?? IMAGES[content.image]}
+        alt={content.alt}
+        loading="lazy"
+      />
     </div>
   );
   const copy = (

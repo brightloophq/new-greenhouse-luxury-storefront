@@ -25,6 +25,12 @@ export interface HomeCard {
   /** null → link to the freshest featured collection at render time. */
   to: string | null;
   image: HomeImageKey;
+  /**
+   * Optional direct asset path (served from /public). When set it overrides the
+   * bundled `image` key — used by Deluxe to show real luxury arrangement
+   * photography per card. Classic omits it and keeps the shared banners.
+   */
+  imageSrc?: string;
   alt: string;
 }
 
@@ -39,6 +45,8 @@ export interface HomeEditorial {
   body: string;
   cta: {label: string; to: string};
   image: HomeImageKey;
+  /** Optional direct /public asset path; overrides `image` when set (Deluxe). */
+  imageSrc?: string;
   alt: string;
 }
 
@@ -53,6 +61,7 @@ export interface HomeContent {
     secondary: {label: string; to: string};
     slogan: string;
     image: HomeImageKey;
+    imageSrc?: string;
     alt: string;
   };
   featured: {kicker: string; title: string; cards: HomeCard[]};
@@ -87,6 +96,9 @@ export interface HomeContent {
 
 const SLOGAN = 'Not just flowers, whatever it takes.';
 
+/** Luxury arrangement photography (Deluxe only), served from /public. */
+const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
+
 /** Shared "Shop by flower" tiles — buying stems is relevant to both audiences. */
 const FLOWER_TILES: HomeTile[] = [
   {label: 'Alstroemeria', to: flowerFamilyPath('alstroemeria')},
@@ -108,6 +120,7 @@ const DELUXE: HomeContent = {
     secondary: {label: 'Send a Gift', to: '/collections/add-ons'},
     slogan: SLOGAN,
     image: 'hero',
+    imageSrc: lux('signature-ivory-blush-bouquet'),
     alt: 'Luxury ivory and blush floral arrangement by The New Greenhouse',
   },
   featured: {
@@ -119,6 +132,7 @@ const DELUXE: HomeContent = {
         eyebrow: 'Celebrate the years',
         to: '/collections/anniversary',
         image: 'occasion',
+        imageSrc: lux('blush-romance-luxe'),
         alt: 'Romantic anniversary arrangement in blush and ivory',
       },
       {
@@ -126,6 +140,7 @@ const DELUXE: HomeContent = {
         eyebrow: 'Say it with flowers',
         to: '/collections/love-and-romance',
         image: 'hero',
+        imageSrc: lux('grand-red-rose-arrangement'),
         alt: 'Red rose romance arrangement in a cinematic setting',
       },
       {
@@ -133,6 +148,7 @@ const DELUXE: HomeContent = {
         eyebrow: 'Make it unforgettable',
         to: '/collections/birthday',
         image: 'botanical',
+        imageSrc: lux('sunshine-birthday-bouquet'),
         alt: 'Bright, joyful birthday bouquet',
       },
       {
@@ -140,6 +156,7 @@ const DELUXE: HomeContent = {
         eyebrow: 'With quiet grace',
         to: '/collections/sympathy-and-funeral',
         image: 'occasion',
+        imageSrc: lux('classic-white-sympathy-arrangement'),
         alt: 'Serene ivory sympathy arrangement',
       },
     ],
@@ -179,6 +196,7 @@ const DELUXE: HomeContent = {
       body: 'Pair a signature bouquet with curated add-ons and a hand-written note. We compose, wrap, and deliver each gift so it arrives feeling personal and complete.',
       cta: {label: 'Explore Luxury Gifts', to: '/collections/add-ons'},
       image: 'occasion',
+      imageSrc: lux('golden-celebration-bouquet'),
       alt: 'Curated luxury gift with a signature bouquet and add-ons',
     },
     {
@@ -187,6 +205,7 @@ const DELUXE: HomeContent = {
       body: 'Premium roses and orchids chosen for form and longevity, arranged with the restraint of a boutique florist — the quiet luxury of exceptional flowers.',
       cta: {label: 'Shop Premium Flowers', to: '/collections/roses'},
       image: 'botanical',
+      imageSrc: lux('white-orchid-elegance'),
       alt: 'Premium orchids and roses in an editorial arrangement',
     },
   ],
