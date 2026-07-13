@@ -30,3 +30,6 @@ source-images/generated-originals/
 # Flower-library source originals are large and regenerable; commit only the optimized public WebP.
 source-images/flowers/*/
 !source-images/flowers/alstroemeria/
+
+# Luxury arrangement source originals (large, regenerable) — commit only optimized WebP.
+source-images/luxury/
