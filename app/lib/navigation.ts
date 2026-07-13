@@ -124,7 +124,7 @@ export const CLASSIC_NAV: ExperienceNav = {
 /* -------------------------------------------------------------------------- */
 export const DELUXE_NAV: ExperienceNav = {
   primary: [
-    {label: 'Signature Bouquets', to: '/collections/all-flowers', mega: true},
+    {label: 'Signature Bouquets', to: '/collections/luxury-bouquets', mega: true},
     {label: 'Luxury Gifts', to: '/collections/add-ons'},
     {label: 'Premium Flowers', to: '/collections/roses'},
     {label: 'Occasions', to: '/collections/birthday'},
@@ -132,13 +132,15 @@ export const DELUXE_NAV: ExperienceNav = {
     {label: 'Contact', to: '/pages/contact'},
   ],
   // Focused Deluxe "Shop" mega — gifting only, no wholesale/supplies/weddings.
+  // Never links /collections/all-flowers (the shared variety hub, which can
+  // surface wholesale stems) or /collections/all — only curated gifting sets.
   mega: [
     {
       title: 'Signature',
       links: [
-        {label: 'Signature Bouquets', to: '/collections/all-flowers'},
-        {label: 'New Arrivals', to: '/collections/all-flowers?sort=newest'},
-        {label: 'Best Sellers', to: '/collections/all-flowers'},
+        {label: 'Signature Bouquets', to: '/collections/luxury-bouquets'},
+        {label: 'Premium Flowers', to: '/collections/roses'},
+        {label: 'Seasonal Deluxe', to: '/collections/seasonal-deluxe'},
       ],
     },
     {
@@ -172,12 +174,12 @@ export const DELUXE_NAV: ExperienceNav = {
     },
   ],
   footerShop: [
-    {label: 'Signature bouquets', to: '/collections/all-flowers'},
+    {label: 'Signature bouquets', to: '/collections/luxury-bouquets'},
     {label: 'Premium roses', to: '/collections/roses'},
     {label: 'Premium orchids', to: '/collections/orchids'},
     {label: 'Curated add-ons', to: '/collections/add-ons'},
     {label: 'Romance', to: '/collections/love-and-romance'},
-    {label: 'Shop all', to: '/collections/all'},
+    {label: 'Seasonal deluxe', to: '/collections/seasonal-deluxe'},
   ],
   footerServices: [
     {label: 'Birthday', to: '/collections/birthday'},

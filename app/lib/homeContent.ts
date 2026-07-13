@@ -68,7 +68,7 @@ export interface HomeContent {
     link?: {label: string; to: string};
     tiles: HomeTile[];
   };
-  productRow: {kicker: string; title: string};
+  productRow: {kicker: string; title: string; cta: {label: string; to: string}};
   /**
    * Editorial feature rows, rendered in order with alternating media/copy
    * layout. Deluxe = gifting editorials (wedding atelier, corporate styling);
@@ -104,7 +104,7 @@ const DELUXE: HomeContent = {
     kicker: 'The New Greenhouse, Kingston',
     title: "Luxury flowers for life's most meaningful moments.",
     body: "Signature bouquets, premium roses and orchids, and curated luxury gifts — hand-composed and delivered across Kingston for life's most meaningful moments.",
-    primary: {label: 'Shop Signature Bouquets', to: null},
+    primary: {label: 'Shop Signature Bouquets', to: '/collections/luxury-bouquets'},
     secondary: {label: 'Send a Luxury Gift', to: '/collections/add-ons'},
     slogan: SLOGAN,
     image: 'hero',
@@ -117,7 +117,7 @@ const DELUXE: HomeContent = {
       {
         title: 'Signature Bouquets',
         eyebrow: 'House arrangements',
-        to: null,
+        to: '/collections/luxury-bouquets',
         image: 'occasion',
         alt: 'Blush and ivory luxury floral arrangement',
       },
@@ -145,10 +145,15 @@ const DELUXE: HomeContent = {
     ],
   },
   flowers: {
-    kicker: 'Shop by flower',
-    title: 'Choose your bloom.',
-    link: {label: 'All flowers', to: '/collections/all-flowers'},
-    tiles: FLOWER_TILES,
+    kicker: 'Premium flowers',
+    title: 'The finest stems, by variety.',
+    link: {label: 'Premium roses', to: '/collections/roses'},
+    tiles: [
+      {label: 'Premium Roses', to: '/collections/roses'},
+      {label: 'Premium Orchids', to: '/collections/orchids'},
+      {label: 'Lilies', to: '/collections/lilies'},
+      {label: 'Signature Bouquets', to: '/collections/luxury-bouquets'},
+    ],
   },
   browse: {
     kicker: 'Shop by occasion',
@@ -165,6 +170,7 @@ const DELUXE: HomeContent = {
   productRow: {
     kicker: 'Best sellers',
     title: 'Arrangements made to be remembered.',
+    cta: {label: 'Shop all bouquets', to: '/collections/roses'},
   },
   editorials: [
     {
@@ -289,6 +295,7 @@ const CLASSIC: HomeContent = {
   productRow: {
     kicker: 'Trade favourites',
     title: 'Stems the pros reorder every week.',
+    cta: {label: 'Shop all', to: '/collections/all'},
   },
   editorials: [
     {

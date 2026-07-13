@@ -111,6 +111,42 @@
 }
 
 /* --------------------------------------------------------------------------
+   Deluxe editorial product cards — beyond palette.
+   The grid density, PDP layout, nav, homepage content and body font already
+   differ per experience; these rules give the Deluxe catalogue card a more
+   editorial, gallery-like finish (centered captions, champagne-gold price,
+   letter-spacing, a restrained gold hairline on hover) so Deluxe reads as a
+   distinct premium experience rather than a recoloured Classic. Classic keeps
+   its denser, left-aligned catalogue card unchanged.
+   -------------------------------------------------------------------------- */
+[data-experience='deluxe'] .ng-catalog-card-body,
+[data-experience='deluxe'] .ng-product-card-body {
+  text-align: center;
+  padding-block: var(--ng-space-3, 0.9rem) var(--ng-space-4, 1.1rem);
+}
+[data-experience='deluxe'] .ng-product-card-title {
+  letter-spacing: 0.01em;
+}
+[data-experience='deluxe'] .ng-product-card-price {
+  color: var(--ng-gold-text);
+  letter-spacing: 0.06em;
+}
+[data-experience='deluxe'] .ng-catalog-card {
+  border: 1px solid transparent;
+  transition: border-color var(--ng-duration-standard, 240ms) ease;
+}
+@media (hover: hover) {
+  [data-experience='deluxe'] .ng-product-card-x:hover .ng-catalog-card {
+    border-color: var(--ng-border-inverse);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-experience='deluxe'] .ng-catalog-card {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
    Experience toggle — compact segmented control (Classic / Deluxe)
    -------------------------------------------------------------------------- */
 .ng-exp-toggle {

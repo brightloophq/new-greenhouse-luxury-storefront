@@ -188,9 +188,9 @@ function ProductRow({
       <div className="greenhouse-section-heading">
         <p className="greenhouse-kicker">{content.kicker}</p>
         <h2 id="best-sellers">{content.title}</h2>
-        <Link to="/collections/all">Shop all</Link>
+        <Link to={content.cta.to}>{content.cta.label}</Link>
       </div>
-      <Suspense fallback={<FallbackProductGrid />}>
+      <Suspense fallback={<FallbackProductGrid to={content.cta.to} />}>
         <Await resolve={products}>
           {(response) => (
             <div className="recommended-products-grid">
@@ -199,7 +199,11 @@ function ProductRow({
                     <ProductItem key={product.id} product={product} />
                   ))
                 : FALLBACK_PRODUCTS.map((product) => (
-                    <FallbackProductCard key={product.title} {...product} />
+                    <FallbackProductCard
+                      key={product.title}
+                      {...product}
+                      to={content.cta.to}
+                    />
                   ))}
             </div>
           )}
@@ -407,11 +411,11 @@ function Newsletter({
   );
 }
 
-function FallbackProductGrid() {
+function FallbackProductGrid({to}: {to: string}) {
   return (
     <div className="recommended-products-grid">
       {FALLBACK_PRODUCTS.map((product) => (
-        <FallbackProductCard key={product.title} {...product} />
+        <FallbackProductCard key={product.title} {...product} to={to} />
       ))}
     </div>
   );
@@ -421,13 +425,15 @@ function FallbackProductCard({
   title,
   price,
   image,
+  to,
 }: {
   title: string;
   price: string;
   image: string;
+  to: string;
 }) {
   return (
-    <Link className="greenhouse-fallback-product product-item" to="/collections/all">
+    <Link className="greenhouse-fallback-product product-item" to={to}>
       <img src={image} alt={title} loading="lazy" />
       <h4>{title}</h4>
       <small>{price}</small>

@@ -34,6 +34,23 @@ import {useExperience} from '~/components/ExperienceProvider';
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
 
+/**
+ * Deluxe collections that are part of the approved journey but not yet created
+ * in Shopify Admin. Rather than 404, the loader renders a safe, empty, on-brand
+ * collection page so the Deluxe experience is complete and never falls back to a
+ * shared collection that could leak wholesale products. Populate these in Admin
+ * (see docs/FOCUSED_DUAL_STORE_FINAL_QA.md → Remaining Shopify Admin tasks) and
+ * remove the handle here once live.
+ */
+const PLANNED_COLLECTIONS: Record<string, {title: string; description: string}> =
+  {
+    'seasonal-deluxe': {
+      title: 'Seasonal Deluxe',
+      description:
+        'Our seasonal luxury edit is being curated. Explore Signature Bouquets and Premium Flowers in the meantime.',
+    },
+  };
+
 function flowerLabelFor(handle?: string): string | undefined {
   if (!handle) return undefined;
   return FACETS.find((f) => f.key === 'flower')?.options.find(
@@ -123,6 +140,36 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   ]);
 
   if (!collection) {
+    // Approved-but-not-yet-created Deluxe collection → safe empty state, no 404,
+    // no wholesale fallback.
+    const planned = PLANNED_COLLECTIONS[handle];
+    if (planned) {
+      return {
+        collection: {
+          id: `planned:${handle}`,
+          handle,
+          title: planned.title,
+          description: planned.description,
+          image: null,
+          seo: {title: planned.title, description: planned.description},
+          products: {
+            nodes: [],
+            pageInfo: {
+              hasPreviousPage: false,
+              hasNextPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          // Shape matches the CollectionQuery result the route consumes; the
+          // unused query-only fields are intentionally omitted.
+        } as unknown as NonNullable<typeof collection>,
+        applied,
+        sort,
+        flowerLabel: undefined,
+        flowerProducts: null,
+      };
+    }
     throw new Response(`Collection ${handle} not found`, {status: 404});
   }
 
