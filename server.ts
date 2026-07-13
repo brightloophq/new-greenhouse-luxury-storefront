@@ -1,7 +1,7 @@
 import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
-import {experienceCookie, type ExperienceMode} from '~/lib/experience';
+import {experienceEntryResponse} from '~/lib/experienceEntry';
 
 /**
  * Export a fetch handler in module format.
@@ -13,20 +13,14 @@ export default {
     executionContext: ExecutionContext,
   ): Promise<Response> {
     try {
-      // Experience entry points: /classic and /deluxe (and any nested path)
-      // set the experience cookie and 302-redirect to the clean canonical URL.
-      // Handled here (before routing) so it can't collide with the optional
-      // ($locale) segment or the catch-all 404 route. Path + query preserved.
-      const url = new URL(request.url);
-      const entry = url.pathname.match(/^\/(classic|deluxe)(?=\/|$)/);
-      if (entry) {
-        const mode = entry[1] as ExperienceMode;
-        const target = (url.pathname.slice(entry[0].length) || '/') + url.search;
-        return new Response(null, {
-          status: 302,
-          headers: {Location: target, 'Set-Cookie': experienceCookie(mode)},
-        });
-      }
+      // Experience entry policy: /classic, /deluxe and their deep links set the
+      // ng_experience cookie and 302 to the canonical store path. Resolved here
+      // (before routing) so nested /classic/collections/* deep links can't
+      // collide with the optional ($locale) segment. Returns null — falling
+      // through to React Router — for the /classic/wholesale and /classic/supplies
+      // landing pages, which render and set the cookie themselves.
+      const entryRedirect = experienceEntryResponse(request);
+      if (entryRedirect) return entryRedirect;
 
       const hydrogenContext = await createHydrogenRouterContext(
         request,

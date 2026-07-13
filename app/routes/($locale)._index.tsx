@@ -11,7 +11,7 @@ import {useExperience} from '~/components/ExperienceProvider';
 import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
 import {getExperienceFromRequest} from '~/lib/experience';
 import type {ExperienceMode} from '~/lib/experience';
-import {HOME_CONTENT, type HomeImageKey} from '~/lib/homeContent';
+import {HOME_CONTENT, type HomeImageKey, type HomeEditorial} from '~/lib/homeContent';
 import heroEditorial from '~/assets/greenhouse-hero-editorial-1920.jpg';
 import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
@@ -115,8 +115,13 @@ export default function Homepage() {
       <TileSection content={content.flowers} labelledBy="shop-by-flower-title" />
       <TileSection content={content.browse} labelledBy="shop-by-browse-title" />
       <ProductRow content={content.productRow} products={data.recommendedProducts} />
-      <Editorial content={content.wedding} variant="wedding" />
-      <Editorial content={content.corporate} variant="corporate" />
+      {content.editorials.map((editorial, index) => (
+        <Editorial
+          key={editorial.title}
+          content={editorial}
+          variant={index % 2 === 0 ? 'wedding' : 'corporate'}
+        />
+      ))}
       <HeritageStory content={content.heritage} />
       <Testimonials content={content.testimonials} />
       <Newsletter content={content.newsletter} />
@@ -273,7 +278,7 @@ function Editorial({
   content,
   variant,
 }: {
-  content: (typeof HOME_CONTENT)[ExperienceMode]['wedding'];
+  content: HomeEditorial;
   variant: 'wedding' | 'corporate';
 }) {
   const titleId = `${variant}-editorial-title`;

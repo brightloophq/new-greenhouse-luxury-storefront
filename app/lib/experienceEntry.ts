@@ -1,24 +1,32 @@
-import {redirect} from 'react-router';
 import {experienceCookie, type ExperienceMode} from '~/lib/experience';
 
 /**
- * Entry-route logic for `/classic`, `/deluxe` and their deep-link splats
- * (Option A — see docs/FOCUSED_DUAL_STORE_AUDIT.md). These routes exist to:
- *   1. set the `ng_experience` cookie so the shopper persists in the chosen
- *      experience across navigation and refresh, and
- *   2. 302 to the canonical, unprefixed in-store path so marketing deep links
- *      never create duplicate-content URLs.
+ * Experience entry-URL policy for `/classic`, `/deluxe` and their deep links.
  *
- * The cart is never touched; prices are never changed. Only same-origin,
- * absolute-path targets are honoured.
+ * Resolved in the Oxygen worker (server.ts) BEFORE React Router runs, for two
+ * reasons:
+ *   1. `/classic/collections/<h>` and `/classic/pages/<h>` otherwise match the
+ *      optional `($locale)` segment (locale = "classic") and 404 in that layout.
+ *      Handling them here avoids that collision deterministically.
+ *   2. It keeps one entry mechanism instead of a worker intercept AND a set of
+ *      redirecting route files fighting flat-route ranking.
+ *
+ * These entry URLs (a) set the `ng_experience` cookie so the shopper persists in
+ * the chosen experience, and (b) 302 to the canonical, unprefixed store path so
+ * marketing deep links never create duplicate-content URLs. The cart is never
+ * touched; prices are never changed; only same-origin absolute paths are honoured.
+ *
+ * EXCEPTION — real content pages that live under `/classic/*` and must RENDER
+ * (not redirect): `/classic/wholesale` and `/classic/supplies`. For those this
+ * returns `null` so React Router serves the landing route, which sets the cookie
+ * itself via its loader headers.
  */
 
 /**
- * Friendly Classic deep-link slugs → canonical store paths. Keeps marketing
- * URLs (`/classic/wholesale`) stable even before dedicated landing pages ship.
+ * Friendly Classic/Deluxe deep-link slugs → canonical store paths. Keeps
+ * marketing URLs (`/classic/greenery`, `/deluxe/gifts`) stable and pointed at
+ * live collections.
  */
-// `wholesale` and `supplies` are served by real /classic/* landing routes,
-// which outrank this splat — only extra friendly slugs need mapping here.
 const CLASSIC_SLUGS: Record<string, string> = {
   greenery: '/collections/greenery-and-fillers',
   flowers: '/collections/bulk-flowers',
@@ -31,6 +39,12 @@ const DELUXE_SLUGS: Record<string, string> = {
   occasions: '/collections/birthday',
 };
 
+/**
+ * Content routes under `/classic/*` that must render in React Router rather than
+ * redirect. They set the experience cookie in their own loaders.
+ */
+const CLASSIC_LANDING = new Set(['wholesale', 'supplies']);
+
 /** Sanitize an arbitrary target to a safe, same-origin absolute path. */
 function safePath(candidate: string | null | undefined): string | null {
   if (!candidate) return null;
@@ -39,28 +53,22 @@ function safePath(candidate: string | null | undefined): string | null {
 }
 
 /**
- * Resolve `/classic` or `/deluxe` (optionally `?to=`) to a canonical redirect
- * that also sets the experience cookie.
+ * If `request` is an experience entry URL, return a 302 response that sets the
+ * cookie and points at the canonical store path. Returns `null` when the path is
+ * not an entry URL, or is a landing content route that should render instead.
  */
-export function enterExperience(request: Request, mode: ExperienceMode) {
+export function experienceEntryResponse(request: Request): Response | null {
   const url = new URL(request.url);
-  const to = safePath(url.searchParams.get('to')) ?? '/';
-  return redirect(to, {headers: {'Set-Cookie': experienceCookie(mode)}});
-}
+  const match = url.pathname.match(/^\/(classic|deluxe)(?:\/(.*))?$/);
+  if (!match) return null;
 
-/**
- * Resolve a deep link splat (`/classic/*`, `/deluxe/*`) to a canonical store
- * path and set the experience cookie. Handles friendly slugs, `collections/*`
- * and `pages/*` pass-through, and `?to=` override; falls back to the homepage.
- */
-export function enterExperienceDeepLink(
-  request: Request,
-  mode: ExperienceMode,
-  splat: string | undefined,
-) {
-  const url = new URL(request.url);
+  const mode = match[1] as ExperienceMode;
+  const rest = (match[2] ?? '').replace(/^\/+|\/+$/g, '');
+
+  // Landing content pages render in React Router (they set the cookie).
+  if (mode === 'classic' && CLASSIC_LANDING.has(rest)) return null;
+
   const override = safePath(url.searchParams.get('to'));
-  const rest = (splat ?? '').replace(/^\/+/, '');
   const slugs = mode === 'deluxe' ? DELUXE_SLUGS : CLASSIC_SLUGS;
 
   let to = override ?? '/';
@@ -72,5 +80,8 @@ export function enterExperienceDeepLink(
     }
   }
 
-  return redirect(to, {headers: {'Set-Cookie': experienceCookie(mode)}});
+  return new Response(null, {
+    status: 302,
+    headers: {Location: to, 'Set-Cookie': experienceCookie(mode)},
+  });
 }

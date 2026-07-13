@@ -69,8 +69,13 @@ export interface HomeContent {
     tiles: HomeTile[];
   };
   productRow: {kicker: string; title: string};
-  wedding: HomeEditorial;
-  corporate: HomeEditorial;
+  /**
+   * Editorial feature rows, rendered in order with alternating media/copy
+   * layout. Deluxe = gifting editorials (wedding atelier, corporate styling);
+   * Classic = wholesale-first (how ordering works, delivery & pickup) — no
+   * Weddings/Corporate departments in the active journey.
+   */
+  editorials: HomeEditorial[];
   heritage: {kicker: string; title: string; body: string};
   testimonials: {
     kicker: string;
@@ -161,22 +166,24 @@ const DELUXE: HomeContent = {
     kicker: 'Best sellers',
     title: 'Arrangements made to be remembered.',
   },
-  wedding: {
-    kicker: 'Wedding atelier',
-    title: 'Your wedding, imagined in bloom.',
-    body: 'From ceremony arches to tablescapes, our floral team composes the atmosphere around your vows, venue, and the feeling you want guests to carry home.',
-    cta: {label: 'Book a Floral Consultation', to: '/pages/wedding-events'},
-    image: 'occasion',
-    alt: 'Romantic blush and ivory wedding floral arrangement',
-  },
-  corporate: {
-    kicker: 'Corporate floral services',
-    title: 'Flowers that hold the room.',
-    body: 'Weekly floral styling and event arrangements for Kingston hotels, offices, restaurants, embassies, boutiques, and private functions.',
-    cta: {label: 'Explore Corporate Flowers', to: '/collections/corporate-gifting'},
-    image: 'botanical',
-    alt: 'Botanical floral arrangement for a luxury hospitality interior',
-  },
+  editorials: [
+    {
+      kicker: 'Wedding atelier',
+      title: 'Your wedding, imagined in bloom.',
+      body: 'From ceremony arches to tablescapes, our floral team composes the atmosphere around your vows, venue, and the feeling you want guests to carry home.',
+      cta: {label: 'Book a Floral Consultation', to: '/pages/wedding-events'},
+      image: 'occasion',
+      alt: 'Romantic blush and ivory wedding floral arrangement',
+    },
+    {
+      kicker: 'Corporate floral services',
+      title: 'Flowers that hold the room.',
+      body: 'Weekly floral styling and event arrangements for Kingston hotels, offices, restaurants, embassies, boutiques, and private functions.',
+      cta: {label: 'Explore Corporate Flowers', to: '/collections/corporate-gifting'},
+      image: 'botanical',
+      alt: 'Botanical floral arrangement for a luxury hospitality interior',
+    },
+  ],
   heritage: {
     kicker: 'Kingston, Jamaica',
     title: 'Four decades of flowers, memories, and moments.',
@@ -283,22 +290,24 @@ const CLASSIC: HomeContent = {
     kicker: 'Trade favourites',
     title: 'Stems the pros reorder every week.',
   },
-  wedding: {
-    kicker: 'Weddings & events',
-    title: 'Flowers by the box for planners and venues.',
-    body: 'Order ceremony and reception flowers in bulk — fresh, graded stems and greenery delivered on schedule so your team can build with confidence.',
-    cta: {label: 'Order Event Flowers', to: '/classic/wholesale'},
-    image: 'occasion',
-    alt: 'Bulk wedding flowers and greenery prepared for an event build',
-  },
-  corporate: {
-    kicker: 'Standing orders',
-    title: 'Weekly flowers for venues and offices.',
-    body: 'Reliable standing orders and bulk supply for Kingston hotels, restaurants, offices and event teams — consistent quality, delivered on your schedule.',
-    cta: {label: 'Set Up a Standing Order', to: '/pages/contact'},
-    image: 'botanical',
-    alt: 'Bulk floral supply prepared for a hospitality standing order',
-  },
+  editorials: [
+    {
+      kicker: 'How wholesale ordering works',
+      title: 'Order by the bunch or the box.',
+      body: 'Browse by variety, colour or wholesale collection, build your list at trade pricing, and we prepare it fresh and graded for delivery or pickup — no account or minimum to get started.',
+      cta: {label: 'Start a Wholesale Order', to: '/classic/wholesale'},
+      image: 'occasion',
+      alt: 'Wholesale flowers graded and boxed for a trade order',
+    },
+    {
+      kicker: 'Delivery & pickup',
+      title: 'Fresh stems, delivered across Jamaica.',
+      body: 'Island-wide delivery and same-day pickup in Kingston & St. Andrew, with cold-chain handling so every order arrives in peak condition for your build.',
+      cta: {label: 'Delivery & Pickup Details', to: '/pages/delivery-information'},
+      image: 'botanical',
+      alt: 'Fresh floral stems prepared for island-wide delivery',
+    },
+  ],
   heritage: {
     kicker: 'Kingston, Jamaica',
     title: 'Four decades supplying Jamaica’s florists.',
