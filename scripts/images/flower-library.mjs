@@ -39,34 +39,83 @@ const LIBRARY = [
   ['asters', 'Asters', [['White','white'],['Pink','pink'],['Purple','purple'],['Lavender','lavender']]],
   ['babys-breath', "Baby's Breath", [['White','white']]],
   ['calla-lilies', 'Calla Lilies', [['White','white'],['Yellow','yellow'],['Pink','pink'],['Purple','purple'],['Orange','orange']]],
+  // --- Researched variety expansion (real commercial types/colours) ---------
+  ['eucalyptus', 'Eucalyptus', [
+    ['Silver Dollar','silver-dollar'],
+    ['Seeded','seeded','seeded eucalyptus with textured green seed pods'],
+    ['Baby Blue','baby-blue','Baby Blue eucalyptus with round dusty-blue-green leaves'],
+    ['Willow','willow','willow eucalyptus with long slender leaves'],
+    ['Parvifolia','parvifolia','parvifolia small-leaf eucalyptus'],
+  ]],
+  ['greenery', 'Greenery', [
+    ['Mixed','mixed'],
+    ['Italian Ruscus','ruscus','Italian ruscus foliage with glossy pointed green leaves'],
+    ['Salal','salal','salal lemon-leaf foliage with broad glossy green leaves'],
+    ['Leatherleaf Fern','leatherleaf-fern','leatherleaf fern fronds'],
+    ['Pittosporum','pittosporum','green pittosporum foliage'],
+    ['Bear Grass','bear-grass','wispy green bear grass'],
+  ]],
+  ['tropicals', 'Tropical Flowers', [
+    ['Mixed','mixed'],
+    ['Bird of Paradise','bird-of-paradise','orange and blue bird of paradise flowers'],
+    ['Anthurium Red','anthurium-red','glossy heart-shaped red anthurium'],
+    ['Anthurium Pink','anthurium-pink','glossy heart-shaped pink anthurium'],
+    ['Ginger','ginger','red torch ginger flowers'],
+    ['Heliconia','heliconia','red and yellow heliconia lobster-claw flowers'],
+    ['Protea','protea','pink king protea'],
+  ]],
+  ['fillers', 'Fillers', [
+    ['White','white'],
+    ['Green','green'],
+    ['Wax Flower','wax-flower-pink','delicate pink waxflower filler'],
+    ['Statice','statice-purple','purple statice filler flowers'],
+    ['Solidago','solidago','golden yellow solidago filler'],
+    ['Limonium','limonium','airy lavender limonium filler'],
+  ]],
+  ['hypericum', 'Hypericum Berries', [
+    ['Red','red'],['Green','green'],['Peach','peach'],
+    ['Pink','pink'],['Ivory','ivory'],['Burgundy','burgundy'],
+  ]],
+  ['orchids', 'Orchids', [
+    ['White','white'],['Purple','purple'],['Pink','pink'],
+    ['Green','green'],['Yellow','yellow'],
+  ]],
+  ['novelties', 'Novelty Blooms', [
+    ['Mixed','mixed'],
+    ['Billy Balls','billy-balls','yellow craspedia billy balls'],
+    ['Celosia','celosia','pink brain celosia'],
+    ['Scabiosa Pods','scabiosa-pods','round scabiosa seed pods'],
+  ]],
+  ['gift-bouquets', 'Gift Bouquets', [
+    ['Mixed','mixed'],
+    ['Pastel Mixed','pastel','a mixed pastel gift bouquet of soft pink, cream and lavender flowers'],
+    ['Bright Mixed','bright','a mixed bright gift bouquet of vivid pink, orange and yellow flowers'],
+  ]],
   ['carnations', 'Carnations', [['White','white'],['Pink','pink'],['Red','red'],['Burgundy','burgundy'],['Peach','peach'],['Yellow','yellow'],['Lavender','lavender']]],
   ['chrysanthemums', 'Chrysanthemums', [['White','white'],['Yellow','yellow'],['Purple','purple'],['Pink','pink'],['Red','red'],['Bronze','bronze']]],
   ['delphinium', 'Delphinium', [['Blue','blue'],['White','white'],['Purple','purple'],['Pink','pink']]],
-  ['eucalyptus', 'Eucalyptus', [['Silver Dollar','silver-dollar']]],
-  ['fillers', 'Fillers', [['White','white'],['Green','green']]],
   ['gerbera-daisies', 'Gerbera Daisies', [['White','white'],['Pink','pink'],['Red','red'],['Yellow','yellow'],['Orange','orange']]],
-  ['gift-bouquets', 'Gift Bouquets', [['Mixed','mixed']]],
-  ['greenery', 'Greenery', [['Mixed','mixed']]],
   ['hydrangea', 'Hydrangea', [['White','white'],['Blue','blue'],['Pink','pink'],['Green','green'],['Purple','purple']]],
-  ['hypericum', 'Hypericum Berries', [['Red','red'],['Green','green'],['Peach','peach']]],
   ['lilies', 'Lilies', [['White','white'],['Pink','pink'],['Orange','orange'],['Yellow','yellow']]],
   ['lisianthus', 'Lisianthus', [['White','white'],['Pink','pink'],['Purple','purple'],['Lavender','lavender']]],
-  ['novelties', 'Novelty Blooms', [['Mixed','mixed']]],
-  ['orchids', 'Orchids', [['White','white'],['Purple','purple'],['Pink','pink']]],
   ['ranunculus', 'Ranunculus', [['White','white'],['Pink','pink'],['Red','red'],['Yellow','yellow'],['Orange','orange']]],
   ['roses-in-stock', 'Roses', [['Red','red'],['White','white'],['Pink','pink'],['Yellow','yellow'],['Orange','orange'],['Lavender','lavender'],['Peach','peach']]],
   ['snapdragon', 'Snapdragon', [['White','white'],['Pink','pink'],['Yellow','yellow'],['Red','red'],['Purple','purple']]],
   ['spray-roses', 'Spray Roses', [['White','white'],['Pink','pink'],['Red','red'],['Yellow','yellow'],['Peach','peach']]],
   ['stock', 'Stock', [['White','white'],['Pink','pink'],['Purple','purple'],['Lavender','lavender']]],
-  ['tropicals', 'Tropical Flowers', [['Mixed','mixed']]],
   ['tulips', 'Tulips', [['White','white'],['Pink','pink'],['Yellow','yellow'],['Purple','purple'],['Orange','orange'],['Red','red']]],
 ];
 
-function buildPrompt(name, colorLabel) {
+function buildPrompt(name, colorLabel, override) {
+  // `override` (optional 3rd tuple element) is an explicit subject phrase for
+  // TYPE-based varieties (e.g. "seeded eucalyptus", "Italian ruscus foliage",
+  // "orange bird of paradise") where the label is not a colour.
   const single = ['Mixed', 'Silver Dollar'].includes(colorLabel);
-  const subject = single
-    ? `a hand-tied bunch of fresh ${name}`
-    : `a hand-tied bunch of fresh ${colorLabel} ${name}, true ${colorLabel.toLowerCase()} colour`;
+  const subject = override
+    ? `a hand-tied bunch of fresh ${override}`
+    : single
+      ? `a hand-tied bunch of fresh ${name}`
+      : `a hand-tied bunch of fresh ${colorLabel} ${name}, true ${colorLabel.toLowerCase()} colour`;
   return (
     `Professional florist product catalog photograph of ${subject}, photographed ` +
     `on a pure white seamless studio background that fills the entire square frame ` +
@@ -118,7 +167,7 @@ async function main() {
     let gen = 0, skip = 0, err = 0;
     console.log(`\n▸ ${name} (${handle}) — ${colors.length} colour(s)`);
 
-    for (const [colorLabel, file] of colors) {
+    for (const [colorLabel, file, override] of colors) {
       const out = join(dir, `${file}.png`);
       if (existsSync(out) && !FORCE) { skip++; totalSkip++; console.log(`   • skip  ${handle}/${file}.png (exists)`); continue; }
 
@@ -126,7 +175,7 @@ async function main() {
 
       let saved = false;
       for (let attempt = 0; attempt <= env.maxRetries && !saved; attempt++) {
-        const res = await generateImage({prompt: buildPrompt(name, colorLabel), negativePrompt: NEGATIVE, aspectRatio: '1:1'});
+        const res = await generateImage({prompt: buildPrompt(name, colorLabel, override), negativePrompt: NEGATIVE, aspectRatio: '1:1'});
         if (res.ok && res.bytesBase64) {
           const buf = Buffer.from(res.bytesBase64, 'base64');
           writeFileSync(out, buf); // never save API failures; only successful bytes

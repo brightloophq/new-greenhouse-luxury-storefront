@@ -148,3 +148,33 @@ Gold standard: Alstroemeria (white seamless bg, jute twine, square).
 
 ## Tulips (tulips)
 - generated 5 · skipped 1 · errors 0 · colours: White, Pink, Yellow, Purple, Orange, Red
+
+## Asters (asters)
+- generated 1 · skipped 3 · errors 0 · colours: White, Pink, Purple, Lavender
+
+## Lilies (lilies)
+- generated 1 · skipped 3 · errors 0 · colours: White, Pink, Orange, Yellow
+
+## Eucalyptus (eucalyptus)
+- generated 4 · skipped 1 · errors 0 · colours: Silver Dollar, Seeded, Baby Blue, Willow, Parvifolia
+
+## Greenery (greenery)
+- generated 5 · skipped 1 · errors 0 · colours: Mixed, Italian Ruscus, Salal, Leatherleaf Fern, Pittosporum, Bear Grass
+
+## Tropical Flowers (tropicals)
+- generated 6 · skipped 1 · errors 0 · colours: Mixed, Bird of Paradise, Anthurium Red, Anthurium Pink, Ginger, Heliconia, Protea
+
+## Fillers (fillers)
+- generated 4 · skipped 2 · errors 0 · colours: White, Green, Wax Flower, Statice, Solidago, Limonium
+
+## Hypericum Berries (hypericum)
+- generated 3 · skipped 3 · errors 0 · colours: Red, Green, Peach, Pink, Ivory, Burgundy
+
+## Orchids (orchids)
+- generated 2 · skipped 3 · errors 0 · colours: White, Purple, Pink, Green, Yellow
+
+## Novelty Blooms (novelties)
+- generated 3 · skipped 1 · errors 0 · colours: Mixed, Billy Balls, Celosia, Scabiosa Pods
+
+## Gift Bouquets (gift-bouquets)
+- generated 2 · skipped 1 · errors 0 · colours: Mixed, Pastel Mixed, Bright Mixed
