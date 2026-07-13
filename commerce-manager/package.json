@@ -23,6 +23,9 @@
     "plan": "node index.mjs plan",
     "validate": "node index.mjs validate",
     "alstro:dry-run": "node scripts/alstroemeria-products.js",
-    "alstro:create": "node scripts/alstroemeria-products.js --commit"
+    "alstro:create": "node scripts/alstroemeria-products.js --commit",
+    "experience:audit": "node scripts/experience-audit.js",
+    "experience:dry-run": "node scripts/experience-classify.js",
+    "experience:apply": "node scripts/experience-apply.js"
   }
 }
