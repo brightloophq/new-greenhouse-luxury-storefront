@@ -13,7 +13,14 @@
     "codegen": "shopify hydrogen codegen && react-router typegen",
     "test": "vitest run",
     "flowers:optimize": "node scripts/optimize-flowers.mjs",
-    "pages:optimize": "node scripts/optimize-pages.mjs"
+    "pages:optimize": "node scripts/optimize-pages.mjs",
+    "images:audit": "node scripts/images/audit.mjs",
+    "images:matrix": "node scripts/images/matrix.mjs",
+    "images:pilot:dry-run": "node scripts/images/pilot.mjs",
+    "images:pilot:generate": "node scripts/images/pilot.mjs --generate",
+    "images:optimize": "node scripts/images/optimize.mjs",
+    "images:integrate": "node scripts/images/integrate.mjs",
+    "images:validate": "node scripts/images/validate.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
