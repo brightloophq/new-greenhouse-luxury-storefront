@@ -116,3 +116,97 @@
   background: linear-gradient(135deg, var(--ng-bg-surface-muted), var(--ng-bg-surface));
   inline-size: 100%;
 }
+
+/* Search page ------------------------------------------------------------ */
+.ng-search-page {
+  margin-inline: auto;
+  max-width: var(--ng-container-xl);
+  padding-inline: var(--ng-container-gutter);
+}
+
+.ng-search-hero {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-3);
+  margin-inline: auto;
+  max-width: 60ch;
+  padding-block: var(--ng-section-standard) var(--ng-space-10);
+  text-align: center;
+}
+
+.ng-search-title {
+  color: var(--ng-text-primary);
+  margin: 0;
+}
+
+.ng-search-term {
+  color: var(--ng-gold-text);
+  font-style: italic;
+}
+
+.ng-search-sub {
+  color: var(--ng-text-secondary);
+  margin: 0;
+}
+
+.ng-search-form {
+  inline-size: 100%;
+  margin-block-start: var(--ng-space-4);
+}
+
+.ng-search-form-row {
+  display: flex;
+  gap: var(--ng-space-2);
+  inline-size: 100%;
+  margin-inline: auto;
+  max-width: 32rem;
+}
+
+.ng-search-input {
+  background: var(--ng-bg-surface);
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-sm);
+  color: var(--ng-text-primary);
+  flex: 1 1 auto;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-body);
+  min-height: var(--ng-button-height-md);
+  min-inline-size: 0;
+  padding: 0 var(--ng-space-4);
+}
+
+.ng-search-input:focus-visible {
+  border-color: var(--ng-color-luxury-gold);
+  outline: none;
+}
+
+.ng-search-submit {
+  background: var(--ng-color-background);
+  border: 1px solid var(--ng-color-background);
+  border-radius: var(--ng-radius-sm);
+  color: var(--ng-color-warm-white);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-button);
+  font-weight: 800;
+  letter-spacing: var(--ng-letter-nav);
+  min-height: var(--ng-button-height-md);
+  padding: 0 var(--ng-space-6);
+  text-transform: uppercase;
+  transition: var(--ng-transition-color), var(--ng-transition-transform);
+}
+
+.ng-search-submit:hover {
+  transform: translateY(-1px);
+}
+
+.ng-search-error {
+  color: var(--ng-color-error, #b3261e);
+  text-align: center;
+}
+
+.ng-search-results {
+  margin-block-start: var(--ng-space-4);
+}

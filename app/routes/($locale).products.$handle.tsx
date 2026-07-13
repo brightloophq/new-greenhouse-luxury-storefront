@@ -12,9 +12,9 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {useExperience} from '~/components/ExperienceProvider';
+import {ProductGrid} from '~/components/catalog/ProductGrid';
+import type {CatalogProduct} from '~/components/catalog/types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
-import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 
 export const meta: Route.MetaFunction = ({data}) => {
   // Use the Shopify SEO title verbatim when set (it may already include the
@@ -62,11 +62,13 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw new Error('Expected product handle to be defined');
   }
 
-  const [{product}] = await Promise.all([
+  const [{product}, {productRecommendations}] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions: getSelectedProductOptions(request)},
     }),
-    // Add other queries here, so that they are loaded in parallel
+    // Related products for the "You may also like" band (empty for brand-new
+    // products — the PDP falls back to a curated add-ons band in that case).
+    storefront.query(PRODUCT_RECOMMENDATIONS_QUERY, {variables: {handle}}),
   ]);
 
   if (!product?.id) {
@@ -78,6 +80,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   return {
     product,
+    recommendations: productRecommendations ?? [],
   };
 }
 
@@ -94,7 +97,7 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 }
 
 export default function Product() {
-  const {product} = useLoaderData<typeof loader>();
+  const {product, recommendations} = useLoaderData<typeof loader>();
 
   // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
@@ -119,22 +122,39 @@ export default function Product() {
     ? ['Secure checkout', 'Hand-tied in Kingston', 'Signature presentation']
     : ['Wholesale pricing available', 'Fresh, graded stems', 'Island-wide delivery'];
 
+  // Real product gallery: the selected-variant image leads; any additional
+  // product images become secondary shots. No more identical stock banners.
+  const galleryImages = product.images?.nodes ?? [];
+  const secondaryImages = galleryImages.filter(
+    (image) => image?.url && image.url !== selectedVariant?.image?.url,
+  );
+
+  // Real related products (recommendations), scoped to the active experience so
+  // Deluxe never surfaces wholesale items. Falls back to a curated band below.
+  const related = (recommendations ?? [])
+    .filter((item) => item && item.id !== product.id)
+    .filter((item) =>
+      deluxe ? (item.tags ?? []).includes('channel:retail') : true,
+    )
+    .slice(0, 4)
+    .map(toRecommendationCard);
+
   return (
     <div className="product commerce-product">
       <section className="product-gallery" aria-label={`${title} imagery`}>
         <ProductImage image={selectedVariant?.image} />
-        <div className="product-gallery-secondary">
-          <img
-            src={occasionBanner}
-            alt="Luxury floral arrangement styled with gifting details"
-            loading="lazy"
-          />
-          <img
-            src={botanicalBanner}
-            alt="Botanical floral arrangement with deep greenery"
-            loading="lazy"
-          />
-        </div>
+        {secondaryImages.length ? (
+          <div className="product-gallery-secondary">
+            {secondaryImages.map((image) => (
+              <img
+                key={image.id ?? image.url}
+                src={image.url}
+                alt={image.altText ?? title}
+                loading="lazy"
+              />
+            ))}
+          </div>
+        ) : null}
       </section>
       <aside className="product-main">
         <p className="greenhouse-kicker">{vendor || 'The New Greenhouse'}</p>
@@ -199,26 +219,39 @@ export default function Product() {
           </details>
         </div>
       </aside>
-      <section className="product-commerce-section product-pairings">
-        <div>
-          <p className="greenhouse-kicker">Perfect pairings</p>
-          <h2>Complete the gesture.</h2>
-        </div>
-        <div className="product-mini-grid">
-          <Link to="/collections/all">Luxury gift basket</Link>
-          <Link to="/collections/all">Premium vase upgrade</Link>
-          <Link to="/collections/all">Corporate floral note</Link>
-        </div>
-      </section>
-      <section className="product-commerce-section product-recently-viewed">
-        <div>
-          <p className="greenhouse-kicker">Recently viewed</p>
-          <h2>Continue exploring the collection.</h2>
-        </div>
-        <Link className="greenhouse-button greenhouse-button-dark" to="/collections/all">
-          View all arrangements
-        </Link>
-      </section>
+      {related.length ? (
+        <section className="product-commerce-section product-pairings">
+          <div>
+            <p className="greenhouse-kicker">You may also like</p>
+            <h2>Complete the gesture.</h2>
+          </div>
+          <ProductGrid products={related} />
+        </section>
+      ) : (
+        <section className="product-commerce-section product-pairings product-pairings-curated">
+          <div>
+            <p className="greenhouse-kicker">
+              {deluxe ? 'Complete the gesture' : 'Build your order'}
+            </p>
+            <h2>
+              {deluxe
+                ? 'Add a finishing touch.'
+                : 'Everything for your build.'}
+            </h2>
+            <p className="product-pairings-copy">
+              {deluxe
+                ? 'Pair your arrangement with a curated add-on and a hand-written note, wrapped and delivered together.'
+                : 'Add greenery, vases and studio supplies to complete your order in one delivery.'}
+            </p>
+          </div>
+          <Link
+            className="greenhouse-button greenhouse-button-dark"
+            to={deluxe ? '/collections/add-ons' : '/collections/floral-supplies'}
+          >
+            {deluxe ? 'Explore add-ons' : 'Shop supplies'}
+          </Link>
+        </section>
+      )}
       <Analytics.ProductView
         data={{
           products: [
@@ -285,6 +318,15 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
+    images(first: 8) {
+      nodes {
+        id
+        url
+        altText
+        width
+        height
+      }
+    }
     options {
       name
       optionValues {
@@ -329,3 +371,69 @@ const PRODUCT_QUERY = `#graphql
   }
   ${PRODUCT_FRAGMENT}
 ` as const;
+
+const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
+  fragment PdpRecommendation on Product {
+    id
+    handle
+    title
+    vendor
+    availableForSale
+    tags
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+  }
+` as const;
+
+const PRODUCT_RECOMMENDATIONS_QUERY = `#graphql
+  query ProductRecommendations(
+    $country: CountryCode
+    $language: LanguageCode
+    $handle: String!
+  ) @inContext(country: $country, language: $language) {
+    productRecommendations(productHandle: $handle, intent: RELATED) {
+      ...PdpRecommendation
+    }
+  }
+  ${RECOMMENDED_PRODUCT_FRAGMENT}
+` as const;
+
+/** Map a recommended-product node onto the catalog card view-model. */
+function toRecommendationCard(
+  node: NonNullable<
+    Awaited<ReturnType<typeof loader>>['recommendations']
+  >[number],
+): CatalogProduct {
+  return {
+    id: node.id,
+    handle: node.handle,
+    title: node.title,
+    vendor: node.vendor,
+    availableForSale: node.availableForSale,
+    featuredImage: node.featuredImage,
+    images: node.featuredImage ? {nodes: [node.featuredImage]} : null,
+    priceRange: node.priceRange,
+    compareAtPriceRange: node.compareAtPriceRange,
+  };
+}
