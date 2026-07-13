@@ -9,7 +9,7 @@
 // DRY-RUN by default (env). Never overwrites unless --force. Auto-retries.
 // Writes source-images/luxury/<handle>.png. Use --proof for the 3 style-lock
 // arrangements; otherwise reads the full list below.
-import {existsSync, mkdirSync, writeFileSync} from 'node:fs';
+import {existsSync, mkdirSync, writeFileSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {PATHS, kb} from './lib.mjs';
 import {loadImageEnv, envSummary, redact} from './env.mjs';
@@ -58,7 +58,8 @@ async function main() {
   const env = loadImageEnv();
   const sum = envSummary();
   const live = !env.dryRun;
-  const list = PROOF ? PROOF_SET : PROOF_SET; // full list added after style-lock approval
+  const full = JSON.parse(readFileSync(join(ROOT, 'config', 'luxury-arrangements.json'), 'utf8')).arrangements;
+  const list = PROOF ? PROOF_SET : full;
   console.log('════════════════════════════════════════════════════════════');
   console.log(`  LUXURY ARRANGEMENTS — ${live ? 'LIVE' : 'DRY-RUN'}${PROOF ? ' · STYLE-LOCK PROOF' : ''}`);
   console.log(`  model: ${sum.model} · key: ${sum.keyPreview} · ${list.length} concept(s)`);
