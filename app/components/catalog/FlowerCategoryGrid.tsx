@@ -1,6 +1,10 @@
-import {Link, useSearchParams} from 'react-router';
+import {Link} from 'react-router';
 import {cx} from '~/components/ui';
-import {FLOWER_CATEGORIES, type FlowerCategory} from '~/lib/flowerCategories';
+import {
+  FLOWER_CATEGORIES,
+  type FlowerCategory,
+  flowerFamilyPath,
+} from '~/lib/flowerCategories';
 import {categoryImageBase, flowerSrc, flowerSrcSet} from '~/data/flowers';
 
 interface FlowerCategoryGridProps {
@@ -21,26 +25,15 @@ const PRIORITY_COUNT = 8;
  * of truth). Cards preserve any other active facets (channel/occasion/colour).
  */
 export function FlowerCategoryGrid({
-  collectionHandle,
   activeFlower,
 }: FlowerCategoryGridProps) {
-  const [searchParams] = useSearchParams();
-
-  function hrefFor(handle: string): string {
-    const params = new URLSearchParams(searchParams);
-    params.set('flower', handle);
-    params.delete('cursor');
-    params.delete('direction');
-    return `/collections/${collectionHandle}?${params.toString()}`;
-  }
-
   return (
     <ul className="ng-cat-cards" aria-label="Browse flowers by variety">
       {FLOWER_CATEGORIES.map((category, i) => (
         <li key={category.handle} className="ng-cat-cards-item">
           <FlowerCategoryCard
             category={category}
-            to={hrefFor(category.handle)}
+            to={flowerFamilyPath(category.handle)}
             active={activeFlower === category.handle}
             priority={i < PRIORITY_COUNT}
           />

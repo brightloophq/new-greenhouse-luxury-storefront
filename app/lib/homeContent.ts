@@ -1,4 +1,4 @@
-import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
+import {flowerFamilyPath} from '~/lib/flowerCategories';
 import type {ExperienceMode} from '~/lib/experience';
 
 /**
@@ -90,11 +90,11 @@ const SLOGAN = 'Not just flowers, whatever it takes.';
 /** Shared "Shop by flower" tiles — buying stems is relevant to both audiences. */
 const FLOWER_TILES: HomeTile[] = [
   {label: 'Alstroemeria', to: flowerFamilyPath('alstroemeria')},
-  {label: 'Roses - In Stock', to: flowerCategoryPath('roses-in-stock')},
-  {label: 'Orchids', to: flowerCategoryPath('orchids')},
-  {label: 'Lilies', to: flowerCategoryPath('lilies')},
-  {label: 'Hydrangea', to: flowerCategoryPath('hydrangea')},
-  {label: 'Tulips', to: flowerCategoryPath('tulips')},
+  {label: 'Roses - In Stock', to: flowerFamilyPath('roses-in-stock')},
+  {label: 'Orchids', to: flowerFamilyPath('orchids')},
+  {label: 'Lilies', to: flowerFamilyPath('lilies')},
+  {label: 'Hydrangea', to: flowerFamilyPath('hydrangea')},
+  {label: 'Tulips', to: flowerFamilyPath('tulips')},
 ];
 
 const DELUXE: HomeContent = {
