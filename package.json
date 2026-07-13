@@ -20,7 +20,8 @@
     "images:pilot:generate": "node scripts/images/pilot.mjs --generate",
     "images:optimize": "node scripts/images/optimize.mjs",
     "images:integrate": "node scripts/images/integrate.mjs",
-    "images:validate": "node scripts/images/validate.mjs"
+    "images:validate": "node scripts/images/validate.mjs",
+    "images:flowers": "node scripts/images/flower-library.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

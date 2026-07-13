@@ -26,3 +26,7 @@ source-images/
 
 # Image pipeline: keep large regenerable originals out of git (derivatives are committed).
 source-images/generated-originals/
+
+# Flower-library source originals are large and regenerable; commit only the optimized public WebP.
+source-images/flowers/*/
+!source-images/flowers/alstroemeria/
