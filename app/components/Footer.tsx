@@ -16,29 +16,14 @@ import {
   TrustGrid,
   TrustItem,
 } from '~/components/ui';
+import {navFor} from '~/lib/navigation';
+import {useExperience} from '~/components/ExperienceProvider';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
   header: HeaderQuery;
   publicStoreDomain: string;
 }
-
-// Static footer link data — editorial columns. Internal routes only.
-const SHOP_LINKS = [
-  {to: '/collections/all-flowers', label: 'All flowers'},
-  {to: '/collections/all-flowers?flower=roses-in-stock', label: 'Roses - In Stock'},
-  {to: '/collections/birthday', label: 'Birthday flowers'},
-  {to: '/collections/sympathy-and-funeral', label: 'Sympathy'},
-  {to: '/pages/wedding-events', label: 'Wedding flowers'},
-  {to: '/collections/all', label: 'Shop all'},
-];
-
-const SERVICE_LINKS = [
-  {to: '/pages/wedding-events', label: 'Weddings'},
-  {to: '/collections/corporate-gifting', label: 'Corporate'},
-  {to: '/pages/delivery-information', label: 'Same-day delivery'},
-  {to: '/collections/bulk-flowers', label: 'Wholesale'},
-];
 
 const COMPANY_LINKS = [
   {to: '/pages/about-us', label: 'About'},
@@ -59,6 +44,8 @@ export function Footer({
   header,
   publicStoreDomain,
 }: FooterProps) {
+  const {experience} = useExperience();
+  const nav = navFor(experience);
   return (
     <Suspense>
       <Await resolve={footerPromise}>
@@ -75,8 +62,8 @@ export function Footer({
                 {/* c. Editorial footer columns */}
                 <Grid cols={4} className="ng-shell-footer-columns">
                   <BrandColumn />
-                  <FooterColumn title="Shop" links={SHOP_LINKS} />
-                  <FooterColumn title="Services" links={SERVICE_LINKS} />
+                  <FooterColumn title="Shop" links={nav.footerShop} />
+                  <FooterColumn title="Services" links={nav.footerServices} />
                   <FooterColumn title="Company" links={COMPANY_LINKS} />
                 </Grid>
 

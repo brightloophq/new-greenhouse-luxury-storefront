@@ -10,12 +10,8 @@ import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
 import {cx, Icon, IconButton} from '~/components/ui';
 import {ExperienceToggle} from '~/components/ExperienceToggle';
-import {
-  FLOWER_VARIETIES,
-  flowerCategoryPath,
-  flowerFamilyPath,
-} from '~/lib/flowerCategories';
-import {hasFlowerImages} from '~/data/flowers';
+import {useExperience} from '~/components/ExperienceProvider';
+import {navFor, type MegaColumn} from '~/lib/navigation';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -23,62 +19,6 @@ interface HeaderProps {
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
 }
-
-type MegaLink = {label: string; to: string};
-type MegaColumn = {title: string; links: MegaLink[]; variant?: 'flowers'};
-
-const MEGA_COLUMNS: MegaColumn[] = [
-  {
-    title: 'Occasions',
-    links: [
-      {label: 'Birthday', to: '/collections/birthday'},
-      {label: 'Anniversary', to: '/collections/anniversary'},
-      {label: 'Love & Romance', to: '/collections/love-and-romance'},
-      {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
-      {label: 'Congratulations', to: '/collections/congratulations'},
-      {label: 'Get Well', to: '/collections/get-well'},
-    ],
-  },
-  {
-    title: 'Flower Varieties',
-    variant: 'flowers',
-    // Families with uploaded imagery → their image library page; the rest →
-    // the filtered "all flowers" catalog. Both are valid routes (never a 404).
-    links: FLOWER_VARIETIES.map((f) => ({
-      label: f.name,
-      to: hasFlowerImages(f.handle)
-        ? flowerFamilyPath(f.handle)
-        : flowerCategoryPath(f.handle),
-    })),
-  },
-  {
-    title: 'Featured Shopping',
-    links: [
-      {label: 'Flower Guide', to: '/flowers'},
-      {label: 'Gift Bouquets', to: flowerCategoryPath('gift-bouquets')},
-      {label: 'Shop All', to: '/collections/all'},
-      {label: 'Bulk Flowers', to: '/collections/bulk-flowers'},
-    ],
-  },
-  {
-    title: 'Services',
-    links: [
-      {label: 'Weddings', to: '/pages/wedding-events'},
-      {label: 'Corporate', to: '/pages/corporate-flowers'},
-      {label: 'Wholesale', to: '/collections/bulk-flowers'},
-    ],
-  },
-];
-
-type PrimaryItem = {label: string; to?: string; mega?: boolean};
-
-const PRIMARY_NAV: PrimaryItem[] = [
-  {label: 'Shop', to: '/collections', mega: true},
-  {label: 'Weddings', to: '/pages/wedding-events'},
-  {label: 'Corporate', to: '/pages/corporate-flowers'},
-  {label: 'Wholesale', to: '/collections/bulk-flowers'},
-  {label: 'About', to: '/pages/about-us'},
-];
 
 export function Header({header, isLoggedIn, cart}: HeaderProps) {
   const {shop} = header;
@@ -134,6 +74,8 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
 }
 
 function DesktopNav() {
+  const {experience} = useExperience();
+  const nav = navFor(experience);
   const [openLabel, setOpenLabel] = useState<string | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -166,7 +108,7 @@ function DesktopNav() {
       }}
     >
       <ul className="ng-shell-primary-list">
-        {PRIMARY_NAV.map((item) => {
+        {nav.primary.map((item) => {
           const isOpen = openLabel === item.label;
           if (item.mega) {
             return (
@@ -194,6 +136,7 @@ function DesktopNav() {
                   <Icon name="chevron-down" size="xs" className="ng-shell-mega-caret" />
                 </button>
                 <MegaPanel
+                  columns={nav.mega}
                   open={isOpen}
                   onPointerEnter={clearTimer}
                   onPointerLeave={scheduleClose}
@@ -221,11 +164,13 @@ function DesktopNav() {
 }
 
 function MegaPanel({
+  columns,
   open,
   onPointerEnter,
   onPointerLeave,
   onClose,
 }: {
+  columns: MegaColumn[];
   open: boolean;
   onPointerEnter: () => void;
   onPointerLeave: () => void;
@@ -240,7 +185,7 @@ function MegaPanel({
     >
       <div className="ng-mega-inner">
         <div className="ng-mega-columns">
-          {MEGA_COLUMNS.map((col) => (
+          {columns.map((col) => (
             <div
               className={cx(
                 'ng-mega-column',
@@ -312,5 +257,3 @@ function CartButton({count}: {count: number}) {
 }
 
 // Consumed by the mobile-navigation drawer in PageLayout.
-export {MEGA_COLUMNS, PRIMARY_NAV};
-export type {MegaColumn, PrimaryItem};

@@ -7,11 +7,9 @@ import type {
 } from 'storefrontapi.generated';
 import {Aside, useAside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
-import {
-  Header,
-  MEGA_COLUMNS,
-  PRIMARY_NAV,
-} from '~/components/Header';
+import {Header} from '~/components/Header';
+import {navFor} from '~/lib/navigation';
+import {useExperience} from '~/components/ExperienceProvider';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
@@ -160,6 +158,8 @@ function SearchAside() {
 
 function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']}) {
   const {close} = useAside();
+  const {experience} = useExperience();
+  const nav = navFor(experience);
   return (
     <Aside type="mobile" heading="Menu" position="left">
       <nav className="ng-mobilenav" aria-label="Mobile">
@@ -170,7 +170,7 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
               Home
             </Link>
           </li>
-          {PRIMARY_NAV.filter((i) => !i.mega).map((item) => (
+          {nav.primary.filter((i) => !i.mega).map((item) => (
             <li key={item.label}>
               <Link
                 to={item.to!}
@@ -185,7 +185,7 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
         </ul>
 
         <Accordion className="ng-mobilenav-accordion">
-          {MEGA_COLUMNS.map((col) => (
+          {nav.mega.map((col) => (
             <AccordionItem key={col.title} title={col.title}>
               <ul className="ng-mobilenav-sublist">
                 {col.links.map((link) => (
