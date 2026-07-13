@@ -1,0 +1,127 @@
+handle,category,color,title,price,approved,image_found,notes
+alstroemeria-purple,alstroemeria,Purple,Amethyst Alstroemeria Bunch,28.00,true,yes,live-price (alstroemeria)
+alstroemeria-lavender,alstroemeria,Lavender,Lavender Mist Alstroemeria Bunch,28.00,true,yes,live-price (alstroemeria)
+alstroemeria-orange,alstroemeria,Orange,Sunset Alstroemeria Bunch,27.00,true,yes,live-price (alstroemeria)
+alstroemeria-pink,alstroemeria,Pink,Blush Alstroemeria Bunch,28.00,true,yes,live-price (alstroemeria)
+alstroemeria-red,alstroemeria,Red,Scarlet Alstroemeria Bunch,30.00,true,yes,live-price (alstroemeria)
+alstroemeria-white,alstroemeria,White,Ivory Alstroemeria Bunch,28.00,true,yes,live-price (alstroemeria)
+alstroemeria-yellow,alstroemeria,Yellow,Golden Alstroemeria Bunch,27.00,true,yes,live-price (alstroemeria)
+asters-lavender,asters,Lavender,Lavender Asters,10,false,yes,PLACEHOLDER price — review before approving
+asters-pink,asters,Pink,Pink Asters,10,false,yes,PLACEHOLDER price — review before approving
+asters-purple,asters,Purple,Purple Asters,10,false,yes,PLACEHOLDER price — review before approving
+asters-white,asters,White,White Asters,10,false,yes,PLACEHOLDER price — review before approving
+babys-breath-white,babys-breath,White,White Baby’s Breath,8,false,yes,PLACEHOLDER price — review before approving
+calla-lilies-orange,calla-lilies,Orange,Orange Calla Lilies,20,false,yes,PLACEHOLDER price — review before approving
+calla-lilies-pink,calla-lilies,Pink,Pink Calla Lilies,20,false,yes,PLACEHOLDER price — review before approving
+calla-lilies-purple,calla-lilies,Purple,Purple Calla Lilies,20,false,yes,PLACEHOLDER price — review before approving
+calla-lilies-white,calla-lilies,White,White Calla Lilies,20,false,yes,PLACEHOLDER price — review before approving
+calla-lilies-yellow,calla-lilies,Yellow,Yellow Calla Lilies,20,false,yes,PLACEHOLDER price — review before approving
+carnations-burgundy,carnations,Burgundy,Burgundy Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-lavender,carnations,Lavender,Lavender Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-peach,carnations,Peach,Peach Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-pink,carnations,Pink,Pink Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-red,carnations,Red,Red Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-white,carnations,White,White Carnations,10,false,yes,PLACEHOLDER price — review before approving
+carnations-yellow,carnations,Yellow,Yellow Carnations,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-bronze,chrysanthemums,Bronze,Bronze Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-pink,chrysanthemums,Pink,Pink Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-purple,chrysanthemums,Purple,Purple Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-red,chrysanthemums,Red,Red Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-white,chrysanthemums,White,White Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+chrysanthemums-yellow,chrysanthemums,Yellow,Yellow Chrysanthemums,10,false,yes,PLACEHOLDER price — review before approving
+delphinium-blue,delphinium,Blue,Blue Delphinium,14,false,yes,PLACEHOLDER price — review before approving
+delphinium-pink,delphinium,Pink,Pink Delphinium,14,false,yes,PLACEHOLDER price — review before approving
+delphinium-purple,delphinium,Purple,Purple Delphinium,14,false,yes,PLACEHOLDER price — review before approving
+delphinium-white,delphinium,White,White Delphinium,14,false,yes,PLACEHOLDER price — review before approving
+eucalyptus-baby-blue,eucalyptus,Baby Blue,Baby Blue Eucalyptus,10,false,yes,PLACEHOLDER price — review before approving
+eucalyptus-parvifolia,eucalyptus,Parvifolia,Parvifolia Eucalyptus,10,false,yes,PLACEHOLDER price — review before approving
+eucalyptus-seeded,eucalyptus,Seeded,Seeded Eucalyptus,10,false,yes,PLACEHOLDER price — review before approving
+eucalyptus-silver-dollar,eucalyptus,Silver Dollar,Silver Dollar Eucalyptus,10,false,yes,PLACEHOLDER price — review before approving
+eucalyptus-willow,eucalyptus,Willow,Willow Eucalyptus,10,false,yes,PLACEHOLDER price — review before approving
+fillers-green,fillers,Green,Green Fillers,8,false,yes,PLACEHOLDER price — review before approving
+fillers-limonium,fillers,Limonium,Limonium,8,false,yes,PLACEHOLDER price — review before approving
+fillers-solidago,fillers,Solidago,Solidago,8,false,yes,PLACEHOLDER price — review before approving
+fillers-statice-purple,fillers,Statice,Statice,8,false,yes,PLACEHOLDER price — review before approving
+fillers-wax-flower-pink,fillers,Wax Flower,Wax Flower,8,false,yes,PLACEHOLDER price — review before approving
+fillers-white,fillers,White,White Fillers,8,false,yes,PLACEHOLDER price — review before approving
+gerbera-daisies-orange,gerbera-daisies,Orange,Orange Gerbera Daisies,12,false,yes,PLACEHOLDER price — review before approving
+gerbera-daisies-pink,gerbera-daisies,Pink,Pink Gerbera Daisies,12,false,yes,PLACEHOLDER price — review before approving
+gerbera-daisies-red,gerbera-daisies,Red,Red Gerbera Daisies,12,false,yes,PLACEHOLDER price — review before approving
+gerbera-daisies-white,gerbera-daisies,White,White Gerbera Daisies,12,false,yes,PLACEHOLDER price — review before approving
+gerbera-daisies-yellow,gerbera-daisies,Yellow,Yellow Gerbera Daisies,12,false,yes,PLACEHOLDER price — review before approving
+gift-bouquets-bright,gift-bouquets,Bright Mixed,Bright Mixed,45,false,yes,PLACEHOLDER price — review before approving
+gift-bouquets-mixed,gift-bouquets,Mixed,Mixed,45,false,yes,PLACEHOLDER price — review before approving
+gift-bouquets-pastel,gift-bouquets,Pastel Mixed,Pastel Mixed,45,false,yes,PLACEHOLDER price — review before approving
+greenery-bear-grass,greenery,Bear Grass,Bear Grass,8,false,yes,PLACEHOLDER price — review before approving
+greenery-leatherleaf-fern,greenery,Leatherleaf Fern,Leatherleaf Fern,8,false,yes,PLACEHOLDER price — review before approving
+greenery-mixed,greenery,Mixed,Mixed,8,false,yes,PLACEHOLDER price — review before approving
+greenery-pittosporum,greenery,Pittosporum,Pittosporum,8,false,yes,PLACEHOLDER price — review before approving
+greenery-ruscus,greenery,Italian Ruscus,Italian Ruscus,8,false,yes,PLACEHOLDER price — review before approving
+greenery-salal,greenery,Salal,Salal,8,false,yes,PLACEHOLDER price — review before approving
+hydrangea-blue,hydrangea,Blue,Blue Hydrangea,22,false,yes,PLACEHOLDER price — review before approving
+hydrangea-green,hydrangea,Green,Green Hydrangea,22,false,yes,PLACEHOLDER price — review before approving
+hydrangea-pink,hydrangea,Pink,Pink Hydrangea,22,false,yes,PLACEHOLDER price — review before approving
+hydrangea-purple,hydrangea,Purple,Purple Hydrangea,22,false,yes,PLACEHOLDER price — review before approving
+hydrangea-white,hydrangea,White,White Hydrangea,22,false,yes,PLACEHOLDER price — review before approving
+hypericum-burgundy,hypericum,Burgundy,Burgundy Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+hypericum-green,hypericum,Green,Green Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+hypericum-ivory,hypericum,Ivory,Ivory Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+hypericum-peach,hypericum,Peach,Peach Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+hypericum-pink,hypericum,Pink,Pink Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+hypericum-red,hypericum,Red,Red Hypericum,10,false,yes,PLACEHOLDER price — review before approving
+lilies-orange,lilies,Orange,Orange Lilies,18,false,yes,PLACEHOLDER price — review before approving
+lilies-pink,lilies,Pink,Pink Lilies,18,false,yes,PLACEHOLDER price — review before approving
+lilies-white,lilies,White,White Lilies,18,false,yes,PLACEHOLDER price — review before approving
+lilies-yellow,lilies,Yellow,Yellow Lilies,18,false,yes,PLACEHOLDER price — review before approving
+lisianthus-lavender,lisianthus,Lavender,Lavender Lisianthus,16,false,yes,PLACEHOLDER price — review before approving
+lisianthus-pink,lisianthus,Pink,Pink Lisianthus,16,false,yes,PLACEHOLDER price — review before approving
+lisianthus-purple,lisianthus,Purple,Purple Lisianthus,16,false,yes,PLACEHOLDER price — review before approving
+lisianthus-white,lisianthus,White,White Lisianthus,16,false,yes,PLACEHOLDER price — review before approving
+novelties-billy-balls,novelties,Billy Balls,Billy Balls,14,false,yes,PLACEHOLDER price — review before approving
+novelties-celosia,novelties,Celosia,Celosia,14,false,yes,PLACEHOLDER price — review before approving
+novelties-mixed,novelties,Mixed,Mixed,14,false,yes,PLACEHOLDER price — review before approving
+novelties-scabiosa-pods,novelties,Scabiosa Pods,Scabiosa Pods,14,false,yes,PLACEHOLDER price — review before approving
+orchids-green,orchids,Green,Green Orchids,25,false,yes,PLACEHOLDER price — review before approving
+orchids-pink,orchids,Pink,Pink Orchids,25,false,yes,PLACEHOLDER price — review before approving
+orchids-purple,orchids,Purple,Purple Orchids,25,false,yes,PLACEHOLDER price — review before approving
+orchids-white,orchids,White,White Orchids,25,false,yes,PLACEHOLDER price — review before approving
+orchids-yellow,orchids,Yellow,Yellow Orchids,25,false,yes,PLACEHOLDER price — review before approving
+ranunculus-orange,ranunculus,Orange,Orange Ranunculus,16,false,yes,PLACEHOLDER price — review before approving
+ranunculus-pink,ranunculus,Pink,Pink Ranunculus,16,false,yes,PLACEHOLDER price — review before approving
+ranunculus-red,ranunculus,Red,Red Ranunculus,16,false,yes,PLACEHOLDER price — review before approving
+ranunculus-white,ranunculus,White,White Ranunculus,16,false,yes,PLACEHOLDER price — review before approving
+ranunculus-yellow,ranunculus,Yellow,Yellow Ranunculus,16,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-lavender,roses-in-stock,Lavender,Lavender Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-orange,roses-in-stock,Orange,Orange Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-peach,roses-in-stock,Peach,Peach Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-pink,roses-in-stock,Pink,Pink Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-red,roses-in-stock,Red,Red Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-white,roses-in-stock,White,White Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+roses-in-stock-yellow,roses-in-stock,Yellow,Yellow Roses - In Stock,18,false,yes,PLACEHOLDER price — review before approving
+snapdragon-pink,snapdragon,Pink,Pink Snapdragon,12,false,yes,PLACEHOLDER price — review before approving
+snapdragon-purple,snapdragon,Purple,Purple Snapdragon,12,false,yes,PLACEHOLDER price — review before approving
+snapdragon-red,snapdragon,Red,Red Snapdragon,12,false,yes,PLACEHOLDER price — review before approving
+snapdragon-white,snapdragon,White,White Snapdragon,12,false,yes,PLACEHOLDER price — review before approving
+snapdragon-yellow,snapdragon,Yellow,Yellow Snapdragon,12,false,yes,PLACEHOLDER price — review before approving
+spray-roses-peach,spray-roses,Peach,Peach Spray Roses,15,false,yes,PLACEHOLDER price — review before approving
+spray-roses-pink,spray-roses,Pink,Pink Spray Roses,15,false,yes,PLACEHOLDER price — review before approving
+spray-roses-red,spray-roses,Red,Red Spray Roses,15,false,yes,PLACEHOLDER price — review before approving
+spray-roses-white,spray-roses,White,White Spray Roses,15,false,yes,PLACEHOLDER price — review before approving
+spray-roses-yellow,spray-roses,Yellow,Yellow Spray Roses,15,false,yes,PLACEHOLDER price — review before approving
+stock-lavender,stock,Lavender,Lavender Stock,12,false,yes,PLACEHOLDER price — review before approving
+stock-pink,stock,Pink,Pink Stock,12,false,yes,PLACEHOLDER price — review before approving
+stock-purple,stock,Purple,Purple Stock,12,false,yes,PLACEHOLDER price — review before approving
+stock-white,stock,White,White Stock,12,false,yes,PLACEHOLDER price — review before approving
+tropicals-anthurium-pink,tropicals,Pink Anthurium,Pink Anthurium,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-anthurium-red,tropicals,Red Anthurium,Red Anthurium,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-bird-of-paradise,tropicals,Bird of Paradise,Bird of Paradise,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-ginger,tropicals,Ginger,Ginger,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-heliconia,tropicals,Heliconia,Heliconia,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-mixed,tropicals,Mixed,Mixed,30,false,yes,PLACEHOLDER price — review before approving
+tropicals-protea,tropicals,Protea,Protea,30,false,yes,PLACEHOLDER price — review before approving
+tulips-orange,tulips,Orange,Orange Tulips,12,false,yes,PLACEHOLDER price — review before approving
+tulips-pink,tulips,Pink,Pink Tulips,12,false,yes,PLACEHOLDER price — review before approving
+tulips-purple,tulips,Purple,Purple Tulips,12,false,yes,PLACEHOLDER price — review before approving
+tulips-red,tulips,Red,Red Tulips,12,false,yes,PLACEHOLDER price — review before approving
+tulips-white,tulips,White,White Tulips,12,false,yes,PLACEHOLDER price — review before approving
+tulips-yellow,tulips,Yellow,Yellow Tulips,12,false,yes,PLACEHOLDER price — review before approving

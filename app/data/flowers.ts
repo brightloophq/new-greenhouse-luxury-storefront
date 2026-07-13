@@ -54,6 +54,7 @@ export function flowerSrc(base: string): string {
 export function familyHandle(family: string): string {
   return family
     .toLowerCase()
+    .replace(/['’]/g, '') // drop apostrophes so "Baby's Breath" → "babys-breath"
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
