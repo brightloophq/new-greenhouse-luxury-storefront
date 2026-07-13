@@ -21,12 +21,18 @@ import shellStyles from '~/styles/shell.css?url';
 import catalogStyles from '~/styles/catalog.css?url';
 import flowerStyles from '~/styles/flowers.css?url';
 import pageStyles from '~/styles/pages.css?url';
+import experienceStyles from '~/styles/experience.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 // Critical font faces preloaded to minimise FOUT on the above-the-fold hero
 import interBody from '~/assets/fonts/inter-400.woff2?url';
 import cormorantDisplay from '~/assets/fonts/cormorant-600.woff2?url';
 import {PageLayout} from './components/PageLayout';
+import {ExperienceProvider} from '~/components/ExperienceProvider';
+import {
+  getExperienceFromRequest,
+  DEFAULT_EXPERIENCE,
+} from '~/lib/experience';
 
 export type RootLoader = typeof loader;
 
@@ -102,6 +108,7 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ...criticalData,
+    experience: getExperienceFromRequest(args.request),
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
@@ -168,9 +175,11 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
+  const data = useRouteLoaderData<RootLoader>('root');
+  const experience = data?.experience ?? DEFAULT_EXPERIENCE;
 
   return (
-    <html lang="en">
+    <html lang="en" data-experience={experience}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -184,6 +193,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={catalogStyles}></link>
         <link rel="stylesheet" href={flowerStyles}></link>
         <link rel="stylesheet" href={pageStyles}></link>
+        <link rel="stylesheet" href={experienceStyles}></link>
         <Meta />
         <Links />
       </head>
@@ -204,15 +214,17 @@ export default function App() {
   }
 
   return (
-    <Analytics.Provider
-      cart={data.cart}
-      shop={data.shop}
-      consent={data.consent}
-    >
-      <PageLayout {...data}>
-        <Outlet />
-      </PageLayout>
-    </Analytics.Provider>
+    <ExperienceProvider experience={data.experience}>
+      <Analytics.Provider
+        cart={data.cart}
+        shop={data.shop}
+        consent={data.consent}
+      >
+        <PageLayout {...data}>
+          <Outlet />
+        </PageLayout>
+      </Analytics.Provider>
+    </ExperienceProvider>
   );
 }
 

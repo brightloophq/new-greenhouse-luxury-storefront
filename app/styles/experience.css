@@ -1,0 +1,148 @@
+/* --------------------------------------------------------------------------
+   Dual-experience token layer.
+
+   The whole design system funnels through the --color-greenhouse-* primitives
+   (both --ng-* and legacy --color-* read them). Overriding those primitives per
+   [data-experience] re-themes the ENTIRE storefront at once — no component or
+   token renaming. The root loader always sets <html data-experience>, so the
+   correct palette is present on first paint (no hydration flash).
+
+   DELUXE  = the base :root values (black + champagne gold) already defined in
+             tailwind.css — the current, brief-approved luxury identity.
+   CLASSIC = the exact green palette extracted from the live main website
+             (thenewgreenhouse.dist, data-theme=classic). Values below are the
+             brand's real Classic tokens, so a customer flowing from the Classic
+             website into the shop sees one continuous green identity.
+
+   Loaded AFTER design-system.css so [data-experience] wins on equal specificity.
+   -------------------------------------------------------------------------- */
+
+[data-experience='classic'] {
+  /* Core primitives → main-site Classic (green). The "gold" accent ROLE is a
+     leaf green in Classic; every gold CTA/border/highlight becomes green. */
+  --color-greenhouse-background: #0f3d26; /* forest — header/footer/inverse */
+  --color-greenhouse-surface: #123a24;
+  --color-greenhouse-surface-2: #16452c;
+  --color-greenhouse-gold: #3fae63; /* accent */
+  --color-greenhouse-soft-gold: #6fcb8d;
+  --color-greenhouse-warm-white: #f4fbf6; /* light page bg (green-cream) */
+  --color-greenhouse-charcoal: #16452c; /* primary text on light */
+  --color-greenhouse-accent-green: #1b5033;
+  --color-greenhouse-light-gray: #b9d9c4;
+  --color-greenhouse-muted-gray: #7fa98f;
+  --color-greenhouse-success: #2f624f;
+
+  /* Hard-coded --ng-* semantics that do NOT derive from the primitives. */
+  --ng-bg-surface: #f4fbf6;
+  --ng-bg-surface-muted: #e8f5ec;
+  --ng-text-secondary: #33463b;
+  --ng-border-subtle: #d3e6d8;
+  --ng-border-strong: #a9cdb4;
+  --ng-border-inverse: rgb(63 174 99 / 35%);
+  --ng-gold-text: #22694a; /* accessible green text on cream (WCAG AA) */
+  --ng-focus-ring: #3fae63;
+
+  /* Typography — Classic body is DM Sans (matches the main website). Display
+     stays Cormorant Garamond (shared). */
+  --ng-font-body: 'DM Sans', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Radii — the main site is sharp everywhere except pills. Square the card +
+     control radii; --ng-radius-pill (999px) is left intact for buttons/toggle. */
+  --ng-radius-xs: 0;
+  --ng-radius-sm: 0;
+  --ng-radius-md: 0;
+  --ng-radius-lg: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Experience toggle — compact segmented control (Classic / Deluxe)
+   -------------------------------------------------------------------------- */
+.ng-exp-toggle {
+  align-items: stretch;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  border: 1px solid var(--ng-border-inverse);
+  border-radius: var(--ng-radius-pill, 999px);
+  display: inline-flex;
+  padding: 3px;
+  position: relative;
+}
+/* Sliding thumb sits under the active option (matches the main website). Its
+   colour is the experience accent — champagne gold in Deluxe, leaf green in
+   Classic — via --ng-color-luxury-gold. */
+.ng-exp-toggle-thumb {
+  background: var(--ng-color-luxury-gold);
+  border-radius: var(--ng-radius-pill, 999px);
+  bottom: 3px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  transition: transform var(--ng-duration-standard, 240ms)
+    cubic-bezier(0.22, 1, 0.36, 1);
+  width: calc(50% - 3px);
+}
+.ng-exp-toggle-thumb[data-active='deluxe'] {
+  transform: translateX(100%);
+}
+.ng-exp-toggle-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  flex: 1;
+  font-family: var(--ng-font-body);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  min-height: 1.75rem;
+  opacity: 0.62;
+  padding: 0 0.75rem;
+  position: relative;
+  text-transform: uppercase;
+  transition:
+    color var(--ng-duration-standard, 240ms) ease,
+    opacity var(--ng-duration-standard, 240ms) ease;
+  white-space: nowrap;
+  z-index: 1;
+}
+.ng-exp-toggle-btn:hover {
+  opacity: 1;
+}
+.ng-exp-toggle-btn.is-active {
+  color: var(--ng-color-background);
+  opacity: 1;
+}
+.ng-exp-toggle-btn:focus-visible {
+  border-radius: var(--ng-radius-pill, 999px);
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Header placement: desktop only (≥1100px) so it never crowds the mobile header. */
+.ng-exp-toggle--header {
+  display: none;
+}
+@media (min-width: 1100px) {
+  .ng-exp-toggle--header {
+    display: inline-flex;
+    margin-inline-end: var(--ng-space-2);
+  }
+}
+
+/* Mobile-drawer placement: full-width row, ≥44px targets. */
+.ng-exp-toggle--drawer {
+  width: 100%;
+}
+.ng-exp-toggle--drawer .ng-exp-toggle-btn {
+  flex: 1;
+  min-height: 2.75rem;
+  font-size: 0.7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-exp-toggle-btn {
+    transition: none;
+  }
+}

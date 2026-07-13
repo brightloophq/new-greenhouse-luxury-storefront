@@ -9,6 +9,7 @@ import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
 import {cx, Icon, IconButton} from '~/components/ui';
+import {ExperienceToggle} from '~/components/ExperienceToggle';
 import {
   FLOWER_VARIETIES,
   flowerCategoryPath,
@@ -110,6 +111,7 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
           </NavLink>
 
           <div className="ng-shell-actions">
+            <ExperienceToggle className="ng-exp-toggle--header" />
             <IconButton aria-label="Search" onClick={() => open('search')}>
               <Icon name="search" />
             </IconButton>
