@@ -17,10 +17,11 @@ import {experienceCookie, type ExperienceMode} from '~/lib/experience';
  * Friendly Classic deep-link slugs → canonical store paths. Keeps marketing
  * URLs (`/classic/wholesale`) stable even before dedicated landing pages ship.
  */
+// `wholesale` and `supplies` are served by real /classic/* landing routes,
+// which outrank this splat — only extra friendly slugs need mapping here.
 const CLASSIC_SLUGS: Record<string, string> = {
-  wholesale: '/collections/bulk-flowers',
-  supplies: '/collections/floral-supplies',
   greenery: '/collections/greenery-and-fillers',
+  flowers: '/collections/bulk-flowers',
 };
 
 const DELUXE_SLUGS: Record<string, string> = {

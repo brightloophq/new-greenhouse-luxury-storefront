@@ -48,8 +48,8 @@ const flower = (h: string) => `/collections/all-flowers?flower=${h}`;
 /* -------------------------------------------------------------------------- */
 export const CLASSIC_NAV: ExperienceNav = {
   primary: [
-    {label: 'Wholesale Flowers', to: '/collections/bulk-flowers', mega: true},
-    {label: 'Floral Supplies', to: '/collections/floral-supplies'},
+    {label: 'Wholesale Flowers', to: '/classic/wholesale', mega: true},
+    {label: 'Floral Supplies', to: '/classic/supplies'},
     {label: 'About', to: '/pages/about-us'},
     {label: 'Delivery', to: '/pages/delivery-information'},
     {label: 'Contact', to: '/pages/contact'},
