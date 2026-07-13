@@ -56,6 +56,18 @@ export const meta: Route.MetaFunction = ({data}) => {
   return [
     {title: `${title} | The New Greenhouse`},
     {name: 'description', content: description},
+    // Canonical to the base collection: filtered/faceted views (?flower=…,
+    // ?sort=…) canonicalize here so they aren't indexed as duplicates. The
+    // per-variety /flowers/$family routes carry the indexable variety SEO.
+    ...(data?.collection?.handle
+      ? [
+          {
+            tagName: 'link' as const,
+            rel: 'canonical',
+            href: `/collections/${data.collection.handle}`,
+          },
+        ]
+      : []),
   ];
 };
 

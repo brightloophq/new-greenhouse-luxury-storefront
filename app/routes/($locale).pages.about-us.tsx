@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () => [
     content:
       'The New Greenhouse is a luxury floral house in Kingston, Jamaica — four decades of flowers for celebrations, weddings, sympathy, and the wholesale trade.',
   },
-  {rel: 'canonical', href: '/pages/about-us'},
+  {tagName: 'link', rel: 'canonical', href: '/pages/about-us'},
 ];
 
 export default function AboutUsPage() {

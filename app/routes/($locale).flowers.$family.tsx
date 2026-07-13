@@ -27,7 +27,7 @@ export const meta: Route.MetaFunction = ({data}) => {
       name: 'description',
       content: `Browse ${name} colourways from The New Greenhouse — luxury and wholesale fresh-cut flowers in Kingston, Jamaica.`,
     },
-    {rel: 'canonical', href: `/flowers/${data?.handle ?? ''}`},
+    {tagName: 'link', rel: 'canonical', href: `/flowers/${data?.handle ?? ''}`},
   ];
 };
 

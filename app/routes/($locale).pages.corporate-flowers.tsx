@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () => [
     content:
       'Weekly corporate floral styling and event arrangements for Kingston hotels, offices, restaurants, embassies, and private functions — by The New Greenhouse.',
   },
-  {rel: 'canonical', href: '/pages/corporate-flowers'},
+  {tagName: 'link', rel: 'canonical', href: '/pages/corporate-flowers'},
 ];
 
 export default function CorporateFlowersPage() {

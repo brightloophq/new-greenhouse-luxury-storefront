@@ -8,7 +8,7 @@ export const meta: Route.MetaFunction = () => [
     content:
       'Luxury wedding and event florals in Kingston, Jamaica — bridal bouquets, ceremony arches, and reception tablescapes composed by The New Greenhouse.',
   },
-  {rel: 'canonical', href: '/pages/wedding-events'},
+  {tagName: 'link', rel: 'canonical', href: '/pages/wedding-events'},
 ];
 
 export default function WeddingEventsPage() {

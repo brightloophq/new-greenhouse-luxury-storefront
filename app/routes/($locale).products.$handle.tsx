@@ -33,6 +33,7 @@ export const meta: Route.MetaFunction = ({data}) => {
         'Luxury floral arrangements handcrafted by The New Greenhouse in Kingston, Jamaica.',
     },
     {
+      tagName: 'link',
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
     },

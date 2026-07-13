@@ -10,7 +10,7 @@ export const meta: Route.MetaFunction = () => {
       content:
         'Browse fresh-cut flower varieties and colourways from The New Greenhouse — Alstroemeria, roses, tulips, orchids and more, for luxury and wholesale floristry in Kingston, Jamaica.',
     },
-    {rel: 'canonical', href: '/flowers'},
+    {tagName: 'link', rel: 'canonical', href: '/flowers'},
   ];
 };
 
