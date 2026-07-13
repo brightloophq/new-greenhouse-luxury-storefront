@@ -28,6 +28,7 @@ const SRC_FLOWERS = join(ROOT, 'source-images', 'flowers');
 
 const argv = process.argv.slice(2);
 const FORCE = argv.includes('--force');
+const CARDS = argv.includes('--cards'); // generate one lush "all" category card per category
 const only = (argv.find((a) => a.startsWith('--only=')) || '').split('=')[1];
 const ONLY = only ? new Set(only.split(',')) : null;
 
@@ -135,6 +136,35 @@ function buildPrompt(name, colorLabel, override) {
   );
 }
 
+// --- Category "all" cards (case study: alstroemeria/all) --------------------
+// A lush, frame-filling, editorial close-up representing the whole category —
+// mixed colours + foliage, raffia tie, soft pale background. Per-handle subject
+// overrides for foliage/berry/mixed categories where "mixed colours" is wrong.
+const CARD_SUBJECT = {
+  eucalyptus: 'a lush full bunch of mixed eucalyptus foliage (silver dollar and seeded)',
+  greenery: 'a lush full bunch of mixed fresh greenery and foliage',
+  'babys-breath': 'a lush full cloud-like bunch of white baby\'s breath',
+  fillers: 'a lush mixed bunch of assorted filler flowers (waxflower, statice, solidago)',
+  hypericum: 'a lush mixed bunch of hypericum berries in assorted colours',
+  'gift-bouquets': 'a lush mixed gift bouquet overflowing with assorted colourful flowers',
+  novelties: 'a lush mixed bunch of assorted novelty blooms (billy balls, celosia, scabiosa pods)',
+  tropicals: 'a bold mixed bunch of assorted tropical flowers (bird of paradise, anthurium, heliconia)',
+  orchids: 'a lush bunch of mixed-colour orchids',
+};
+
+function buildCardPrompt(handle, name) {
+  const subject = CARD_SUBJECT[handle] || `a generous mixed bunch of ${name} in a beautiful mix of natural colours`;
+  return (
+    `Lush, editorial close-up product photograph of ${subject}, filling the frame ` +
+    `and overflowing with blooms and fresh green foliage, gathered and tied at the ` +
+    `base with natural raffia twine. Soft bright natural studio lighting, clean pale ` +
+    `neutral softly-blurred background (no black, no dark border, no frame). ` +
+    `Botanically accurate ${name}, vivid true-to-life colours, ultra sharp, high ` +
+    `detail, photorealistic premium floral catalogue photography. Square 1:1 ` +
+    `composition. No vase, no props, no people, no text, no logo, no watermark.`
+  );
+}
+
 const NEGATIVE =
   'black background, dark background, black border, dark border, frame, ' +
   'vignette, dark edges, dark corners, matte, vase, jar, container, glass, ' +
@@ -164,6 +194,28 @@ async function main() {
   for (const [handle, name, colors] of cats) {
     const dir = join(SRC_FLOWERS, handle);
     mkdirSync(dir, {recursive: true});
+
+    // --cards: generate one lush "all" category card per category, then skip
+    // the per-colour loop.
+    if (CARDS) {
+      const out = join(dir, 'all.png');
+      if (existsSync(out) && !FORCE) { totalSkip++; console.log(`   • skip  ${handle}/all.png (exists)`); continue; }
+      if (!live) { console.log(`   • plan  ${handle}/all.png (category card)`); continue; }
+      let saved = false;
+      for (let attempt = 0; attempt <= env.maxRetries && !saved; attempt++) {
+        const res = await generateImage({prompt: buildCardPrompt(handle, name), negativePrompt: NEGATIVE, aspectRatio: '1:1'});
+        if (res.ok && res.bytesBase64) {
+          const buf = Buffer.from(res.bytesBase64, 'base64');
+          writeFileSync(out, buf); saved = true; totalGen++;
+          console.log(`   ✓ card  ${handle}/all.png  (${kb(buf.length)})${attempt ? ` [retry ${attempt}]` : ''}`);
+        } else if (attempt < env.maxRetries) { await sleep(1000 * (attempt + 1)); }
+        else { totalErr++; console.error(`   ✗ fail  ${handle}/all.png: ${redact(res.error || 'no image')}`); }
+      }
+      if (totalErr >= env.errorThreshold) { console.error(`\n  ✗ error threshold reached — stopping.`); return summary(totalGen, totalSkip, totalErr); }
+      if (live) await sleep(env.rateLimitMs);
+      continue;
+    }
+
     let gen = 0, skip = 0, err = 0;
     console.log(`\n▸ ${name} (${handle}) — ${colors.length} colour(s)`);
 
