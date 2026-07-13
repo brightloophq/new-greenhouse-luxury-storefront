@@ -26,6 +26,18 @@
   min-inline-size: 0; /* allow grid children to shrink */
 }
 
+/* Editorial layout (Deluxe collections): full-width, no permanent filter rail.
+   Filtering stays available via the toolbar's slide-out drawer. */
+.ng-catalog-layout--editorial {
+  max-width: var(--ng-container-xl);
+}
+
+@media (min-width: 80rem) {
+  .ng-catalog-layout--editorial {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .ng-catalog-sidebar {
   display: none; /* mobile + tablet: filters live in the slide-out drawer */
 }

@@ -91,6 +91,11 @@
 [data-experience='classic'] .ng-cat-card-body {
   padding: 0.6rem 0.7rem 0.7rem;
 }
+/* Deluxe category tiles use full-bleed art-directed crops (Classic keeps the
+   letterboxed `contain` fit so wholesale stems are never cropped). */
+[data-experience='deluxe'] .ng-cat-card-img {
+  object-fit: cover;
+}
 
 /* --------------------------------------------------------------------------
    Product experience — one shared PDP (same variant / cart / checkout).
