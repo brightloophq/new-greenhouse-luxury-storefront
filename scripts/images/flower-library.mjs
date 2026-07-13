@@ -69,7 +69,9 @@ function buildPrompt(name, colorLabel) {
     : `a hand-tied bunch of fresh ${colorLabel} ${name}, true ${colorLabel.toLowerCase()} colour`;
   return (
     `Professional florist product catalog photograph of ${subject}, photographed ` +
-    `on a pure white seamless studio background. The bunch is centred and shown ` +
+    `on a pure white seamless studio background that fills the entire square frame ` +
+    `edge to edge — absolutely no black, no dark border, no frame, no vignette, no ` +
+    `dark edges or corners. The bunch is centred and shown ` +
     `in full including the green stems, tied near the base with thin natural jute ` +
     `twine, with roughly 10% even margin around it. Soft luxury commercial studio ` +
     `lighting, balanced exposure, natural highlights, and only a soft natural ` +
@@ -85,10 +87,12 @@ function buildPrompt(name, colorLabel) {
 }
 
 const NEGATIVE =
-  'vase, jar, container, glass, table, surface, hands, people, ribbon, wrapping ' +
-  'paper, cellophane, text, letters, watermark, logo, gradient background, ' +
-  'coloured background, props, decorations, CGI, 3d render, painterly, ' +
-  'illustration, oversaturated, blurry, noise, duplicated petals, malformed flowers';
+  'black background, dark background, black border, dark border, frame, ' +
+  'vignette, dark edges, dark corners, matte, vase, jar, container, glass, ' +
+  'table, surface, hands, people, ribbon, wrapping paper, cellophane, text, ' +
+  'letters, watermark, logo, gradient background, coloured background, props, ' +
+  'decorations, CGI, 3d render, painterly, illustration, oversaturated, blurry, ' +
+  'noise, duplicated petals, malformed flowers';
 
 async function main() {
   const env = loadImageEnv();
