@@ -270,9 +270,27 @@ function TileSection({
           <Link to={content.link.to}>{content.link.label}</Link>
         ) : null}
       </div>
-      <div className="greenhouse-occasion-grid">
+      <div
+        className={
+          content.tiles.some((tile) => tile.image)
+            ? 'greenhouse-occasion-grid greenhouse-occasion-grid--imaged'
+            : 'greenhouse-occasion-grid'
+        }
+      >
         {content.tiles.map((tile) => (
-          <Link key={tile.label} to={tile.to}>
+          <Link
+            key={tile.label}
+            to={tile.to}
+            className={tile.image ? 'greenhouse-occasion-tile--imaged' : undefined}
+          >
+            {tile.image ? (
+              <img
+                className="greenhouse-occasion-tile-img"
+                src={tile.image}
+                alt=""
+                loading="lazy"
+              />
+            ) : null}
             <span>{tile.label}</span>
             <small>Explore</small>
           </Link>

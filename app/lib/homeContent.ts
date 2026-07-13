@@ -37,6 +37,8 @@ export interface HomeCard {
 export interface HomeTile {
   label: string;
   to: string;
+  /** Optional tile image (Deluxe renders image cards; Classic stays text-only). */
+  image?: string;
 }
 
 export interface HomeEditorial {
@@ -99,6 +101,27 @@ const SLOGAN = 'Not just flowers, whatever it takes.';
 /** Luxury arrangement photography (Deluxe only), served from /public. */
 const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
 
+/** A representative portrait arrangement photo per collection, for image tiles. */
+const TILE_ARRANGEMENT: Record<string, string> = {
+  'luxury-bouquets': 'luxury-mixed-garden-bouquet',
+  roses: 'grand-red-rose-arrangement',
+  orchids: 'white-orchid-elegance',
+  'seasonal-deluxe': 'luxury-tropical-arrangement',
+  congratulations: 'congratulations-brights-bouquet',
+  'get-well': 'get-well-luxe',
+  'new-baby': 'new-baby-soft-pastels-bouquet',
+  'corporate-gifting': 'corporate-elegance-arrangement',
+  'bridal-bouquets': 'bridal-white-bouquet',
+  'sympathy-and-funeral': 'classic-white-sympathy-arrangement',
+};
+
+/** A Deluxe collection tile backed by a portrait luxury arrangement photo. */
+const heroTile = (label: string, handle: string): HomeTile => ({
+  label,
+  to: `/collections/${handle}`,
+  image: lux(TILE_ARRANGEMENT[handle] ?? handle),
+});
+
 /** Shared "Shop by flower" tiles — buying stems is relevant to both audiences. */
 const FLOWER_TILES: HomeTile[] = [
   {label: 'Alstroemeria', to: flowerFamilyPath('alstroemeria')},
@@ -110,8 +133,11 @@ const FLOWER_TILES: HomeTile[] = [
 ];
 
 const DELUXE: HomeContent = {
+  // Note: the site-wide header bar already carries the same-day delivery line;
+  // this homepage announcement leads with the gifting differentiator instead of
+  // repeating it (see audit M2).
   announcement:
-    'Hand-delivered across Kingston & St. Andrew with a personal message — same-day available for orders before 2PM.',
+    'Every arrangement hand-delivered across Kingston & St. Andrew with a hand-written note.',
   hero: {
     kicker: 'The New Greenhouse · Luxury Florist, Kingston',
     title: "Luxury flowers for life's most meaningful moments.",
@@ -166,22 +192,22 @@ const DELUXE: HomeContent = {
     title: 'Hand-composed, gift-ready arrangements.',
     link: {label: 'View the collection', to: '/collections/luxury-bouquets'},
     tiles: [
-      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
-      {label: 'Roses Collection', to: '/collections/roses'},
-      {label: 'Orchid Collection', to: '/collections/orchids'},
-      {label: 'Seasonal Collection', to: '/collections/seasonal-deluxe'},
+      heroTile('Luxury Bouquets', 'luxury-bouquets'),
+      heroTile('Roses Collection', 'roses'),
+      heroTile('Orchid Collection', 'orchids'),
+      heroTile('Seasonal Collection', 'seasonal-deluxe'),
     ],
   },
   browse: {
     kicker: 'More occasions',
     title: 'A gesture for every reason.',
     tiles: [
-      {label: 'Congratulations', to: '/collections/congratulations'},
-      {label: 'Get Well Soon', to: '/collections/get-well'},
-      {label: 'New Baby', to: '/collections/new-baby'},
-      {label: 'Corporate Gifts', to: '/collections/corporate-gifting'},
-      {label: 'Weddings', to: '/collections/bridal-bouquets'},
-      {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
+      heroTile('Congratulations', 'congratulations'),
+      heroTile('Get Well Soon', 'get-well'),
+      heroTile('New Baby', 'new-baby'),
+      heroTile('Corporate Gifts', 'corporate-gifting'),
+      heroTile('Weddings', 'bridal-bouquets'),
+      heroTile('Sympathy', 'sympathy-and-funeral'),
     ],
   },
   productRow: {

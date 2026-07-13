@@ -407,3 +407,135 @@
     transition: none;
   }
 }
+
+/* ==========================================================================
+   DELUXE POLISH PASS (audit Phase C) — all scoped to [data-experience='deluxe']
+   so Classic (green wholesale brand) is untouched.
+   ========================================================================== */
+
+/* M1 — champagne-gold hover accents instead of botanical green. Green hover on
+   a black/gold luxury surface reads off-brand; Classic keeps green. */
+[data-experience='deluxe'] .ng-button:hover,
+[data-experience='deluxe'] .ng-button-primary:hover {
+  background: var(--ng-color-luxury-gold);
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
+}
+[data-experience='deluxe'] .ng-catalog-loadmore-btn:hover {
+  background: var(--ng-color-luxury-gold);
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
+}
+[data-experience='deluxe'] a:hover,
+[data-experience='deluxe'] .link:hover {
+  color: var(--ng-gold-text);
+}
+
+/* H1 — the hero secondary action reads as a text link, not a second button
+   (design law: never two buttons side by side). Markup is shared; Classic keeps
+   its solid secondary button. */
+[data-experience='deluxe'] .greenhouse-hero-actions .greenhouse-button-secondary {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--ng-text-primary);
+  min-height: auto;
+  padding: 0;
+  position: relative;
+  text-decoration: none;
+}
+[data-experience='deluxe'] .greenhouse-hero-actions .greenhouse-button-secondary::after {
+  background: currentColor;
+  bottom: -2px;
+  content: '';
+  display: block;
+  height: 1px;
+  left: 0;
+  position: absolute;
+  transition: width var(--ng-duration-standard, 240ms) ease;
+  width: 100%;
+}
+[data-experience='deluxe'] .greenhouse-hero-actions .greenhouse-button-secondary:hover {
+  background: transparent;
+  color: var(--ng-gold-text);
+  transform: none;
+}
+[data-experience='deluxe'] .greenhouse-hero-actions .greenhouse-button-secondary:hover::after {
+  width: 0;
+}
+
+/* L1 — sub-headings (h4) use the display serif in Deluxe so the type hierarchy
+   stays editorial below h3 (Classic keeps the functional sans sub-head). */
+[data-experience='deluxe'] h4 {
+  font-family: var(--ng-font-heading);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+
+/* L2 — warm-cream card fills routed through a token so they re-theme (the raw
+   #fffaf1 in app.css is left for Classic). */
+[data-experience='deluxe'] .greenhouse-occasion-grid a,
+[data-experience='deluxe'] .greenhouse-product-row .product-item {
+  background: var(--ng-bg-surface);
+}
+
+/* M6 — Deluxe homepage occasion/signature tiles become image cards. Classic
+   tiles carry no image and stay text-only (data-driven, no Classic change). */
+.greenhouse-occasion-grid--imaged {
+  gap: clamp(1rem, 2.2vw, 1.75rem);
+}
+.greenhouse-occasion-tile--imaged {
+  align-items: flex-start;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--ng-radius-md, 6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: var(--ng-space-4, 1.1rem);
+  position: relative;
+}
+.greenhouse-occasion-tile-img {
+  inset: 0;
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  position: absolute;
+  transition: transform var(--ng-duration-slow, 600ms) var(--ng-ease-standard, ease);
+  z-index: 0;
+}
+.greenhouse-occasion-tile--imaged::after {
+  background: linear-gradient(
+    180deg,
+    rgba(9, 9, 9, 0) 30%,
+    rgba(9, 9, 9, 0.72) 100%
+  );
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+.greenhouse-occasion-tile--imaged > span,
+.greenhouse-occasion-tile--imaged > small {
+  color: var(--ng-color-warm-white, #faf8f4);
+  position: relative;
+  z-index: 2;
+}
+.greenhouse-occasion-tile--imaged > span {
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-h5, 1.15rem);
+}
+@media (hover: hover) {
+  .greenhouse-occasion-tile--imaged:hover .greenhouse-occasion-tile-img {
+    transform: scale(1.05);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .greenhouse-occasion-tile-img {
+    transition: none;
+  }
+  .greenhouse-occasion-tile--imaged:hover .greenhouse-occasion-tile-img {
+    transform: none;
+  }
+}
