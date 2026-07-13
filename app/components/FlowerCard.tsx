@@ -51,7 +51,6 @@ export function FlowerCard({
           alt={flower.alt}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          fetchPriority={priority ? 'high' : 'auto'}
         />
         {flower.availability === 'seasonal' ? (
           <span className="flower-card-badge">Seasonal</span>
