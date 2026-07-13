@@ -118,72 +118,78 @@ export const CLASSIC_NAV: ExperienceNav = {
 };
 
 /* -------------------------------------------------------------------------- */
-/* DELUXE — luxury gifting                                                     */
-/* Primary: Signature Bouquets · Luxury Gifts · Premium Flowers · Occasions ·  */
+/* DELUXE — luxury gifting, OCCASION-FIRST                                      */
+/* Primary: Occasions (mega) · Signature · Roses · Orchids · Weddings ·        */
 /*          Our Story · Contact  (Classic reached via the experience toggle.)  */
+/* Customers browse by shopping intent / occasion, not botanical species.      */
+/* Only existing collections are linked (no 404s); collections still to be     */
+/* created — Best Sellers, Signature Collection, Thank You, Same-Day — are      */
+/* added in the gated Phase 2. Seasonal renders a safe empty state.            */
 /* -------------------------------------------------------------------------- */
 export const DELUXE_NAV: ExperienceNav = {
   primary: [
-    {label: 'Signature Bouquets', to: '/collections/luxury-bouquets', mega: true},
-    {label: 'Luxury Gifts', to: '/collections/add-ons'},
-    {label: 'Premium Flowers', to: '/collections/roses'},
-    {label: 'Occasions', to: '/collections/birthday'},
+    {label: 'Occasions', to: '/collections/anniversary', mega: true},
+    {label: 'Signature', to: '/collections/luxury-bouquets'},
+    {label: 'Roses', to: '/collections/roses'},
+    {label: 'Orchids', to: '/collections/orchids'},
+    {label: 'Weddings', to: '/collections/bridal-bouquets'},
     {label: 'Our Story', to: '/pages/about-us'},
     {label: 'Contact', to: '/pages/contact'},
   ],
-  // Focused Deluxe "Shop" mega — gifting only, no wholesale/supplies/weddings.
-  // Never links /collections/all-flowers (the shared variety hub, which can
-  // surface wholesale stems) or /collections/all — only curated gifting sets.
+  // Occasion-led mega — gifting only. Never links the shared variety hub
+  // (/collections/all-flowers) or /collections/all — only curated gifting sets.
   mega: [
     {
-      title: 'Signature',
+      title: 'Shop by Occasion',
       links: [
-        {label: 'Signature Bouquets', to: '/collections/luxury-bouquets'},
-        {label: 'Premium Flowers', to: '/collections/roses'},
-        {label: 'Seasonal Deluxe', to: '/collections/seasonal-deluxe'},
+        {label: 'Anniversary', to: '/collections/anniversary'},
+        {label: 'Birthday', to: '/collections/birthday'},
+        {label: 'Love & Romance', to: '/collections/love-and-romance'},
+        {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
+        {label: 'Congratulations', to: '/collections/congratulations'},
+        {label: 'Get Well Soon', to: '/collections/get-well'},
+        {label: 'New Baby', to: '/collections/new-baby'},
+      ],
+    },
+    {
+      title: 'Signature Collection',
+      links: [
+        {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
+        {label: 'Roses Collection', to: '/collections/roses'},
+        {label: 'Orchid Collection', to: '/collections/orchids'},
+        {label: 'Seasonal Collection', to: '/collections/seasonal-deluxe'},
       ],
     },
     {
       title: 'Premium Flowers',
       variant: 'flowers',
       links: [
-        {label: 'Premium Roses', to: '/collections/roses'},
-        {label: 'Premium Orchids', to: '/collections/orchids'},
+        {label: 'Roses', to: '/collections/roses'},
+        {label: 'Orchids', to: '/collections/orchids'},
         {label: 'Lilies', to: '/collections/lilies'},
       ],
     },
     {
-      title: 'Luxury Gifts',
+      title: 'Gifts & Weddings',
       links: [
         {label: 'Curated Add-ons', to: '/collections/add-ons'},
-        {label: 'Romance', to: '/collections/love-and-romance'},
-        {label: 'Anniversary', to: '/collections/anniversary'},
-        {label: 'Premium Birthday', to: '/collections/birthday'},
-      ],
-    },
-    {
-      title: 'Shop by Occasion',
-      links: [
-        {label: 'Birthday', to: '/collections/birthday'},
-        {label: 'Anniversary', to: '/collections/anniversary'},
-        {label: 'Romance', to: '/collections/love-and-romance'},
-        {label: 'Congratulations', to: '/collections/congratulations'},
-        {label: 'New Baby', to: '/collections/new-baby'},
-        {label: 'Get Well', to: '/collections/get-well'},
+        {label: 'Corporate Gifts', to: '/collections/corporate-gifting'},
+        {label: 'Wedding Bouquets', to: '/collections/bridal-bouquets'},
+        {label: 'Centerpieces', to: '/collections/centerpieces'},
       ],
     },
   ],
   footerShop: [
-    {label: 'Signature bouquets', to: '/collections/luxury-bouquets'},
-    {label: 'Premium roses', to: '/collections/roses'},
-    {label: 'Premium orchids', to: '/collections/orchids'},
-    {label: 'Curated add-ons', to: '/collections/add-ons'},
-    {label: 'Romance', to: '/collections/love-and-romance'},
-    {label: 'Seasonal deluxe', to: '/collections/seasonal-deluxe'},
+    {label: 'Anniversary', to: '/collections/anniversary'},
+    {label: 'Birthday', to: '/collections/birthday'},
+    {label: 'Love & Romance', to: '/collections/love-and-romance'},
+    {label: 'Luxury bouquets', to: '/collections/luxury-bouquets'},
+    {label: 'Roses', to: '/collections/roses'},
+    {label: 'Orchids', to: '/collections/orchids'},
   ],
   footerServices: [
-    {label: 'Birthday', to: '/collections/birthday'},
-    {label: 'Anniversary', to: '/collections/anniversary'},
+    {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
+    {label: 'Corporate gifts', to: '/collections/corporate-gifting'},
     {label: 'Our story', to: '/pages/about-us'},
     {label: 'Concierge & delivery', to: '/pages/delivery-information'},
   ],

@@ -110,6 +110,171 @@
   gap: clamp(1.25rem, 3vw, 2.5rem);
 }
 
+/* ==========================================================================
+   DELUXE LUXURY LAYER — premium motion + polish, scoped to the Deluxe
+   experience ONLY. CSS-only (GPU transforms + scroll-driven view() timelines,
+   no extra JS). Classic is never selected here. All motion collapses under
+   prefers-reduced-motion.
+   ========================================================================== */
+
+/* --- Editorial polish: kicker, headings, hero ---------------------------- */
+[data-experience='deluxe'] .greenhouse-kicker {
+  letter-spacing: 0.28em;
+  position: relative;
+}
+[data-experience='deluxe'] .greenhouse-section-heading h2,
+[data-experience='deluxe'] .ng-catalog-hero-title {
+  letter-spacing: -0.01em;
+}
+[data-experience='deluxe'] .greenhouse-hero-panel h1 {
+  letter-spacing: -0.015em;
+}
+
+/* --- Premium card hover: lift + shadow + gold edge + image zoom ---------- */
+[data-experience='deluxe'] .greenhouse-banner-card,
+[data-experience='deluxe'] .ng-product-card,
+[data-experience='deluxe'] .ng-cat-card,
+[data-experience='deluxe'] .greenhouse-occasion-grid > a,
+[data-experience='deluxe'] .greenhouse-fallback-product {
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s ease;
+  will-change: transform;
+}
+[data-experience='deluxe'] .greenhouse-banner-card:hover,
+[data-experience='deluxe'] .ng-product-card:hover,
+[data-experience='deluxe'] .greenhouse-fallback-product:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.6);
+}
+[data-experience='deluxe'] .ng-cat-card:hover,
+[data-experience='deluxe'] .greenhouse-occasion-grid > a:hover {
+  transform: translateY(-4px);
+  border-color: var(--ng-color-luxury-gold, #c8a96a);
+}
+/* Zoom the imagery inside its frame (frame clips the overflow). */
+[data-experience='deluxe'] .greenhouse-banner-card,
+[data-experience='deluxe'] .ng-product-card-media,
+[data-experience='deluxe'] .ng-cat-card-media,
+[data-experience='deluxe'] .greenhouse-fallback-product {
+  overflow: hidden;
+}
+[data-experience='deluxe'] .greenhouse-banner-card img,
+[data-experience='deluxe'] .ng-product-card-media img,
+[data-experience='deluxe'] .ng-cat-card-media img,
+[data-experience='deluxe'] .greenhouse-fallback-product img {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+[data-experience='deluxe'] .greenhouse-banner-card:hover img,
+[data-experience='deluxe'] .ng-product-card:hover .ng-product-card-media img,
+[data-experience='deluxe'] .ng-cat-card:hover .ng-cat-card-media img,
+[data-experience='deluxe'] .greenhouse-fallback-product:hover img {
+  transform: scale(1.06);
+}
+
+/* --- Button micro-interactions: lift + gold sheen sweep ------------------ */
+[data-experience='deluxe'] .greenhouse-button,
+[data-experience='deluxe'] .flower-shop-cta {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+}
+[data-experience='deluxe'] .greenhouse-button:hover,
+[data-experience='deluxe'] .flower-shop-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -14px rgba(200, 169, 106, 0.55);
+}
+[data-experience='deluxe'] .greenhouse-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 80%
+  );
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+[data-experience='deluxe'] .greenhouse-button:hover::after {
+  transform: translateX(120%);
+}
+
+/* --- Scroll-driven reveal: sections fade-up, cards stagger as they enter -- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-experience='deluxe'] .greenhouse-featured-collections,
+    [data-experience='deluxe'] .greenhouse-occasions,
+    [data-experience='deluxe'] .greenhouse-editorial,
+    [data-experience='deluxe'] .greenhouse-corporate,
+    [data-experience='deluxe'] .greenhouse-product-row,
+    [data-experience='deluxe'] .greenhouse-heritage,
+    [data-experience='deluxe'] .greenhouse-testimonials,
+    [data-experience='deluxe'] .greenhouse-newsletter {
+      animation: ng-deluxe-fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+    /* Individual cards reveal as each one scrolls in → natural stagger. */
+    [data-experience='deluxe'] .greenhouse-banner-card,
+    [data-experience='deluxe'] .greenhouse-occasion-grid > a,
+    [data-experience='deluxe'] .ng-product-card,
+    [data-experience='deluxe'] .recommended-products-grid > * {
+      animation: ng-deluxe-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 18%;
+    }
+  }
+}
+@keyframes ng-deluxe-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ng-deluxe-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Respect reduced motion: no transforms, no reveals ------------------- */
+@media (prefers-reduced-motion: reduce) {
+  [data-experience='deluxe'] .greenhouse-banner-card,
+  [data-experience='deluxe'] .ng-product-card,
+  [data-experience='deluxe'] .ng-cat-card,
+  [data-experience='deluxe'] .greenhouse-occasion-grid > a,
+  [data-experience='deluxe'] .greenhouse-fallback-product,
+  [data-experience='deluxe'] .greenhouse-button,
+  [data-experience='deluxe'] .flower-shop-cta,
+  [data-experience='deluxe'] .greenhouse-banner-card img,
+  [data-experience='deluxe'] .ng-product-card-media img,
+  [data-experience='deluxe'] .ng-cat-card-media img,
+  [data-experience='deluxe'] .greenhouse-fallback-product img {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
+  [data-experience='deluxe'] .greenhouse-button::after {
+    display: none;
+  }
+}
+
 /* --------------------------------------------------------------------------
    Deluxe editorial product cards — beyond palette.
    The grid density, PDP layout, nav, homepage content and body font already
