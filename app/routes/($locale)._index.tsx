@@ -8,17 +8,33 @@ import type {
 import {ProductItem} from '~/components/ProductItem';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
+import {getExperienceFromRequest} from '~/lib/experience';
 import heroEditorial from '~/assets/greenhouse-hero-editorial-1920.jpg';
 import occasionBanner from '~/assets/greenhouse-occasion-banner-1600.jpg';
 import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({data}) => {
+  // Distinct SEO per experience: wholesale intent (Classic) vs luxury gifting
+  // (Deluxe). Canonical stays "/" for both (no duplicate-content routes).
+  if (data?.experience === 'classic') {
+    return [
+      {
+        title:
+          'Wholesale Flowers & Florist Supplies Jamaica | The New Greenhouse',
+      },
+      {
+        name: 'description',
+        content:
+          'Bulk flowers, wholesale roses, greenery and florist supplies for florists, event planners, hotels and businesses in Kingston, Jamaica.',
+      },
+    ];
+  }
   return [
-    {title: 'The New Greenhouse | Luxury Florist in Kingston, Jamaica'},
+    {title: 'Luxury Flowers & Premium Bouquets Kingston | The New Greenhouse'},
     {
       name: 'description',
       content:
-        'Shop luxury flowers, gifts, wedding florals, sympathy arrangements, and corporate floral design from The New Greenhouse in Kingston, Jamaica.',
+        'Signature luxury bouquets, premium roses and orchids, and refined corporate and wedding floral design from The New Greenhouse in Kingston, Jamaica.',
     },
   ];
 };
@@ -37,7 +53,7 @@ export async function loader(args: Route.LoaderArgs) {
  * Load data necessary for rendering content above the fold. This is the critical data
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
   const [{collections}] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
     // Add other queries here, so that they are loaded in parallel
@@ -46,6 +62,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
     featuredCollection: collections.nodes[0],
+    experience: getExperienceFromRequest(request),
   };
 }
 
