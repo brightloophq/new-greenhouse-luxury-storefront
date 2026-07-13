@@ -1,5 +1,6 @@
 import {useEffect, useId, useRef, useState} from 'react';
 import {useSearchParams} from 'react-router';
+import {useExperience} from '~/components/ExperienceProvider';
 import {
   Accordion,
   AccordionItem,
@@ -76,6 +77,14 @@ export interface FilterPanelProps {
 export function FilterPanel({filters, variant = 'sidebar'}: FilterPanelProps) {
   const {setParam, commit, clearAll} = useCatalogParams();
   const activeCount = countActiveFilters(filters);
+  const {experience} = useExperience();
+
+  // Deluxe is gifting-only: hide the wholesale/retail "Buying Option" facet so
+  // the Deluxe catalogue never offers a wholesale filter. Classic keeps it.
+  const visibleFacets =
+    experience === 'deluxe'
+      ? FACETS.filter((facet) => facet.key !== 'channel')
+      : FACETS;
 
   // Local, uncommitted price inputs — applied on the "Apply" action so we don't
   // fire a navigation on every keystroke. Re-sync when the URL changes.
@@ -134,7 +143,7 @@ export function FilterPanel({filters, variant = 'sidebar'}: FilterPanelProps) {
       </div>
 
       <Accordion className="ng-catalog-filters-groups">
-        {FACETS.map((facet) => {
+        {visibleFacets.map((facet) => {
           const current = (filters as unknown as Record<
             string,
             string | undefined
