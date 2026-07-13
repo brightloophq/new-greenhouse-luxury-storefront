@@ -83,7 +83,6 @@ function FlowerCategoryCard({
             alt={`${category.name} flowers`}
             loading={priority ? 'eager' : 'lazy'}
             decoding="async"
-            fetchPriority={priority ? 'high' : 'auto'}
           />
         ) : (
           <span className="ng-cat-card-placeholder" aria-hidden="true">
