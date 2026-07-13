@@ -124,7 +124,11 @@ export default function Homepage() {
       ))}
       <HeritageStory content={content.heritage} />
       <Testimonials content={content.testimonials} />
-      <Newsletter content={content.newsletter} />
+      {/* Deluxe relies on the single site-wide footer newsletter; Classic keeps
+          its homepage capture form (audit M4 — remove the duplicate). */}
+      {mode === 'classic' ? (
+        <Newsletter content={content.newsletter} />
+      ) : null}
     </div>
   );
 }
