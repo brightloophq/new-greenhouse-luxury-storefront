@@ -1,0 +1,65 @@
+{
+  "when": "2026-07-14T14-23-12-990Z",
+  "products": {
+    "wet-floral-foam-bricks": {
+      "id": "gid://shopify/Product/8553432875187",
+      "title": "Wet Floral Foam Bricks",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "glass-cylinder-vase": {
+      "id": "gid://shopify/Product/8553435398323",
+      "title": "Glass Cylinder Vase",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "bud-vase-set": {
+      "id": "gid://shopify/Product/8553435431091",
+      "title": "Bud Vase Set",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "satin-ribbon": {
+      "id": "gid://shopify/Product/8553435463859",
+      "title": "Satin Ribbon",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "organza-ribbon": {
+      "id": "gid://shopify/Product/8553435496627",
+      "title": "Organza Ribbon",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "kraft-cellophane-wrap": {
+      "id": "gid://shopify/Product/8553435529395",
+      "title": "Kraft & Cellophane Wrap",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "woven-arrangement-basket": {
+      "id": "gid://shopify/Product/8553435562163",
+      "title": "Woven Arrangement Basket",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "floral-stem-tape": {
+      "id": "gid://shopify/Product/8553435594931",
+      "title": "Floral Stem Tape",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "florist-shears-snips": {
+      "id": "gid://shopify/Product/8553435627699",
+      "title": "Florist Shears & Snips",
+      "mediaCount": 0,
+      "hadImage": false
+    },
+    "bouquet-presentation-boxes": {
+      "id": "gid://shopify/Product/8553435660467",
+      "title": "Bouquet Presentation Boxes",
+      "mediaCount": 0,
+      "hadImage": false
+    }
+  }
+}
