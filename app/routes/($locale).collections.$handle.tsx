@@ -404,6 +404,13 @@ export default function Collection() {
                 sort={sort}
                 activeCount={activeCount}
                 onOpenFilters={() => setDrawerOpen(true)}
+                noun={
+                  filterContext === 'classic-supply'
+                    ? 'item'
+                    : filterContext === 'deluxe'
+                      ? 'arrangement'
+                      : 'product'
+                }
               />
               <ActiveFilterChips filters={applied} />
               <CatalogResults
