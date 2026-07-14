@@ -119,11 +119,30 @@ const TILE_ARRANGEMENT: Record<string, string> = {
   'sympathy-and-funeral': 'classic-white-sympathy-arrangement',
 };
 
-/** A Deluxe collection tile backed by a portrait luxury arrangement photo. */
+/** Bespoke occasion-card photography (square, luxury house style). */
+const occ = (handle: string) => `/images/occasions/${handle}-800.webp`;
+const OCCASION_IMAGES = new Set([
+  'birthday',
+  'anniversary',
+  'love-and-romance',
+  'sympathy-and-funeral',
+  'congratulations',
+  'thank-you',
+  'get-well',
+  'new-baby',
+  'corporate-gifting',
+]);
+
+/**
+ * A Deluxe collection tile. Occasion collections use their bespoke occasion-card
+ * image; other tiles fall back to a representative luxury arrangement photo.
+ */
 const heroTile = (label: string, handle: string): HomeTile => ({
   label,
   to: `/collections/${handle}`,
-  image: lux(TILE_ARRANGEMENT[handle] ?? handle),
+  image: OCCASION_IMAGES.has(handle)
+    ? occ(handle)
+    : lux(TILE_ARRANGEMENT[handle] ?? handle),
 });
 
 /** Shared "Shop by flower" tiles — buying stems is relevant to both audiences. */
@@ -162,32 +181,32 @@ const DELUXE: HomeContent = {
         eyebrow: 'Celebrate the years',
         to: '/collections/anniversary',
         image: 'occasion',
-        imageSrc: lux('blush-romance-luxe'),
-        alt: 'Romantic anniversary arrangement in blush and ivory',
+        imageSrc: occ('anniversary'),
+        alt: 'Romantic anniversary arrangement in red, blush and cream roses',
       },
       {
         title: 'Love & Romance',
         eyebrow: 'Say it with flowers',
         to: '/collections/love-and-romance',
         image: 'hero',
-        imageSrc: lux('grand-red-rose-arrangement'),
-        alt: 'Red rose romance arrangement in a cinematic setting',
+        imageSrc: occ('love-and-romance'),
+        alt: 'Luxury red rose romance bouquet, hand-tied',
       },
       {
         title: 'Birthday',
         eyebrow: 'Make it unforgettable',
         to: '/collections/birthday',
         image: 'botanical',
-        imageSrc: lux('sunshine-birthday-bouquet'),
-        alt: 'Bright, joyful birthday bouquet',
+        imageSrc: occ('birthday'),
+        alt: 'Vibrant premium birthday bouquet in peach and coral tones',
       },
       {
         title: 'Sympathy',
         eyebrow: 'With quiet grace',
         to: '/collections/sympathy-and-funeral',
         image: 'occasion',
-        imageSrc: lux('classic-white-sympathy-arrangement'),
-        alt: 'Serene ivory sympathy arrangement',
+        imageSrc: occ('sympathy-and-funeral'),
+        alt: 'Serene white and ivory sympathy arrangement with soft greenery',
       },
     ],
   },

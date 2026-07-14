@@ -361,3 +361,13 @@
   font-weight: 600;
   margin-top: 0.25rem;
 }
+.ng-delivery-map-img {
+  aspect-ratio: 16 / 9;
+  display: block;
+  width: 100%;
+}
+.ng-delivery-map-full {
+  color: var(--ng-color-soft-gold, #4d6a50);
+  font-weight: 600;
+  white-space: nowrap;
+}

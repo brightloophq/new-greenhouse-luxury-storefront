@@ -97,12 +97,29 @@ export default function DeliveryInformationPage() {
           {DELIVERY.fees.mapAsset ? (
             <figure className="ng-delivery-map">
               <img
-                src={DELIVERY.fees.mapAsset}
+                className="ng-delivery-map-img"
+                src={`${DELIVERY.fees.mapAsset}-1280.webp`}
+                srcSet={[640, 960, 1280, 1600, 2000]
+                  .map((w) => `${DELIVERY.fees.mapAsset}-${w}.webp ${w}w`)
+                  .join(', ')}
+                sizes="(min-width: 64em) 60rem, 100vw"
                 alt={DELIVERY.fees.mapAlt}
+                width={1600}
+                height={900}
                 loading="lazy"
                 decoding="async"
               />
-              <figcaption>{DELIVERY.fees.mapAlt}</figcaption>
+              <figcaption>
+                {DELIVERY.fees.mapCaption}{' '}
+                <a
+                  className="ng-delivery-map-full"
+                  href={`${DELIVERY.fees.mapAsset}-2000.webp`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View full-size map →
+                </a>
+              </figcaption>
             </figure>
           ) : (
             <p className="ng-delivery-map-note">

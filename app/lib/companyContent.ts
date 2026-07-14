@@ -89,12 +89,15 @@ export const DELIVERY = {
     heading: 'Delivery fees',
     note: 'Delivery fees depend on your delivery location. The applicable fee is confirmed during ordering or before your order is finalised. Island-wide delivery requires direct confirmation. Wholesale and trade accounts may follow agreed delivery schedules.',
     bandsLabel: 'Current delivery fee bands',
-    // TODO(merchant): supply the legible, licensed delivery price-map image to
-    // drop into the reserved slot on the delivery page. Until then the fee-band
-    // list below is the primary way pricing is communicated.
-    mapAsset: null as string | null,
+    // Merchant-supplied delivery price map (rendered from NG Delivery Price Map.pdf).
+    // Base path — the delivery page builds a responsive srcSet from it. The J$
+    // fee-band list is still shown so pricing is never map-only. The map art
+    // itself labels amounts with "$"; the caption clarifies these are J$ (JMD).
+    mapAsset: '/images/delivery/delivery-map' as string | null,
     mapAlt:
-      'The New Greenhouse delivery fee map for Kingston & St. Andrew, showing fee bands from J$800 to J$3,500 by area.',
+      'The New Greenhouse delivery price map — concentric fee zones centred on Kingston: J$800 in central Kingston out through J$900, J$1,000, J$1,500 and J$2,500 to J$3,500 toward Spanish Town and Portmore, across Kingston & St. Andrew.',
+    mapCaption:
+      'Delivery price map for Kingston & St. Andrew. Amounts are in Jamaican dollars (J$); your exact fee is confirmed by location during ordering.',
   },
 
   recipient: {
