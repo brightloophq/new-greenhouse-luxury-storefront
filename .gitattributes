@@ -1,0 +1,6 @@
+# Hydrogen/GraphQL codegen writes LF. Pin these generated files to LF so a build
+# on Windows (core.autocrlf) never leaves them "modified" — which otherwise
+# blocks `shopify hydrogen deploy` with a spurious "Uncommitted changes" error.
+*.generated.d.ts text eol=lf
+storefrontapi.generated.d.ts text eol=lf
+customer-accountapi.generated.d.ts text eol=lf
