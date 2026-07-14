@@ -399,6 +399,20 @@ function Testimonials({
       <div className="greenhouse-section-heading">
         <p className="greenhouse-kicker">{content.kicker}</p>
         <h2 id="testimonials-title">{content.title}</h2>
+        {content.rating ? (
+          <a
+            className="greenhouse-rating-badge"
+            href={content.rating.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="greenhouse-rating-star" aria-hidden="true">
+              ★
+            </span>
+            <strong>{content.rating.score}</strong>
+            <span>from {content.rating.count} Google reviews</span>
+          </a>
+        ) : null}
       </div>
       <div className="greenhouse-testimonial-grid">
         {content.items.map((testimonial) => (

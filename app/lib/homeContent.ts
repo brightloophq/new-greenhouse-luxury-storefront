@@ -91,6 +91,8 @@ export interface HomeContent {
   testimonials: {
     kicker: string;
     title: string;
+    /** Optional verified Google rating badge (real aggregate + link out). */
+    rating?: {score: string; count: number; href: string};
     items: {quote: string; name: string; context: string}[];
   };
   newsletter: {kicker: string; title: string; body: string};
@@ -243,6 +245,11 @@ const DELUXE: HomeContent = {
   testimonials: {
     kicker: 'Loved by customers',
     title: 'A quiet standard of excellence.',
+    rating: {
+      score: '4.5',
+      count: 44,
+      href: 'https://maps.app.goo.gl/hdR7bXAwxgyLiZ1c7',
+    },
     items: [
       {
         quote:

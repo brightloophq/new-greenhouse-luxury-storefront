@@ -32,11 +32,22 @@ const COMPANY_LINKS = [
   {to: '/pages/faq', label: 'FAQ'},
 ];
 
-// TODO: real social URLs
 const SOCIAL_LINKS = [
-  {name: 'instagram' as const, label: 'Instagram', href: '#'},
-  {name: 'facebook' as const, label: 'Facebook', href: '#'},
-  {name: 'whatsapp' as const, label: 'WhatsApp', href: '#'},
+  {
+    name: 'instagram' as const,
+    label: 'Instagram',
+    href: 'https://www.instagram.com/newgreenhouse',
+  },
+  {
+    name: 'facebook' as const,
+    label: 'Facebook',
+    href: 'https://www.facebook.com/TheNewGreenhouse/',
+  },
+  {
+    name: 'whatsapp' as const,
+    label: 'WhatsApp',
+    href: 'https://wa.me/18768438964',
+  },
 ];
 
 export function Footer({
@@ -156,8 +167,8 @@ function ContactStrip() {
         className="ng-shell-contact-item"
         icon={<Icon name="phone" size="sm" />}
         label={
-          <a className="ng-shell-contact-link" href="tel:+18760000000">
-            +1 (876) 000-0000
+          <a className="ng-shell-contact-link" href="tel:+18768438964">
+            +1 (876) 843-8964
           </a>
         }
       />

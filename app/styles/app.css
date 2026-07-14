@@ -1667,6 +1667,16 @@ button.reset:hover:not(:has(> *)) {
   opacity: 0.5;
 }
 
+.product-options-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
 .product-options-grid {
   display: flex;
   flex-wrap: wrap;

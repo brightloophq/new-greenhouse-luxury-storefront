@@ -128,7 +128,7 @@ export const CLASSIC_NAV: ExperienceNav = {
 /* -------------------------------------------------------------------------- */
 export const DELUXE_NAV: ExperienceNav = {
   primary: [
-    {label: 'Occasions', to: '/collections/anniversary', mega: true},
+    {label: 'Occasions', to: '/collections', mega: true},
     {label: 'Signature', to: '/collections/luxury-bouquets'},
     {label: 'Roses', to: '/collections/roses'},
     {label: 'Orchids', to: '/collections/orchids'},

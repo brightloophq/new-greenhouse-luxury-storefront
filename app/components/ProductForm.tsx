@@ -26,7 +26,8 @@ export function ProductForm({
 
         return (
           <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
+            {/* Non-heading label: avoids an h1→h5 heading-order jump on the PDP. */}
+            <span className="product-options-label">{option.name}</span>
             <div className="product-options-grid">
               {option.optionValues.map((value) => {
                 const {

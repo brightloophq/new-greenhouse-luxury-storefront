@@ -539,3 +539,50 @@
     transform: none;
   }
 }
+
+/* M8 — verified Google rating badge (real 4.5 / 44 reviews, links to Google). */
+.greenhouse-rating-badge {
+  align-items: center;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-pill, 999px);
+  color: var(--ng-text-secondary);
+  display: inline-flex;
+  font-size: var(--ng-font-size-small, 0.85rem);
+  gap: 0.4rem;
+  margin-block-start: var(--ng-space-3, 0.9rem);
+  padding: 0.35rem 0.9rem;
+  text-decoration: none;
+  transition: border-color var(--ng-duration-standard, 240ms) ease;
+}
+.greenhouse-rating-badge:hover {
+  border-color: var(--ng-color-luxury-gold);
+}
+.greenhouse-rating-badge strong {
+  color: var(--ng-text-primary);
+}
+.greenhouse-rating-star {
+  color: var(--ng-gold-text);
+}
+
+/* M7 — more lavish editorial rhythm for Deluxe homepage sections. */
+[data-experience='deluxe'] .greenhouse-occasions,
+[data-experience='deluxe'] .greenhouse-featured-collections,
+[data-experience='deluxe'] .greenhouse-testimonials,
+[data-experience='deluxe'] .greenhouse-heritage {
+  padding-block: var(--ng-section-editorial, clamp(4rem, 8vw, 7rem));
+}
+
+/* L4 — full-bleed Deluxe hero images are not rounded (the global img radius
+   fights full-bleed luxury imagery). */
+[data-experience='deluxe'] .greenhouse-hero-media img,
+[data-experience='deluxe'] .ng-catalog-hero-img {
+  border-radius: 0;
+}
+
+/* L7 — Deluxe PDP variant chips read as refined uppercase pills. */
+[data-experience='deluxe'] .product-options-item {
+  border-radius: 0;
+  font-size: var(--ng-font-size-small, 0.82rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
