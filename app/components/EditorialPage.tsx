@@ -50,7 +50,6 @@ export function EditorialPage({
           width={1600}
           height={900}
           loading="eager"
-          fetchPriority="high"
           decoding="async"
         />
         <div className="ng-editorial-hero-overlay" />

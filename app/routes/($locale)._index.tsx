@@ -177,7 +177,6 @@ function HomeHero({
           sizes={content.imageSrc ? '100vw' : undefined}
           alt={content.alt}
           loading="eager"
-          fetchPriority="high"
           decoding="async"
         />
       </div>
