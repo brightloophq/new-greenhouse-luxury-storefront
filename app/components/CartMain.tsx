@@ -4,6 +4,8 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {useExperience} from '~/components/ExperienceProvider';
+import {primaryShopPath} from '~/lib/navigation';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -100,6 +102,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
 
 function CartEmpty({hidden = false}: {hidden: boolean}) {
   const {close} = useAside();
+  const {experience} = useExperience();
   return (
     <div hidden={hidden} className="cart-empty-state">
       <p className="cart-empty-copy">
@@ -108,7 +111,7 @@ function CartEmpty({hidden = false}: {hidden: boolean}) {
       </p>
       <Link
         className="greenhouse-button greenhouse-button-dark"
-        to="/collections"
+        to={primaryShopPath(experience)}
         onClick={close}
         prefetch="viewport"
       >

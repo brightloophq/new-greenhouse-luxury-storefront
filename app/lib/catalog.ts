@@ -125,6 +125,32 @@ export const FACETS: FacetDef[] = [
   },
 ];
 
+/**
+ * Per-experience filter configuration (Phase 4/5) — the SINGLE source of truth
+ * for which facets each context exposes. Filters are NEVER derived from shared
+ * component defaults. `channel` ("Buying Option") is internal scoping and is
+ * exposed in NO context.
+ *
+ *   classic-wholesale → Flower Type + Color        (no occasion, no channel)
+ *   classic-supply    → Color only                 (no flower, no occasion)
+ *   deluxe            → Occasion + Color            (no flower-family, no channel)
+ *
+ * (Availability toggle + Price range are always available; they are not facets.)
+ */
+export type FilterContext = 'classic-wholesale' | 'classic-supply' | 'deluxe';
+
+export const CONTEXT_FACETS: Record<FilterContext, FacetKey[]> = {
+  'classic-wholesale': ['flower', 'color'],
+  'classic-supply': ['color'],
+  deluxe: ['occasion', 'color'],
+};
+
+/** Facet defs visible in a given context, in canonical order. */
+export function facetsForContext(context: FilterContext): FacetDef[] {
+  const allowed = new Set<FacetKey>(CONTEXT_FACETS[context]);
+  return FACETS.filter((f) => allowed.has(f.key));
+}
+
 export interface SortOption {
   value: string;
   label: string;
@@ -150,13 +176,27 @@ export interface AppliedFilters {
   maxPrice?: number;
 }
 
-/** Read applied catalog state from URL search params. */
-export function parseCatalogSearchParams(searchParams: URLSearchParams): {
+/**
+ * Read applied catalog state from URL search params. When `context` is given,
+ * facets NOT allowed in that context are IGNORED (not parsed, not applied) — so
+ * a stale/foreign param such as `occasion=romance` in a Classic URL never leaks
+ * into the query, the chips, or the count (Phase 5: no hidden active filters,
+ * no carrying filters across experiences).
+ */
+export function parseCatalogSearchParams(
+  searchParams: URLSearchParams,
+  context?: FilterContext,
+): {
   filters: AppliedFilters;
   sort: string;
 } {
-  const validFor = (key: FacetKey, v: string | null) =>
-    v && FACETS.find((f) => f.key === key)?.options.some((o) => o.value === v) ? v : undefined;
+  const allowed = context ? new Set<FacetKey>(CONTEXT_FACETS[context]) : null;
+  const validFor = (key: FacetKey, v: string | null) => {
+    if (allowed && !allowed.has(key)) return undefined;
+    return v && FACETS.find((f) => f.key === key)?.options.some((o) => o.value === v)
+      ? v
+      : undefined;
+  };
 
   const minP = Number(searchParams.get('minp'));
   const maxP = Number(searchParams.get('maxp'));

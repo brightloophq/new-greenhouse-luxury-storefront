@@ -17,9 +17,11 @@ import {
   countActiveFilters,
   FACETS,
   CATALOG_PRODUCT_FRAGMENT,
+  type FilterContext,
 } from '~/lib/catalog';
 import type {CatalogImage, CatalogProduct} from '~/components/catalog/types';
-import type {ExperienceMode} from '~/lib/experience';
+import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
+import {CLASSIC_SUPPLY_COLLECTIONS} from '~/lib/experienceClassify';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
 import {
   FilterPanel,
@@ -35,6 +37,17 @@ import {productInExperience} from '~/lib/experienceClassify';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
+
+/** Which filter set a collection page uses (Phase 4/5), by experience + type. */
+function filterContextFor(
+  experience: ExperienceMode,
+  handle: string,
+): FilterContext {
+  if (experience === 'deluxe') return 'deluxe';
+  return CLASSIC_SUPPLY_COLLECTIONS.has(handle)
+    ? 'classic-supply'
+    : 'classic-wholesale';
+}
 
 /**
  * Deluxe collections with a dedicated wide (16:9) editorial hero banner in
@@ -180,7 +193,15 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   }
 
   const url = new URL(request.url);
-  const {filters: applied, sort} = parseCatalogSearchParams(url.searchParams);
+  const experience = getExperienceFromRequest(request);
+  const filterContext = filterContextFor(experience, handle);
+  // Context-scoped parse: filters not valid for this experience+section (e.g. an
+  // `occasion` param on a Classic page) are ignored, so they never reach the
+  // Storefront query, the chips, or the count.
+  const {filters: applied, sort} = parseCatalogSearchParams(
+    url.searchParams,
+    filterContext,
+  );
   const productFilters = buildProductFilters(applied);
   const {sortKey, reverse} = toCollectionSort(sort);
   const paginationVariables = getPaginationVariables(request, {pageBy: 12});
@@ -243,6 +264,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         } as unknown as NonNullable<typeof collection>,
         applied,
         sort,
+        filterContext,
         flowerLabel: undefined,
         flowerProducts: null,
       };
@@ -256,6 +278,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     collection,
     applied,
     sort,
+    filterContext,
     flowerLabel: flowerLabelFor(applied.flower),
     flowerProducts: flowerResult?.products ?? null,
     origin: url.origin,
@@ -267,7 +290,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection, applied, sort, flowerLabel, flowerProducts} =
+  const {collection, applied, sort, filterContext, flowerLabel, flowerProducts} =
     useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -312,9 +335,18 @@ export default function Collection() {
       ? 'All Flowers'
       : collection.title;
 
+  // The "shop" crumb is experience-scoped so Classic never routes a shopper to
+  // the generic /collections directory (Phase 2/7).
+  const shopCrumb =
+    filterContext === 'deluxe'
+      ? {label: 'Collections', to: '/collections'}
+      : filterContext === 'classic-supply'
+        ? {label: 'Floral Supplies', to: '/classic/supplies'}
+        : {label: 'Wholesale Flowers', to: '/classic/wholesale'};
+
   const breadcrumbs = [
     {label: 'Home', to: '/'},
-    {label: 'Collections', to: '/collections'},
+    shopCrumb,
     ...(isHub
       ? activeFlower
         ? [{label: 'All Flowers', to: hubPath}, {label: heading}]
@@ -341,7 +373,7 @@ export default function Collection() {
       >
         {editorial ? null : (
           <aside className="ng-catalog-sidebar" aria-label="Product filters">
-            <FilterPanel variant="sidebar" filters={applied} />
+            <FilterPanel variant="sidebar" filters={applied} context={filterContext} />
           </aside>
         )}
 
@@ -387,6 +419,7 @@ export default function Collection() {
 
       <FilterDrawer
         filters={applied}
+        context={filterContext}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       />

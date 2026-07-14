@@ -205,3 +205,12 @@ export const DELUXE_NAV: ExperienceNav = {
 export function navFor(experience: ExperienceMode): ExperienceNav {
   return experience === 'deluxe' ? DELUXE_NAV : CLASSIC_NAV;
 }
+
+/**
+ * The primary "keep shopping" destination for an experience — used by shared
+ * empty states (cart, product grid) so Classic never routes to the generic
+ * /collections directory. Classic → Wholesale Flowers hub; Deluxe → occasions.
+ */
+export function primaryShopPath(experience: ExperienceMode): string {
+  return experience === 'deluxe' ? '/collections' : '/classic/wholesale';
+}
