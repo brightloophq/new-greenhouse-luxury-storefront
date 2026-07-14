@@ -157,7 +157,7 @@ Each milestone is independently completable, testable, and committable. Complexi
 
 ---
 
-### M4 — Collection & Catalog Experience
+### M4 — Collection & Catalog Experience — ✅ COMPLETE (2026-07-11, see `docs/MILESTONE-4.md`)
 **Goal:** Real, functional discovery — the wholesale browsing backbone.
 **Scope:** Wire **functional filters + sort** (extend `COLLECTION_QUERY` with `filters`/`sortKey`, drive via `useSearchParams` like the orders form); collection hero/header; refined product grid (`ProductCard`); load-more/pagination polish; empty/loading states; correct meta titles; larger sensible `pageBy`. Consolidate duplicated collection fragments.
 **Modifies:** `collections._index.tsx`, `collections.$handle.tsx`, `collections.all.tsx`, `PaginatedResourceSection.tsx`, `ProductCard`, shared collection fragment module, `CollectionToolbar`/`FilterControl` molecules.
@@ -223,7 +223,8 @@ Each milestone is independently completable, testable, and committable. Complexi
 
 ---
 
-### M10 — Imagery Pipeline & Art Direction
+### M10 — Imagery Pipeline & Art Direction — ◐ SCAFFOLDED (2026-07-11, see `docs/ASSET_MANIFEST.md`)
+*Pipeline + manifest + folder scaffold complete; 46 assets await generation (no image-gen tool available) + owner approval.*
 **Goal:** Cinematic, non-stock floral imagery with correct crops/formats.
 **Scope:** Audit current assets; regenerate/upscale/re-crop weak images; per-surface art direction (hero vs. card vs. gallery ratios already tokenized); ensure all imagery flows through Hydrogen `Image` with correct `sizes`/`aspectRatio`; alt-text pass; consider CDN transforms.
 **Modifies:** `app/assets/*`, image usages across home/PDP/collections, `ProductGallery`, `ProductCard`.

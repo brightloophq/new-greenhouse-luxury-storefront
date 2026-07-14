@@ -1,12 +1,22 @@
 /*
  * Self-hosted brand fonts (latin subset), served same-origin so the strict
  * Content-Security-Policy needs no external font/style sources.
- * Display: Cormorant Garamond · Body: Inter (see CLAUDE.md typography).
+ * Display: Cormorant Garamond (both experiences).
+ * Body: Inter (Deluxe) · DM Sans (Classic — matches the main website).
  * font-display: swap keeps text visible during load; critical faces are
  * preloaded in root.tsx to minimise FOUT on the hero.
  */
 
-/* ---- Inter (body) ---- */
+/* ---- DM Sans (Classic body — variable, weights 300–500) ---- */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src: url('../assets/fonts/dmsans-variable.woff2') format('woff2');
+}
+
+/* ---- Inter (Deluxe body) ---- */
 @font-face {
   font-family: 'Inter';
   font-style: normal;

@@ -1,0 +1,16 @@
+{
+  "products": 80,
+  "variants": 208,
+  "byCategory": {
+    "wholesale": 32,
+    "retail": 16,
+    "sympathy": 8,
+    "weddings": 8,
+    "supplies": 10,
+    "plants": 6
+  },
+  "collections": 37,
+  "provisionalPrices": 208,
+  "missingImages": 80,
+  "confirmationRequiredFields": 120
+}

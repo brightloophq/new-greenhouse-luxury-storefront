@@ -16,30 +16,14 @@ import {
   TrustGrid,
   TrustItem,
 } from '~/components/ui';
+import {navFor} from '~/lib/navigation';
+import {useExperience} from '~/components/ExperienceProvider';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
   header: HeaderQuery;
   publicStoreDomain: string;
 }
-
-// Static footer link data — editorial columns. Internal routes only.
-const SHOP_LINKS = [
-  {to: '/collections/luxury-bouquets', label: 'Luxury bouquets'},
-  {to: '/collections/birthday-flowers', label: 'Birthday flowers'},
-  {to: '/collections/wedding-flowers', label: 'Wedding flowers'},
-  {to: '/collections/sympathy', label: 'Sympathy'},
-  {to: '/collections/gift-baskets', label: 'Gift baskets'},
-  {to: '/collections', label: 'Shop all'},
-];
-
-const SERVICE_LINKS = [
-  {to: '/pages/wedding-events', label: 'Weddings'},
-  {to: '/pages/corporate-flowers', label: 'Corporate'},
-  {to: '/collections/same-day-delivery', label: 'Same-day delivery'},
-  // TODO: dedicated wholesale page pending — points to all collection for now.
-  {to: '/collections/all', label: 'Wholesale'},
-];
 
 const COMPANY_LINKS = [
   {to: '/pages/about-us', label: 'About'},
@@ -48,11 +32,22 @@ const COMPANY_LINKS = [
   {to: '/pages/faq', label: 'FAQ'},
 ];
 
-// TODO: real social URLs
 const SOCIAL_LINKS = [
-  {name: 'instagram' as const, label: 'Instagram', href: '#'},
-  {name: 'facebook' as const, label: 'Facebook', href: '#'},
-  {name: 'whatsapp' as const, label: 'WhatsApp', href: '#'},
+  {
+    name: 'instagram' as const,
+    label: 'Instagram',
+    href: 'https://www.instagram.com/newgreenhouse',
+  },
+  {
+    name: 'facebook' as const,
+    label: 'Facebook',
+    href: 'https://www.facebook.com/TheNewGreenhouse/',
+  },
+  {
+    name: 'whatsapp' as const,
+    label: 'WhatsApp',
+    href: 'https://wa.me/18768438964',
+  },
 ];
 
 export function Footer({
@@ -60,6 +55,8 @@ export function Footer({
   header,
   publicStoreDomain,
 }: FooterProps) {
+  const {experience} = useExperience();
+  const nav = navFor(experience);
   return (
     <Suspense>
       <Await resolve={footerPromise}>
@@ -76,8 +73,8 @@ export function Footer({
                 {/* c. Editorial footer columns */}
                 <Grid cols={4} className="ng-shell-footer-columns">
                   <BrandColumn />
-                  <FooterColumn title="Shop" links={SHOP_LINKS} />
-                  <FooterColumn title="Services" links={SERVICE_LINKS} />
+                  <FooterColumn title="Shop" links={nav.footerShop} />
+                  <FooterColumn title="Services" links={nav.footerServices} />
                   <FooterColumn title="Company" links={COMPANY_LINKS} />
                 </Grid>
 
@@ -170,8 +167,8 @@ function ContactStrip() {
         className="ng-shell-contact-item"
         icon={<Icon name="phone" size="sm" />}
         label={
-          <a className="ng-shell-contact-link" href="tel:+18760000000">
-            +1 (876) 000-0000
+          <a className="ng-shell-contact-link" href="tel:+18768438964">
+            +1 (876) 843-8964
           </a>
         }
       />

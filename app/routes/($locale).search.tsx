@@ -1,29 +1,48 @@
-import {useLoaderData} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
-import {SearchResults} from '~/components/SearchResults';
 import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
   getEmptyPredictiveSearchResult,
 } from '~/lib/search';
+import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
+import {CatalogResults} from '~/components/catalog/CatalogResults';
+import type {CatalogProduct} from '~/components/catalog/types';
+import {ButtonLink, Heading, Icon, Text} from '~/components/ui';
 import type {
   RegularSearchQuery,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
+  return [{title: `Search | The New Greenhouse`}];
 };
+
+/**
+ * Wholesale supply collections that must never surface in the Deluxe (luxury)
+ * predictive-search dropdown. Products are scoped by the `channel:retail` tag;
+ * collections have no tags in the predictive payload, so we deny by handle.
+ */
+const WHOLESALE_ONLY_COLLECTIONS = new Set([
+  'bulk-flowers',
+  'floral-supplies',
+  'greenery-and-fillers',
+  'vases-and-containers',
+  'ribbon',
+  'tools-and-accessories',
+  'wrapping-and-packaging',
+]);
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const url = new URL(request.url);
   const isPredictive = url.searchParams.has('predictive');
+  const experience = getExperienceFromRequest(request);
   const searchPromise: Promise<PredictiveSearchReturn | RegularSearchReturn> =
     isPredictive
-      ? predictiveSearch({request, context})
-      : regularSearch({request, context});
+      ? predictiveSearch({request, context, experience})
+      : regularSearch({request, context, experience});
 
   searchPromise.catch((error: Error) => {
     console.error(error);
@@ -33,45 +52,133 @@ export async function loader({request, context}: Route.LoaderArgs) {
   return await searchPromise;
 }
 
+/** Map a Storefront search-product node onto the catalog card view-model. */
+function toCatalogProduct(
+  node: RegularSearchQuery['products']['nodes'][number],
+): CatalogProduct {
+  const variant = node.selectedOrFirstAvailableVariant;
+  const price = variant?.price ?? {amount: '0', currencyCode: 'USD'};
+  return {
+    id: node.id,
+    handle: node.handle,
+    title: node.title,
+    vendor: node.vendor,
+    availableForSale: variant?.availableForSale ?? undefined,
+    featuredImage: variant?.image ?? null,
+    images: variant?.image ? {nodes: [variant.image]} : null,
+    priceRange: {minVariantPrice: price, maxVariantPrice: price},
+    compareAtPriceRange: variant?.compareAtPrice
+      ? {minVariantPrice: variant.compareAtPrice}
+      : null,
+  };
+}
+
 /**
- * Renders the /search route
+ * Renders the /search route — rebuilt on the premium `ng-catalog` design
+ * system (was stock Hydrogen scaffolding). Product results scope to the active
+ * experience server-side (Deluxe = luxury/retail only).
  */
 export default function SearchPage() {
   const {type, term, result, error} = useLoaderData<typeof loader>();
   if (type === 'predictive') return null;
 
+  const products = result?.items?.products;
+  const productNodes = products?.nodes ?? [];
+  const hasTerm = Boolean(term);
+  const hasProducts = productNodes.length > 0;
+
+  const connection = products
+    ? {nodes: productNodes.map(toCatalogProduct), pageInfo: products.pageInfo}
+    : null;
+
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
-        )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
+    <div className="ng-catalog-page ng-search-page">
+      <header className="ng-search-hero">
+        <p className="greenhouse-kicker">Search</p>
+        <h1 className="ng-search-title">
+          {hasTerm ? (
+            <>
+              Results for <span className="ng-search-term">“{term}”</span>
+            </>
+          ) : (
+            'Search the collection'
+          )}
+        </h1>
+        <p className="ng-search-sub">
+          Find the perfect arrangement by flower, occasion, or collection.
+        </p>
+        <SearchForm className="ng-search-form">
+          {({inputRef}) => (
+            <div className="ng-search-form-row">
+              <input
+                className="ng-search-input"
+                defaultValue={term}
+                name="q"
+                placeholder="Search flowers, occasions, collections…"
+                ref={inputRef}
+                type="search"
+                aria-label="Search"
+              />
+              <button className="ng-search-submit" type="submit">
+                Search
+              </button>
             </div>
           )}
-        </SearchResults>
+        </SearchForm>
+      </header>
+
+      {error ? (
+        <p className="ng-search-error" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      {hasProducts && connection ? (
+        <section className="ng-search-results" aria-label="Search results">
+          <CatalogResults connection={connection} />
+        </section>
+      ) : hasTerm ? (
+        <div className="ng-catalog-empty" role="status">
+          <span className="ng-catalog-empty-icon" aria-hidden="true">
+            <Icon name="search" size="lg" />
+          </span>
+          <Heading as={2} size="h3" className="ng-catalog-empty-title">
+            No arrangements match “{term}”
+          </Heading>
+          <Text tone="secondary" className="ng-catalog-empty-text">
+            Try a different word — a flower, an occasion, or a colour — or
+            explore our collections below.
+          </Text>
+          <ButtonLink
+            to="/collections"
+            variant="primary"
+            className="ng-catalog-empty-action"
+          >
+            Browse collections
+          </ButtonLink>
+        </div>
+      ) : (
+        <div className="ng-catalog-empty" role="status">
+          <span className="ng-catalog-empty-icon" aria-hidden="true">
+            <Icon name="flower" size="lg" />
+          </span>
+          <Heading as={2} size="h3" className="ng-catalog-empty-title">
+            What are you looking for?
+          </Heading>
+          <Text tone="secondary" className="ng-catalog-empty-text">
+            Search for a flower, an occasion, or a collection — or browse our
+            signature arrangements.
+          </Text>
+          <ButtonLink
+            to="/collections"
+            variant="primary"
+            className="ng-catalog-empty-action"
+          >
+            Browse collections
+          </ButtonLink>
+        </div>
       )}
+
       <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
     </div>
   );
@@ -90,12 +197,14 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
     title
     trackingParameters
     vendor
+    tags
     selectedOrFirstAvailableVariant(
       selectedOptions: []
       ignoreUnknownOptions: true
       caseInsensitiveMatch: true
     ) {
       id
+      availableForSale
       image {
         url
         altText
@@ -216,10 +325,10 @@ export const SEARCH_QUERY = `#graphql
 async function regularSearch({
   request,
   context,
-}: Pick<
-  Route.LoaderArgs,
-  'request' | 'context'
->): Promise<RegularSearchReturn> {
+  experience,
+}: Pick<Route.LoaderArgs, 'request' | 'context'> & {
+  experience: ExperienceMode;
+}): Promise<RegularSearchReturn> {
   const {storefront} = context;
   const url = new URL(request.url);
   const variables = getPaginationVariables(request, {pageBy: 8});
@@ -238,7 +347,24 @@ async function regularSearch({
     throw new Error('No search data returned from Shopify API');
   }
 
-  const total = Object.values(items).reduce(
+  // Deluxe (luxury) search is scoped to retail products only, so wholesale
+  // by-the-box SKUs never surface in the gifting experience. The `search`
+  // connection's `productFilters` arg does not constrain a text query, so we
+  // filter the returned nodes by tag. Classic is unscoped (Wholesale intact).
+  const scopedItems =
+    experience === 'deluxe' && items.products?.nodes
+      ? {
+          ...items,
+          products: {
+            ...items.products,
+            nodes: items.products.nodes.filter((node) =>
+              (node.tags ?? []).includes('channel:retail'),
+            ),
+          },
+        }
+      : items;
+
+  const total = Object.values(scopedItems).reduce(
     (acc: number, {nodes}: {nodes: Array<unknown>}) => acc + nodes.length,
     0,
   );
@@ -247,7 +373,7 @@ async function regularSearch({
     ? errors.map(({message}: {message: string}) => message).join(', ')
     : undefined;
 
-  return {type: 'regular', term, error, result: {total, items}};
+  return {type: 'regular', term, error, result: {total, items: scopedItems}};
 }
 
 /**
@@ -305,6 +431,7 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
     id
     title
     handle
+    tags
     trackingParameters
     selectedOrFirstAvailableVariant(
       selectedOptions: []
@@ -381,10 +508,10 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
 async function predictiveSearch({
   request,
   context,
-}: Pick<
-  Route.ActionArgs,
-  'request' | 'context'
->): Promise<PredictiveSearchReturn> {
+  experience,
+}: Pick<Route.ActionArgs, 'request' | 'context'> & {
+  experience: ExperienceMode;
+}): Promise<PredictiveSearchReturn> {
   const {storefront} = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
@@ -417,10 +544,27 @@ async function predictiveSearch({
     throw new Error('No predictive search data returned from Shopify API');
   }
 
-  const total = Object.values(items).reduce(
+  // Deluxe (luxury) predictive results are scoped to retail products and drop
+  // wholesale-supply collections — predictiveSearch has no productFilters arg,
+  // so we filter the payload here. Classic sees everything (Wholesale intact).
+  const scoped =
+    experience === 'deluxe'
+      ? {
+          ...items,
+          products: items.products.filter((product) =>
+            (product.tags ?? []).includes('channel:retail'),
+          ),
+          collections: items.collections.filter(
+            (collection) =>
+              !WHOLESALE_ONLY_COLLECTIONS.has(collection.handle),
+          ),
+        }
+      : items;
+
+  const total = Object.values(scoped).reduce(
     (acc: number, item: Array<unknown>) => acc + item.length,
     0,
   );
 
-  return {type, term, result: {items, total}};
+  return {type, term, result: {items: scoped, total}};
 }

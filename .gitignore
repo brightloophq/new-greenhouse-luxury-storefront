@@ -4,6 +4,37 @@ node_modules
 /dist
 /public/build
 /.mf
-.env
 .shopify
 .react-router
+
+# Secrets, credentials & logs — NEVER commit.
+# .env* (including .env.example, which holds real values here) is always ignored.
+.env
+.env.*
+commerce-manager/.env
+commerce-manager/.env.*
+*.log
+reports/private/
+**/reports/private/
+*.token
+*.secret
+.tng-token
+.access-token
+
+# Raw flower source images (optimized WebP in public/ are the committed artifacts)
+source-images/
+
+# Image pipeline: keep large regenerable originals out of git (derivatives are committed).
+source-images/generated-originals/
+
+# Flower-library source originals are large and regenerable; commit only the optimized public WebP.
+source-images/flowers/*/
+!source-images/flowers/alstroemeria/
+
+# Luxury arrangement source originals (large, regenerable) — commit only optimized WebP.
+source-images/luxury/
+
+# internal review pages (not for the public storefront)
+public/flower-library.html
+public/pilot-review.html
+source-images/collection-heroes/

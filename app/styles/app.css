@@ -1628,9 +1628,18 @@ button.reset:hover:not(:has(> *)) {
 .product {
   display: grid;
   gap: clamp(1.5rem, 5vw, 4rem);
+  /* Explicit single column at mobile: without a template the implicit auto
+     column sizes to a child's max-content and blows past the viewport. */
+  grid-template-columns: minmax(0, 1fr);
   @media (min-width: 45em) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+}
+
+/* Grid children (gallery + purchase panel) must never exceed their track. */
+.product > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .product h1 {
@@ -1656,6 +1665,16 @@ button.reset:hover:not(:has(> *)) {
 
 .product-price-on-sale s {
   opacity: 0.5;
+}
+
+.product-options-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
 }
 
 .product-options-grid {

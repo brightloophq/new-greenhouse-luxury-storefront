@@ -9,7 +9,9 @@ import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
 import {cx, Icon, IconButton} from '~/components/ui';
-import megaFeatureImage from '~/assets/greenhouse-occasion-banner-1600.jpg';
+import {ExperienceToggle} from '~/components/ExperienceToggle';
+import {useExperience} from '~/components/ExperienceProvider';
+import {navFor, type MegaColumn} from '~/lib/navigation';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -17,52 +19,6 @@ interface HeaderProps {
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
 }
-
-type MegaLink = {label: string; to: string};
-type MegaColumn = {title: string; links: MegaLink[]};
-
-const MEGA_COLUMNS: MegaColumn[] = [
-  {
-    title: 'Occasions',
-    links: [
-      {label: 'Birthday', to: '/collections/birthday-flowers'},
-      {label: 'Anniversary', to: '/collections/anniversary-flowers'},
-      {label: 'Love & Romance', to: '/collections/love-romance'},
-      {label: 'Sympathy', to: '/collections/sympathy'},
-      {label: 'Weddings', to: '/collections/wedding-flowers'},
-      {label: 'Gift Baskets', to: '/collections/gift-baskets'},
-    ],
-  },
-  {
-    title: 'The Collection',
-    links: [
-      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
-      {label: 'Tropical Flowers', to: '/collections/tropical-flowers'},
-      {label: 'Plants', to: '/collections/plants'},
-      {label: 'Same-Day Delivery', to: '/collections/same-day-delivery'},
-      {label: 'Shop All', to: '/collections/all'},
-    ],
-  },
-  {
-    title: 'Wholesale & Trade',
-    links: [
-      {label: 'Wholesale Flowers', to: '/collections/all'},
-      {label: 'Weddings & Events', to: '/pages/wedding-events'},
-      {label: 'Corporate Floral', to: '/pages/corporate-flowers'},
-      {label: 'Bulk & Standing Orders', to: '/pages/contact'},
-    ],
-  },
-];
-
-type PrimaryItem = {label: string; to?: string; mega?: boolean};
-
-const PRIMARY_NAV: PrimaryItem[] = [
-  {label: 'Shop', to: '/collections', mega: true},
-  {label: 'Weddings', to: '/pages/wedding-events'},
-  {label: 'Corporate', to: '/pages/corporate-flowers'},
-  {label: 'Wholesale', to: '/collections/all'},
-  {label: 'About', to: '/pages/about-us'},
-];
 
 export function Header({header, isLoggedIn, cart}: HeaderProps) {
   const {shop} = header;
@@ -95,6 +51,7 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
           </NavLink>
 
           <div className="ng-shell-actions">
+            <ExperienceToggle className="ng-exp-toggle--header" />
             <IconButton aria-label="Search" onClick={() => open('search')}>
               <Icon name="search" />
             </IconButton>
@@ -117,6 +74,8 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
 }
 
 function DesktopNav() {
+  const {experience} = useExperience();
+  const nav = navFor(experience);
   const [openLabel, setOpenLabel] = useState<string | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -149,7 +108,7 @@ function DesktopNav() {
       }}
     >
       <ul className="ng-shell-primary-list">
-        {PRIMARY_NAV.map((item) => {
+        {nav.primary.map((item) => {
           const isOpen = openLabel === item.label;
           if (item.mega) {
             return (
@@ -177,6 +136,7 @@ function DesktopNav() {
                   <Icon name="chevron-down" size="xs" className="ng-shell-mega-caret" />
                 </button>
                 <MegaPanel
+                  columns={nav.mega}
                   open={isOpen}
                   onPointerEnter={clearTimer}
                   onPointerLeave={scheduleClose}
@@ -204,11 +164,13 @@ function DesktopNav() {
 }
 
 function MegaPanel({
+  columns,
   open,
   onPointerEnter,
   onPointerLeave,
   onClose,
 }: {
+  columns: MegaColumn[];
   open: boolean;
   onPointerEnter: () => void;
   onPointerLeave: () => void;
@@ -223,8 +185,14 @@ function MegaPanel({
     >
       <div className="ng-mega-inner">
         <div className="ng-mega-columns">
-          {MEGA_COLUMNS.map((col) => (
-            <div className="ng-mega-column" key={col.title}>
+          {columns.map((col) => (
+            <div
+              className={cx(
+                'ng-mega-column',
+                col.variant === 'flowers' && 'ng-mega-column--flowers',
+              )}
+              key={col.title}
+            >
               <p className="ng-mega-column-title">{col.title}</p>
               <ul>
                 {col.links.map((link) => (
@@ -243,21 +211,6 @@ function MegaPanel({
             </div>
           ))}
         </div>
-        <NavLink
-          to="/collections/luxury-bouquets"
-          prefetch="intent"
-          className="ng-mega-feature"
-          onClick={onClose}
-        >
-          <span className="ng-mega-feature-media">
-            <img src={megaFeatureImage} alt="" loading="lazy" />
-          </span>
-          <span className="ng-mega-feature-copy">
-            <span className="ng-mega-feature-eyebrow">House arrangements</span>
-            <span className="ng-mega-feature-title">Signature Bouquets</span>
-            <span className="ng-mega-feature-cta">Shop the edit →</span>
-          </span>
-        </NavLink>
       </div>
     </div>
   );
@@ -304,5 +257,3 @@ function CartButton({count}: {count: number}) {
 }
 
 // Consumed by the mobile-navigation drawer in PageLayout.
-export {MEGA_COLUMNS, PRIMARY_NAV};
-export type {MegaColumn, PrimaryItem};

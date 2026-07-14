@@ -1,92 +1,63 @@
-import {useLoaderData, Link} from 'react-router';
+import {useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
-import {getPaginationVariables, Image} from '@shopify/hydrogen';
+import {Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
-import botanicalBanner from '~/assets/greenhouse-botanical-banner-1600.jpg';
+import {Section, Container, Grid, CollectionCard} from '~/components/ui';
+import {CollectionHero} from '~/components/catalog/CollectionHero';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Luxury Floral Collections | The New Greenhouse'},
+    {title: 'Shop Flowers by Collection | The New Greenhouse'},
     {
       name: 'description',
       content:
-        'Explore signature bouquets, sympathy flowers, wedding florals, corporate flowers, plants, and luxury gifting collections from The New Greenhouse.',
+        'Browse luxury and wholesale floral collections — bouquets, weddings, sympathy, corporate, plants and gifting — from The New Greenhouse in Kingston, Jamaica.',
     },
   ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
-  return {...deferredData, ...criticalData};
+  return {...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
-async function loadCriticalData({context, request}: Route.LoaderArgs) {
-  const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
-  });
-
+async function loadCriticalData({context}: Route.LoaderArgs) {
   const [{collections}] = await Promise.all([
-    context.storefront.query(COLLECTIONS_QUERY, {
-      variables: paginationVariables,
-    }),
-    // Add other queries here, so that they are loaded in parallel
+    context.storefront.query(COLLECTIONS_QUERY),
   ]);
-
   return {collections};
-}
-
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
-function loadDeferredData({context}: Route.LoaderArgs) {
-  return {};
 }
 
 export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
+  const nodes = collections.nodes.filter(
+    (c) => c.handle !== 'frontpage',
+  );
 
   return (
-    <div className="collections commerce-page">
-      <section className="commerce-hero commerce-hero-split">
-        <div>
-          <p className="greenhouse-kicker">Curated by occasion</p>
-          <h1>Luxury floral collections for every meaningful moment.</h1>
-          <p>
-            Explore signature arrangements, sympathy florals, wedding design,
-            plants, corporate flowers, and premium gifting from Kingston&apos;s
-            trusted floral house.
-          </p>
-        </div>
-        <img
-          src={botanicalBanner}
-          alt="Botanical luxury floral arrangement"
-          loading="eager"
-        />
-      </section>
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
-          />
-        )}
-      </PaginatedResourceSection>
+    <div className="ng-catalog-page ng-catalog-index">
+      <CollectionHero
+        breadcrumbs={[
+          {label: 'Home', to: '/'},
+          {label: 'Collections'},
+        ]}
+        eyebrow="Browse the house"
+        title="Shop flowers by collection"
+        description="Curated collections for gifting, weddings, sympathy, corporate spaces and wholesale ordering — the full house of The New Greenhouse."
+      />
+      <Section spacing="standard">
+        <Container size="xl">
+          <Grid cols={3}>
+            {nodes.map((collection, index) => (
+              <CollectionItem
+                key={collection.id}
+                collection={collection}
+                index={index}
+              />
+            ))}
+          </Grid>
+        </Container>
+      </Section>
     </div>
   );
 }
@@ -99,26 +70,25 @@ function CollectionItem({
   index: number;
 }) {
   return (
-    <Link
-      className="collection-item"
-      key={collection.id}
-      to={`/collections/${collection.handle}`}
-      prefetch="intent"
-    >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="4/3"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <span className="collection-item-copy">
-        <small>Collection</small>
-        <h5>{collection.title}</h5>
-      </span>
-    </Link>
+    <CollectionCard
+      href={`/collections/${collection.handle}`}
+      title={collection.title}
+      eyebrow="Collection"
+      description={collection.description || undefined}
+      media={
+        collection.image ? (
+          <Image
+            alt={collection.image.altText || collection.title}
+            aspectRatio="16/10"
+            data={collection.image}
+            loading={index < 4 ? 'eager' : 'lazy'}
+            sizes="(min-width: 64em) 30vw, (min-width: 45em) 45vw, 100vw"
+          />
+        ) : (
+          <div className="ng-catalog-card-noimg" aria-hidden="true" />
+        )
+      }
+    />
   );
 }
 
@@ -127,6 +97,7 @@ const COLLECTIONS_QUERY = `#graphql
     id
     title
     handle
+    description
     image {
       id
       url
@@ -137,26 +108,11 @@ const COLLECTIONS_QUERY = `#graphql
   }
   query StoreCollections(
     $country: CountryCode
-    $endCursor: String
-    $first: Int
     $language: LanguageCode
-    $last: Int
-    $startCursor: String
   ) @inContext(country: $country, language: $language) {
-    collections(
-      first: $first,
-      last: $last,
-      before: $startCursor,
-      after: $endCursor
-    ) {
+    collections(first: 50, sortKey: TITLE) {
       nodes {
         ...Collection
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
       }
     }
   }

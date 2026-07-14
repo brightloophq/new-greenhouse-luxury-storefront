@@ -1,0 +1,24 @@
+{
+  "note": "Deluxe luxury-arrangement catalogue — single source for image generation (scripts/images/luxury-arrangements.mjs) AND Shopify product/collection creation (commerce-manager). price in USD. collections = Shopify handles this product belongs to.",
+  "arrangements": [
+    {"handle": "grand-red-rose-arrangement", "title": "Grand Red Rose Arrangement", "subject": "a grand, opulent arrangement of two dozen deep red roses", "price": 185, "collections": ["roses", "love-and-romance", "best-sellers"]},
+    {"handle": "white-orchid-elegance", "title": "White Orchid Elegance", "subject": "an elegant tall arrangement of pure white phalaenopsis orchids", "price": 165, "collections": ["orchids", "best-sellers", "signature-collection"]},
+    {"handle": "blush-romance-luxe", "title": "Blush Romance Bouquet", "subject": "a romantic hand-tied bouquet of blush-pink and ivory roses with soft white accents", "price": 135, "collections": ["love-and-romance", "anniversary"]},
+    {"handle": "golden-celebration-bouquet", "title": "Golden Celebration Bouquet", "subject": "a celebratory bouquet of golden-yellow roses, warm orange blooms and lush greenery", "price": 145, "collections": ["anniversary", "congratulations", "best-sellers"]},
+    {"handle": "luxury-mixed-garden-bouquet", "title": "Luxury Mixed Garden Bouquet", "subject": "a lush mixed garden-style bouquet of roses, hydrangea and seasonal blooms in soft pastels", "price": 155, "collections": ["luxury-bouquets", "signature-collection"]},
+    {"handle": "royal-hydrangea-arrangement", "title": "Royal Hydrangea Arrangement", "subject": "a regal arrangement of blue and white hydrangea with premium foliage", "price": 150, "collections": ["luxury-bouquets", "signature-collection"]},
+    {"handle": "classic-white-sympathy-arrangement", "title": "Classic White Sympathy Arrangement", "subject": "a serene white sympathy arrangement of white roses, white lilies and chrysanthemums", "price": 140, "collections": ["sympathy-and-funeral"]},
+    {"handle": "sunshine-birthday-bouquet", "title": "Sunshine Birthday Bouquet", "subject": "a bright, joyful birthday bouquet of yellow, orange and pink blooms", "price": 120, "collections": ["birthday", "best-sellers"]},
+    {"handle": "luxury-tropical-arrangement", "title": "Luxury Tropical Arrangement", "subject": "a bold luxury tropical arrangement of orange bird of paradise, red anthurium and orchids with palm foliage", "price": 175, "collections": ["luxury-bouquets", "seasonal-deluxe"]},
+    {"handle": "premium-mothers-day-bouquet", "title": "Premium Mother's Day Bouquet", "subject": "an elegant Mother's Day bouquet of blush roses, soft peonies and pastel blooms", "price": 160, "collections": ["seasonal-deluxe", "best-sellers"]},
+    {"handle": "signature-ivory-blush-bouquet", "title": "Signature Ivory & Blush Bouquet", "subject": "a signature bouquet of ivory and blush roses with delicate white filler accents", "price": 170, "collections": ["signature-collection", "luxury-bouquets"]},
+    {"handle": "red-rose-romance-luxe", "title": "Red Rose Romance Bouquet", "subject": "a romantic dozen red roses hand-tied with baby's breath and eucalyptus", "price": 115, "collections": ["love-and-romance", "roses"]},
+    {"handle": "congratulations-brights-bouquet", "title": "Congratulations Brights Bouquet", "subject": "a vibrant congratulations bouquet of bright mixed blooms in pink, orange and yellow", "price": 110, "collections": ["congratulations"]},
+    {"handle": "get-well-luxe", "title": "Get Well Sunshine Bouquet", "subject": "a cheerful get-well bouquet of sunny yellow and white blooms with greenery", "price": 95, "collections": ["get-well"]},
+    {"handle": "new-baby-soft-pastels-bouquet", "title": "New Baby Soft Pastels Bouquet", "subject": "a soft pastel new-baby bouquet of pink, peach and white blooms", "price": 105, "collections": ["new-baby"]},
+    {"handle": "corporate-elegance-arrangement", "title": "Corporate Elegance Arrangement", "subject": "a refined corporate arrangement of white roses and green premium foliage", "price": 150, "collections": ["corporate-gifting"]},
+    {"handle": "bridal-white-bouquet", "title": "Bridal White Bouquet", "subject": "an elegant bridal bouquet of white roses, white ranunculus and trailing greenery", "price": 145, "collections": ["wedding-flowers", "bridal-bouquets"]},
+    {"handle": "thank-you-peach-bouquet", "title": "Thank You Bouquet", "subject": "a warm thank-you bouquet of peach and cream roses with eucalyptus", "price": 100, "collections": ["thank-you"]},
+    {"handle": "seasonal-luxe-bouquet", "title": "Seasonal Luxe Bouquet", "subject": "a seasonal luxury bouquet of the finest in-season premium blooms in rich tones", "price": 130, "collections": ["seasonal-deluxe"]}
+  ]
+}
