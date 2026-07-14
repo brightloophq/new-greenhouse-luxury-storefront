@@ -174,12 +174,12 @@ export const DELUXE_NAV: ExperienceNav = {
       ],
     },
     {
-      title: 'Gifts & Weddings',
+      title: 'Gifts & Corporate',
       links: [
         {label: 'Curated Add-ons', to: '/collections/add-ons'},
         {label: 'Corporate Gifts', to: '/collections/corporate-gifting'},
-        {label: 'Wedding Bouquets', to: '/collections/bridal-bouquets'},
-        {label: 'Centerpieces', to: '/collections/centerpieces'},
+        {label: 'Thank You', to: '/collections/thank-you'},
+        {label: 'Best Sellers', to: '/collections/best-sellers'},
       ],
     },
   ],

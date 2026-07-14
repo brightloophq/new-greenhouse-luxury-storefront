@@ -18,6 +18,7 @@ import {
 } from '~/components/ui';
 import {navFor} from '~/lib/navigation';
 import {useExperience} from '~/components/ExperienceProvider';
+import {CONTACT, DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -167,9 +168,13 @@ function ContactStrip() {
         className="ng-shell-contact-item"
         icon={<Icon name="phone" size="sm" />}
         label={
-          <a className="ng-shell-contact-link" href="tel:+18768438964">
-            +1 (876) 843-8964
-          </a>
+          <span className="ng-shell-contact-phones">
+            {CONTACT.phones.map((phone) => (
+              <a key={phone.href} className="ng-shell-contact-link" href={phone.href}>
+                {phone.display}
+              </a>
+            ))}
+          </span>
         }
       />
       <TrustItem
@@ -178,21 +183,21 @@ function ContactStrip() {
         label={
           <a
             className="ng-shell-contact-link"
-            href="mailto:info@thenewgreenhouseja.com"
+            href={`mailto:${CONTACT.email}`}
           >
-            info@thenewgreenhouseja.com
+            {CONTACT.email}
           </a>
         }
       />
       <TrustItem
         className="ng-shell-contact-item"
         icon={<Icon name="map-pin" size="sm" />}
-        label="Kingston, Jamaica"
+        label={CONTACT.address.full}
       />
       <TrustItem
         className="ng-shell-contact-item"
         icon={<Icon name="clock" size="sm" />}
-        label="Same-day delivery before 2PM"
+        label={`Same-day delivery before ${DELIVERY_CUTOFF_SHORT}`}
       />
     </TrustGrid>
   );
@@ -268,9 +273,19 @@ function FooterMenu({
   primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
   publicStoreDomain: string;
 }) {
+  // Hide any Shopify-managed footer link to wedding/event pages — the business
+  // does not currently offer those services (see About corrections / removed
+  // wedding-events route). Flag the CMS menu item for deletion (final report).
+  const HIDDEN_FOOTER_LINK = /wedding|event florist|ceremony|reception styling/i;
   return (
     <nav className="ng-shell-footer-legal" aria-label="Legal and policies">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+      {(menu || FALLBACK_FOOTER_MENU).items
+        .filter(
+          (item) =>
+            !HIDDEN_FOOTER_LINK.test(item.title ?? '') &&
+            !/wedding-events|weddings|corporate-flowers/i.test(item.url ?? ''),
+        )
+        .map((item) => {
         if (!item.url) return null;
         // if the url is internal, we strip the domain
         const url =

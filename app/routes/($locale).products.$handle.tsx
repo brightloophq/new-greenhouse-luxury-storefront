@@ -17,6 +17,7 @@ import {useExperience} from '~/components/ExperienceProvider';
 import {ProductGrid} from '~/components/catalog/ProductGrid';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {DELIVERY_CUTOFF} from '~/lib/companyContent';
 
 export const meta: Route.MetaFunction = ({data}) => {
   // Use the Shopify SEO title verbatim when set (it may already include the
@@ -179,7 +180,7 @@ export default function Product() {
   const deluxe = experience === 'deluxe';
   const assurances = deluxe
     ? ['Secure checkout', 'Hand-tied in Kingston', 'Signature presentation']
-    : ['Wholesale pricing available', 'Fresh, graded stems', 'Island-wide delivery'];
+    : ['Wholesale pricing available', 'Fresh, graded stems', 'Island-wide delivery by arrangement'];
 
   // Real product gallery: prefer the selected-variant image, else fall back to
   // the first product media (demo products carry media, not a variant image),
@@ -234,7 +235,7 @@ export default function Product() {
         </div>
         <p className="product-delivery-note">
           Same-day delivery may be available across Kingston &amp; St. Andrew
-          for orders placed before 2PM.
+          for orders placed before {DELIVERY_CUTOFF}, Monday–Saturday.
         </p>
         <ProductForm
           productOptions={productOptions}

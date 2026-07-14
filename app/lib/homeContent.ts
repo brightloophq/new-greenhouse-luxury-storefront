@@ -106,14 +106,16 @@ const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
 /** A representative portrait arrangement photo per collection, for image tiles. */
 const TILE_ARRANGEMENT: Record<string, string> = {
   'luxury-bouquets': 'luxury-mixed-garden-bouquet',
-  roses: 'grand-red-rose-arrangement',
+  // Signature "Roses" tile uses a distinct red-rose photo so it never duplicates
+  // the Love & Romance occasion card (which uses grand-red-rose-arrangement).
+  roses: 'red-rose-romance-luxe',
   orchids: 'white-orchid-elegance',
   'seasonal-deluxe': 'luxury-tropical-arrangement',
   congratulations: 'congratulations-brights-bouquet',
   'get-well': 'get-well-luxe',
   'new-baby': 'new-baby-soft-pastels-bouquet',
   'corporate-gifting': 'corporate-elegance-arrangement',
-  'bridal-bouquets': 'bridal-white-bouquet',
+  'thank-you': 'thank-you-peach-bouquet',
   'sympathy-and-funeral': 'classic-white-sympathy-arrangement',
 };
 
@@ -208,7 +210,7 @@ const DELUXE: HomeContent = {
       heroTile('Get Well Soon', 'get-well'),
       heroTile('New Baby', 'new-baby'),
       heroTile('Corporate Gifts', 'corporate-gifting'),
-      heroTile('Weddings', 'bridal-bouquets'),
+      heroTile('Thank You', 'thank-you'),
       heroTile('Sympathy', 'sympathy-and-funeral'),
     ],
   },
@@ -240,7 +242,7 @@ const DELUXE: HomeContent = {
   heritage: {
     kicker: 'Kingston, Jamaica',
     title: 'Four decades of flowers, memories, and moments.',
-    body: 'For 40+ years, The New Greenhouse has served Jamaica with flowers for celebrations, farewells, weddings, homes, businesses, and the meaningful gestures in between.',
+    body: 'For 40+ years, The New Greenhouse has served Jamaica with flowers for celebrations, farewells, homes, businesses, and the meaningful gestures in between.',
   },
   testimonials: {
     kicker: 'Loved by customers',
@@ -361,7 +363,7 @@ const CLASSIC: HomeContent = {
     {
       kicker: 'Delivery & pickup',
       title: 'Fresh stems, delivered across Jamaica.',
-      body: 'Island-wide delivery and same-day pickup in Kingston & St. Andrew, with cold-chain handling so every order arrives in peak condition for your build.',
+      body: 'Same-day delivery and pickup across Kingston & St. Andrew, with island-wide delivery by arrangement and cold-chain handling so every order arrives in peak condition for your build.',
       cta: {label: 'Delivery & Pickup Details', to: '/pages/delivery-information'},
       image: 'botanical',
       alt: 'Fresh floral stems prepared for island-wide delivery',

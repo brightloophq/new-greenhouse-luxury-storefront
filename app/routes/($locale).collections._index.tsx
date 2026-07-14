@@ -26,13 +26,15 @@ const DELUXE_COLLECTION_ORDER = [
   'get-well',
   'new-baby',
   'corporate-gifting',
-  'bridal-bouquets',
   'seasonal-deluxe',
   'orchids',
   'roses',
   'same-day-delivery',
   'add-ons',
-  'centerpieces',
+  // Wedding/event collections (bridal-bouquets, centerpieces) are intentionally
+  // omitted from the customer-facing Deluxe occasions index: the business does
+  // not currently offer wedding/event services. The Shopify products remain for
+  // merchant review — see docs deliverable / final report.
 ];
 const DELUXE_ALLOW = new Set(DELUXE_COLLECTION_ORDER);
 

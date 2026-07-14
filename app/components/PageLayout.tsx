@@ -18,6 +18,7 @@ import {
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Accordion, AccordionItem, Icon} from '~/components/ui';
 import {ExperienceToggle} from '~/components/ExperienceToggle';
+import {CONTACT, DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -216,11 +217,11 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
               </Await>
             </Suspense>
           </Link>
-          <a href="mailto:info@thenewgreenhouseja.com" className="ng-mobilenav-contact">
-            <Icon name="mail" size="sm" /> info@thenewgreenhouseja.com
+          <a href={`mailto:${CONTACT.email}`} className="ng-mobilenav-contact">
+            <Icon name="mail" size="sm" /> {CONTACT.email}
           </a>
           <p className="ng-mobilenav-note">
-            Same-day delivery across Kingston &amp; St. Andrew before 2PM.
+            Same-day delivery across Kingston &amp; St. Andrew before {DELIVERY_CUTOFF_SHORT}.
           </p>
         </div>
       </nav>
