@@ -122,11 +122,13 @@ export default function Product() {
     ? ['Secure checkout', 'Hand-tied in Kingston', 'Signature presentation']
     : ['Wholesale pricing available', 'Fresh, graded stems', 'Island-wide delivery'];
 
-  // Real product gallery: the selected-variant image leads; any additional
-  // product images become secondary shots. No more identical stock banners.
+  // Real product gallery: prefer the selected-variant image, else fall back to
+  // the first product media (demo products carry media, not a variant image),
+  // so the main frame is never empty. Additional images become secondary shots.
   const galleryImages = product.images?.nodes ?? [];
+  const primaryImage = selectedVariant?.image ?? galleryImages[0] ?? null;
   const secondaryImages = galleryImages.filter(
-    (image) => image?.url && image.url !== selectedVariant?.image?.url,
+    (image) => image?.url && image.url !== primaryImage?.url,
   );
 
   // Real related products (recommendations), scoped to the active experience so
@@ -142,7 +144,10 @@ export default function Product() {
   return (
     <div className="product commerce-product">
       <section className="product-gallery" aria-label={`${title} imagery`}>
-        <ProductImage image={selectedVariant?.image} />
+        <ProductImage
+          image={primaryImage}
+          aspectRatio={deluxe ? '4/5' : '1/1'}
+        />
         {secondaryImages.length ? (
           <div className="product-gallery-secondary">
             {secondaryImages.map((image) => (

@@ -1,0 +1,23 @@
+{
+  "note": "18 Deluxe demo/placeholder products that were ACTIVE but imageless + sold-out. Generate 4:5 luxury photos (scripts/images/deluxe-demo.mjs) and make them buyable (commerce-manager/scripts/deluxe-fix-products.js). Same luxury photography standard as the luxury arrangements. handle = existing Shopify product handle.",
+  "products": [
+    {"handle": "birthday-brights-bouquet", "subject": "a bright, joyful birthday bouquet of mixed blooms in yellow, pink and orange"},
+    {"handle": "classic-birthday-blooms", "subject": "a classic birthday bouquet of colourful mixed roses and gerbera daisies"},
+    {"handle": "anniversary-rose-bouquet", "subject": "a romantic anniversary bouquet of red and blush pink roses"},
+    {"handle": "anniversary-luxe-arrangement", "subject": "a luxe anniversary arrangement of two dozen deep red roses with premium foliage"},
+    {"handle": "red-rose-romance-bouquet", "subject": "a romantic dozen red roses hand-tied with baby's breath and eucalyptus"},
+    {"handle": "blush-romance-bouquet", "subject": "a romantic hand-tied bouquet of blush-pink and ivory roses with soft white accents"},
+    {"handle": "congratulations-bright-bouquet", "subject": "a vibrant congratulations bouquet of bright mixed blooms in pink, orange and yellow"},
+    {"handle": "congratulations-elegant-arrangement", "subject": "an elegant congratulations arrangement of white and pastel premium blooms"},
+    {"handle": "new-baby-soft-pink-bouquet", "subject": "a soft pink new-baby bouquet of pink roses and delicate blooms"},
+    {"handle": "new-baby-neutral-bouquet", "subject": "a soft neutral new-baby bouquet of ivory, peach and cream blooms"},
+    {"handle": "get-well-sunshine-bouquet", "subject": "a cheerful get-well bouquet of sunny yellow and white blooms with greenery"},
+    {"handle": "get-well-soft-pastels", "subject": "a gentle get-well bouquet of soft pastel blooms in pink, peach and cream"},
+    {"handle": "designers-choice-bouquet", "subject": "a designer's choice luxury bouquet of the finest seasonal premium blooms in rich tones"},
+    {"handle": "seasonal-market-bunch", "subject": "a seasonal market-style bunch of fresh premium blooms in warm rich tones"},
+    {"handle": "everyday-ivory-elegance", "subject": "an elegant everyday bouquet of ivory roses and white blooms with soft greenery"},
+    {"handle": "modern-mixed-bouquet", "subject": "a modern mixed bouquet of contemporary blooms in a refined blush and burgundy palette"},
+    {"handle": "peaceful-whites-hand-tied-bouquet", "subject": "a peaceful all-white hand-tied bouquet of white roses, lilies and ranunculus"},
+    {"handle": "serene-sympathy-bouquet", "subject": "a serene white sympathy bouquet of white roses, white lilies and chrysanthemums"}
+  ]
+}

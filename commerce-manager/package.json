@@ -28,6 +28,8 @@
     "flowers:products:create": "node scripts/flower-products.js --commit",
     "luxury:dry-run": "node scripts/luxury-products.js",
     "luxury:create": "node scripts/luxury-products.js --commit",
+    "deluxe:fix:dry-run": "node scripts/deluxe-fix-products.js",
+    "deluxe:fix:commit": "node scripts/deluxe-fix-products.js --commit",
     "experience:audit": "node scripts/experience-audit.js",
     "experience:dry-run": "node scripts/experience-classify.js",
     "experience:apply": "node scripts/experience-apply.js"
