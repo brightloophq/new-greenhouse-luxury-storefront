@@ -27,7 +27,9 @@
   color: var(--ng-text-inverse);
   display: grid;
   isolation: isolate;
-  min-height: 26rem;
+  /* Grows with the viewport so the banner never reads small on large screens
+     yet stays a sensible height on mobile (Part 13). Full-width, stable crop. */
+  min-height: clamp(20rem, 34vw, 38rem);
   overflow: clip;
   position: relative;
   width: 100%;
@@ -67,12 +69,15 @@
 .ng-catalog-hero-content {
   align-content: end;
   display: grid;
-  gap: var(--ng-space-4);
+  gap: clamp(var(--ng-space-3), 1.4vw, var(--ng-space-5));
   grid-area: 1 / 1;
   justify-items: start;
-  max-width: 44rem;
-  padding: clamp(var(--ng-space-6), 5vw, var(--ng-space-16));
+  /* Content occupies a meaningful share of the banner and stays readable at
+     every width; padding scales so text never crowds the edge. */
+  max-width: min(52rem, 90%);
+  padding: clamp(var(--ng-space-6), 4.5vw, var(--ng-space-14));
   position: relative;
+  width: 100%;
   z-index: 2;
 }
 
@@ -88,24 +93,19 @@
 .ng-catalog-hero-title {
   color: inherit;
   font-family: var(--ng-font-heading);
-  font-size: var(--ng-font-size-display-l);
+  /* Fluid: prominent on desktop, calm on mobile — never tiny, never oversized. */
+  font-size: clamp(1.9rem, 1.15rem + 2.6vw, 3.5rem);
   font-weight: 400;
   line-height: var(--ng-line-tight);
   margin: 0;
 }
 
 .ng-catalog-hero-description {
-  font-size: var(--ng-font-size-body-l);
+  font-size: clamp(0.98rem, 0.9rem + 0.4vw, 1.2rem);
   line-height: var(--ng-line-body);
   margin: 0;
-  max-width: 38rem;
+  max-width: 40rem;
   opacity: 0.92;
-}
-
-@media (min-width: 48rem) {
-  .ng-catalog-hero--media {
-    min-height: 30rem;
-  }
 }
 
 /* --------------------------------------------------------------------------

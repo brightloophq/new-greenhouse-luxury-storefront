@@ -105,9 +105,11 @@ export const CLASSIC_NAV: ExperienceNav = {
     {label: 'All wholesale flowers', to: '/collections/bulk-flowers'},
     {label: 'Wholesale roses', to: '/collections/wholesale-roses'},
     {label: 'Wholesale greenery', to: '/collections/wholesale-greenery'},
-    {label: 'Floral supplies', to: '/collections/floral-supplies'},
+    {label: 'Floral supplies', to: '/classic/supplies'},
     {label: 'Greenery & fillers', to: '/collections/greenery-and-fillers'},
-    {label: 'Shop all', to: '/collections/all'},
+    // Was "/collections/all" — a generic all-products listing that leaked Deluxe
+    // items into Classic. Classic shops via the Wholesale Flowers hub instead.
+    {label: 'Shop wholesale flowers', to: '/classic/wholesale'},
   ],
   footerServices: [
     {label: 'Florist essentials', to: '/collections/florist-essentials'},

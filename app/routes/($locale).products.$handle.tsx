@@ -18,7 +18,8 @@ import {ProductGrid} from '~/components/catalog/ProductGrid';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {DELIVERY_CUTOFF} from '~/lib/companyContent';
-import {productInExperience} from '~/lib/experienceClassify';
+import {productInExperience, classifyProduct} from '~/lib/experienceClassify';
+import {getExperienceFromRequest, experienceCookie} from '~/lib/experience';
 
 export const meta: Route.MetaFunction = ({data}) => {
   // Use the Shopify SEO title verbatim when set (it may already include the
@@ -133,6 +134,23 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   if (!product?.id) {
     throw new Response(null, {status: 404});
+  }
+
+  // Experience-preserving routing (Part 16): a product must never render inside
+  // the wrong visual experience. If a direct link lands a shopper on a product
+  // that belongs to the OTHER experience (by central classification), resolve to
+  // the correct experience by setting the cookie and re-requesting the same URL.
+  // Ambiguous/unknown products stay in the current experience (no redirect).
+  const experience = getExperienceFromRequest(request);
+  const productExperience = classifyProduct(product);
+  if (
+    (productExperience === 'classic' || productExperience === 'deluxe') &&
+    productExperience !== experience
+  ) {
+    const {pathname, search} = new URL(request.url);
+    throw redirect(pathname + search, {
+      headers: {'Set-Cookie': experienceCookie(productExperience)},
+    });
   }
 
   // The API handle might be localized, so redirect to the localized handle
@@ -382,6 +400,8 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    productType
+    tags
     descriptionHtml
     description
     encodedVariantExistence
