@@ -59,6 +59,14 @@ function safePath(candidate: string | null | undefined): string | null {
  */
 export function experienceEntryResponse(request: Request): Response | null {
   const url = new URL(request.url);
+
+  // React Router single-fetch data requests (`<route>.data`) must NEVER be
+  // answered with a raw body-less 302 here — the client decodes them as a
+  // turbo-stream and a plain redirect throws "Unable to decode turbo-stream
+  // response" (a 500 on client-side navigation, e.g. to /classic/supplies). Let
+  // React Router handle all .data requests; the landing loaders set the cookie.
+  if (url.pathname.endsWith('.data')) return null;
+
   const match = url.pathname.match(/^\/(classic|deluxe)(?:\/(.*))?$/);
   if (!match) return null;
 
