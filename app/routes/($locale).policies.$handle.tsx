@@ -8,7 +8,14 @@ type SelectedPolicies = keyof Pick<
 >;
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.policy.title ?? 'Policy'} | The New Greenhouse`}];
+  const title = data?.policy.title ?? 'Policy';
+  return [
+    {title: `${title} | The New Greenhouse`},
+    {
+      name: 'description',
+      content: `${title} for The New Greenhouse — luxury and wholesale florist, Kingston, Jamaica.`,
+    },
+  ];
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {

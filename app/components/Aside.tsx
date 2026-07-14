@@ -1,6 +1,7 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -8,6 +9,7 @@ import {
 } from 'react';
 import {useId} from 'react';
 import {IconButton, Icon} from '~/components/ui';
+import {useCloseOnRouteChange} from '~/lib/useCloseOnRouteChange';
 
 type AsideType = 'search' | 'cart' | 'mobile' | 'closed';
 type AsidePosition = 'right' | 'left' | 'top';
@@ -141,13 +143,18 @@ const AsideContext = createContext<AsideContextValue | null>(null);
 
 Aside.Provider = function AsideProvider({children}: {children: ReactNode}) {
   const [type, setType] = useState<AsideType>('closed');
+  const close = useCallback(() => setType('closed'), []);
+
+  // Dismiss any open drawer (cart / search / mobile nav) on a real route change,
+  // including Back/Forward — never leave an overlay open over the next page.
+  useCloseOnRouteChange(close);
 
   return (
     <AsideContext.Provider
       value={{
         type,
         open: setType,
-        close: () => setType('closed'),
+        close,
       }}
     >
       {children}

@@ -1,9 +1,30 @@
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
+/**
+ * Pages that describe services the business does not currently offer (weddings /
+ * event floristry). Their local routes were removed; this guard also prevents
+ * any lingering Shopify CMS page of the same handle from rendering wedding/event
+ * service claims. Corporate *gifting* is supported, so that handle points to the
+ * live gifting collection. Flag the CMS pages for deletion (see final report).
+ */
+const REMOVED_PAGE_REDIRECTS: Record<string, string> = {
+  'wedding-events': '/collections',
+  weddings: '/collections',
+  wedding: '/collections',
+  'corporate-flowers': '/collections/corporate-gifting',
+};
+
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.page.title ?? 'Page'} | The New Greenhouse`}];
+  const title = data?.page.title ?? 'Page';
+  return [
+    {title: `${title} | The New Greenhouse`},
+    {
+      name: 'description',
+      content: `${title} — The New Greenhouse, luxury and wholesale florist in Kingston, Jamaica.`,
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -23,6 +44,11 @@ export async function loader(args: Route.LoaderArgs) {
 async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
   if (!params.handle) {
     throw new Error('Missing page handle');
+  }
+
+  const removedTarget = REMOVED_PAGE_REDIRECTS[params.handle.toLowerCase()];
+  if (removedTarget) {
+    throw redirect(removedTarget, 301);
   }
 
   const [{page}] = await Promise.all([

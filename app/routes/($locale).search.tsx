@@ -8,6 +8,10 @@ import {
   getEmptyPredictiveSearchResult,
 } from '~/lib/search';
 import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
+import {
+  productInExperience,
+  collectionBlockedIn,
+} from '~/lib/experienceClassify';
 import {CatalogResults} from '~/components/catalog/CatalogResults';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {ButtonLink, Heading, Icon, Text} from '~/components/ui';
@@ -17,23 +21,16 @@ import type {
 } from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Search | The New Greenhouse`}];
+  return [
+    {title: `Search | The New Greenhouse`},
+    {
+      name: 'description',
+      content:
+        'Search flowers, occasions and collections at The New Greenhouse — luxury bouquets and fresh stems delivered across Kingston, Jamaica.',
+    },
+    {name: 'robots', content: 'noindex, follow'},
+  ];
 };
-
-/**
- * Wholesale supply collections that must never surface in the Deluxe (luxury)
- * predictive-search dropdown. Products are scoped by the `channel:retail` tag;
- * collections have no tags in the predictive payload, so we deny by handle.
- */
-const WHOLESALE_ONLY_COLLECTIONS = new Set([
-  'bulk-flowers',
-  'floral-supplies',
-  'greenery-and-fillers',
-  'vases-and-containers',
-  'ribbon',
-  'tools-and-accessories',
-  'wrapping-and-packaging',
-]);
 
 export async function loader({request, context}: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -198,6 +195,7 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
     trackingParameters
     vendor
     tags
+    productType
     selectedOrFirstAvailableVariant(
       selectedOptions: []
       ignoreUnknownOptions: true
@@ -347,22 +345,24 @@ async function regularSearch({
     throw new Error('No search data returned from Shopify API');
   }
 
-  // Deluxe (luxury) search is scoped to retail products only, so wholesale
-  // by-the-box SKUs never surface in the gifting experience. The `search`
-  // connection's `productFilters` arg does not constrain a text query, so we
-  // filter the returned nodes by tag. Classic is unscoped (Wholesale intact).
-  const scopedItems =
-    experience === 'deluxe' && items.products?.nodes
-      ? {
-          ...items,
-          products: {
-            ...items.products,
-            nodes: items.products.nodes.filter((node) =>
-              (node.tags ?? []).includes('channel:retail'),
-            ),
-          },
-        }
-      : items;
+  // Strict experience isolation (Part 18): products are filtered to the active
+  // experience by central classification (productType + experience tag), NOT by
+  // the shared channel tag — 40 products carry both channel tags, so a channel
+  // filter would leak. Classic keeps only wholesale flowers + supplies; Deluxe
+  // keeps only luxury arrangements/gifts; ambiguous (Plant) shows in neither.
+  // The `search` connection's productFilters arg does not constrain a text
+  // query, so we filter the returned nodes here. Articles/pages stay (shared).
+  const scopedItems = items.products?.nodes
+    ? {
+        ...items,
+        products: {
+          ...items.products,
+          nodes: items.products.nodes.filter((node) =>
+            productInExperience(node, experience),
+          ),
+        },
+      }
+    : items;
 
   const total = Object.values(scopedItems).reduce(
     (acc: number, {nodes}: {nodes: Array<unknown>}) => acc + nodes.length,
@@ -432,6 +432,7 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
     title
     handle
     tags
+    productType
     trackingParameters
     selectedOrFirstAvailableVariant(
       selectedOptions: []
@@ -544,22 +545,18 @@ async function predictiveSearch({
     throw new Error('No predictive search data returned from Shopify API');
   }
 
-  // Deluxe (luxury) predictive results are scoped to retail products and drop
-  // wholesale-supply collections — predictiveSearch has no productFilters arg,
-  // so we filter the payload here. Classic sees everything (Wholesale intact).
-  const scoped =
-    experience === 'deluxe'
-      ? {
-          ...items,
-          products: items.products.filter((product) =>
-            (product.tags ?? []).includes('channel:retail'),
-          ),
-          collections: items.collections.filter(
-            (collection) =>
-              !WHOLESALE_ONLY_COLLECTIONS.has(collection.handle),
-          ),
-        }
-      : items;
+  // Predictive results are scoped to the active experience (Part 18): products
+  // by central classification, collections by the opposite experience's
+  // allow-list. Applies to BOTH experiences so neither dropdown leaks the other.
+  const scoped = {
+    ...items,
+    products: items.products.filter((product) =>
+      productInExperience(product, experience),
+    ),
+    collections: items.collections.filter(
+      (collection) => !collectionBlockedIn(collection.handle, experience),
+    ),
+  };
 
   const total = Object.values(scoped).reduce(
     (acc: number, item: Array<unknown>) => acc + item.length,

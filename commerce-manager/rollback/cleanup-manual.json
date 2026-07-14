@@ -1,0 +1,225 @@
+{
+  "wedding": {
+    "bridesmaid-bouquet": {
+      "id": "gid://shopify/Product/8553435168947",
+      "status": "ACTIVE",
+      "publications": [
+        "New Greenhouse Luxury Storefront"
+      ]
+    },
+    "bridal-bouquet-cascading-blush": {
+      "id": "gid://shopify/Product/8553435136179",
+      "status": "ACTIVE",
+      "publications": [
+        "New Greenhouse Luxury Storefront"
+      ]
+    },
+    "bridal-bouquet-ivory-garden": {
+      "id": "gid://shopify/Product/8553435103411",
+      "status": "ACTIVE",
+      "publications": [
+        "New Greenhouse Luxury Storefront"
+      ]
+    },
+    "elevated-reception-centerpiece": {
+      "id": "gid://shopify/Product/8553435234483",
+      "status": "ACTIVE",
+      "publications": [
+        "New Greenhouse Luxury Storefront"
+      ]
+    },
+    "low-reception-centerpiece": {
+      "id": "gid://shopify/Product/8553435201715",
+      "status": "ACTIVE",
+      "publications": [
+        "New Greenhouse Luxury Storefront"
+      ]
+    }
+  },
+  "supplies": {
+    "wet-floral-foam-bricks": {
+      "id": "gid://shopify/Product/8553432875187",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:green",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:foam",
+        "type:floral-supply"
+      ]
+    },
+    "glass-cylinder-vase": {
+      "id": "gid://shopify/Product/8553435398323",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:white-ivory",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:vase",
+        "type:floral-supply"
+      ]
+    },
+    "bud-vase-set": {
+      "id": "gid://shopify/Product/8553435431091",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:white-ivory",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:vase",
+        "type:floral-supply"
+      ]
+    },
+    "satin-ribbon": {
+      "id": "gid://shopify/Product/8553435463859",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:mixed",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:ribbon",
+        "type:floral-supply"
+      ]
+    },
+    "organza-ribbon": {
+      "id": "gid://shopify/Product/8553435496627",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:mixed",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:ribbon",
+        "type:floral-supply"
+      ]
+    },
+    "kraft-cellophane-wrap": {
+      "id": "gid://shopify/Product/8553435529395",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:white-ivory",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:wrap",
+        "type:floral-supply"
+      ]
+    },
+    "woven-arrangement-basket": {
+      "id": "gid://shopify/Product/8553435562163",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:yellow-orange",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:basket",
+        "type:floral-supply"
+      ]
+    },
+    "floral-stem-tape": {
+      "id": "gid://shopify/Product/8553435594931",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:green",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:tape",
+        "type:floral-supply"
+      ]
+    },
+    "florist-shears-snips": {
+      "id": "gid://shopify/Product/8553435627699",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:green",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:tools",
+        "type:floral-supply"
+      ]
+    },
+    "bouquet-presentation-boxes": {
+      "id": "gid://shopify/Product/8553435660467",
+      "tags": [
+        "channel:retail",
+        "channel:wholesale",
+        "color:white-ivory",
+        "content-status:reviewed",
+        "customer:event-planner",
+        "customer:florist",
+        "customer:retail-shopper",
+        "format:supply",
+        "image-status:required",
+        "price-status:placeholder",
+        "season:year-round",
+        "supply:box",
+        "type:floral-supply"
+      ]
+    }
+  },
+  "page": {
+    "id": "gid://shopify/Page/122876133555",
+    "isPublished": true
+  }
+}

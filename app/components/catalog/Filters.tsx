@@ -1,6 +1,7 @@
 import {useEffect, useId, useRef, useState} from 'react';
 import {useSearchParams} from 'react-router';
 import {useExperience} from '~/components/ExperienceProvider';
+import {useTabTrap} from '~/lib/useTabTrap';
 import {
   Accordion,
   AccordionItem,
@@ -278,7 +279,11 @@ export interface FilterDrawerProps {
  */
 export function FilterDrawer({filters, open, onClose}: FilterDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
+
+  // Trap Tab focus within the drawer while open.
+  useTabTrap(panelRef, open);
 
   // Esc to close.
   useEffect(() => {
@@ -300,9 +305,12 @@ export function FilterDrawer({filters, open, onClose}: FilterDrawerProps) {
     };
   }, [open]);
 
-  // Move focus into the dialog on open.
+  // Move focus into the dialog on open; restore it to the trigger on close.
   useEffect(() => {
-    if (open) panelRef.current?.focus();
+    if (!open) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
+    return () => restoreFocusRef.current?.focus?.();
   }, [open]);
 
   if (!open) return null;

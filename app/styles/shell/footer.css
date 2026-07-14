@@ -151,6 +151,12 @@
   letter-spacing: 0.01em;
 }
 
+.ng-shell-contact-phones {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
 .ng-shell-contact-link {
   color: inherit;
   text-decoration: none;

@@ -105,9 +105,11 @@ export const CLASSIC_NAV: ExperienceNav = {
     {label: 'All wholesale flowers', to: '/collections/bulk-flowers'},
     {label: 'Wholesale roses', to: '/collections/wholesale-roses'},
     {label: 'Wholesale greenery', to: '/collections/wholesale-greenery'},
-    {label: 'Floral supplies', to: '/collections/floral-supplies'},
+    {label: 'Floral supplies', to: '/classic/supplies'},
     {label: 'Greenery & fillers', to: '/collections/greenery-and-fillers'},
-    {label: 'Shop all', to: '/collections/all'},
+    // Was "/collections/all" — a generic all-products listing that leaked Deluxe
+    // items into Classic. Classic shops via the Wholesale Flowers hub instead.
+    {label: 'Shop wholesale flowers', to: '/classic/wholesale'},
   ],
   footerServices: [
     {label: 'Florist essentials', to: '/collections/florist-essentials'},
@@ -127,14 +129,19 @@ export const CLASSIC_NAV: ExperienceNav = {
 /* added in the gated Phase 2. Seasonal renders a safe empty state.            */
 /* -------------------------------------------------------------------------- */
 export const DELUXE_NAV: ExperienceNav = {
+  // Simplified, production IA: Home first (never rely on the logo to get home),
+  // Shop holds the full mega, Occasions browses the collection index, plus
+  // Delivery and a Wholesale switch to the Classic experience. Our Story +
+  // Contact live in the footer only. Cart is the header icon. "Collections" is
+  // folded into "Occasions" (same /collections index in an occasion-first store)
+  // to avoid two nav items pointing at one page.
   primary: [
-    {label: 'Occasions', to: '/collections', mega: true},
-    {label: 'Signature', to: '/collections/luxury-bouquets'},
-    {label: 'Roses', to: '/collections/roses'},
-    {label: 'Orchids', to: '/collections/orchids'},
-    {label: 'Weddings', to: '/collections/bridal-bouquets'},
-    {label: 'Our Story', to: '/pages/about-us'},
-    {label: 'Contact', to: '/pages/contact'},
+    {label: 'Home', to: '/'},
+    {label: 'Shop', to: '/collections/luxury-bouquets', mega: true},
+    {label: 'Occasions', to: '/collections'},
+    {label: 'Delivery', to: '/pages/delivery-information'},
+    // No "Wholesale" link in the luxury nav — switching to the trade store is
+    // handled by the Classic/Deluxe experience toggle, keeping Deluxe on-brand.
   ],
   // Occasion-led mega — gifting only. Never links the shared variety hub
   // (/collections/all-flowers) or /collections/all — only curated gifting sets.
@@ -170,12 +177,12 @@ export const DELUXE_NAV: ExperienceNav = {
       ],
     },
     {
-      title: 'Gifts & Weddings',
+      title: 'Gifts & Corporate',
       links: [
         {label: 'Curated Add-ons', to: '/collections/add-ons'},
         {label: 'Corporate Gifts', to: '/collections/corporate-gifting'},
-        {label: 'Wedding Bouquets', to: '/collections/bridal-bouquets'},
-        {label: 'Centerpieces', to: '/collections/centerpieces'},
+        {label: 'Thank You', to: '/collections/thank-you'},
+        {label: 'Best Sellers', to: '/collections/best-sellers'},
       ],
     },
   ],

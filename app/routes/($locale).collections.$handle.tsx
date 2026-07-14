@@ -31,6 +31,7 @@ import {CatalogResults} from '~/components/catalog/CatalogResults';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
 import {useExperience} from '~/components/ExperienceProvider';
+import {productInExperience} from '~/lib/experienceClassify';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
@@ -132,20 +133,34 @@ export const meta: Route.MetaFunction = ({data}) => {
     data?.collection?.seo?.description ||
     data?.collection?.description ||
     'Shop luxury and wholesale floral arrangements from The New Greenhouse in Kingston, Jamaica.';
+  const fullTitle = `${title} | The New Greenhouse`;
+  const origin = data?.origin ?? '';
+  const path = data?.collection?.handle
+    ? `/collections/${data.collection.handle}`
+    : '';
+  const image = data?.collection?.image?.url;
   return [
-    {title: `${title} | The New Greenhouse`},
+    {title: fullTitle},
     {name: 'description', content: description},
+    {property: 'og:type', content: 'website'},
+    {property: 'og:title', content: fullTitle},
+    {property: 'og:description', content: description},
+    {property: 'og:url', content: `${origin}${path}`},
+    {property: 'og:site_name', content: 'The New Greenhouse'},
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: fullTitle},
+    {name: 'twitter:description', content: description},
+    ...(image
+      ? [
+          {property: 'og:image' as const, content: image},
+          {name: 'twitter:image' as const, content: image},
+        ]
+      : []),
     // Canonical to the base collection: filtered/faceted views (?flower=…,
     // ?sort=…) canonicalize here so they aren't indexed as duplicates. The
     // per-variety /flowers/$family routes carry the indexable variety SEO.
-    ...(data?.collection?.handle
-      ? [
-          {
-            tagName: 'link' as const,
-            rel: 'canonical',
-            href: `/collections/${data.collection.handle}`,
-          },
-        ]
+    ...(path
+      ? [{tagName: 'link' as const, rel: 'canonical', href: path}]
       : []),
   ];
 };
@@ -243,6 +258,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     sort,
     flowerLabel: flowerLabelFor(applied.flower),
     flowerProducts: flowerResult?.products ?? null,
+    origin: url.origin,
   };
 }
 
@@ -276,9 +292,16 @@ export default function Collection() {
 
   // Hub flower views use the top-level product search connection (reliable tag
   // filtering); everything else uses the collection's own products.
-  const productConnection =
+  const rawConnection =
     isHub && activeFlower && flowerProducts ? flowerProducts : collection.products;
-  const products = (productConnection.nodes ?? []) as CatalogProduct[];
+  // Safety net (Part 11/16): even within a curated Shopify collection, never
+  // render a product that belongs to the other experience — filter members by
+  // central classification. Ambiguous/unknown products show in neither.
+  const filteredNodes = (rawConnection.nodes ?? []).filter((node) =>
+    productInExperience(node, experience),
+  );
+  const productConnection = {...rawConnection, nodes: filteredNodes};
+  const products = filteredNodes as CatalogProduct[];
 
   // On a flower hub the default view is the visual category browser ("All
   // Flowers"); picking a variety (card or sidebar) switches to its products.

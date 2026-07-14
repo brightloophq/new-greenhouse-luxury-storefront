@@ -20,6 +20,7 @@ import {CollectionHero, MerchandisingBlock} from '~/components/catalog/Collectio
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {ProductItem} from '~/components/ProductItem';
 import {experienceCookie} from '~/lib/experience';
+import {DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 /** Live colour collections for the shop-by-colour rail. */
 const COLOURS: {label: string; to: string}[] = [
@@ -42,7 +43,7 @@ const ORDER_STEPS = [
   },
   {
     title: 'Collect or get it delivered',
-    body: 'Same-day delivery across Kingston & St. Andrew for orders before 2PM, or arrange warehouse pickup.',
+    body: `Same-day delivery across Kingston & St. Andrew for orders before ${DELIVERY_CUTOFF_SHORT}, or arrange warehouse pickup.`,
   },
 ];
 
@@ -223,7 +224,7 @@ export default function ClassicWholesale() {
           <TrustGrid aria-label="Delivery and pickup">
             <TrustItem
               icon={<Icon name="clock" size="sm" />}
-              label="Same-day delivery before 2PM"
+              label={`Same-day delivery before ${DELIVERY_CUTOFF_SHORT}`}
             />
             <TrustItem
               icon={<Icon name="map-pin" size="sm" />}

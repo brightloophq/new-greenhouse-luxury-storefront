@@ -23,29 +23,44 @@ const IMAGES: Record<HomeImageKey, string> = {
   botanical: botanicalBanner,
 };
 
+/**
+ * Build a responsive srcSet from a local `…-800.webp` asset path (the Deluxe
+ * hero/tile images ship 400/600/800 widths). Returns undefined for bundled
+ * assets so the browser just uses `src`.
+ */
+function localSrcSet(src?: string): string | undefined {
+  if (!src || !src.includes('-800.webp')) return undefined;
+  const base = src.replace('-800.webp', '');
+  return `${base}-400.webp 400w, ${base}-600.webp 600w, ${base}-800.webp 800w`;
+}
+
 export const meta: Route.MetaFunction = ({data}) => {
   // Distinct SEO per experience: wholesale intent (Classic) vs luxury gifting
   // (Deluxe). Canonical stays "/" for both (no duplicate-content routes).
-  if (data?.experience === 'classic') {
-    return [
-      {
-        title:
-          'Wholesale Flowers & Florist Supplies Jamaica | The New Greenhouse',
-      },
-      {
-        name: 'description',
-        content:
-          'Bulk flowers, wholesale roses, greenery and florist supplies for florists, event planners, hotels and businesses in Kingston, Jamaica.',
-      },
-    ];
-  }
+  const classic = data?.experience === 'classic';
+  const title = classic
+    ? 'Wholesale Flowers & Florist Supplies Jamaica | The New Greenhouse'
+    : 'Luxury Flowers & Premium Bouquets Kingston | The New Greenhouse';
+  const description = classic
+    ? 'Bulk flowers, wholesale roses, greenery and florist supplies for florists, event planners, hotels and businesses in Kingston, Jamaica.'
+    : 'Signature luxury bouquets, premium roses and orchids, and refined corporate and wedding floral design from The New Greenhouse in Kingston, Jamaica.';
+  const origin = data?.origin ?? '';
+  // Branded share image (a real, always-present asset) for both experiences.
+  const image = `${origin}/images/collection-heroes/luxury-bouquets-1200.webp`;
+
   return [
-    {title: 'Luxury Flowers & Premium Bouquets Kingston | The New Greenhouse'},
-    {
-      name: 'description',
-      content:
-        'Signature luxury bouquets, premium roses and orchids, and refined corporate and wedding floral design from The New Greenhouse in Kingston, Jamaica.',
-    },
+    {title},
+    {name: 'description', content: description},
+    {property: 'og:type', content: 'website'},
+    {property: 'og:title', content: title},
+    {property: 'og:description', content: description},
+    {property: 'og:url', content: `${origin}/`},
+    {property: 'og:site_name', content: 'The New Greenhouse'},
+    {property: 'og:image', content: image},
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: title},
+    {name: 'twitter:description', content: description},
+    {name: 'twitter:image', content: image},
   ];
 };
 
@@ -73,6 +88,7 @@ async function loadCriticalData({context, request}: Route.LoaderArgs) {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
     featuredCollection: collections.nodes[0],
     experience: getExperienceFromRequest(request),
+    origin: new URL(request.url).origin,
   };
 }
 
@@ -134,11 +150,9 @@ export default function Homepage() {
 }
 
 function HomeAnnouncement({text}: {text: string}) {
-  return (
-    <div className="greenhouse-home-announcement" role="status">
-      {text}
-    </div>
-  );
+  // Not a live region: the site-wide header announcement is the single
+  // role="status" (avoids two competing status regions in the header area).
+  return <div className="greenhouse-home-announcement">{text}</div>;
 }
 
 function HomeHero({
@@ -157,7 +171,14 @@ function HomeHero({
   return (
     <section className="greenhouse-hero" aria-labelledby="greenhouse-hero-title">
       <div className="greenhouse-hero-media">
-        <img src={content.imageSrc ?? IMAGES[content.image]} alt={content.alt} />
+        <img
+          src={content.imageSrc ?? IMAGES[content.image]}
+          srcSet={localSrcSet(content.imageSrc)}
+          sizes={content.imageSrc ? '100vw' : undefined}
+          alt={content.alt}
+          loading="eager"
+          decoding="async"
+        />
       </div>
       <div className="greenhouse-hero-panel">
         <p className="greenhouse-kicker">{content.kicker}</p>
@@ -246,8 +267,11 @@ function FeaturedCollections({
           >
             <img
               src={card.imageSrc ?? IMAGES[card.image]}
+              srcSet={localSrcSet(card.imageSrc)}
+              sizes="(min-width: 64em) 25vw, (min-width: 45em) 50vw, 100vw"
               alt={card.alt}
               loading="lazy"
+              decoding="async"
             />
             <span>{card.eyebrow}</span>
             <strong>{card.title}</strong>
@@ -291,8 +315,11 @@ function TileSection({
               <img
                 className="greenhouse-occasion-tile-img"
                 src={tile.image}
+                srcSet={localSrcSet(tile.image)}
+                sizes="(min-width: 64em) 25vw, (min-width: 45em) 33vw, 50vw"
                 alt=""
                 loading="lazy"
+                decoding="async"
               />
             ) : null}
             <span>{tile.label}</span>

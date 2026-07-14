@@ -6,7 +6,14 @@ import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.blog.title ?? 'Journal'} | The New Greenhouse`}];
+  const title = data?.blog.title ?? 'Journal';
+  return [
+    {title: `${title} | The New Greenhouse`},
+    {
+      name: 'description',
+      content: `${title} — stories, gifting guides and floral inspiration from The New Greenhouse, Kingston, Jamaica.`,
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {

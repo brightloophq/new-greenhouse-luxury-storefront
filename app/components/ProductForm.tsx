@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link, useNavigate} from 'react-router';
 import {type MappedProductOptions} from '@shopify/hydrogen';
 import type {
@@ -7,7 +8,7 @@ import type {
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import type {ProductFragment} from 'storefrontapi.generated';
-import {cx} from '~/components/ui';
+import {cx, QuantityStepper} from '~/components/ui';
 
 export function ProductForm({
   productOptions,
@@ -18,6 +19,9 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
+  // Quantity is intentionally preserved across variant changes (no reset).
+  const [quantity, setQuantity] = useState(1);
+  const available = Boolean(selectedVariant?.availableForSale);
   return (
     <div className="product-form">
       {productOptions.map((option) => {
@@ -57,6 +61,7 @@ export function ProductForm({
                       prefetch="intent"
                       preventScrollReset
                       replace
+                      aria-current={selected ? 'true' : undefined}
                       to={`/products/${handle}?${variantUriQuery}`}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
@@ -79,6 +84,7 @@ export function ProductForm({
                       )}
                       key={option.name + name}
                       disabled={!exists}
+                      aria-pressed={selected}
                       onClick={() => {
                         if (!selected) {
                           void navigate(`?${variantUriQuery}`, {
@@ -94,12 +100,25 @@ export function ProductForm({
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
+
+      <div className="product-quantity">
+        <span className="product-quantity-label" id="product-quantity-label">
+          Quantity
+        </span>
+        <QuantityStepper
+          value={quantity}
+          onChange={setQuantity}
+          min={1}
+          disabled={!available}
+          aria-label="Quantity"
+        />
+      </div>
+
       <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
+        disabled={!available}
         onClick={() => {
           open('cart');
         }}
@@ -108,14 +127,14 @@ export function ProductForm({
             ? [
                 {
                   merchandiseId: selectedVariant.id,
-                  quantity: 1,
+                  quantity,
                   selectedVariant,
                 },
               ]
             : []
         }
       >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+        {available ? 'Add to cart' : 'Sold out'}
       </AddToCartButton>
     </div>
   );

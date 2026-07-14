@@ -40,7 +40,8 @@
   --ng-border-strong: #a9cdb4;
   --ng-border-inverse: rgb(63 174 99 / 35%);
   --ng-gold-text: #22694a; /* accessible green text on cream (WCAG AA) */
-  --ng-focus-ring: #3fae63;
+  /* Inherit the high-contrast --ng-gold-text (#22694a) focus ring from base;
+     the old #3fae63 was too light on green-cream (a11y B1). */
 
   /* Typography — Classic body is DM Sans (matches the main website). Display
      stays Cormorant Garamond (shared). */
@@ -585,4 +586,163 @@
   font-size: var(--ng-font-size-small, 0.82rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* ==========================================================================
+   PHASE 6 — DELUXE BRAND FIXES (remove stray botanical-green from the luxury
+   palette). All scoped to Deluxe; Classic keeps its green system.
+   ========================================================================== */
+
+/* H6 — the heritage section was a full botanical-green band (base
+   --ng-color-accent-green is only re-themed for Classic). In Deluxe render it as
+   a premium near-black band with ivory text + gold kicker. Classic keeps green. */
+[data-experience='deluxe'] .greenhouse-heritage {
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
+}
+[data-experience='deluxe'] .greenhouse-heritage .greenhouse-kicker {
+  color: var(--ng-color-luxury-gold);
+}
+
+/* L1 — discount pill: charcoal, not botanical green, in Deluxe. */
+[data-experience='deluxe'] .ng-price-discount {
+  background: var(--ng-color-charcoal);
+  color: var(--ng-color-warm-white);
+}
+
+/* L1 — QuickView "in stock" availability: gold, not green, in Deluxe
+   (the sold-out variant keeps its own styling). */
+[data-experience='deluxe'] .ng-catalog-quickview-availability:not(.is-soldout) {
+  color: var(--ng-gold-text);
+}
+
+/* ==========================================================================
+   DELUXE PRODUCT PAGE — production polish (audit Part 1)
+   Layout, CTA dominance, elegant delivery/trust blocks, typography hierarchy,
+   image framing, responsiveness. Scoped to Deluxe; Classic PDP unchanged.
+   ========================================================================== */
+[data-experience='deluxe'] .commerce-product {
+  padding-block: clamp(1rem, 3vw, 2.5rem) clamp(3rem, 7vw, 6rem);
+}
+
+/* Gallery — beautifully framed portrait image + secondary shots. */
+[data-experience='deluxe'] .product-gallery {
+  align-self: start;
+}
+[data-experience='deluxe'] .product-image {
+  background: var(--ng-bg-surface-muted);
+  border-radius: var(--ng-radius-md, 8px);
+  overflow: hidden;
+}
+[data-experience='deluxe'] .product-gallery-secondary {
+  display: grid;
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+  grid-template-columns: 1fr 1fr;
+  margin-top: clamp(0.5rem, 1.5vw, 1rem);
+}
+[data-experience='deluxe'] .product-gallery-secondary img {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--ng-radius-md, 8px);
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Purchase panel — generous rhythm, sticky on desktop. */
+[data-experience='deluxe'] .product-main {
+  background: transparent;
+  /* flex column + vertical rhythm now come from the shared token system in
+     app.css (.product-main / --pdp-rhythm) so both experiences stay proportional. */
+  top: 7rem;
+}
+[data-experience='deluxe'] .product-main h1 {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+[data-experience='deluxe'] .product-price-block {
+  color: var(--ng-text-primary);
+  font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+}
+
+/* CTA dominance — Add to Cart is the clear primary action. */
+[data-experience='deluxe'] .add-to-cart-button {
+  background: var(--ng-color-background);
+  border: 1px solid var(--ng-color-background);
+  border-radius: var(--ng-radius-sm, 4px);
+  color: var(--ng-color-warm-white);
+  cursor: pointer;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-button, 0.82rem);
+  font-weight: 800;
+  letter-spacing: var(--ng-letter-nav, 0.12em);
+  min-height: 3.5rem;
+  text-transform: uppercase;
+  transition: var(--ng-transition-color), var(--ng-transition-transform);
+  width: 100%;
+}
+[data-experience='deluxe'] .add-to-cart-button:hover:not(:disabled) {
+  background: var(--ng-color-luxury-gold);
+  border-color: var(--ng-color-luxury-gold);
+  color: var(--ng-color-background);
+  transform: translateY(-1px);
+}
+[data-experience='deluxe'] .add-to-cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Delivery + gift cues become elegant information blocks. */
+[data-experience='deluxe'] .product-delivery-note,
+[data-experience='deluxe'] .product-gift-message {
+  background: var(--ng-bg-surface);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-md, 8px);
+  font-size: var(--ng-font-size-small, 0.85rem);
+  line-height: var(--ng-line-body, 1.6);
+  margin: 0;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
+}
+[data-experience='deluxe'] .product-trust-grid {
+  display: grid;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+[data-experience='deluxe'] .product-trust-grid span {
+  align-items: center;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-md, 8px);
+  display: flex;
+  font-size: 0.72rem;
+  justify-content: center;
+  letter-spacing: 0.03em;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+/* Product details — scannable accordions with generous spacing. */
+[data-experience='deluxe'] .product-story details {
+  border-top: 1px solid var(--ng-border-subtle);
+  padding-block: 0.9rem;
+}
+[data-experience='deluxe'] .product-story summary {
+  cursor: pointer;
+  font-family: var(--ng-font-heading);
+  font-size: 1.1rem;
+}
+[data-experience='deluxe'] .product-story details > p,
+[data-experience='deluxe'] .product-story details > div {
+  line-height: var(--ng-line-body, 1.6);
+  padding-top: 0.6rem;
+}
+
+/* Related products spacing is now shared/token-driven in app.css
+   (.product-commerce-section) so both experiences stay proportional. */
+
+/* Mobile: the purchase panel scrolls with the page (no sticky overlap). */
+@media (max-width: 45em) {
+  [data-experience='deluxe'] .product-main {
+    position: static;
+    top: auto;
+  }
 }

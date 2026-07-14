@@ -106,22 +106,43 @@ const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
 /** A representative portrait arrangement photo per collection, for image tiles. */
 const TILE_ARRANGEMENT: Record<string, string> = {
   'luxury-bouquets': 'luxury-mixed-garden-bouquet',
-  roses: 'grand-red-rose-arrangement',
+  // Signature "Roses" tile uses a distinct red-rose photo so it never duplicates
+  // the Love & Romance occasion card (which uses grand-red-rose-arrangement).
+  roses: 'red-rose-romance-luxe',
   orchids: 'white-orchid-elegance',
   'seasonal-deluxe': 'luxury-tropical-arrangement',
   congratulations: 'congratulations-brights-bouquet',
   'get-well': 'get-well-luxe',
   'new-baby': 'new-baby-soft-pastels-bouquet',
   'corporate-gifting': 'corporate-elegance-arrangement',
-  'bridal-bouquets': 'bridal-white-bouquet',
+  'thank-you': 'thank-you-peach-bouquet',
   'sympathy-and-funeral': 'classic-white-sympathy-arrangement',
 };
 
-/** A Deluxe collection tile backed by a portrait luxury arrangement photo. */
+/** Bespoke occasion-card photography (square, luxury house style). */
+const occ = (handle: string) => `/images/occasions/${handle}-800.webp`;
+const OCCASION_IMAGES = new Set([
+  'birthday',
+  'anniversary',
+  'love-and-romance',
+  'sympathy-and-funeral',
+  'congratulations',
+  'thank-you',
+  'get-well',
+  'new-baby',
+  'corporate-gifting',
+]);
+
+/**
+ * A Deluxe collection tile. Occasion collections use their bespoke occasion-card
+ * image; other tiles fall back to a representative luxury arrangement photo.
+ */
 const heroTile = (label: string, handle: string): HomeTile => ({
   label,
   to: `/collections/${handle}`,
-  image: lux(TILE_ARRANGEMENT[handle] ?? handle),
+  image: OCCASION_IMAGES.has(handle)
+    ? occ(handle)
+    : lux(TILE_ARRANGEMENT[handle] ?? handle),
 });
 
 /** Shared "Shop by flower" tiles — buying stems is relevant to both audiences. */
@@ -160,32 +181,32 @@ const DELUXE: HomeContent = {
         eyebrow: 'Celebrate the years',
         to: '/collections/anniversary',
         image: 'occasion',
-        imageSrc: lux('blush-romance-luxe'),
-        alt: 'Romantic anniversary arrangement in blush and ivory',
+        imageSrc: occ('anniversary'),
+        alt: 'Romantic anniversary arrangement in red, blush and cream roses',
       },
       {
         title: 'Love & Romance',
         eyebrow: 'Say it with flowers',
         to: '/collections/love-and-romance',
         image: 'hero',
-        imageSrc: lux('grand-red-rose-arrangement'),
-        alt: 'Red rose romance arrangement in a cinematic setting',
+        imageSrc: occ('love-and-romance'),
+        alt: 'Luxury red rose romance bouquet, hand-tied',
       },
       {
         title: 'Birthday',
         eyebrow: 'Make it unforgettable',
         to: '/collections/birthday',
         image: 'botanical',
-        imageSrc: lux('sunshine-birthday-bouquet'),
-        alt: 'Bright, joyful birthday bouquet',
+        imageSrc: occ('birthday'),
+        alt: 'Vibrant premium birthday bouquet in peach and coral tones',
       },
       {
         title: 'Sympathy',
         eyebrow: 'With quiet grace',
         to: '/collections/sympathy-and-funeral',
         image: 'occasion',
-        imageSrc: lux('classic-white-sympathy-arrangement'),
-        alt: 'Serene ivory sympathy arrangement',
+        imageSrc: occ('sympathy-and-funeral'),
+        alt: 'Serene white and ivory sympathy arrangement with soft greenery',
       },
     ],
   },
@@ -208,7 +229,7 @@ const DELUXE: HomeContent = {
       heroTile('Get Well Soon', 'get-well'),
       heroTile('New Baby', 'new-baby'),
       heroTile('Corporate Gifts', 'corporate-gifting'),
-      heroTile('Weddings', 'bridal-bouquets'),
+      heroTile('Thank You', 'thank-you'),
       heroTile('Sympathy', 'sympathy-and-funeral'),
     ],
   },
@@ -240,7 +261,7 @@ const DELUXE: HomeContent = {
   heritage: {
     kicker: 'Kingston, Jamaica',
     title: 'Four decades of flowers, memories, and moments.',
-    body: 'For 40+ years, The New Greenhouse has served Jamaica with flowers for celebrations, farewells, weddings, homes, businesses, and the meaningful gestures in between.',
+    body: 'For 40+ years, The New Greenhouse has served Jamaica with flowers for celebrations, farewells, homes, businesses, and the meaningful gestures in between.',
   },
   testimonials: {
     kicker: 'Loved by customers',
@@ -285,20 +306,20 @@ const CLASSIC: HomeContent = {
     kicker: 'Wholesale & Florist Supplies',
     title: 'Wholesale flowers, greenery & florist supplies.',
     body: 'Fresh, graded stems by the box — plus vases, ribbon, tools and everything a florist, planner or venue needs, delivered across Jamaica.',
-    primary: {label: 'Shop Wholesale Flowers', to: '/collections/bulk-flowers'},
-    secondary: {label: 'Floral Supplies', to: '/collections/floral-supplies'},
+    primary: {label: 'Shop Wholesale Flowers', to: '/classic/wholesale'},
+    secondary: {label: 'Shop Floral Supplies', to: '/classic/supplies'},
     slogan: SLOGAN,
     image: 'botanical',
     alt: 'Bulk wholesale flowers and greenery ready for florists and events',
   },
   featured: {
-    kicker: 'Shop the warehouse',
-    title: 'Everything a florist orders, in one delivery.',
+    kicker: 'Two ways to shop',
+    title: 'Wholesale flowers and floral supplies.',
     cards: [
       {
         title: 'Wholesale Flowers',
-        eyebrow: 'By the box',
-        to: '/collections/bulk-flowers',
+        eyebrow: 'Fresh stems by the box',
+        to: '/classic/wholesale',
         image: 'occasion',
         alt: 'Bulk wholesale flowers ready for florists and events',
       },
@@ -311,8 +332,8 @@ const CLASSIC: HomeContent = {
       },
       {
         title: 'Floral Supplies',
-        eyebrow: 'Studio essentials',
-        to: '/collections/floral-supplies',
+        eyebrow: 'Tools, containers & packaging',
+        to: '/classic/supplies',
         image: 'hero',
         alt: 'Florist supplies including tools, ribbon and packaging',
       },
@@ -361,7 +382,7 @@ const CLASSIC: HomeContent = {
     {
       kicker: 'Delivery & pickup',
       title: 'Fresh stems, delivered across Jamaica.',
-      body: 'Island-wide delivery and same-day pickup in Kingston & St. Andrew, with cold-chain handling so every order arrives in peak condition for your build.',
+      body: 'Same-day delivery and pickup across Kingston & St. Andrew, with island-wide delivery by arrangement and cold-chain handling so every order arrives in peak condition for your build.',
       cta: {label: 'Delivery & Pickup Details', to: '/pages/delivery-information'},
       image: 'botanical',
       alt: 'Fresh floral stems prepared for island-wide delivery',

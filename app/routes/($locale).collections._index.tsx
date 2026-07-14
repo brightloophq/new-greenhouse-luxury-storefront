@@ -1,17 +1,29 @@
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
 import {Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {Section, Container, Grid, CollectionCard} from '~/components/ui';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
+import {getExperienceFromRequest} from '~/lib/experience';
+import {DELUXE_COLLECTION_ORDER} from '~/lib/experienceClassify';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({data}) => {
+  if (data?.experience === 'deluxe') {
+    return [
+      {title: 'Shop by Occasion | The New Greenhouse'},
+      {
+        name: 'description',
+        content:
+          'Explore luxury floral collections for every occasion — anniversary, birthday, romance, sympathy, congratulations and signature bouquets — hand-delivered across Kingston by The New Greenhouse.',
+      },
+    ];
+  }
   return [
     {title: 'Shop Flowers by Collection | The New Greenhouse'},
     {
       name: 'description',
       content:
-        'Browse luxury and wholesale floral collections — bouquets, weddings, sympathy, corporate, plants and gifting — from The New Greenhouse in Kingston, Jamaica.',
+        'Browse wholesale and retail floral collections — bulk stems, greenery, supplies, bouquets and gifting — from The New Greenhouse in Kingston, Jamaica.',
     },
   ];
 };
@@ -21,29 +33,45 @@ export async function loader(args: Route.LoaderArgs) {
   return {...criticalData};
 }
 
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
+  const experience = getExperienceFromRequest(request);
+
+  // Classic has NO generic collection directory (Part 3/19). The Classic journey
+  // is Home → Wholesale Flowers / Floral Supplies — never a long list of Shopify
+  // collections. Send Classic (and the classic-default no-cookie case) straight
+  // to the Wholesale Flowers hub; Floral Supplies is one nav click away.
+  if (experience !== 'deluxe') {
+    throw redirect('/classic/wholesale');
+  }
+
   const [{collections}] = await Promise.all([
     context.storefront.query(COLLECTIONS_QUERY),
   ]);
-  return {collections};
+
+  // Deluxe shows ONLY the curated allow-list, filtered server-side so wholesale
+  // collections never reach the Deluxe client (not even the serialized payload).
+  const nodes = DELUXE_COLLECTION_ORDER.map((handle) =>
+    collections.nodes.find((c) => c.handle === handle),
+  ).filter((c): c is CollectionFragment => Boolean(c));
+
+  return {nodes, experience};
 }
 
 export default function Collections() {
-  const {collections} = useLoaderData<typeof loader>();
-  const nodes = collections.nodes.filter(
-    (c) => c.handle !== 'frontpage',
-  );
+  const {nodes, experience} = useLoaderData<typeof loader>();
+  const deluxe = experience === 'deluxe';
 
   return (
     <div className="ng-catalog-page ng-catalog-index">
       <CollectionHero
-        breadcrumbs={[
-          {label: 'Home', to: '/'},
-          {label: 'Collections'},
-        ]}
-        eyebrow="Browse the house"
-        title="Shop flowers by collection"
-        description="Curated collections for gifting, weddings, sympathy, corporate spaces and wholesale ordering — the full house of The New Greenhouse."
+        breadcrumbs={[{label: 'Home', to: '/'}, {label: 'Collections'}]}
+        eyebrow={deluxe ? 'Shop by occasion' : 'Browse the house'}
+        title={deluxe ? 'The luxury collection' : 'Shop flowers by collection'}
+        description={
+          deluxe
+            ? 'Hand-composed arrangements for every occasion — anniversary, romance, birthday, sympathy and our signature bouquets — gift-ready and delivered with a personal touch.'
+            : 'Curated collections for gifting, weddings, sympathy, corporate spaces and wholesale ordering — the full house of The New Greenhouse.'
+        }
       />
       <Section spacing="standard">
         <Container size="xl">

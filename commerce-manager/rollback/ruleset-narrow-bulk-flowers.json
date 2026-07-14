@@ -1,0 +1,27 @@
+{
+  "id": "gid://shopify/Collection/339491291315",
+  "handle": "bulk-flowers",
+  "priorRuleSet": {
+    "appliedDisjunctively": false,
+    "rules": [
+      {
+        "column": "TAG",
+        "relation": "EQUALS",
+        "condition": "channel:wholesale"
+      }
+    ]
+  },
+  "priorCount": 188,
+  "suppliesRemoved": [
+    "wet-floral-foam-bricks",
+    "glass-cylinder-vase",
+    "bud-vase-set",
+    "satin-ribbon",
+    "organza-ribbon",
+    "kraft-cellophane-wrap",
+    "woven-arrangement-basket",
+    "floral-stem-tape",
+    "florist-shears-snips",
+    "bouquet-presentation-boxes"
+  ]
+}

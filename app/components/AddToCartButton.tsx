@@ -16,22 +16,31 @@ export function AddToCartButton({
 }) {
   return (
     <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
-      {(fetcher: FetcherWithComponents<any>) => (
-        <>
-          <input
-            name="analytics"
-            type="hidden"
-            value={JSON.stringify(analytics)}
-          />
-          <button
-            type="submit"
-            onClick={onClick}
-            disabled={disabled ?? fetcher.state !== 'idle'}
-          >
-            {children}
-          </button>
-        </>
-      )}
+      {(fetcher: FetcherWithComponents<any>) => {
+        const busy = fetcher.state !== 'idle';
+        return (
+          <>
+            <input
+              name="analytics"
+              type="hidden"
+              value={JSON.stringify(analytics)}
+            />
+            <button
+              className="add-to-cart-button"
+              type="submit"
+              onClick={onClick}
+              disabled={disabled || busy}
+            >
+              {busy ? 'Adding…' : children}
+            </button>
+            {/* Screen-reader confirmation that a line was added (the cart drawer
+                also opens on click, but this is a robust polite announcement). */}
+            <span className="ng-visually-hidden" role="status" aria-live="polite">
+              {fetcher.data && fetcher.state === 'idle' ? 'Added to cart' : ''}
+            </span>
+          </>
+        );
+      }}
     </CartForm>
   );
 }

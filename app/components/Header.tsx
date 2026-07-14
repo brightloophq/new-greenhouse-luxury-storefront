@@ -8,6 +8,8 @@ import {
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
+import {useCloseOnRouteChange} from '~/lib/useCloseOnRouteChange';
+import {DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 import {cx, Icon, IconButton} from '~/components/ui';
 import {ExperienceToggle} from '~/components/ExperienceToggle';
 import {useExperience} from '~/components/ExperienceProvider';
@@ -28,7 +30,7 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
   return (
     <div className={cx('ng-shell-header', scrolled && 'is-solid')}>
       <div className="ng-shell-announcement" role="status">
-        <span>Same-day delivery across Kingston &amp; St. Andrew — order before 2PM</span>
+        <span>Same-day delivery across Kingston &amp; St. Andrew — order before {DELIVERY_CUTOFF_SHORT}</span>
         <span aria-hidden="true" className="ng-shell-announcement-sep">·</span>
         <span>Luxury florals since 1984</span>
       </div>
@@ -79,6 +81,10 @@ function DesktopNav() {
   const [openLabel, setOpenLabel] = useState<string | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Close the mega on any route change (covers Back/Forward and keyboard/touch
+  // activation) so a hover panel never lingers over the destination page.
+  useCloseOnRouteChange(() => setOpenLabel(null));
 
   const clearTimer = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);

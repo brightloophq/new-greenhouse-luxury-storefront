@@ -2,6 +2,7 @@ import {useEffect, useId, useRef, type ComponentProps} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import {ButtonLink, Heading, Icon, PriceBlock, Text} from '~/components/ui';
 import type {CatalogMoney, CatalogProduct} from '~/components/catalog/types';
+import {useTabTrap} from '~/lib/useTabTrap';
 
 /** CatalogMoney is structurally compatible with Hydrogen's MoneyV2 view-model. */
 const asMoney = (money: CatalogMoney) =>
@@ -28,7 +29,12 @@ export function QuickView({product, open, onClose}: QuickViewProps) {
   const titleId = useId();
   const descId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const isOpen = open && !!product;
+
+  // Trap Tab focus within the dialog while open.
+  useTabTrap(dialogRef, isOpen);
 
   // Esc to close.
   useEffect(() => {
@@ -53,9 +59,12 @@ export function QuickView({product, open, onClose}: QuickViewProps) {
     };
   }, [isOpen]);
 
-  // Move focus to the close button when the modal opens.
+  // Move focus to the close button on open; restore it to the trigger on close.
   useEffect(() => {
-    if (isOpen) closeRef.current?.focus();
+    if (!isOpen) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    return () => restoreFocusRef.current?.focus?.();
   }, [isOpen]);
 
   if (!isOpen || !product) return null;
@@ -87,6 +96,7 @@ export function QuickView({product, open, onClose}: QuickViewProps) {
         aria-hidden="true"
       />
       <div
+        ref={dialogRef}
         className="ng-catalog-quickview-dialog"
         role="dialog"
         aria-modal="true"

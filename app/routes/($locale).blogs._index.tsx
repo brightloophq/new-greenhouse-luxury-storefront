@@ -7,7 +7,14 @@ import type {BlogsQuery} from 'storefrontapi.generated';
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Journal | The New Greenhouse`}];
+  return [
+    {title: `Journal | The New Greenhouse`},
+    {
+      name: 'description',
+      content:
+        'The New Greenhouse Journal — floral inspiration, gifting guides and seasonal notes from our Kingston, Jamaica studio.',
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
