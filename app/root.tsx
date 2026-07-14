@@ -11,7 +11,6 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -92,9 +91,39 @@ export function links() {
       href: cormorantDisplay,
       crossOrigin: 'anonymous',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    // The New Greenhouse brand favicon / touch / PWA icon set (public/).
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+    {rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png'},
+    {rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png'},
+    {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png'},
+    {rel: 'manifest', href: '/manifest.webmanifest'},
   ];
 }
+
+/**
+ * Default document metadata for The New Greenhouse. Applies brand title,
+ * description and social cards to any route that does not set its own meta.
+ * Content routes (homepage, collections, products) override the title with
+ * page-specific SEO copy.
+ */
+export const meta: Route.MetaFunction = () => {
+  const title = 'The New Greenhouse | Not just a flower, whatever it takes.';
+  const description =
+    'Premium wholesale flowers, luxury floral arrangements, and professional floral supplies in Kingston, Jamaica. Fresh flowers for florists, businesses, gifts, and everyday moments.';
+  return [
+    {title},
+    {name: 'description', content: description},
+    {property: 'og:type', content: 'website'},
+    {property: 'og:site_name', content: 'The New Greenhouse'},
+    {property: 'og:title', content: title},
+    {property: 'og:description', content: description},
+    {property: 'og:image', content: '/og-image.png'},
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: title},
+    {name: 'twitter:description', content: description},
+    {name: 'twitter:image', content: '/og-image.png'},
+  ];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -183,6 +212,13 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/* Global brand chrome — constant on every route (route meta can't drop these) */}
+        <meta name="theme-color" content="#090909" />
+        <meta name="application-name" content="The New Greenhouse" />
+        <meta name="apple-mobile-web-app-title" content="The New Greenhouse" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="msapplication-TileColor" content="#090909" />
         <link rel="stylesheet" href={fontStyles}></link>
         <link rel="stylesheet" href={tailwindCss}></link>
         <link rel="stylesheet" href={resetStyles}></link>

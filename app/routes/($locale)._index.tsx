@@ -38,9 +38,9 @@ export const meta: Route.MetaFunction = ({data}) => {
   // Distinct SEO per experience: wholesale intent (Classic) vs luxury gifting
   // (Deluxe). Canonical stays "/" for both (no duplicate-content routes).
   const classic = data?.experience === 'classic';
-  const title = classic
-    ? 'Wholesale Flowers & Florist Supplies Jamaica | The New Greenhouse'
-    : 'Luxury Flowers & Premium Bouquets Kingston | The New Greenhouse';
+  // Brand tagline is the default document title (requested). Experience-specific
+  // keyword copy lives in the description + OG below for SEO.
+  const title = 'The New Greenhouse | Not just a flower, whatever it takes.';
   const description = classic
     ? 'Bulk flowers, wholesale roses, greenery and florist supplies for florists, event planners, hotels and businesses in Kingston, Jamaica.'
     : 'Signature luxury bouquets, premium roses and orchids, and refined corporate and wedding floral design from The New Greenhouse in Kingston, Jamaica.';
