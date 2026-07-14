@@ -20,6 +20,8 @@ export interface CatalogProduct {
   handle: string;
   title: string;
   vendor?: string | null;
+  productType?: string | null;
+  tags?: string[] | null;
   availableForSale?: boolean | null;
   featuredImage?: CatalogImage | null;
   images?: {nodes: CatalogImage[]} | null;

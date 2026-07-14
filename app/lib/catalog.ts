@@ -16,6 +16,8 @@ export const CATALOG_PRODUCT_FRAGMENT = `#graphql
     handle
     title
     vendor
+    productType
+    tags
     availableForSale
     description(truncateAt: 200)
     featuredImage {

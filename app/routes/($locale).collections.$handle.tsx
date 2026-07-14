@@ -31,6 +31,7 @@ import {CatalogResults} from '~/components/catalog/CatalogResults';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
 import {useExperience} from '~/components/ExperienceProvider';
+import {productInExperience} from '~/lib/experienceClassify';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
@@ -291,9 +292,16 @@ export default function Collection() {
 
   // Hub flower views use the top-level product search connection (reliable tag
   // filtering); everything else uses the collection's own products.
-  const productConnection =
+  const rawConnection =
     isHub && activeFlower && flowerProducts ? flowerProducts : collection.products;
-  const products = (productConnection.nodes ?? []) as CatalogProduct[];
+  // Safety net (Part 11/16): even within a curated Shopify collection, never
+  // render a product that belongs to the other experience — filter members by
+  // central classification. Ambiguous/unknown products show in neither.
+  const filteredNodes = (rawConnection.nodes ?? []).filter((node) =>
+    productInExperience(node, experience),
+  );
+  const productConnection = {...rawConnection, nodes: filteredNodes};
+  const products = filteredNodes as CatalogProduct[];
 
   // On a flower hub the default view is the visual category browser ("All
   // Flowers"); picking a variety (card or sidebar) switches to its products.
