@@ -1730,16 +1730,43 @@ button.reset:hover:not(:has(> *)) {
   outline-offset: 2px;
 }
 
-/* Consistent vertical rhythm so headings / price / blocks never run together. */
+/* ==========================================================================
+   PDP vertical spacing system — one token-driven rhythm so every product page
+   (both experiences) shares comfortable, proportional breathing room. Spacing
+   only: no colour / type / layout / behaviour change. `--pdp-rhythm` scales
+   down one step on tablet/mobile so the balance stays proportional.
+   ========================================================================== */
+.product-main {
+  --pdp-rhythm: var(--ng-space-6); /* 24px comfortable stack rhythm (desktop) */
+  display: flex;
+  flex-direction: column;
+  gap: var(--pdp-rhythm);
+}
+/* Tighter title group: the small vendor kicker hugs the title (its own row of
+   rhythm would read as a gap), then the full rhythm resumes. */
+.product-main > .greenhouse-kicker {
+  margin-bottom: calc(var(--ng-space-2) - var(--pdp-rhythm));
+}
+/* The purchase controls (options → quantity → Add to Cart) get their own,
+   slightly tighter internal rhythm so they read as one action group. */
 .product-form {
   display: flex;
   flex-direction: column;
-  gap: var(--ng-space-4, 1.1rem);
+  gap: var(--ng-space-5); /* 20px */
 }
-.product-main {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.85rem, 2vw, 1.25rem);
+/* Extra air before the scannable "info" groups so nothing feels cramped and
+   the trust badges / details read as distinct sections. */
+.product-main > .product-trust-grid,
+.product-main > .product-story {
+  margin-top: var(--ng-space-2); /* +8px on top of the base rhythm */
+}
+@media (max-width: 48em) {
+  .product-main {
+    --pdp-rhythm: var(--ng-space-5); /* 20px on tablet + mobile */
+  }
+  .product-form {
+    gap: var(--ng-space-4); /* 16px */
+  }
 }
 
 /* H2 — quantity selector row. */
@@ -1815,6 +1842,34 @@ button.reset:hover:not(:has(> *)) {
   line-height: 1.6;
   margin: 0;
   padding: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+/* Product Details accordions — each row breathes so the divider rule never
+   crowds the summary or the copy beneath it. */
+.product-story details {
+  padding-block: var(--ng-space-4);
+}
+.product-story summary {
+  padding-block: var(--ng-space-1);
+}
+
+/* Related products / cross-sell sit well clear of the purchase panel. */
+.product-commerce-section {
+  margin-top: var(--ng-space-16); /* 64px desktop */
+}
+
+/* Comfortable breathing room before the footer at the end of the page. */
+.product.commerce-product {
+  padding-bottom: var(--ng-space-16);
+}
+
+@media (max-width: 48em) {
+  .product-commerce-section {
+    margin-top: var(--ng-space-12); /* 48px */
+  }
+  .product.commerce-product {
+    padding-bottom: var(--ng-space-12);
+  }
 }
 
 /* A6 — the purchase panel scrolls with the page on mobile (no sticky overlap). */

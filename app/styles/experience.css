@@ -650,9 +650,8 @@
 /* Purchase panel — generous rhythm, sticky on desktop. */
 [data-experience='deluxe'] .product-main {
   background: transparent;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.5rem);
+  /* flex column + vertical rhythm now come from the shared token system in
+     app.css (.product-main / --pdp-rhythm) so both experiences stay proportional. */
   top: 7rem;
 }
 [data-experience='deluxe'] .product-main h1 {
@@ -737,10 +736,8 @@
   padding-top: 0.6rem;
 }
 
-/* Related products — breathe. */
-[data-experience='deluxe'] .product-commerce-section {
-  margin-top: clamp(2.5rem, 6vw, 5rem);
-}
+/* Related products spacing is now shared/token-driven in app.css
+   (.product-commerce-section) so both experiences stay proportional. */
 
 /* Mobile: the purchase panel scrolls with the page (no sticky overlap). */
 @media (max-width: 45em) {
