@@ -170,7 +170,9 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
               Home
             </Link>
           </li>
-          {nav.primary.filter((i) => !i.mega).map((item) => (
+          {/* Home is rendered explicitly above; drop it from the data list so the
+              Deluxe drawer (whose primary[0] is Home) never shows it twice. */}
+          {nav.primary.filter((i) => !i.mega && i.to !== '/').map((item) => (
             <li key={item.label}>
               <Link
                 to={item.to!}

@@ -40,7 +40,8 @@
   --ng-border-strong: #a9cdb4;
   --ng-border-inverse: rgb(63 174 99 / 35%);
   --ng-gold-text: #22694a; /* accessible green text on cream (WCAG AA) */
-  --ng-focus-ring: #3fae63;
+  /* Inherit the high-contrast --ng-gold-text (#22694a) focus ring from base;
+     the old #3fae63 was too light on green-cream (a11y B1). */
 
   /* Typography — Classic body is DM Sans (matches the main website). Display
      stays Cormorant Garamond (shared). */
@@ -585,6 +586,34 @@
   font-size: var(--ng-font-size-small, 0.82rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* ==========================================================================
+   PHASE 6 — DELUXE BRAND FIXES (remove stray botanical-green from the luxury
+   palette). All scoped to Deluxe; Classic keeps its green system.
+   ========================================================================== */
+
+/* H6 — the heritage section was a full botanical-green band (base
+   --ng-color-accent-green is only re-themed for Classic). In Deluxe render it as
+   a premium near-black band with ivory text + gold kicker. Classic keeps green. */
+[data-experience='deluxe'] .greenhouse-heritage {
+  background: var(--ng-color-background);
+  color: var(--ng-color-warm-white);
+}
+[data-experience='deluxe'] .greenhouse-heritage .greenhouse-kicker {
+  color: var(--ng-color-luxury-gold);
+}
+
+/* L1 — discount pill: charcoal, not botanical green, in Deluxe. */
+[data-experience='deluxe'] .ng-price-discount {
+  background: var(--ng-color-charcoal);
+  color: var(--ng-color-warm-white);
+}
+
+/* L1 — QuickView "in stock" availability: gold, not green, in Deluxe
+   (the sold-out variant keeps its own styling). */
+[data-experience='deluxe'] .ng-catalog-quickview-availability:not(.is-soldout) {
+  color: var(--ng-gold-text);
 }
 
 /* ==========================================================================

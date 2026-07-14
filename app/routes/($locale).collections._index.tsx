@@ -4,14 +4,55 @@ import {Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {Section, Container, Grid, CollectionCard} from '~/components/ui';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
+import {getExperienceFromRequest} from '~/lib/experience';
 
-export const meta: Route.MetaFunction = () => {
+/**
+ * Deluxe (luxury) collection index allow-list, in curated occasion-first order.
+ * The Deluxe experience shows ONLY these gifting/occasion/signature collections —
+ * never the wholesale supply collections (bulk-flowers, floral-supplies, vases,
+ * ribbon, greenery, all-flowers…) or the empty legacy duplicates. Handles not
+ * present in the store are simply skipped. Classic keeps the full catalogue.
+ */
+const DELUXE_COLLECTION_ORDER = [
+  'best-sellers',
+  'luxury-bouquets',
+  'signature-collection',
+  'anniversary',
+  'birthday',
+  'love-and-romance',
+  'sympathy-and-funeral',
+  'congratulations',
+  'thank-you',
+  'get-well',
+  'new-baby',
+  'corporate-gifting',
+  'bridal-bouquets',
+  'seasonal-deluxe',
+  'orchids',
+  'roses',
+  'same-day-delivery',
+  'add-ons',
+  'centerpieces',
+];
+const DELUXE_ALLOW = new Set(DELUXE_COLLECTION_ORDER);
+
+export const meta: Route.MetaFunction = ({data}) => {
+  if (data?.experience === 'deluxe') {
+    return [
+      {title: 'Shop by Occasion | The New Greenhouse'},
+      {
+        name: 'description',
+        content:
+          'Explore luxury floral collections for every occasion — anniversary, birthday, romance, sympathy, congratulations and signature bouquets — hand-delivered across Kingston by The New Greenhouse.',
+      },
+    ];
+  }
   return [
     {title: 'Shop Flowers by Collection | The New Greenhouse'},
     {
       name: 'description',
       content:
-        'Browse luxury and wholesale floral collections — bouquets, weddings, sympathy, corporate, plants and gifting — from The New Greenhouse in Kingston, Jamaica.',
+        'Browse wholesale and retail floral collections — bulk stems, greenery, supplies, bouquets and gifting — from The New Greenhouse in Kingston, Jamaica.',
     },
   ];
 };
@@ -21,29 +62,39 @@ export async function loader(args: Route.LoaderArgs) {
   return {...criticalData};
 }
 
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
+  const experience = getExperienceFromRequest(request);
   const [{collections}] = await Promise.all([
     context.storefront.query(COLLECTIONS_QUERY),
   ]);
-  return {collections};
+
+  // Filter server-side so wholesale collections/copy never reach the Deluxe
+  // client at all (not even in the serialized loader payload).
+  const nodes =
+    experience === 'deluxe'
+      ? DELUXE_COLLECTION_ORDER.map((handle) =>
+          collections.nodes.find((c) => c.handle === handle),
+        ).filter((c): c is CollectionFragment => Boolean(c))
+      : collections.nodes.filter((c) => c.handle !== 'frontpage');
+
+  return {nodes, experience};
 }
 
 export default function Collections() {
-  const {collections} = useLoaderData<typeof loader>();
-  const nodes = collections.nodes.filter(
-    (c) => c.handle !== 'frontpage',
-  );
+  const {nodes, experience} = useLoaderData<typeof loader>();
+  const deluxe = experience === 'deluxe';
 
   return (
     <div className="ng-catalog-page ng-catalog-index">
       <CollectionHero
-        breadcrumbs={[
-          {label: 'Home', to: '/'},
-          {label: 'Collections'},
-        ]}
-        eyebrow="Browse the house"
-        title="Shop flowers by collection"
-        description="Curated collections for gifting, weddings, sympathy, corporate spaces and wholesale ordering — the full house of The New Greenhouse."
+        breadcrumbs={[{label: 'Home', to: '/'}, {label: 'Collections'}]}
+        eyebrow={deluxe ? 'Shop by occasion' : 'Browse the house'}
+        title={deluxe ? 'The luxury collection' : 'Shop flowers by collection'}
+        description={
+          deluxe
+            ? 'Hand-composed arrangements for every occasion — anniversary, romance, birthday, sympathy and our signature bouquets — gift-ready and delivered with a personal touch.'
+            : 'Curated collections for gifting, weddings, sympathy, corporate spaces and wholesale ordering — the full house of The New Greenhouse.'
+        }
       />
       <Section spacing="standard">
         <Container size="xl">

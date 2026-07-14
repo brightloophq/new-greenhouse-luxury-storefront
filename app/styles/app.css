@@ -1691,9 +1691,138 @@ button.reset:hover:not(:has(> *)) {
   color: var(--color-ink);
   font-size: 1rem;
   font-family: inherit;
-  min-height: 2.5rem;
+  min-height: 2.75rem; /* ≥44px touch target (a11y B5) */
   text-transform: none;
   letter-spacing: 0;
+}
+
+/* ==========================================================================
+   Shared PDP commerce fixes (both experiences; neutral tokens re-theme green in
+   Classic). Deluxe adds its luxury color/sheen on top in experience.css.
+   H1 selected-variant state · A3 dominant CTA · A4 trust blocks · H2 quantity.
+   ========================================================================== */
+
+/* H1 — visible selected / unavailable / focus states on variant chips. */
+.product-options-item {
+  border: 1px solid var(--ng-border-strong, #d8d2c8);
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+.product-options-item:hover:not(.is-unavailable):not(:disabled) {
+  border-color: var(--ng-text-primary);
+}
+.product-options-item.is-selected {
+  background-color: var(--ng-text-primary);
+  border-color: var(--ng-text-primary);
+  color: var(--ng-color-warm-white);
+  font-weight: 700;
+}
+.product-options-item.is-unavailable {
+  cursor: not-allowed;
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+.product-options-item:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Consistent vertical rhythm so headings / price / blocks never run together. */
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-4, 1.1rem);
+}
+.product-main {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 2vw, 1.25rem);
+}
+
+/* H2 — quantity selector row. */
+.product-quantity {
+  align-items: center;
+  display: flex;
+  gap: var(--ng-space-3, 0.9rem);
+}
+.product-quantity-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* A3 — Add to Cart is the dominant primary action in BOTH experiences. */
+.add-to-cart-button {
+  align-items: center;
+  background: var(--ng-color-background);
+  border: 1px solid var(--ng-color-background);
+  border-radius: var(--ng-radius-sm, 4px);
+  color: var(--ng-color-warm-white);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-button, 0.85rem);
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: var(--ng-letter-nav, 0.1em);
+  min-height: 3.25rem;
+  text-transform: uppercase;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease;
+  width: 100%;
+}
+.add-to-cart-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.add-to-cart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.add-to-cart-button:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 3px;
+}
+
+/* A4 — assurance chips as distinct blocks (no run-together inline spans). */
+.product-trust-grid {
+  display: grid;
+  gap: var(--ng-space-2, 0.5rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.product-trust-grid span {
+  align-items: center;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-sm, 4px);
+  display: flex;
+  font-size: 0.72rem;
+  justify-content: center;
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+}
+
+/* Delivery + trade/gift info as readable blocks (both experiences). */
+.product-delivery-note,
+.product-gift-message {
+  background: var(--ng-bg-surface);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-md, 8px);
+  font-size: var(--ng-font-size-small, 0.85rem);
+  line-height: 1.6;
+  margin: 0;
+  padding: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+/* A6 — the purchase panel scrolls with the page on mobile (no sticky overlap). */
+@media (max-width: 45em) {
+  .product-main {
+    position: static;
+    top: auto;
+  }
 }
 
 .product-option-label-swatch {

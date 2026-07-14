@@ -30,7 +30,9 @@
   --ng-border-subtle: #e2d8c8;
   --ng-border-strong: #c3b191;
   --ng-border-inverse: rgb(200 169 106 / 42%);
-  --ng-focus-ring: var(--ng-color-soft-gold);
+  /* High-contrast focus ring: --ng-gold-text is AA (≈4.8:1 deluxe / dark-green
+     classic) on light surfaces, unlike the pale champagne soft-gold (a11y B1). */
+  --ng-focus-ring: var(--ng-gold-text);
   /* Accessible gold for small text on LIGHT backgrounds (WCAG AA 4.74:1 on ivory).
      Use --ng-color-luxury-gold for gold on DARK / decorative / borders / buttons. */
   --ng-gold-text: #8a6a2a;

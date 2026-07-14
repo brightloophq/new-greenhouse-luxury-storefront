@@ -17,7 +17,15 @@ import type {
 } from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Search | The New Greenhouse`}];
+  return [
+    {title: `Search | The New Greenhouse`},
+    {
+      name: 'description',
+      content:
+        'Search flowers, occasions and collections at The New Greenhouse — luxury bouquets and fresh stems delivered across Kingston, Jamaica.',
+    },
+    {name: 'robots', content: 'noindex, follow'},
+  ];
 };
 
 /**

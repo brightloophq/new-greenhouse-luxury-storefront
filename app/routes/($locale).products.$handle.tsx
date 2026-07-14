@@ -1,8 +1,10 @@
 import {Link, redirect, useLoaderData} from 'react-router';
+import type {MetaDescriptor} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
   Analytics,
+  Image,
   useOptimisticVariant,
   getProductOptions,
   getAdjacentAndFirstAvailableVariants,
@@ -20,24 +22,80 @@ export const meta: Route.MetaFunction = ({data}) => {
   // Use the Shopify SEO title verbatim when set (it may already include the
   // brand); otherwise append the brand to the product title. Prevents the
   // "… | The New Greenhouse | The New Greenhouse" doubling.
-  const pageTitle = data?.product.seo.title
-    ? data.product.seo.title
-    : `${data?.product.title || 'Luxury Flowers'} | The New Greenhouse`;
-  return [
+  const product = data?.product;
+  const pageTitle = product?.seo.title
+    ? product.seo.title
+    : `${product?.title || 'Luxury Flowers'} | The New Greenhouse`;
+  const description =
+    product?.seo.description ||
+    product?.description ||
+    'Luxury floral arrangements handcrafted by The New Greenhouse in Kingston, Jamaica.';
+  const origin = data?.origin ?? '';
+  const path = `/products/${product?.handle ?? ''}`;
+  const url = `${origin}${path}`;
+  const variant = product?.selectedOrFirstAvailableVariant;
+  const image = variant?.image?.url ?? product?.images?.nodes?.[0]?.url;
+
+  const tags: MetaDescriptor[] = [
     {title: pageTitle},
-    {
-      name: 'description',
-      content:
-        data?.product.seo.description ||
-        data?.product.description ||
-        'Luxury floral arrangements handcrafted by The New Greenhouse in Kingston, Jamaica.',
-    },
-    {
-      tagName: 'link',
-      rel: 'canonical',
-      href: `/products/${data?.product.handle}`,
-    },
+    {name: 'description', content: description},
+    {tagName: 'link', rel: 'canonical', href: path},
+    // Open Graph + Twitter for premium link previews.
+    {property: 'og:type', content: 'product'},
+    {property: 'og:title', content: pageTitle},
+    {property: 'og:description', content: description},
+    {property: 'og:url', content: url},
+    {property: 'og:site_name', content: 'The New Greenhouse'},
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: pageTitle},
+    {name: 'twitter:description', content: description},
   ];
+  if (image) {
+    tags.push({property: 'og:image', content: image});
+    tags.push({name: 'twitter:image', content: image});
+  }
+
+  // Product + BreadcrumbList structured data (real fields only).
+  if (product && variant) {
+    tags.push({
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.title,
+        description,
+        image: image ? [image] : undefined,
+        sku: variant.sku || undefined,
+        brand: {'@type': 'Brand', name: product.vendor || 'The New Greenhouse'},
+        url,
+        offers: {
+          '@type': 'Offer',
+          price: variant.price?.amount,
+          priceCurrency: variant.price?.currencyCode,
+          availability: variant.availableForSale
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          url,
+        },
+      },
+    });
+    tags.push({
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {'@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/`},
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: product.title,
+            item: url,
+          },
+        ],
+      },
+    });
+  }
+
+  return tags;
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -81,6 +139,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   return {
     product,
     recommendations: productRecommendations ?? [],
+    origin: new URL(request.url).origin,
   };
 }
 
@@ -151,11 +210,14 @@ export default function Product() {
         {secondaryImages.length ? (
           <div className="product-gallery-secondary">
             {secondaryImages.map((image) => (
-              <img
+              <Image
                 key={image.id ?? image.url}
-                src={image.url}
+                data={image}
                 alt={image.altText ?? title}
+                aspectRatio={deluxe ? '4/5' : '1/1'}
+                sizes="(min-width: 45em) 20vw, 45vw"
                 loading="lazy"
+                decoding="async"
               />
             ))}
           </div>

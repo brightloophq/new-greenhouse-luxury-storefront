@@ -4,7 +4,14 @@ import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.article.title ?? 'Article'} | The New Greenhouse`}];
+  const title = data?.article.title ?? 'Article';
+  return [
+    {title: `${title} | The New Greenhouse`},
+    {
+      name: 'description',
+      content: `${title} — from The New Greenhouse Journal, luxury and wholesale florist in Kingston, Jamaica.`,
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {

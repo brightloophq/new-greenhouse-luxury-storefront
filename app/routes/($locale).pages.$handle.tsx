@@ -3,7 +3,14 @@ import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `${data?.page.title ?? 'Page'} | The New Greenhouse`}];
+  const title = data?.page.title ?? 'Page';
+  return [
+    {title: `${title} | The New Greenhouse`},
+    {
+      name: 'description',
+      content: `${title} — The New Greenhouse, luxury and wholesale florist in Kingston, Jamaica.`,
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
