@@ -1,0 +1,31 @@
+{
+  "groupB": {
+    "long-stem-ivory-roses": "ok",
+    "ivory-garden-roses": "ok",
+    "dendrobium-orchid-stems": "ok",
+    "cymbidium-orchid-stems": "ok",
+    "phalaenopsis-orchid-stems": "ok",
+    "asiatic-lilies-mixed": "ok",
+    "calla-lilies-ivory": "ok",
+    "standard-carnations-assorted": "ok",
+    "babys-breath-gypsophila": "ok"
+  },
+  "groupD": {
+    "long-stem-red-roses": "ok",
+    "long-stem-pink-roses": "ok",
+    "long-stem-yellow-roses": "ok",
+    "oriental-lilies-white": "ok",
+    "white-hydrangeas": "ok",
+    "antique-blue-hydrangeas": "ok",
+    "pink-hydrangeas": "ok"
+  },
+  "redirects": [
+    "/products/long-stem-red-roses → /products/roses-in-stock-red",
+    "/products/long-stem-pink-roses → /products/roses-in-stock-pink",
+    "/products/long-stem-yellow-roses → /products/roses-in-stock-yellow",
+    "/products/oriental-lilies-white → /products/lilies-white",
+    "/products/white-hydrangeas → /products/hydrangea-white",
+    "/products/antique-blue-hydrangeas → /products/hydrangea-blue",
+    "/products/pink-hydrangeas → /products/hydrangea-pink"
+  ]
+}

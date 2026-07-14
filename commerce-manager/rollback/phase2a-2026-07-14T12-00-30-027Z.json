@@ -1,0 +1,1205 @@
+{
+  "generatedAt": "2026-07-14T12-00-30-027Z",
+  "phase": "2A",
+  "retire": {
+    "heliconia": {
+      "canonical": "tropicals-heliconia",
+      "before": {
+        "id": "gid://shopify/Product/8553433956531",
+        "handle": "heliconia",
+        "title": "Heliconia",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490734259",
+            "handle": "red"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308013747",
+            "sku": "TNG-WHL-022-P25",
+            "price": "85.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301492403"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308046515",
+            "sku": "TNG-WHL-022-P50",
+            "price": "160.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301525171"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308079283",
+            "sku": "TNG-WHL-022-P100",
+            "price": "300.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301557939"
+          }
+        ]
+      }
+    },
+    "bird-of-paradise": {
+      "canonical": "tropicals-bird-of-paradise",
+      "before": {
+        "id": "gid://shopify/Product/8553434022067",
+        "handle": "bird-of-paradise",
+        "title": "Bird of Paradise",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490799795",
+            "handle": "yellow-and-orange"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308210355",
+            "sku": "TNG-WHL-024-P25",
+            "price": "85.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301689011"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308243123",
+            "sku": "TNG-WHL-024-P50",
+            "price": "160.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301721779"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308275891",
+            "sku": "TNG-WHL-024-P100",
+            "price": "300.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301754547"
+          }
+        ]
+      }
+    },
+    "seeded-eucalyptus": {
+      "canonical": "eucalyptus-seeded",
+      "before": {
+        "id": "gid://shopify/Product/8553434054835",
+        "handle": "seeded-eucalyptus",
+        "title": "Seeded Eucalyptus",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490865331",
+            "handle": "green-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491356851",
+            "handle": "wholesale-greenery"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308308659",
+            "sku": "TNG-WHL-025-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301787315"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308341427",
+            "sku": "TNG-WHL-025-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301820083"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308374195",
+            "sku": "TNG-WHL-025-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301852851"
+          }
+        ]
+      }
+    },
+    "silver-dollar-eucalyptus": {
+      "canonical": "eucalyptus-silver-dollar",
+      "before": {
+        "id": "gid://shopify/Product/8553434087603",
+        "handle": "silver-dollar-eucalyptus",
+        "title": "Silver Dollar Eucalyptus",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490865331",
+            "handle": "green-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491356851",
+            "handle": "wholesale-greenery"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308406963",
+            "sku": "TNG-WHL-026-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301885619"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308439731",
+            "sku": "TNG-WHL-026-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301918387"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308472499",
+            "sku": "TNG-WHL-026-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301951155"
+          }
+        ]
+      }
+    },
+    "wax-flower": {
+      "canonical": "fillers-wax-flower-pink",
+      "before": {
+        "id": "gid://shopify/Product/8553434251443",
+        "handle": "wax-flower",
+        "title": "Wax Flower",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490767027",
+            "handle": "pink"
+          },
+          {
+            "id": "gid://shopify/Collection/339490930867",
+            "handle": "birthday"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308832947",
+            "sku": "TNG-WHL-030-P25",
+            "price": "28.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302311603"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308865715",
+            "sku": "TNG-WHL-030-P50",
+            "price": "52.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302344371"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308898483",
+            "sku": "TNG-WHL-030-P100",
+            "price": "95.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302377139"
+          }
+        ]
+      }
+    },
+    "statice": {
+      "canonical": "fillers-statice-purple",
+      "before": {
+        "id": "gid://shopify/Product/8553434284211",
+        "handle": "statice",
+        "title": "Statice",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490832563",
+            "handle": "purple"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308931251",
+            "sku": "TNG-WHL-031-P25",
+            "price": "28.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302409907"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308964019",
+            "sku": "TNG-WHL-031-P50",
+            "price": "52.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302442675"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308996787",
+            "sku": "TNG-WHL-031-P100",
+            "price": "95.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302475443"
+          }
+        ]
+      }
+    },
+    "solidago": {
+      "canonical": "fillers-solidago",
+      "before": {
+        "id": "gid://shopify/Product/8553434316979",
+        "handle": "solidago",
+        "title": "Solidago",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490799795",
+            "handle": "yellow-and-orange"
+          },
+          {
+            "id": "gid://shopify/Collection/339490930867",
+            "handle": "birthday"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679309029555",
+            "sku": "TNG-WHL-032-P25",
+            "price": "28.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302508211"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679309062323",
+            "sku": "TNG-WHL-032-P50",
+            "price": "52.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302540979"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679309095091",
+            "sku": "TNG-WHL-032-P100",
+            "price": "95.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302573747"
+          }
+        ]
+      }
+    }
+  },
+  "complete": {
+    "football-disbud-chrysanthemums": {
+      "image": "chrysanthemums/football-disbud-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553433759923",
+        "handle": "football-disbud-chrysanthemums",
+        "title": "Football Disbud Chrysanthemums",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490701491",
+            "handle": "white-and-ivory"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679307391155",
+            "sku": "TNG-WHL-016-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772300869811"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307423923",
+            "sku": "TNG-WHL-016-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772300902579"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307456691",
+            "sku": "TNG-WHL-016-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772300935347"
+          }
+        ]
+      }
+    },
+    "spider-chrysanthemums": {
+      "image": "chrysanthemums/spider-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553433792691",
+        "handle": "spider-chrysanthemums",
+        "title": "Spider Chrysanthemums",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490799795",
+            "handle": "yellow-and-orange"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679307489459",
+            "sku": "TNG-WHL-017-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772300968115"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307522227",
+            "sku": "TNG-WHL-017-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301000883"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307554995",
+            "sku": "TNG-WHL-017-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301033651"
+          }
+        ]
+      }
+    },
+    "button-pompon-chrysanthemums": {
+      "image": "chrysanthemums/button-pompon-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553433825459",
+        "handle": "button-pompon-chrysanthemums",
+        "title": "Button Pompon Chrysanthemums",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490898099",
+            "handle": "mixed-color"
+          },
+          {
+            "id": "gid://shopify/Collection/339490930867",
+            "handle": "birthday"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679307587763",
+            "sku": "TNG-WHL-018-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301066419"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307620531",
+            "sku": "TNG-WHL-018-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301099187"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307653299",
+            "sku": "TNG-WHL-018-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301131955"
+          }
+        ]
+      }
+    },
+    "palm-leather-leaf": {
+      "image": "greenery/leatherleaf-fern-800.webp",
+      "ready": true,
+      "before": {
+        "id": "gid://shopify/Product/8553434153139",
+        "handle": "palm-leather-leaf",
+        "title": "Palm & Leather Leaf",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490865331",
+            "handle": "green-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491356851",
+            "handle": "wholesale-greenery"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308603571",
+            "sku": "TNG-WHL-028-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302082227"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308636339",
+            "sku": "TNG-WHL-028-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302114995"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308669107",
+            "sku": "TNG-WHL-028-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302147763"
+          }
+        ]
+      }
+    },
+    "israeli-ruscus": {
+      "image": "greenery/israeli-ruscus-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553434120371",
+        "handle": "israeli-ruscus",
+        "title": "Israeli Ruscus",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490668723",
+            "handle": "greenery-and-fillers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490865331",
+            "handle": "green-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491029171",
+            "handle": "sympathy-and-funeral"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491356851",
+            "handle": "wholesale-greenery"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308505267",
+            "sku": "TNG-WHL-027-P25",
+            "price": "35.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301983923"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308538035",
+            "sku": "TNG-WHL-027-P50",
+            "price": "65.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302016691"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308570803",
+            "sku": "TNG-WHL-027-P100",
+            "price": "120.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772302049459"
+          }
+        ]
+      }
+    },
+    "anthurium-stems": {
+      "image": "tropicals/anthurium-assorted-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553433923763",
+        "handle": "anthurium-stems",
+        "title": "Anthurium Stems",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490734259",
+            "handle": "red"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679307882675",
+            "sku": "TNG-WHL-021-P25-STD",
+            "price": "85.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301361331"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307915443",
+            "sku": "TNG-WHL-021-P50-STD",
+            "price": "160.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301394099"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307948211",
+            "sku": "TNG-WHL-021-P50-PRM",
+            "price": "192.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301426867"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679307980979",
+            "sku": "TNG-WHL-021-P100-PRM",
+            "price": "360.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301459635"
+          }
+        ]
+      }
+    },
+    "torch-ginger": {
+      "image": "tropicals/torch-ginger-800.webp",
+      "ready": false,
+      "before": {
+        "id": "gid://shopify/Product/8553433989299",
+        "handle": "torch-ginger",
+        "title": "Torch Ginger",
+        "status": "ACTIVE",
+        "publications": [
+          {
+            "name": "New Greenhouse Luxury Storefront",
+            "id": "gid://shopify/Publication/188378349747",
+            "isPublished": true
+          }
+        ],
+        "mediaCount": 0,
+        "featuredImage": null,
+        "collections": [
+          {
+            "id": "gid://shopify/Collection/339490537651",
+            "handle": "all-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339490734259",
+            "handle": "red"
+          },
+          {
+            "id": "gid://shopify/Collection/339491061939",
+            "handle": "congratulations"
+          },
+          {
+            "id": "gid://shopify/Collection/339491160243",
+            "handle": "corporate-gifting"
+          },
+          {
+            "id": "gid://shopify/Collection/339491291315",
+            "handle": "bulk-flowers"
+          },
+          {
+            "id": "gid://shopify/Collection/339491389619",
+            "handle": "florist-essentials"
+          },
+          {
+            "id": "gid://shopify/Collection/339491618995",
+            "handle": "corporate-gifts"
+          }
+        ],
+        "variants": [
+          {
+            "id": "gid://shopify/ProductVariant/45679308112051",
+            "sku": "TNG-WHL-023-P25",
+            "price": "85.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301590707"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308144819",
+            "sku": "TNG-WHL-023-P50",
+            "price": "160.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301623475"
+          },
+          {
+            "id": "gid://shopify/ProductVariant/45679308177587",
+            "sku": "TNG-WHL-023-P100",
+            "price": "300.00",
+            "compareAtPrice": null,
+            "inventoryPolicy": "DENY",
+            "inventoryQuantity": 0,
+            "tracked": true,
+            "inventoryItemId": "gid://shopify/InventoryItem/47772301656243"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "retired": [
+    "heliconia",
+    "bird-of-paradise",
+    "seeded-eucalyptus",
+    "silver-dollar-eucalyptus",
+    "wax-flower",
+    "statice",
+    "solidago"
+  ],
+  "completed": [
+    "palm-leather-leaf"
+  ],
+  "pending": [
+    "football-disbud-chrysanthemums",
+    "spider-chrysanthemums",
+    "button-pompon-chrysanthemums",
+    "israeli-ruscus",
+    "anthurium-stems",
+    "torch-ginger"
+  ],
+  "redirects": [
+    "/products/heliconia → /products/tropicals-heliconia",
+    "/products/bird-of-paradise → /products/tropicals-bird-of-paradise",
+    "/products/seeded-eucalyptus → /products/eucalyptus-seeded",
+    "/products/silver-dollar-eucalyptus → /products/eucalyptus-silver-dollar",
+    "/products/wax-flower → /products/fillers-wax-flower-pink",
+    "/products/statice → /products/fillers-statice-purple",
+    "/products/solidago → /products/fillers-solidago"
+  ]
+}

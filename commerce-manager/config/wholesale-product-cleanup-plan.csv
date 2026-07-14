@@ -1,0 +1,63 @@
+handle,title,classification,recommended_action,approved_action,approved_for_image_generation,approved_for_inventory_change,approved_for_publication_change,reviewer_notes
+long-stem-red-roses,Long-Stem Red Roses,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→roses-in-stock-red
+wet-floral-foam-bricks,Wet Floral Foam Bricks,C,Keep hidden/draft,,false,false,false,
+peace-lily-plant,Peace Lily Plant,C,Keep hidden/draft,,false,false,false,
+standing-spray-classic-white,Standing Spray — Classic White,E,Manual review,,false,false,false,
+long-stem-ivory-roses,Long-Stem Ivory Roses,B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+long-stem-pink-roses,Long-Stem Pink Roses,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→roses-in-stock-pink
+long-stem-yellow-roses,Long-Stem Yellow Roses,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→roses-in-stock-yellow
+assorted-spray-roses,Assorted Spray Roses,E,Manual review,,false,false,false,
+ivory-garden-roses,Ivory Garden Roses,B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+dendrobium-orchid-stems,Dendrobium Orchid Stems,B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+cymbidium-orchid-stems,Cymbidium Orchid Stems,B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+phalaenopsis-orchid-stems,Phalaenopsis Orchid Stems,B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+oriental-lilies-white,Oriental Lilies (White),D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→lilies-white
+asiatic-lilies-mixed,Asiatic Lilies (Mixed),B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+calla-lilies-ivory,Calla Lilies (Ivory),B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+white-hydrangeas,White Hydrangeas,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→hydrangea-white
+antique-blue-hydrangeas,Antique Blue Hydrangeas,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→hydrangea-blue
+pink-hydrangeas,Pink Hydrangeas,D,Delete (duplicate/obsolete),retire,false,false,true,Phase 1 done: DRAFT + unpublished + redirect→hydrangea-pink
+football-disbud-chrysanthemums,Football Disbud Chrysanthemums,E,Manual review,,false,false,false,
+spider-chrysanthemums,Spider Chrysanthemums,E,Manual review,,false,false,false,
+button-pompon-chrysanthemums,Button Pompon Chrysanthemums,E,Manual review,,false,false,false,
+standard-carnations-assorted,Standard Carnations (Assorted),B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+spray-mini-carnations,Spray Mini Carnations,E,Manual review,,false,false,false,
+anthurium-stems,Anthurium Stems,E,Manual review,,false,false,false,
+heliconia,Heliconia,E,Manual review,,false,false,false,
+torch-ginger,Torch Ginger,E,Manual review,,false,false,false,
+bird-of-paradise,Bird of Paradise,E,Manual review,,false,false,false,
+seeded-eucalyptus,Seeded Eucalyptus,E,Manual review,,false,false,false,
+silver-dollar-eucalyptus,Silver Dollar Eucalyptus,E,Manual review,,false,false,false,
+israeli-ruscus,Israeli Ruscus,E,Manual review,,false,false,false,
+palm-leather-leaf,Palm & Leather Leaf,E,Manual review,,false,false,false,
+babys-breath-gypsophila,Baby's Breath (Gypsophila),B,Complete after image + availability fix,complete,false,true,true,Phase 1 done: library image + untracked + published
+wax-flower,Wax Flower,E,Manual review,,false,false,false,
+statice,Statice,E,Manual review,,false,false,false,
+solidago,Solidago,E,Manual review,,false,false,false,
+standing-spray-mixed-tribute,Standing Spray — Mixed Tribute,E,Manual review,,false,false,false,
+sympathy-wreath-ivory-greenery,Sympathy Wreath — Ivory & Greenery,E,Manual review,,false,false,false,
+casket-spray-full-ivory,Casket Spray — Full Ivory,E,Manual review,,false,false,false,
+tribute-basket-arrangement,Tribute Basket Arrangement,E,Manual review,,false,false,false,
+memorial-vase-arrangement,Memorial Vase Arrangement,C,Keep hidden/draft,,false,false,false,
+bridal-bouquet-ivory-garden,Bridal Bouquet — Ivory Garden,E,Manual review,,false,false,false,
+bridal-bouquet-cascading-blush,Bridal Bouquet — Cascading Blush,E,Manual review,,false,false,false,
+bridesmaid-bouquet,Bridesmaid Bouquet,E,Manual review,,false,false,false,
+low-reception-centerpiece,Low Reception Centerpiece,E,Manual review,,false,false,false,
+elevated-reception-centerpiece,Elevated Reception Centerpiece,E,Manual review,,false,false,false,
+ceremony-aisle-arch-arrangement,Ceremony Aisle & Arch Arrangement,E,Manual review,,false,false,false,
+sweetheart-table-arrangement,Sweetheart Table Arrangement,E,Manual review,,false,false,false,
+intimate-wedding-flower-package,Intimate Wedding Flower Package,E,Manual review,,false,false,false,
+glass-cylinder-vase,Glass Cylinder Vase,C,Keep hidden/draft,,false,false,false,
+bud-vase-set,Bud Vase Set,C,Keep hidden/draft,,false,false,false,
+satin-ribbon,Satin Ribbon,C,Keep hidden/draft,,false,false,false,
+organza-ribbon,Organza Ribbon,C,Keep hidden/draft,,false,false,false,
+kraft-cellophane-wrap,Kraft & Cellophane Wrap,C,Keep hidden/draft,,false,false,false,
+woven-arrangement-basket,Woven Arrangement Basket,C,Keep hidden/draft,,false,false,false,
+floral-stem-tape,Floral Stem Tape,C,Keep hidden/draft,,false,false,false,
+florist-shears-snips,Florist Shears & Snips,C,Keep hidden/draft,,false,false,false,
+bouquet-presentation-boxes,Bouquet Presentation Boxes,C,Keep hidden/draft,,false,false,false,
+snake-plant-sansevieria,Snake Plant (Sansevieria),C,Keep hidden/draft,,false,false,false,
+phalaenopsis-orchid-plant,Phalaenopsis Orchid Plant,C,Keep hidden/draft,,false,false,false,
+fruit-flower-gift-basket,Fruit & Flower Gift Basket,E,Manual review,,false,false,false,
+belgian-chocolates-add-on,Belgian Chocolates Add-on,E,Manual review,,false,false,false,
+plush-teddy-bear-add-on,Plush Teddy Bear Add-on,E,Manual review,,false,false,false,
