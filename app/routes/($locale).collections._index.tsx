@@ -1,42 +1,11 @@
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
 import {Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {Section, Container, Grid, CollectionCard} from '~/components/ui';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
 import {getExperienceFromRequest} from '~/lib/experience';
-
-/**
- * Deluxe (luxury) collection index allow-list, in curated occasion-first order.
- * The Deluxe experience shows ONLY these gifting/occasion/signature collections —
- * never the wholesale supply collections (bulk-flowers, floral-supplies, vases,
- * ribbon, greenery, all-flowers…) or the empty legacy duplicates. Handles not
- * present in the store are simply skipped. Classic keeps the full catalogue.
- */
-const DELUXE_COLLECTION_ORDER = [
-  'best-sellers',
-  'luxury-bouquets',
-  'signature-collection',
-  'anniversary',
-  'birthday',
-  'love-and-romance',
-  'sympathy-and-funeral',
-  'congratulations',
-  'thank-you',
-  'get-well',
-  'new-baby',
-  'corporate-gifting',
-  'seasonal-deluxe',
-  'orchids',
-  'roses',
-  'same-day-delivery',
-  'add-ons',
-  // Wedding/event collections (bridal-bouquets, centerpieces) are intentionally
-  // omitted from the customer-facing Deluxe occasions index: the business does
-  // not currently offer wedding/event services. The Shopify products remain for
-  // merchant review — see docs deliverable / final report.
-];
-const DELUXE_ALLOW = new Set(DELUXE_COLLECTION_ORDER);
+import {DELUXE_COLLECTION_ORDER} from '~/lib/experienceClassify';
 
 export const meta: Route.MetaFunction = ({data}) => {
   if (data?.experience === 'deluxe') {
@@ -66,18 +35,24 @@ export async function loader(args: Route.LoaderArgs) {
 
 async function loadCriticalData({context, request}: Route.LoaderArgs) {
   const experience = getExperienceFromRequest(request);
+
+  // Classic has NO generic collection directory (Part 3/19). The Classic journey
+  // is Home → Wholesale Flowers / Floral Supplies — never a long list of Shopify
+  // collections. Send Classic (and the classic-default no-cookie case) straight
+  // to the Wholesale Flowers hub; Floral Supplies is one nav click away.
+  if (experience !== 'deluxe') {
+    throw redirect('/classic/wholesale');
+  }
+
   const [{collections}] = await Promise.all([
     context.storefront.query(COLLECTIONS_QUERY),
   ]);
 
-  // Filter server-side so wholesale collections/copy never reach the Deluxe
-  // client at all (not even in the serialized loader payload).
-  const nodes =
-    experience === 'deluxe'
-      ? DELUXE_COLLECTION_ORDER.map((handle) =>
-          collections.nodes.find((c) => c.handle === handle),
-        ).filter((c): c is CollectionFragment => Boolean(c))
-      : collections.nodes.filter((c) => c.handle !== 'frontpage');
+  // Deluxe shows ONLY the curated allow-list, filtered server-side so wholesale
+  // collections never reach the Deluxe client (not even the serialized payload).
+  const nodes = DELUXE_COLLECTION_ORDER.map((handle) =>
+    collections.nodes.find((c) => c.handle === handle),
+  ).filter((c): c is CollectionFragment => Boolean(c));
 
   return {nodes, experience};
 }

@@ -18,6 +18,7 @@ import {ProductGrid} from '~/components/catalog/ProductGrid';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {DELIVERY_CUTOFF} from '~/lib/companyContent';
+import {productInExperience} from '~/lib/experienceClassify';
 
 export const meta: Route.MetaFunction = ({data}) => {
   // Use the Shopify SEO title verbatim when set (it may already include the
@@ -191,13 +192,12 @@ export default function Product() {
     (image) => image?.url && image.url !== primaryImage?.url,
   );
 
-  // Real related products (recommendations), scoped to the active experience so
-  // Deluxe never surfaces wholesale items. Falls back to a curated band below.
+  // Related products scoped to the active experience by central classification
+  // (Part 16/18) — both ways: Deluxe never surfaces wholesale/supply items, and
+  // Classic never surfaces luxury arrangements. Falls back to a curated band.
   const related = (recommendations ?? [])
     .filter((item) => item && item.id !== product.id)
-    .filter((item) =>
-      deluxe ? (item.tags ?? []).includes('channel:retail') : true,
-    )
+    .filter((item) => productInExperience(item, experience))
     .slice(0, 4)
     .map(toRecommendationCard);
 
@@ -448,6 +448,7 @@ const RECOMMENDED_PRODUCT_FRAGMENT = `#graphql
     vendor
     availableForSale
     tags
+    productType
     featuredImage {
       id
       url
