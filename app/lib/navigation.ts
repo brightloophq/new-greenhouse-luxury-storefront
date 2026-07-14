@@ -138,7 +138,8 @@ export const DELUXE_NAV: ExperienceNav = {
     {label: 'Shop', to: '/collections/luxury-bouquets', mega: true},
     {label: 'Occasions', to: '/collections'},
     {label: 'Delivery', to: '/pages/delivery-information'},
-    {label: 'Wholesale', to: '/classic'},
+    // No "Wholesale" link in the luxury nav — switching to the trade store is
+    // handled by the Classic/Deluxe experience toggle, keeping Deluxe on-brand.
   ],
   // Occasion-led mega — gifting only. Never links the shared variety hub
   // (/collections/all-flowers) or /collections/all — only curated gifting sets.
