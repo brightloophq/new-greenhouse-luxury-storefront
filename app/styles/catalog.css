@@ -33,7 +33,12 @@
 }
 
 @media (min-width: 80rem) {
-  .ng-catalog-layout--editorial {
+  /* Two-class selector so it OUTRANKS the base `.ng-catalog-layout` sidebar-grid
+     rule below (same media query, equal single-class specificity, later in
+     source). Without this, an editorial collection (no sidebar, one child) drops
+     its product grid into the empty 300px sidebar track — cramped to 300px on
+     desktop. This keeps the Deluxe editorial grid full-width. */
+  .ng-catalog-layout.ng-catalog-layout--editorial {
     grid-template-columns: minmax(0, 1fr);
   }
 }
