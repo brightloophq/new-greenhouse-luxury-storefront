@@ -56,6 +56,17 @@ import {
   TrustItem,
 } from '~/components/ui';
 
+/**
+ * Internal component gallery. Dev-only: 404s in production builds so customers
+ * can never reach the showcase (it contains demo/placeholder sample content).
+ */
+export async function loader() {
+  if (import.meta.env.PROD) {
+    throw new Response('Not Found', {status: 404});
+  }
+  return null;
+}
+
 export const meta: MetaFunction = () => [
   {title: 'Design System · The New Greenhouse (internal)'},
   {name: 'robots', content: 'noindex'},

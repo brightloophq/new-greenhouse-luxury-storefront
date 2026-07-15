@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
 import {Image} from '@shopify/hydrogen';
@@ -6,6 +7,7 @@ import {Section, Container, Grid, CollectionCard} from '~/components/ui';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
 import {getExperienceFromRequest} from '~/lib/experience';
 import {DELUXE_COLLECTION_ORDER} from '~/lib/experienceClassify';
+import {collectionCardImage} from '~/lib/collectionImages';
 
 export const meta: Route.MetaFunction = ({data}) => {
   if (data?.experience === 'deluxe') {
@@ -97,25 +99,44 @@ function CollectionItem({
   collection: CollectionFragment;
   index: number;
 }) {
+  // Prefer the bespoke local card image (unique per collection, always present);
+  // fall back to the Shopify collection image, then an elegant placeholder.
+  const local = collectionCardImage(collection.handle);
+  const sizes = '(min-width: 64em) 30vw, (min-width: 45em) 45vw, 100vw';
+  let media: React.ReactNode;
+  if (local) {
+    media = (
+      <img
+        className="ng-collection-card-img"
+        src={local.src}
+        srcSet={local.srcSet}
+        sizes={sizes}
+        alt={collection.title}
+        loading={index < 4 ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    );
+  } else if (collection.image) {
+    media = (
+      <Image
+        alt={collection.image.altText || collection.title}
+        aspectRatio="16/10"
+        data={collection.image}
+        loading={index < 4 ? 'eager' : 'lazy'}
+        sizes={sizes}
+      />
+    );
+  } else {
+    media = <div className="ng-catalog-card-noimg" aria-hidden="true" />;
+  }
+
   return (
     <CollectionCard
       href={`/collections/${collection.handle}`}
       title={collection.title}
       eyebrow="Collection"
       description={collection.description || undefined}
-      media={
-        collection.image ? (
-          <Image
-            alt={collection.image.altText || collection.title}
-            aspectRatio="16/10"
-            data={collection.image}
-            loading={index < 4 ? 'eager' : 'lazy'}
-            sizes="(min-width: 64em) 30vw, (min-width: 45em) 45vw, 100vw"
-          />
-        ) : (
-          <div className="ng-catalog-card-noimg" aria-hidden="true" />
-        )
-      }
+      media={media}
     />
   );
 }

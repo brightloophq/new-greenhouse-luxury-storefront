@@ -6,7 +6,6 @@ import type {
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
-import {MockShopNotice} from '~/components/MockShopNotice';
 import {useExperience} from '~/components/ExperienceProvider';
 import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
 import {getExperienceFromRequest} from '~/lib/experience';
@@ -121,7 +120,6 @@ export default function Homepage() {
 
   return (
     <div className="home">
-      {data.isShopLinked ? null : <MockShopNotice />}
       <HomeAnnouncement text={content.announcement} />
       <HomeHero content={content.hero} collection={data.featuredCollection} />
       <FeaturedCollections

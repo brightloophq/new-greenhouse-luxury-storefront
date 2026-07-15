@@ -103,6 +103,9 @@ const SLOGAN = 'Not just flowers, whatever it takes.';
 /** Luxury arrangement photography (Deluxe only), served from /public. */
 const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
 
+/** Bespoke collection-card photography (unique per collection), from /public. */
+const col = (handle: string) => `/images/collections/${handle}-800.webp`;
+
 /** A representative portrait arrangement photo per collection, for image tiles. */
 const TILE_ARRANGEMENT: Record<string, string> = {
   'luxury-bouquets': 'luxury-mixed-garden-bouquet',
@@ -214,23 +217,25 @@ const DELUXE: HomeContent = {
     kicker: 'The Signature Collection',
     title: 'Hand-composed, gift-ready arrangements.',
     link: {label: 'View the collection', to: '/collections/luxury-bouquets'},
+    // Bespoke collection-card photography — each tile a distinct arrangement.
     tiles: [
-      heroTile('Luxury Bouquets', 'luxury-bouquets'),
-      heroTile('Roses Collection', 'roses'),
-      heroTile('Orchid Collection', 'orchids'),
-      heroTile('Seasonal Collection', 'seasonal-deluxe'),
+      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets', image: col('luxury-bouquets')},
+      {label: 'Roses Collection', to: '/collections/roses', image: col('roses')},
+      {label: 'Orchid Collection', to: '/collections/orchids', image: col('orchids')},
+      {label: 'Seasonal Collection', to: '/collections/seasonal-deluxe', image: col('seasonal-deluxe')},
     ],
   },
   browse: {
     kicker: 'More occasions',
     title: 'A gesture for every reason.',
+    // Sympathy already leads the "featured" row above — omitted here so no
+    // collection card repeats across the homepage.
     tiles: [
       heroTile('Congratulations', 'congratulations'),
       heroTile('Get Well Soon', 'get-well'),
       heroTile('New Baby', 'new-baby'),
       heroTile('Corporate Gifts', 'corporate-gifting'),
       heroTile('Thank You', 'thank-you'),
-      heroTile('Sympathy', 'sympathy-and-funeral'),
     ],
   },
   productRow: {
@@ -321,28 +326,32 @@ const CLASSIC: HomeContent = {
         eyebrow: 'Fresh stems by the box',
         to: '/classic/wholesale',
         image: 'occasion',
-        alt: 'Bulk wholesale flowers ready for florists and events',
+        imageSrc: col('wholesale-flowers'),
+        alt: 'Buckets of fresh wholesale flowers in mixed colours ready for florists',
       },
       {
         title: 'Greenery & Fillers',
         eyebrow: 'For every build',
         to: '/collections/greenery-and-fillers',
         image: 'botanical',
-        alt: 'Fresh greenery and foliage fillers for floral arrangements',
+        imageSrc: col('greenery-fillers'),
+        alt: 'Fresh bunches of eucalyptus and mixed greenery fillers',
       },
       {
         title: 'Floral Supplies',
         eyebrow: 'Tools, containers & packaging',
         to: '/classic/supplies',
         image: 'hero',
-        alt: 'Florist supplies including tools, ribbon and packaging',
+        imageSrc: '/images/supplies/essentials-800.webp',
+        alt: 'Florist essentials — tools, wire, tape and packaging',
       },
       {
         title: 'Vases & Containers',
         eyebrow: 'Finishing touches',
         to: '/collections/vases-and-containers',
         image: 'occasion',
-        alt: 'Vases and containers for floral arrangements',
+        imageSrc: '/images/supplies/vases-800.webp',
+        alt: 'A collection of glass and ceramic florist vases and containers',
       },
     ],
   },

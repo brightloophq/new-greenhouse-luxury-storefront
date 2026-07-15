@@ -26,7 +26,7 @@ export function CatalogToolbar({
   sort,
   onOpenFilters,
   activeCount,
-  noun: nounSingular = 'arrangement',
+  noun: nounSingular = 'product',
 }: CatalogToolbarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
