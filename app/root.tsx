@@ -20,6 +20,7 @@ import shellStyles from '~/styles/shell.css?url';
 import catalogStyles from '~/styles/catalog.css?url';
 import flowerStyles from '~/styles/flowers.css?url';
 import pageStyles from '~/styles/pages.css?url';
+import homeStyles from '~/styles/home.css?url';
 import experienceStyles from '~/styles/experience.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
@@ -229,6 +230,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={catalogStyles}></link>
         <link rel="stylesheet" href={flowerStyles}></link>
         <link rel="stylesheet" href={pageStyles}></link>
+        <link rel="stylesheet" href={homeStyles}></link>
         <link rel="stylesheet" href={experienceStyles}></link>
         <Meta />
         <Links />

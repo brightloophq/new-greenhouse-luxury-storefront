@@ -6,6 +6,8 @@ import type {
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
+import {BrandHero} from '~/components/home/BrandHero';
+import {ExperienceChooser} from '~/components/home/ExperienceChooser';
 import {useExperience} from '~/components/ExperienceProvider';
 import {flowerCategoryPath, flowerFamilyPath} from '~/lib/flowerCategories';
 import {getExperienceFromRequest} from '~/lib/experience';
@@ -118,6 +120,22 @@ export default function Homepage() {
   const mode: ExperienceMode = experience ?? data.experience;
   const content = HOME_CONTENT[mode];
 
+  // General storefront (bright, botanical) — 2026 redesign. The brand hero and
+  // the four-way shopping chooser lead the page; a couple of trust/shop sections
+  // follow. The premium/Deluxe experience keeps its own elevated homepage.
+  if (mode !== 'deluxe') {
+    return (
+      <div className="home home--general">
+        <BrandHero />
+        <ExperienceChooser />
+        <TileSection content={content.flowers} labelledBy="shop-by-flower-title" />
+        <HeritageStory content={content.heritage} />
+        <Testimonials content={content.testimonials} />
+        <Newsletter content={content.newsletter} />
+      </div>
+    );
+  }
+
   return (
     <div className="home">
       <HomeAnnouncement text={content.announcement} />
@@ -138,11 +156,6 @@ export default function Homepage() {
       ))}
       <HeritageStory content={content.heritage} />
       <Testimonials content={content.testimonials} />
-      {/* Deluxe relies on the single site-wide footer newsletter; Classic keeps
-          its homepage capture form (audit M4 — remove the duplicate). */}
-      {mode === 'classic' ? (
-        <Newsletter content={content.newsletter} />
-      ) : null}
     </div>
   );
 }

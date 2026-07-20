@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Homepage redesign (2026) — bright botanical brand hero + shopping chooser.
+   The general storefront reads fresh, natural and welcoming. The ONLY elevated
+   treatment (subtle gold) lives on the premium "Arrangements" card.
+   ========================================================================== */
+
+/* Smooth in-page scroll for the hero "Explore More" anchor. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.home--general {
+  --ngh-green-deep: #2f4a37;
+  --ngh-green: #4d6a50;
+  --ngh-leaf: #6f9a74;
+  --ngh-gold: #c8a96a;
+  --ngh-cream: #faf8f4;
+  --ngh-ink: #222;
+}
+
+/* ------------------------------------------------------------------ Hero -- */
+.ng-brandhero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: clamp(32rem, 62vh, 46rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+.ng-brandhero-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.ng-brandhero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: ngh-slow-zoom 18s ease-out both;
+}
+.ng-brandhero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 42, 32, 0.04) 0%,
+    rgba(30, 42, 32, 0.14) 45%,
+    rgba(18, 28, 20, 0.46) 100%
+  );
+}
+.ng-brandhero-inner {
+  width: min(100% - 3rem, 70rem);
+  margin: 0 auto;
+  padding: 3rem 0 clamp(2.5rem, 6vw, 5rem);
+  text-align: center;
+  color: #fff;
+  animation: ngh-fade-up 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.ng-brandhero-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+.ng-brandhero-wordmark {
+  margin: 0 0 1.6rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 1.2rem + 6vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.28);
+}
+.ng-brandhero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ngh-green-deep);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.ng-brandhero-cta:hover {
+  transform: translateY(-2px);
+  background: #fff;
+}
+.ng-brandhero-cta-arrow {
+  transition: transform 0.25s ease;
+}
+.ng-brandhero-cta:hover .ng-brandhero-cta-arrow {
+  transform: translateY(3px);
+}
+
+/* -------------------------------------------------------------- Chooser -- */
+.ng-chooser {
+  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem;
+  background: var(--ngh-cream);
+  scroll-margin-top: 5rem;
+}
+.ng-chooser-head {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+.ng-chooser-eyebrow {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ngh-green);
+}
+.ng-chooser-head h2 {
+  margin: 0;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  line-height: 1.05;
+  color: var(--ngh-green-deep);
+}
+.ng-chooser-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ng-chooser-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  box-shadow: 0 6px 24px rgba(47, 74, 55, 0.1);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+}
+.ng-chooser-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(47, 74, 55, 0.2);
+}
+.ng-chooser-card-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: block;
+}
+.ng-chooser-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-chooser-card:hover .ng-chooser-card-media img {
+  transform: scale(1.05);
+}
+.ng-chooser-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 42, 32, 0) 30%,
+    rgba(25, 38, 28, 0.72) 100%
+  );
+}
+.ng-chooser-card-body {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding: 1.25rem 1.25rem 1.35rem;
+}
+.ng-chooser-card-title {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.ng-chooser-card-blurb {
+  display: block;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  opacity: 0.92;
+}
+.ng-chooser-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ng-chooser-card-arrow {
+  transition: transform 0.25s ease;
+}
+.ng-chooser-card:hover .ng-chooser-card-arrow {
+  transform: translateX(4px);
+}
+
+/* Premium (Arrangements) — the only card with the elevated gold treatment. */
+.ng-chooser-card--premium::after {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 18, 12, 0) 25%,
+    rgba(18, 15, 10, 0.82) 100%
+  );
+}
+.ng-chooser-card--premium .ng-chooser-card-body {
+  border-bottom: 2px solid var(--ngh-gold);
+}
+.ng-chooser-card--premium .ng-chooser-card-title {
+  color: #f4e3c4;
+}
+.ng-chooser-card--premium .ng-chooser-card-cta {
+  color: var(--ngh-gold);
+}
+
+/* Focus visibility */
+.ng-brandhero-cta:focus-visible,
+.ng-chooser-card:focus-visible {
+  outline: 3px solid var(--ngh-gold);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- Motion -- */
+@keyframes ngh-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ngh-slow-zoom {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-brandhero-media img,
+  .ng-brandhero-inner {
+    animation: none;
+  }
+  .ng-chooser-card,
+  .ng-chooser-card-media img,
+  .ng-brandhero-cta,
+  .ng-chooser-card-arrow {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------ Responsive -- */
+@media (max-width: 64em) {
+  .ng-chooser-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-chooser-grid {
+    grid-template-columns: 1fr;
+  }
+  .ng-chooser-card {
+    aspect-ratio: 16 / 10;
+  }
+}
