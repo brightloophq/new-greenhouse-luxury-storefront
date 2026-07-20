@@ -102,9 +102,22 @@ describe('navigation isolation', () => {
     expect(labels).not.toContain('luxury');
   });
 
-  it('Classic primary nav exposes Wholesale Flowers + Floral Supplies', () => {
-    const primary = navFor('classic').primary.map((i) => i.label);
-    expect(primary).toContain('Wholesale Flowers');
-    expect(primary).toContain('Floral Supplies');
+  it('exposes exactly the approved primary nav', () => {
+    const primary = navFor().primary.map((i) => i.label);
+    expect(primary).toEqual([
+      'Home',
+      'Wholesale',
+      'Retail',
+      'Arrangements',
+      'Supplies',
+      'About',
+    ]);
+  });
+
+  it('About is a dropdown with About Us, Contact Us and Reviews', () => {
+    const nav = navFor();
+    expect(nav.primary.find((i) => i.label === 'About')?.mega).toBe(true);
+    const about = nav.mega.flatMap((c) => c.links.map((l) => l.label));
+    expect(about).toEqual(['About Us', 'Contact Us', 'Reviews']);
   });
 });

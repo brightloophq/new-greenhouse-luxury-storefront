@@ -37,7 +37,7 @@ const CARDS: ChooserCard[] = [
   {
     title: 'Retail',
     blurb: 'Ready-to-gift flowers, delivered across Kingston.',
-    to: '/collections/all-flowers',
+    to: '/retail',
     img: 'retail',
     dir: 'homepage',
   },
@@ -51,7 +51,7 @@ const CARDS: ChooserCard[] = [
   {
     title: 'Supplies',
     blurb: 'Vases, ribbon, tools & packaging for the studio.',
-    to: '/classic/supplies',
+    to: '/supplies',
     img: 'supplies',
     dir: 'homepage',
   },

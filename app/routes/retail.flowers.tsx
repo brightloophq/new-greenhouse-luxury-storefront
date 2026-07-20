@@ -3,34 +3,33 @@ import {
   ArrangementsCatalogue,
   type ArrangementProduct,
 } from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, ARRANGEMENT_COLLECTIONS} from '~/lib/catalogues';
+import {CATALOGUE_QUERY, TRADE_COLLECTIONS} from '~/lib/catalogues';
 
 export const meta: MetaFunction = () => [
-  {title: 'Mixed Arrangements | The New Greenhouse'},
+  {title: 'Retail Flowers | The New Greenhouse'},
 ];
 
 export async function loader({context}: LoaderFunctionArgs) {
   let products: ArrangementProduct[] = [];
   try {
     const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: ARRANGEMENT_COLLECTIONS.mixed},
+      variables: {handle: TRADE_COLLECTIONS.retailFlowers},
     });
     products = collection?.products?.nodes ?? [];
   } catch (error) {
-    console.error('mixed catalogue failed', error);
+    console.error('retail flowers catalogue failed', error);
   }
   return {products};
 }
 
-/** Mixed arrangements — stays GREEN. */
-export default function MixedArrangements() {
+export default function RetailFlowers() {
   const {products} = useLoaderData<typeof loader>();
   return (
     <ArrangementsCatalogue
-      eyebrow="Arrangements"
-      title="Mixed"
+      eyebrow="Retail"
+      title="Flowers"
       products={products}
-      back={{to: '/arrangements', label: 'Arrangements'}}
+      back={{to: '/retail', label: 'Retail'}}
     />
   );
 }

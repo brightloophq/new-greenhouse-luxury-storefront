@@ -751,3 +751,37 @@ button.ng-chooser-card {
 @media (max-width: 40em) {
   .ng-wsprofile-grid { grid-template-columns: 1fr; }
 }
+
+/* ---- Simple content pages (About / Contact / Reviews) ---- */
+.ng-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+}
+.ng-page-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-page-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
+  color: #2f4a37;
+}
+.ng-page-lead { margin: 0 0 2rem; color: #5a6b58; line-height: 1.6; }
+.ng-page-facts { display: grid; gap: 1rem; margin: 0; }
+.ng-page-facts dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-page-facts dd { margin: 0.2rem 0 0; color: #3f4a3f; }
+.ng-page-facts a { color: #2f4a37; }
+.ng-chooser-grid--two { grid-template-columns: repeat(2, 1fr); max-width: 52rem; }
+@media (max-width: 34em) {
+  .ng-chooser-grid--two { grid-template-columns: 1fr; }
+}

@@ -2,14 +2,10 @@ import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {
-  Button,
   Container,
   cx,
-  FormField,
   Grid,
-  Heading,
   Icon,
-  Input,
   NavLinkStyled,
   Stack,
   Text,
@@ -27,10 +23,9 @@ interface FooterProps {
 }
 
 const COMPANY_LINKS = [
-  {to: '/pages/about-us', label: 'About'},
-  {to: '/pages/contact', label: 'Contact'},
-  {to: '/pages/delivery-information', label: 'Delivery'},
-  {to: '/pages/faq', label: 'FAQ'},
+  {to: '/about', label: 'About Us'},
+  {to: '/contact', label: 'Contact Us'},
+  {to: '/reviews', label: 'Reviews'},
 ];
 
 const SOCIAL_LINKS = [
@@ -65,10 +60,7 @@ export function Footer({
           <footer className="ng-shell-footer">
             <Container size="xl" className="ng-shell-footer-inner">
               <Stack className="ng-shell-footer-stack">
-                {/* a. Newsletter — editorial capture band */}
-                <NewsletterBand />
-
-                {/* b. Contact strip */}
+                {/* a. Contact strip */}
                 <ContactStrip />
 
                 {/* c. Editorial footer columns */}
@@ -101,58 +93,6 @@ export function Footer({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* a. Newsletter band                                                         */
-/* -------------------------------------------------------------------------- */
-
-function NewsletterBand() {
-  return (
-    <section
-      className="ng-shell-newsletter"
-      aria-labelledby="ng-shell-newsletter-heading"
-    >
-      <div className="ng-shell-newsletter-copy">
-        <span className="ng-shell-newsletter-eyebrow">The floral circle</span>
-        <Heading
-          as={2}
-          size="h2"
-          id="ng-shell-newsletter-heading"
-          className="ng-shell-newsletter-heading"
-        >
-          Join the floral circle.
-        </Heading>
-        <Text size="body" className="ng-shell-newsletter-text">
-          Seasonal arrangements, private previews, and quiet notes on the art of
-          flowers — delivered to your inbox.
-        </Text>
-      </div>
-      {/* TODO: wire to email provider (M9) — placeholder action, no fake success. */}
-      <form
-        method="post"
-        action="#newsletter"
-        className="ng-shell-newsletter-form"
-      >
-        <FormField
-          label="Email address"
-          hideLabel
-          htmlFor="ng-shell-newsletter-email"
-          className="ng-shell-newsletter-field"
-        >
-          <Input
-            type="email"
-            name="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            required
-          />
-        </FormField>
-        <Button type="submit" variant="secondary">
-          Join the list
-        </Button>
-      </form>
-    </section>
-  );
-}
 
 /* -------------------------------------------------------------------------- */
 /* b. Contact strip                                                           */
@@ -212,8 +152,7 @@ function BrandColumn() {
     <div className="ng-shell-footer-brand">
       <p className="ng-shell-footer-wordmark">The New Greenhouse</p>
       <Text size="small" className="ng-shell-footer-blurb">
-        Luxury florals, botanical gifts, and composed moments — designed and
-        delivered with quiet intention in Kingston, Jamaica.
+        Fresh flowers, arrangements and florist supplies — Kingston, Jamaica.
       </Text>
       <ul className="ng-shell-footer-social" aria-label="Social media">
         {SOCIAL_LINKS.map((social) => (
