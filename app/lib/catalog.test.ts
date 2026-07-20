@@ -78,7 +78,6 @@ function allLabels(exp: 'classic' | 'deluxe'): string[] {
     ...nav.primary.map((i) => i.label),
     ...nav.mega.flatMap((c) => [c.title, ...c.links.map((l) => l.label)]),
     ...nav.footerShop.map((l) => l.label),
-    ...nav.footerServices.map((l) => l.label),
   ];
 }
 

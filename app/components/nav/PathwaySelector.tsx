@@ -34,7 +34,7 @@ export function PathwaySelector({
     <section id={id} className="ng-chooser" aria-labelledby={headingId}>
       <div className="ng-chooser-head">
         {back ? (
-          <Link className="ng-arrcat-back" to={back.to} prefetch="intent">
+          <Link className="ng-shopcat-back" to={back.to} prefetch="intent">
             <span aria-hidden="true">←</span> {back.label}
           </Link>
         ) : null}

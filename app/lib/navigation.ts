@@ -25,7 +25,6 @@ export interface ExperienceNav {
   primary: PrimaryItem[];
   mega: MegaColumn[];
   footerShop: NavLink[];
-  footerServices: NavLink[];
 }
 
 /** The approved global navigation. */
@@ -54,11 +53,6 @@ export const MAIN_NAV: ExperienceNav = {
     {label: 'Retail', to: '/retail'},
     {label: 'Arrangements', to: '/arrangements'},
     {label: 'Supplies', to: '/supplies'},
-  ],
-  footerServices: [
-    {label: 'About Us', to: '/about'},
-    {label: 'Contact Us', to: '/contact'},
-    {label: 'Reviews', to: '/reviews'},
   ],
 };
 

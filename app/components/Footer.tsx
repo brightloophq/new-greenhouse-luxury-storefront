@@ -64,10 +64,12 @@ export function Footer({
                 <ContactStrip />
 
                 {/* c. Editorial footer columns */}
-                <Grid cols={4} className="ng-shell-footer-columns">
+                {/* Shop + Company only. "Services" listed the same three links
+                    as Company (About/Contact/Reviews) — one duplicated column
+                    on every page. A minimal footer says each thing once. */}
+                <Grid cols={3} className="ng-shell-footer-columns">
                   <BrandColumn />
                   <FooterColumn title="Shop" links={nav.footerShop} />
-                  <FooterColumn title="Services" links={nav.footerServices} />
                   <FooterColumn title="Company" links={COMPANY_LINKS} />
                 </Grid>
 
