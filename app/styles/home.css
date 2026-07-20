@@ -22,56 +22,50 @@
 
 /* ------------------------------------------------------------------ Hero -- */
 .ng-brandhero {
-  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem 0;
-  background: #e7dac9; /* matches the arrangement's seamless cream ground */
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: stretch;
+  min-height: clamp(31rem, 82vh, 48rem);
+  background: #eef2e9; /* soft sage-cream — bright, fresh, green-leaning */
   overflow: hidden;
 }
-.ng-brandhero-inner {
-  max-width: 56rem;
-  margin: 0 auto;
+.ng-brandhero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 5rem);
   animation: ngh-fade-up 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .ng-brandhero-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9rem;
-  margin: 0 0 1.3rem;
+  margin: 0 0 1.1rem;
   font-size: 0.72rem;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--ngh-green-deep);
-}
-.ng-brandhero-rule {
-  display: inline-block;
-  width: clamp(1.5rem, 6vw, 3.5rem);
-  height: 1px;
-  background: currentColor;
-  opacity: 0.5;
+  color: var(--ngh-green);
 }
 .ng-brandhero-wordmark {
-  margin: 0 0 1.3rem;
+  margin: 0 0 1.1rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-weight: 500;
-  font-size: clamp(2.6rem, 1rem + 6.6vw, 6.5rem);
-  line-height: 0.95;
-  letter-spacing: 0.045em;
+  font-size: clamp(2.4rem, 1rem + 4.2vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ngh-green-deep);
 }
 .ng-brandhero-tagline {
-  max-width: 34rem;
-  margin: 0 auto 2rem;
-  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.18rem);
-  line-height: 1.55;
-  color: #5c5346;
+  max-width: 26rem;
+  margin: 0 0 1.9rem;
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.12rem);
+  line-height: 1.5;
+  color: #5a6b58;
 }
 .ng-brandhero-cta {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.92rem 2.2rem;
+  padding: 0.9rem 2.1rem;
   border-radius: 999px;
   background: var(--ngh-green-deep);
   color: #f4efe4;
@@ -93,55 +87,42 @@
 .ng-brandhero-cta:hover .ng-brandhero-cta-arrow {
   transform: translateY(3px);
 }
-.ng-brandhero-bloom {
-  max-width: 64rem;
-  margin: clamp(1.5rem, 4vw, 3rem) auto 0;
-  animation: ngh-fade-up 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+.ng-brandhero-media {
+  position: relative;
+  overflow: hidden;
 }
-.ng-brandhero-bloom img {
-  display: block;
+.ng-brandhero-media img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  /* Feather all four edges so the arrangement melts into the cream ground (no
-     visible rectangle). Flowers sit centre, so only the cream margin fades. */
-  -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 6%,
-      #000 94%,
-      transparent 100%
-    ),
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      #000 5%,
-      #000 96%,
-      transparent 100%
-    );
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 6%,
-      #000 94%,
-      transparent 100%
-    ),
-    linear-gradient(
-      to bottom,
-      transparent 0,
-      #000 5%,
-      #000 96%,
-      transparent 100%
-    );
-  mask-composite: intersect;
+  height: 100%;
+  object-fit: cover;
+  animation: ngh-slow-zoom 7s ease-out both;
+}
+@media (max-width: 60em) {
+  .ng-brandhero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .ng-brandhero-copy {
+    align-items: center;
+    padding: clamp(2.25rem, 8vw, 3.5rem) 1.5rem;
+    text-align: center;
+  }
+  .ng-brandhero-cta {
+    align-self: center;
+  }
+  .ng-brandhero-media {
+    min-height: 20rem;
+    aspect-ratio: 4 / 3;
+  }
 }
 
 /* -------------------------------------------------------------- Chooser -- */
 .ng-chooser {
   padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(3.5rem, 7vw, 6rem);
-  /* Same warm cream as the hero ground so the two sections read as one
-     continuous editorial canvas — no color step. */
-  background: #e7dac9;
+  /* Bright warm white — fresh and clean under the sage hero. */
+  background: #f6f4ee;
   scroll-margin-top: 5rem;
 }
 .ng-chooser-head {
@@ -296,8 +277,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ng-brandhero-inner,
-  .ng-brandhero-bloom {
+  .ng-brandhero-copy,
+  .ng-brandhero-media img {
     animation: none;
   }
   .ng-chooser-card,
@@ -320,5 +301,244 @@
   }
   .ng-chooser-card {
     aspect-ratio: 16 / 10;
+  }
+}
+
+/* ==========================================================================
+   Wholesale entry — chooser button, auth modal, and the /classic/wholesale
+   gate page (direct visits by guests / unapproved accounts).
+   ========================================================================== */
+
+/* The Wholesale chooser card is a <button>; make it match the anchor cards. */
+button.ng-chooser-card {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+}
+
+/* ---- Auth modal ---- */
+.ng-wsmodal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(30, 42, 32, 0.5);
+  backdrop-filter: blur(3px);
+  animation: ngh-fade-up 200ms ease both;
+}
+.ng-wsmodal {
+  position: relative;
+  width: min(100%, 30rem);
+  padding: clamp(1.9rem, 4vw, 2.6rem);
+  border-radius: 18px;
+  background: #fbfaf5;
+  box-shadow: 0 30px 80px rgba(20, 30, 22, 0.35);
+  text-align: center;
+}
+.ng-wsmodal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5a6b58;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.ng-wsmodal-close:hover {
+  color: #2f4a37;
+}
+.ng-wsmodal-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-wsmodal-title {
+  margin: 0 0 0.7rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.9rem;
+  color: #2f4a37;
+}
+.ng-wsmodal-body {
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #5a6b58;
+}
+.ng-wsmodal-actions {
+  display: grid;
+  gap: 0.6rem;
+}
+.ng-wsmodal-btn {
+  display: block;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: #2f4a37;
+  color: #f4efe4;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsmodal-btn:hover {
+  background: #24382a;
+  transform: translateY(-1px);
+}
+.ng-wsmodal-btn--ghost {
+  background: transparent;
+  color: #2f4a37;
+  box-shadow: inset 0 0 0 1.5px #cdd8c9;
+}
+.ng-wsmodal-btn--ghost:hover {
+  background: #eef2e9;
+}
+.ng-wsmodal-foot {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: #7a857a;
+}
+.ng-wsmodal-foot a {
+  color: #2f4a37;
+}
+
+/* ---- Gate page (direct /classic/wholesale for guests / pending) ---- */
+.ng-wsgate {
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  background: #eef2e9;
+}
+.ng-wsgate-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.ng-wsgate-eyebrow {
+  margin: 0 0 0.8rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-wsgate-title {
+  margin: 0 0 1rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
+  color: #2f4a37;
+}
+.ng-wsgate-body {
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: #5a6b58;
+}
+.ng-wsgate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+.ng-wsgate-btn {
+  display: inline-block;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  background: #2f4a37;
+  color: #f4efe4;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsgate-btn:hover {
+  background: #24382a;
+  transform: translateY(-2px);
+}
+.ng-wsgate-btn--ghost {
+  background: transparent;
+  color: #2f4a37;
+  box-shadow: inset 0 0 0 1.5px #cdd8c9;
+}
+.ng-wsgate-btn--ghost:hover {
+  background: #e4ecdf;
+}
+.ng-wsgate-perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: #6a786a;
+}
+.ng-wsgate-perks li::before {
+  content: "✿";
+  margin-right: 0.4rem;
+  color: #4d6a50;
+}
+.ng-wholesale-welcome {
+  margin: 0;
+  padding: 0.9rem 1.5rem;
+  background: #eef2e9;
+  color: #2f4a37;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+/* ---- Arrangements landing (still green) ---- */
+.ng-arr-hero {
+  padding: clamp(3rem, 7vw, 5rem) 1.5rem clamp(1.5rem, 3vw, 2.5rem);
+  background: #eef2e9;
+  text-align: center;
+}
+.ng-arr-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-arr-title {
+  margin: 0 0 0.6rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2.4rem, 1rem + 4vw, 4.2rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2f4a37;
+}
+.ng-arr-sub {
+  margin: 0 auto;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  color: #5a6b58;
+}
+.ng-arr-hero + .ng-chooser {
+  background: #eef2e9;
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+.ng-chooser-grid--three {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 66rem;
+}
+@media (max-width: 64em) {
+  .ng-chooser-grid--three {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-chooser-grid--three {
+    grid-template-columns: 1fr;
   }
 }

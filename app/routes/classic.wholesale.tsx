@@ -19,7 +19,9 @@ import {
 import {CollectionHero, MerchandisingBlock} from '~/components/catalog/CollectionHero';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {ProductItem} from '~/components/ProductItem';
+import {WholesaleGate} from '~/components/wholesale/WholesaleGate';
 import {experienceCookie} from '~/lib/experience';
+import {getWholesaleAccess} from '~/lib/wholesale';
 import {DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 /** Live colour collections for the shop-by-colour rail. */
@@ -58,30 +60,48 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export async function loader({context}: Route.LoaderArgs) {
-  // Featured wholesale products from the live bulk-flowers collection.
-  // Degrades gracefully to an empty state (→ browse CTA) if unavailable.
+  // Wholesale is trade-only: gate on authentication + merchant approval.
+  const {access, firstName} = await getWholesaleAccess(context.customerAccount);
+
+  // Only approved trade accounts load (and see) the wholesale catalogue.
   let featured: FeaturedProduct[] = [];
-  try {
-    const result = await context.storefront.query(WHOLESALE_FEATURED_QUERY, {
-      variables: {handle: 'bulk-flowers'},
-    });
-    featured = result.collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('classic/wholesale featured products failed', error);
+  if (access === 'approved') {
+    try {
+      const result = await context.storefront.query(WHOLESALE_FEATURED_QUERY, {
+        variables: {handle: 'bulk-flowers'},
+      });
+      featured = result.collection?.products?.nodes ?? [];
+    } catch (error) {
+      console.error('classic/wholesale featured products failed', error);
+    }
   }
 
   // Landing in the Classic experience persists the wholesale (green) mode.
   return data(
-    {featured},
+    {access, firstName: firstName ?? null, featured},
     {headers: {'Set-Cookie': experienceCookie('classic')}},
   );
 }
 
 export default function ClassicWholesale() {
-  const {featured} = useLoaderData<typeof loader>();
+  const {access, firstName, featured} = useLoaderData<typeof loader>();
+
+  // Trade gate — guests and unapproved accounts never see the catalogue.
+  if (access !== 'approved') {
+    return (
+      <div className="ng-experience ng-experience--classic">
+        <WholesaleGate access={access} />
+      </div>
+    );
+  }
 
   return (
     <div className="ng-experience ng-experience--classic">
+      {firstName ? (
+        <p className="ng-wholesale-welcome">
+          Welcome back, {firstName} — you’re signed in to trade pricing.
+        </p>
+      ) : null}
       <CollectionHero
         eyebrow="Wholesale & Trade"
         title="Wholesale flowers by the box."

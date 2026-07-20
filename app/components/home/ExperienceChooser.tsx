@@ -1,48 +1,52 @@
+import {useState} from 'react';
 import {Link} from 'react-router';
+import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 
 /**
  * "Choose Your Shopping Experience" — the four entry points into the store.
- * These are wayfinding cards, not product cards: a photograph, a title and one
- * line of copy. Wholesale/Retail/Supplies stay in the bright general storefront;
- * Arrangements enters the elevated Premium/Deluxe collection (a full navigation
- * through the /deluxe entry so the experience cookie + theme switch server-side).
+ * Wayfinding cards, not product cards: a photograph, a title, one line of copy.
+ *
+ * Everything stays in the one bright, green brand:
+ *   Wholesale     → opens the sign-in / register modal immediately (trade only)
+ *   Retail        → shop flowers & supplies, guest checkout
+ *   Arrangements  → the (still green) Arrangements page; Premium/Deluxe is a
+ *                   deliberate choice one level deeper
+ *   Supplies      → the florist supplies categories
  */
 interface ChooserCard {
   title: string;
   blurb: string;
-  to: string;
-  /** image basename under /public/images/<dir>/ with 400/600/800 webp widths. */
   img: string;
   dir: string;
-  /** Arrangements enters a different experience → full-page navigation. */
-  external?: boolean;
-  /** Adds the subtle premium treatment to the card. */
+  /** Internal link destination (Link). */
+  to?: string;
+  /** Wholesale opens the auth modal instead of navigating. */
+  action?: 'wholesale';
+  /** Adds the subtle premium hint to the card. */
   premium?: boolean;
 }
 
 const CARDS: ChooserCard[] = [
   {
     title: 'Wholesale',
-    blurb: 'Fresh stems by the box for florists, planners & venues.',
-    to: '/classic/wholesale',
+    blurb: 'Trade pricing by the box for florists & venues.',
     img: 'wholesale-flowers',
     dir: 'collections',
+    action: 'wholesale',
   },
   {
     title: 'Retail',
-    blurb: 'Ready-to-gift bouquets, delivered across Kingston.',
+    blurb: 'Ready-to-gift flowers, delivered across Kingston.',
     to: '/collections/all-flowers',
     img: 'retail',
     dir: 'homepage',
   },
   {
     title: 'Arrangements',
-    blurb: 'Hand-crafted premium & deluxe floral design.',
-    to: '/deluxe?to=/collections',
+    blurb: 'Hand-crafted designs — occasion, mixed & premium.',
+    to: '/arrangements',
     img: 'arrangements',
     dir: 'homepage',
-    external: true,
-    premium: true,
   },
   {
     title: 'Supplies',
@@ -61,35 +65,34 @@ function srcSet(dir: string, img: string) {
   };
 }
 
-function CardMedia({card}: {card: ChooserCard}) {
+function CardInner({card}: {card: ChooserCard}) {
   const {src, srcSet: ss} = srcSet(card.dir, card.img);
   return (
-    <span className="ng-chooser-card-media">
-      <img
-        src={src}
-        srcSet={ss}
-        sizes="(min-width: 64em) 24vw, (min-width: 45em) 45vw, 90vw"
-        alt=""
-        loading="lazy"
-        decoding="async"
-      />
-    </span>
-  );
-}
-
-function CardBody({card}: {card: ChooserCard}) {
-  return (
-    <span className="ng-chooser-card-body">
-      <span className="ng-chooser-card-title">{card.title}</span>
-      <span className="ng-chooser-card-blurb">{card.blurb}</span>
-      <span className="ng-chooser-card-cta" aria-hidden="true">
-        Explore <span className="ng-chooser-card-arrow">→</span>
+    <>
+      <span className="ng-chooser-card-media">
+        <img
+          src={src}
+          srcSet={ss}
+          sizes="(min-width: 64em) 24vw, (min-width: 45em) 45vw, 90vw"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
       </span>
-    </span>
+      <span className="ng-chooser-card-body">
+        <span className="ng-chooser-card-title">{card.title}</span>
+        <span className="ng-chooser-card-blurb">{card.blurb}</span>
+        <span className="ng-chooser-card-cta" aria-hidden="true">
+          Explore <span className="ng-chooser-card-arrow">→</span>
+        </span>
+      </span>
+    </>
   );
 }
 
 export function ExperienceChooser() {
+  const [wholesaleOpen, setWholesaleOpen] = useState(false);
+
   return (
     <section
       id="choose-experience"
@@ -102,29 +105,32 @@ export function ExperienceChooser() {
       </div>
 
       <ul className="ng-chooser-grid">
-        {CARDS.map((card) => (
-          <li key={card.title}>
-            {card.external ? (
-              <a
-                className={`ng-chooser-card${card.premium ? ' ng-chooser-card--premium' : ''}`}
-                href={card.to}
-              >
-                <CardMedia card={card} />
-                <CardBody card={card} />
-              </a>
-            ) : (
-              <Link
-                className={`ng-chooser-card${card.premium ? ' ng-chooser-card--premium' : ''}`}
-                to={card.to}
-                prefetch="intent"
-              >
-                <CardMedia card={card} />
-                <CardBody card={card} />
-              </Link>
-            )}
-          </li>
-        ))}
+        {CARDS.map((card) => {
+          const className = `ng-chooser-card${card.premium ? ' ng-chooser-card--premium' : ''}`;
+          return (
+            <li key={card.title}>
+              {card.action === 'wholesale' ? (
+                <button
+                  type="button"
+                  className={className}
+                  onClick={() => setWholesaleOpen(true)}
+                >
+                  <CardInner card={card} />
+                </button>
+              ) : (
+                <Link className={className} to={card.to!} prefetch="intent">
+                  <CardInner card={card} />
+                </Link>
+              )}
+            </li>
+          );
+        })}
       </ul>
+
+      <WholesaleAuthModal
+        open={wholesaleOpen}
+        onClose={() => setWholesaleOpen(false)}
+      />
     </section>
   );
 }

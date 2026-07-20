@@ -17,7 +17,6 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Accordion, AccordionItem, Icon} from '~/components/ui';
-import {ExperienceToggle} from '~/components/ExperienceToggle';
 import {CONTACT, DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 interface PageLayoutProps {
@@ -164,7 +163,6 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
   return (
     <Aside type="mobile" heading="Menu" position="left">
       <nav className="ng-mobilenav" aria-label="Mobile">
-        <ExperienceToggle className="ng-exp-toggle--drawer" />
         <ul className="ng-mobilenav-primary">
           <li>
             <Link to="/" prefetch="intent" onClick={close} className="ng-mobilenav-link">

@@ -1,0 +1,90 @@
+import {useEffect, useRef} from 'react';
+
+/**
+ * Wholesale authentication modal (Phase: unified brand). Opening the Wholesale
+ * card surfaces this immediately — no interstitial page. Shopify's Customer
+ * Account API is OAuth-based, so both actions hand off to the Shopify-hosted
+ * sign-in / create-account flow (we never collect credentials in-app).
+ */
+export function WholesaleAuthModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    // Focus the close control when the dialog opens.
+    closeRef.current?.focus();
+    // Prevent background scroll while the modal is open.
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="ng-wsmodal-backdrop"
+      role="presentation"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="ng-wsmodal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ng-wsmodal-title"
+      >
+        <button
+          ref={closeRef}
+          type="button"
+          className="ng-wsmodal-close"
+          aria-label="Close"
+          onClick={onClose}
+        >
+          ×
+        </button>
+
+        <p className="ng-wsmodal-eyebrow">Wholesale · For the trade</p>
+        <h2 id="ng-wsmodal-title" className="ng-wsmodal-title">
+          Sign in to shop wholesale
+        </h2>
+        <p className="ng-wsmodal-body">
+          Wholesale pricing is reserved for florists, event planners, hotels and
+          venues. Sign in to your trade account, or create one and our team will
+          set you up.
+        </p>
+
+        <div className="ng-wsmodal-actions">
+          {/* Full navigation — /account/login hands off to Shopify sign-in. */}
+          <a className="ng-wsmodal-btn" href="/account/login">
+            Sign in
+          </a>
+          <a
+            className="ng-wsmodal-btn ng-wsmodal-btn--ghost"
+            href="/account/login"
+          >
+            Create wholesale account
+          </a>
+        </div>
+
+        <p className="ng-wsmodal-foot">
+          Prefer to apply first? <a href="/pages/contact">Contact our team →</a>
+        </p>
+      </div>
+    </div>
+  );
+}

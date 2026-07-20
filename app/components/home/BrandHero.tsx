@@ -1,25 +1,20 @@
 /**
- * Brand hero — editorial florist style (2026 redesign, owner-directed).
- * Soft warm-cream ground, the wordmark set large in an elegant serif, a heritage
- * line, and a single "Explore More" CTA that smooth-scrolls to the shopping
- * chooser. The arrangement sits on a matching seamless cream ground so it melts
- * into the section. Calm, bright and premium — never dark or dramatic.
+ * Brand hero — one unified, bright, botanical identity (2026 redesign).
+ * Split layout: minimal copy on a soft sage-cream panel (left) and a large,
+ * vibrant botanical photograph (right). Green, fresh and welcoming — never a
+ * dark luxury hero. "Explore More" smooth-scrolls to the shopping chooser.
  */
 export function BrandHero() {
   return (
     <section className="ng-brandhero" aria-labelledby="ng-brandhero-title">
-      <div className="ng-brandhero-inner">
-        <p className="ng-brandhero-eyebrow">
-          <span className="ng-brandhero-rule" aria-hidden="true" />
-          Est. 1984 · Kingston, Jamaica
-          <span className="ng-brandhero-rule" aria-hidden="true" />
-        </p>
+      <div className="ng-brandhero-copy">
+        <p className="ng-brandhero-eyebrow">Est. 1984 · Kingston, Jamaica</p>
         <h1 id="ng-brandhero-title" className="ng-brandhero-wordmark">
           The New Greenhouse
         </h1>
         <p className="ng-brandhero-tagline">
-          Fresh flowers, handcrafted arrangements &amp; florist supplies —
-          delivered across Kingston, every day.
+          Fresh flowers, arrangements &amp; florist supplies — delivered daily
+          across Kingston.
         </p>
         <a className="ng-brandhero-cta" href="#choose-experience">
           Explore More
@@ -27,14 +22,14 @@ export function BrandHero() {
         </a>
       </div>
 
-      <div className="ng-brandhero-bloom">
+      <div className="ng-brandhero-media">
         <img
-          src="/images/homepage/hero-editorial-1440.webp"
-          srcSet="/images/homepage/hero-editorial-768.webp 768w, /images/homepage/hero-editorial-1024.webp 1024w, /images/homepage/hero-editorial-1440.webp 1440w"
-          sizes="(min-width: 64em) 64rem, 100vw"
-          alt="A lush New Greenhouse arrangement of garden roses, dahlias and hydrangea in soft blush, coral, cream and green"
-          width={1440}
-          height={960}
+          src="/images/homepage/hero-split-1200.webp"
+          srcSet="/images/homepage/hero-split-640.webp 640w, /images/homepage/hero-split-900.webp 900w, /images/homepage/hero-split-1200.webp 1200w"
+          sizes="(min-width: 60em) 50vw, 100vw"
+          alt="A vibrant New Greenhouse arrangement of colourful fresh flowers surrounded by lush green foliage in a bright botanical studio"
+          width={1200}
+          height={1500}
           loading="eager"
           decoding="async"
         />
