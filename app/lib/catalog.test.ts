@@ -89,11 +89,17 @@ describe('navigation isolation', () => {
     expect(primary).not.toContain('Occasions');
   });
 
-  it('Deluxe nav never exposes Wholesale Flowers or Floral Supplies', () => {
-    const labels = allLabels('deluxe').join(' | ').toLowerCase();
-    expect(labels).not.toContain('wholesale');
-    expect(labels).not.toContain('floral supplies');
-    expect(labels).not.toContain('floral supply');
+  it('is one unified green nav — navFor returns the same nav regardless of arg', () => {
+    // Unified brand: there is no separate luxury/Deluxe navigation.
+    expect(navFor('deluxe')).toBe(navFor('classic'));
+    expect(navFor()).toBe(navFor('classic'));
+  });
+
+  it('nav never exposes a global Premium/Deluxe destination', () => {
+    const labels = allLabels('classic').join(' | ').toLowerCase();
+    expect(labels).not.toContain('deluxe');
+    expect(labels).not.toContain('premium');
+    expect(labels).not.toContain('luxury');
   });
 
   it('Classic primary nav exposes Wholesale Flowers + Floral Supplies', () => {

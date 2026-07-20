@@ -95,6 +95,18 @@ function DesktopNav() {
     return () => document.removeEventListener('keydown', onKey);
   }, [openLabel]);
 
+  // Premium/Deluxe catalogue: no global tabs — just a clear way back to the
+  // green Arrangements page (the theme re-greens on navigation).
+  if (experience === 'deluxe') {
+    return (
+      <nav className="ng-shell-primary" aria-label="Primary">
+        <NavLink to="/arrangements" prefetch="intent" className="ng-shell-back">
+          <span aria-hidden="true">←</span> Arrangements
+        </NavLink>
+      </nav>
+    );
+  }
+
   return (
     <nav
       className="ng-shell-primary"

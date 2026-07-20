@@ -119,98 +119,20 @@ export const CLASSIC_NAV: ExperienceNav = {
   ],
 };
 
-/* -------------------------------------------------------------------------- */
-/* DELUXE — luxury gifting, OCCASION-FIRST                                      */
-/* Primary: Occasions (mega) · Signature · Roses · Orchids · Weddings ·        */
-/*          Our Story · Contact  (Classic reached via the experience toggle.)  */
-/* Customers browse by shopping intent / occasion, not botanical species.      */
-/* Only existing collections are linked (no 404s); collections still to be     */
-/* created — Best Sellers, Signature Collection, Thank You, Same-Day — are      */
-/* added in the gated Phase 2. Seasonal renders a safe empty state.            */
-/* -------------------------------------------------------------------------- */
-export const DELUXE_NAV: ExperienceNav = {
-  // Simplified, production IA: Home first (never rely on the logo to get home),
-  // Shop holds the full mega, Occasions browses the collection index, plus
-  // Delivery and a Wholesale switch to the Classic experience. Our Story +
-  // Contact live in the footer only. Cart is the header icon. "Collections" is
-  // folded into "Occasions" (same /collections index in an occasion-first store)
-  // to avoid two nav items pointing at one page.
-  primary: [
-    {label: 'Home', to: '/'},
-    {label: 'Shop', to: '/collections/luxury-bouquets', mega: true},
-    {label: 'Occasions', to: '/collections'},
-    {label: 'Delivery', to: '/pages/delivery-information'},
-    // No "Wholesale" link in the luxury nav — switching to the trade store is
-    // handled by the Classic/Deluxe experience toggle, keeping Deluxe on-brand.
-  ],
-  // Occasion-led mega — gifting only. Never links the shared variety hub
-  // (/collections/all-flowers) or /collections/all — only curated gifting sets.
-  mega: [
-    {
-      title: 'Shop by Occasion',
-      links: [
-        {label: 'Anniversary', to: '/collections/anniversary'},
-        {label: 'Birthday', to: '/collections/birthday'},
-        {label: 'Love & Romance', to: '/collections/love-and-romance'},
-        {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
-        {label: 'Congratulations', to: '/collections/congratulations'},
-        {label: 'Get Well Soon', to: '/collections/get-well'},
-        {label: 'New Baby', to: '/collections/new-baby'},
-      ],
-    },
-    {
-      title: 'Signature Collection',
-      links: [
-        {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets'},
-        {label: 'Roses Collection', to: '/collections/roses'},
-        {label: 'Orchid Collection', to: '/collections/orchids'},
-        {label: 'Seasonal Collection', to: '/collections/seasonal-deluxe'},
-      ],
-    },
-    {
-      title: 'Premium Flowers',
-      variant: 'flowers',
-      links: [
-        {label: 'Roses', to: '/collections/roses'},
-        {label: 'Orchids', to: '/collections/orchids'},
-        {label: 'Lilies', to: '/collections/lilies'},
-      ],
-    },
-    {
-      title: 'Gifts & Corporate',
-      links: [
-        {label: 'Curated Add-ons', to: '/collections/add-ons'},
-        {label: 'Corporate Gifts', to: '/collections/corporate-gifting'},
-        {label: 'Thank You', to: '/collections/thank-you'},
-        {label: 'Best Sellers', to: '/collections/best-sellers'},
-      ],
-    },
-  ],
-  footerShop: [
-    {label: 'Anniversary', to: '/collections/anniversary'},
-    {label: 'Birthday', to: '/collections/birthday'},
-    {label: 'Love & Romance', to: '/collections/love-and-romance'},
-    {label: 'Luxury bouquets', to: '/collections/luxury-bouquets'},
-    {label: 'Roses', to: '/collections/roses'},
-    {label: 'Orchids', to: '/collections/orchids'},
-  ],
-  footerServices: [
-    {label: 'Sympathy', to: '/collections/sympathy-and-funeral'},
-    {label: 'Corporate gifts', to: '/collections/corporate-gifting'},
-    {label: 'Our story', to: '/pages/about-us'},
-    {label: 'Concierge & delivery', to: '/pages/delivery-information'},
-  ],
-};
-
-export function navFor(experience: ExperienceMode): ExperienceNav {
-  return experience === 'deluxe' ? DELUXE_NAV : CLASSIC_NAV;
+/**
+ * One unified green brand — the SAME header/footer navigation everywhere.
+ * Premium/Deluxe is a product pathway inside Arrangements, never a global nav
+ * destination, so there is no separate luxury nav. (Signature kept for the
+ * optional `_experience` arg so existing call sites don't need to change.)
+ */
+export function navFor(_experience?: ExperienceMode): ExperienceNav {
+  return CLASSIC_NAV;
 }
 
 /**
- * The primary "keep shopping" destination for an experience — used by shared
- * empty states (cart, product grid) so Classic never routes to the generic
- * /collections directory. Classic → Wholesale Flowers hub; Deluxe → occasions.
+ * The primary "keep shopping" destination — used by shared empty states (cart,
+ * product grid). One brand → the Arrangements selector.
  */
-export function primaryShopPath(experience: ExperienceMode): string {
-  return experience === 'deluxe' ? '/collections' : '/classic/wholesale';
+export function primaryShopPath(_experience?: ExperienceMode): string {
+  return '/arrangements';
 }

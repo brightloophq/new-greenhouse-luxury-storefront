@@ -1,27 +1,17 @@
 /**
- * Wholesale access gate (Phase 2). The trade area requires authentication and
- * merchant approval.
- *
- * Shopify's Customer Account API does not expose customer `tags`, so approval is
- * read from a customer metafield — the API-supported equivalent of a "wholesale"
- * tag. The merchant approves an account by setting:
- *
- *     namespace: custom   key: wholesale_approved   value: "true"   (boolean/single-line)
- *
- * (The metafield definition must grant "Customer Account API" read access.)
+ * Wholesale access. The trade area requires authentication, but NOT manual
+ * approval — a customer who signs in or creates a wholesale account gets
+ * immediate wholesale access. (Business-profile details are collected during
+ * onboarding; they do not gate shopping.)
  *
  * States:
- *   guest    → not signed in           → show sign-in / apply gate
- *   pending  → signed in, not approved  → show "approval pending / contact" gate
- *   approved → signed in + approved     → full wholesale dashboard
- *
- * The metafield read is defensive: any error (metafield not yet configured, no
- * access) resolves to `pending` — secure by default, and never breaks the page.
+ *   guest         → not signed in       → open the sign-in / create-account modal
+ *   authenticated → signed in           → wholesale dashboard + catalogue
  */
 
 import {WHOLESALE_APPROVAL_QUERY} from '~/graphql/customer-account/WholesaleApprovalQuery';
 
-export type WholesaleAccess = 'guest' | 'pending' | 'approved';
+export type WholesaleAccess = 'guest' | 'authenticated';
 
 export interface WholesaleAccessResult {
   access: WholesaleAccess;
@@ -35,18 +25,13 @@ interface WholesaleCustomerAccount {
     options?: {variables?: Record<string, unknown>},
   ): Promise<{
     data?: {
-      customer?: {
-        firstName?: string | null;
-        metafield?: {value?: string | null} | null;
-      } | null;
+      customer?: {firstName?: string | null} | null;
     } | null;
     errors?: unknown;
   }>;
 }
 
-const TRUTHY = new Set(['true', '1', 'yes', 'approved']);
-
-/** Resolve the shopper's wholesale access level (guest | pending | approved). */
+/** Resolve wholesale access: signed-in shoppers get immediate access. */
 export async function getWholesaleAccess(
   customerAccount: WholesaleCustomerAccount,
 ): Promise<WholesaleAccessResult> {
@@ -58,16 +43,11 @@ export async function getWholesaleAccess(
   }
   if (!loggedIn) return {access: 'guest'};
 
+  // Signed in → immediate access. Fetch the first name for a friendly greeting.
   try {
     const {data} = await customerAccount.query(WHOLESALE_APPROVAL_QUERY);
-    const value = data?.customer?.metafield?.value?.trim().toLowerCase();
-    const approved = value != null && TRUTHY.has(value);
-    return {
-      access: approved ? 'approved' : 'pending',
-      firstName: data?.customer?.firstName ?? undefined,
-    };
+    return {access: 'authenticated', firstName: data?.customer?.firstName ?? undefined};
   } catch {
-    // Metafield not configured / no read access → secure default.
-    return {access: 'pending'};
+    return {access: 'authenticated'};
   }
 }

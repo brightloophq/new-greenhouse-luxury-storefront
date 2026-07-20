@@ -21,6 +21,20 @@ export function isExperience(value: unknown): value is ExperienceMode {
   return value === 'classic' || value === 'deluxe';
 }
 
+/**
+ * The ONLY route that activates the elevated (Premium/Deluxe) visual theme.
+ * Everything else is the one green botanical brand. Visual theme is resolved
+ * from the route here — deliberately decoupled from product classification and
+ * from any cookie, so Mixed/Occasion (whose products are Deluxe-classified)
+ * still render green.
+ */
+export const PREMIUM_ROUTE = '/arrangements/premium-deluxe';
+
+/** Resolve the visual theme for a pathname (green everywhere but the premium catalogue). */
+export function themeForPath(pathname: string): ExperienceMode {
+  return pathname.startsWith(PREMIUM_ROUTE) ? 'deluxe' : 'classic';
+}
+
 /** Read the active experience from a request's Cookie header. */
 export function getExperienceFromRequest(request: Request): ExperienceMode {
   return experienceFromCookieHeader(request.headers.get('Cookie'));

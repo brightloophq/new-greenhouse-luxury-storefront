@@ -63,9 +63,9 @@ export async function loader({context}: Route.LoaderArgs) {
   // Wholesale is trade-only: gate on authentication + merchant approval.
   const {access, firstName} = await getWholesaleAccess(context.customerAccount);
 
-  // Only approved trade accounts load (and see) the wholesale catalogue.
+  // Signed-in trade accounts load (and see) the wholesale catalogue.
   let featured: FeaturedProduct[] = [];
-  if (access === 'approved') {
+  if (access === 'authenticated') {
     try {
       const result = await context.storefront.query(WHOLESALE_FEATURED_QUERY, {
         variables: {handle: 'bulk-flowers'},
@@ -86,11 +86,11 @@ export async function loader({context}: Route.LoaderArgs) {
 export default function ClassicWholesale() {
   const {access, firstName, featured} = useLoaderData<typeof loader>();
 
-  // Trade gate — guests and unapproved accounts never see the catalogue.
-  if (access !== 'approved') {
+  // Trade gate — guests must sign in / create an account first.
+  if (access !== 'authenticated') {
     return (
       <div className="ng-experience ng-experience--classic">
-        <WholesaleGate access={access} />
+        <WholesaleGate />
       </div>
     );
   }

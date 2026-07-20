@@ -542,3 +542,127 @@ button.ng-chooser-card {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Arrangements catalogue (green by default; elevated only on premium) ---- */
+.ng-arrcat {
+  min-height: 60vh;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+  background: #eef2e9;
+}
+.ng-arrcat-head {
+  max-width: 72rem;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+.ng-arrcat-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4d6a50;
+  text-decoration: none;
+}
+.ng-arrcat-back:hover {
+  color: #2f4a37;
+}
+.ng-arrcat-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-arrcat-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.4rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #2f4a37;
+}
+.ng-arrcat-sub {
+  max-width: 32rem;
+  margin: 0 auto;
+  color: #5a6b58;
+}
+.ng-arrcat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.6rem 1.25rem;
+  max-width: 78rem;
+  margin: 2rem auto 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-arrcat-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.ng-arrcat-card-media {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 12px;
+  background: #e4ecdf;
+}
+.ng-arrcat-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-arrcat-card:hover .ng-arrcat-card-media img {
+  transform: scale(1.05);
+}
+.ng-arrcat-card-title {
+  display: block;
+  margin: 0.7rem 0 0.15rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.05rem;
+  color: #2f4a37;
+}
+.ng-arrcat-card-price {
+  display: block;
+  font-size: 0.9rem;
+  color: #5a6b58;
+}
+.ng-arrcat-empty {
+  padding: 3rem 0;
+  text-align: center;
+  color: #5a6b58;
+}
+.ng-shell-back {
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 64em) {
+  .ng-arrcat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Elevated surface — ONLY on the premium-deluxe route (data-experience=deluxe). */
+[data-experience='deluxe'] .ng-arrcat {
+  background: #14100c;
+}
+[data-experience='deluxe'] .ng-arrcat-eyebrow,
+[data-experience='deluxe'] .ng-arrcat-back {
+  color: #c8a96a;
+}
+[data-experience='deluxe'] .ng-arrcat-title {
+  color: #f4e3c4;
+}
+[data-experience='deluxe'] .ng-arrcat-sub,
+[data-experience='deluxe'] .ng-arrcat-card-price {
+  color: #cbbfa6;
+}
+[data-experience='deluxe'] .ng-arrcat-card-title {
+  color: #f4efe4;
+}
+[data-experience='deluxe'] .ng-arrcat-card-media {
+  background: #241d15;
+}

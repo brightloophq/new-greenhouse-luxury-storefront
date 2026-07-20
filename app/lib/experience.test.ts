@@ -7,7 +7,24 @@ import {
   getExperienceFromRequest,
   experienceCookie,
   EXPERIENCE_COOKIE,
+  themeForPath,
+  PREMIUM_ROUTE,
 } from '~/lib/experience';
+
+describe('route-based theme (unified brand)', () => {
+  it('is green everywhere except the premium catalogue', () => {
+    expect(themeForPath('/')).toBe('classic');
+    expect(themeForPath('/arrangements')).toBe('classic');
+    expect(themeForPath('/arrangements/mixed')).toBe('classic');
+    expect(themeForPath('/arrangements/occasion/birthday')).toBe('classic');
+    expect(themeForPath('/classic/wholesale')).toBe('classic');
+  });
+
+  it('activates the elevated theme only on the premium-deluxe route', () => {
+    expect(themeForPath(PREMIUM_ROUTE)).toBe('deluxe');
+    expect(themeForPath(`${PREMIUM_ROUTE}/anything`)).toBe('deluxe');
+  });
+});
 
 describe('experience state', () => {
   it('defaults to classic (client decision)', () => {

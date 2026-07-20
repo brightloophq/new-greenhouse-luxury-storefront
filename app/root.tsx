@@ -30,7 +30,8 @@ import cormorantDisplay from '~/assets/fonts/cormorant-600.woff2?url';
 import {PageLayout} from './components/PageLayout';
 import {ExperienceProvider} from '~/components/ExperienceProvider';
 import {
-  getExperienceFromRequest,
+  themeForPath,
+  PREMIUM_ROUTE,
   DEFAULT_EXPERIENCE,
 } from '~/lib/experience';
 
@@ -49,6 +50,15 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
   // revalidate when manually revalidating via useRevalidator
   if (currentUrl.toString() === nextUrl.toString()) return true;
+
+  // Re-run the root loader when crossing the premium-catalogue boundary so the
+  // route-based visual theme (<html data-experience>) updates on client nav.
+  if (
+    currentUrl.pathname.startsWith(PREMIUM_ROUTE) !==
+    nextUrl.pathname.startsWith(PREMIUM_ROUTE)
+  ) {
+    return true;
+  }
 
   // Defaulting to no revalidation for root loader data to improve performance.
   // When using this feature, you risk your UI getting out of sync with your server.
@@ -138,7 +148,9 @@ export async function loader(args: Route.LoaderArgs) {
   return {
     ...deferredData,
     ...criticalData,
-    experience: getExperienceFromRequest(args.request),
+    // Visual theme is route-based (green everywhere; elevated only on the
+    // premium catalogue) — not cookie- or product-driven.
+    experience: themeForPath(new URL(args.request.url).pathname),
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
