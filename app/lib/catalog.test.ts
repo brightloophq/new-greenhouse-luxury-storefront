@@ -62,10 +62,10 @@ describe('context-scoped param parsing (switching clears incompatible filters)',
   });
 
   it('ignores a flower param on a Deluxe page but keeps occasion', () => {
-    const params = new URLSearchParams('flower=rose&occasion=anniversary');
+    const params = new URLSearchParams('flower=rose&occasion=thank-you');
     const {filters} = parseCatalogSearchParams(params, 'deluxe');
     expect(filters.flower).toBeUndefined();
-    expect(filters.occasion).toBe('anniversary');
+    expect(filters.occasion).toBe('thank-you');
   });
 });
 

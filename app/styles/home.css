@@ -543,18 +543,18 @@ button.ng-chooser-card {
   }
 }
 
-/* ---- Arrangements catalogue (green by default; elevated only on premium) ---- */
-.ng-arrcat {
+/* ---- Catalogue surface (green by default; elevated only on premium) -------- */
+.ng-shopcat {
   min-height: 60vh;
   padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
   background: #eef2e9;
 }
-.ng-arrcat-head {
-  max-width: 72rem;
-  margin: 0 auto 1.5rem;
+.ng-shopcat-head {
+  max-width: 78rem;
+  margin: 0 auto 2rem;
   text-align: center;
 }
-.ng-arrcat-back {
+.ng-shopcat-back {
   display: inline-block;
   margin-bottom: 1rem;
   font-size: 0.78rem;
@@ -563,17 +563,17 @@ button.ng-chooser-card {
   color: #4d6a50;
   text-decoration: none;
 }
-.ng-arrcat-back:hover {
+.ng-shopcat-back:hover {
   color: #2f4a37;
 }
-.ng-arrcat-eyebrow {
+.ng-shopcat-eyebrow {
   margin: 0 0 0.5rem;
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #4d6a50;
 }
-.ng-arrcat-title {
+.ng-shopcat-title {
   margin: 0 0 0.5rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(2rem, 1.2rem + 2.6vw, 3.4rem);
@@ -581,90 +581,313 @@ button.ng-chooser-card {
   text-transform: uppercase;
   color: #2f4a37;
 }
-.ng-arrcat-sub {
+.ng-shopcat-sub {
   max-width: 32rem;
   margin: 0 auto;
   color: #5a6b58;
 }
-.ng-arrcat-grid {
+
+/* Sidebar filters + results. The sidebar collapses into the drawer below 64em. */
+.ng-shopcat-layout {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.6rem 1.25rem;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 2.5rem;
   max-width: 78rem;
-  margin: 2rem auto 0;
+  margin: 0 auto;
+  align-items: start;
+}
+.ng-shopcat-main {
+  min-width: 0;
+}
+
+/* Search */
+/* Search is a utility, not a focal point — restrained, and capped in width so
+   it never competes with the collection title above it. */
+.ng-shopcat-search {
+  display: flex;
+  gap: 0.4rem;
+  max-width: 22rem;
+  margin-bottom: 1.25rem;
+}
+.ng-shopcat-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.45rem 0.7rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #2f4a37;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #cfdcc9;
+}
+.ng-shopcat-search-input::placeholder {
+  color: #8a9a86;
+}
+.ng-shopcat-search-input:focus {
+  outline: none;
+  border-bottom-color: #4d6a50;
+}
+.ng-shopcat-search-submit {
+  padding: 0.45rem 0.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4d6a50;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+.ng-shopcat-search-submit:hover {
+  color: #2f4a37;
+  border-bottom-color: #4d6a50;
+}
+
+/* Results — dim (never blank) while a filter/sort navigation is in flight. */
+.ng-shopcat-results {
+  transition: opacity 0.2s ease;
+}
+.ng-shopcat-results[data-state='loading'] {
+  opacity: 0.55;
+}
+.ng-shopcat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem 1.25rem;
+  margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
 }
-.ng-arrcat-card {
+.ng-shopcat-notice {
+  padding: 3.5rem 1rem;
+  text-align: center;
+}
+.ng-shopcat-notice-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.3rem;
+  color: #2f4a37;
+}
+.ng-shopcat-notice-body {
+  margin: 0;
+  color: #5a6b58;
+}
+
+/* Cards */
+.ng-shopcat-card {
   display: block;
   color: inherit;
   text-decoration: none;
 }
-.ng-arrcat-card-media {
+.ng-shopcat-card-media {
+  position: relative;
   display: block;
   overflow: hidden;
   aspect-ratio: 4 / 5;
   border-radius: 12px;
   background: #e4ecdf;
 }
-.ng-arrcat-card-media img {
+.ng-shopcat-card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.ng-arrcat-card:hover .ng-arrcat-card-media img {
+.ng-shopcat-card:hover .ng-shopcat-card-media img {
   transform: scale(1.05);
 }
-.ng-arrcat-card-title {
+.ng-shopcat-card-flag {
+  position: absolute;
+  inset: auto auto 0.6rem 0.6rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2f4a37;
+  background: rgb(255 255 255 / 0.92);
+  border-radius: 4px;
+}
+.ng-shopcat-card-flag--sale {
+  color: #fff;
+  background: #4d6a50;
+}
+.ng-shopcat-card-title {
   display: block;
   margin: 0.7rem 0 0.15rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.05rem;
   color: #2f4a37;
 }
-.ng-arrcat-card-price {
+.ng-shopcat-card-spec {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7b8a78;
+}
+.ng-shopcat-card-price {
   display: block;
   font-size: 0.9rem;
   color: #5a6b58;
 }
-.ng-arrcat-empty {
-  padding: 3rem 0;
-  text-align: center;
-  color: #5a6b58;
+.ng-shopcat-card-was {
+  margin-left: 0.4rem;
+  color: #8a9a86;
 }
+.ng-shopcat-card-unit {
+  color: #7b8a78;
+}
+/* Wholesale buyers scan a lot of stems — denser grid, tighter imagery. */
+.ng-shopcat-card--wholesale .ng-shopcat-card-media,
+.ng-shopcat-card--supply .ng-shopcat-card-media {
+  aspect-ratio: 1 / 1;
+}
+.ng-shopcat-card--wholesale .ng-shopcat-card-title {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
 .ng-shell-back {
   font-size: 0.85rem;
   letter-spacing: 0.04em;
   color: inherit;
   text-decoration: none;
 }
+
 @media (max-width: 64em) {
-  .ng-arrcat-grid {
+  .ng-shopcat-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Filters live in the drawer at this width — the toolbar button opens it. */
+  .ng-shopcat-aside {
+    display: none;
+  }
+  .ng-shopcat-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-shopcat-grid {
+    gap: 1.2rem 0.85rem;
   }
 }
 
 /* Elevated surface — ONLY on the premium-deluxe route (data-experience=deluxe). */
-[data-experience='deluxe'] .ng-arrcat {
+[data-experience='deluxe'] .ng-shopcat {
   background: #14100c;
 }
-[data-experience='deluxe'] .ng-arrcat-eyebrow,
-[data-experience='deluxe'] .ng-arrcat-back {
+[data-experience='deluxe'] .ng-shopcat-eyebrow,
+[data-experience='deluxe'] .ng-shopcat-back {
   color: #c8a96a;
 }
-[data-experience='deluxe'] .ng-arrcat-title {
+[data-experience='deluxe'] .ng-shopcat-title,
+[data-experience='deluxe'] .ng-shopcat-notice-title {
   color: #f4e3c4;
 }
-[data-experience='deluxe'] .ng-arrcat-sub,
-[data-experience='deluxe'] .ng-arrcat-card-price {
+[data-experience='deluxe'] .ng-shopcat-sub,
+[data-experience='deluxe'] .ng-shopcat-notice-body,
+[data-experience='deluxe'] .ng-shopcat-card-price {
   color: #cbbfa6;
 }
-[data-experience='deluxe'] .ng-arrcat-card-title {
+[data-experience='deluxe'] .ng-shopcat-card-title {
   color: #f4efe4;
 }
-[data-experience='deluxe'] .ng-arrcat-card-media {
+[data-experience='deluxe'] .ng-shopcat-card-media {
   background: #241d15;
+}
+[data-experience='deluxe'] .ng-shopcat-search-input {
+  color: #f4efe4;
+  border-bottom-color: #3a3025;
+}
+[data-experience='deluxe'] .ng-shopcat-search-submit {
+  color: #c8a96a;
+}
+/* Toolbar controls sit on the dark premium surface — keep text legible
+   (the default light-surface greys fall below contrast here). */
+[data-experience='deluxe'] .ng-catalog-toolbar-count,
+[data-experience='deluxe'] .ng-catalog-toolbar-sort-label {
+  color: #cbbfa6;
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-count-num {
+  color: #f4e3c4;
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-sort-select {
+  color: #f4efe4;
+  background: #1d1811;
+  border-color: #3a3025;
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-filters {
+  color: #f4e3c4;
+  border-color: #3a3025;
+}
+
+/* ---- 404 / error surface -------------------------------------------------- */
+.ng-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  text-align: center;
+  background: #eef2e9;
+}
+.ng-404-code {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: #8a9a86;
+}
+.ng-404-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem);
+  letter-spacing: 0.03em;
+  color: #2f4a37;
+}
+.ng-404-sub {
+  max-width: 34rem;
+  margin: 0 0 2.5rem;
+  color: #5a6b58;
+}
+.ng-404-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  max-width: 52rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-404-link {
+  display: block;
+  height: 100%;
+  padding: 1.1rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  background: #fff;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+.ng-404-link:hover {
+  transform: translateY(-2px);
+}
+.ng-404-link-label {
+  display: block;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.05rem;
+  color: #2f4a37;
+}
+.ng-404-link-blurb {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: #7b8a78;
+}
+@media (max-width: 48em) {
+  .ng-404-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---- Wholesale business profile (account) ---- */

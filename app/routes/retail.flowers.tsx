@@ -1,34 +1,35 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, TRADE_COLLECTIONS} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
 
 export const meta: MetaFunction = () => [
   {title: 'Retail Flowers | The New Greenhouse'},
 ];
 
-export async function loader({context}: LoaderFunctionArgs) {
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: TRADE_COLLECTIONS.retailFlowers},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('retail flowers catalogue failed', error);
-  }
-  return {products};
+export async function loader({context, request}: LoaderFunctionArgs) {
+  return loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    TRADE_COLLECTIONS.retailFlowers,
+    request,
+    'retail-flowers',
+  );
 }
 
 export default function RetailFlowers() {
-  const {products} = useLoaderData<typeof loader>();
+  const cat = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Retail"
       title="Flowers"
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="retail-flowers"
+      variant="retail"
+      noun="bouquet"
       back={{to: '/retail', label: 'Retail'}}
     />
   );

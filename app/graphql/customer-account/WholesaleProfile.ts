@@ -1,10 +1,26 @@
 // Customer Account API. The signed-in customer reads/writes their OWN wholesale
-// business profile, stored as a single JSON metafield (custom.wholesale_profile).
-// No manual approval — completing the profile is encouraged, not gating.
+// business profile, stored as INDIVIDUAL typed customer metafields in the
+// `custom` namespace — not a JSON blob — so each value is readable, filterable
+// and segmentable in Shopify admin.
 //
-// NOTE (merchant): the metafield definition custom.wholesale_profile (type json)
-// must grant "Customer Account API" READ + WRITE access for these to succeed at
-// runtime; userErrors are surfaced gracefully if not.
+// NOTE (merchant): every definition listed in WHOLESALE_PROFILE_KEYS must exist
+// under the `custom` namespace with "Customer Account API" READ + WRITE access
+// granted, otherwise metafieldsSet returns userErrors (surfaced gracefully).
+// See docs/MERCHANT-ACTIONS.md.
+
+export const WHOLESALE_PROFILE_KEYS = [
+  'business_name',
+  'business_type',
+  'business_phone',
+  'business_address',
+  'city_parish',
+  'delivery_area',
+  'website_social',
+  'purchase_frequency',
+  'business_notes',
+] as const;
+
+export type WholesaleProfileFieldKey = (typeof WHOLESALE_PROFILE_KEYS)[number];
 
 export const WHOLESALE_PROFILE_QUERY = `#graphql
   query WholesaleProfile {
@@ -18,7 +34,21 @@ export const WHOLESALE_PROFILE_QUERY = `#graphql
       phoneNumber {
         phoneNumber
       }
-      wholesaleProfile: metafield(namespace: "custom", key: "wholesale_profile") {
+      metafields(
+        identifiers: [
+          {namespace: "custom", key: "business_name"}
+          {namespace: "custom", key: "business_type"}
+          {namespace: "custom", key: "business_phone"}
+          {namespace: "custom", key: "business_address"}
+          {namespace: "custom", key: "city_parish"}
+          {namespace: "custom", key: "delivery_area"}
+          {namespace: "custom", key: "website_social"}
+          {namespace: "custom", key: "purchase_frequency"}
+          {namespace: "custom", key: "business_notes"}
+        ]
+      ) {
+        key
+        namespace
         value
       }
     }

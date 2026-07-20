@@ -1,39 +1,43 @@
 import {redirect, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, TRADE_COLLECTIONS} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
 import {getWholesaleAccess} from '~/lib/wholesale';
+import {requireWholesaleProfile} from '~/lib/wholesaleProfile';
 
 export const meta: MetaFunction = () => [
   {title: 'Wholesale Flowers | The New Greenhouse'},
 ];
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   // Wholesale is authentication-required.
   const {access} = await getWholesaleAccess(context.customerAccount);
   if (access !== 'authenticated') throw redirect('/wholesale');
+  // …and trade buyers must have completed their business profile.
+  await requireWholesaleProfile(context.customerAccount, request);
 
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: TRADE_COLLECTIONS.wholesaleFlowers},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('wholesale flowers catalogue failed', error);
-  }
-  return {products};
+  return loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    TRADE_COLLECTIONS.wholesaleFlowers,
+    request,
+    'wholesale-flowers',
+  );
 }
 
 export default function WholesaleFlowers() {
-  const {products} = useLoaderData<typeof loader>();
+  const cat = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Wholesale"
       title="Flowers"
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="wholesale-flowers"
+      variant="wholesale"
+      noun="stem"
       back={{to: '/wholesale', label: 'Wholesale'}}
     />
   );

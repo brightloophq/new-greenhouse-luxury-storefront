@@ -530,8 +530,10 @@ export type WholesaleProfileQuery = {
     phoneNumber?: CustomerAccountAPI.Maybe<
       Pick<CustomerAccountAPI.CustomerPhoneNumber, 'phoneNumber'>
     >;
-    wholesaleProfile?: CustomerAccountAPI.Maybe<
-      Pick<CustomerAccountAPI.Metafield, 'value'>
+    metafields: Array<
+      CustomerAccountAPI.Maybe<
+        Pick<CustomerAccountAPI.Metafield, 'key' | 'namespace' | 'value'>
+      >
     >;
   };
 };
@@ -570,7 +572,7 @@ interface GeneratedQueryTypes {
     return: WholesaleApprovalQuery;
     variables: WholesaleApprovalQueryVariables;
   };
-  '#graphql\n  query WholesaleProfile {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      phoneNumber {\n        phoneNumber\n      }\n      wholesaleProfile: metafield(namespace: "custom", key: "wholesale_profile") {\n        value\n      }\n    }\n  }\n': {
+  '#graphql\n  query WholesaleProfile {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      phoneNumber {\n        phoneNumber\n      }\n      metafields(\n        identifiers: [\n          {namespace: "custom", key: "business_name"}\n          {namespace: "custom", key: "business_type"}\n          {namespace: "custom", key: "business_phone"}\n          {namespace: "custom", key: "business_address"}\n          {namespace: "custom", key: "city_parish"}\n          {namespace: "custom", key: "delivery_area"}\n          {namespace: "custom", key: "website_social"}\n          {namespace: "custom", key: "purchase_frequency"}\n          {namespace: "custom", key: "business_notes"}\n        ]\n      ) {\n        key\n        namespace\n        value\n      }\n    }\n  }\n': {
     return: WholesaleProfileQuery;
     variables: WholesaleProfileQueryVariables;
   };

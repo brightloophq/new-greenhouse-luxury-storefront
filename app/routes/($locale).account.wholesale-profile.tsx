@@ -1,9 +1,11 @@
 import {
   data,
   Form,
+  redirect,
   useActionData,
   useLoaderData,
   useNavigation,
+  useSearchParams,
   type LoaderFunctionArgs,
   type ActionFunctionArgs,
   type MetaFunction,
@@ -12,117 +14,86 @@ import {
   WHOLESALE_PROFILE_QUERY,
   WHOLESALE_PROFILE_MUTATION,
 } from '~/graphql/customer-account/WholesaleProfile';
+import {
+  WHOLESALE_PROFILE_FIELDS,
+  missingProfileFields,
+  toProfile,
+  type WholesaleProfile as Profile,
+  type WholesaleProfileField,
+} from '~/lib/wholesaleProfile';
 
 /**
- * Wholesale business-profile completion (Part 11). The customer is already
- * authenticated (account layout gates this) and already has wholesale access —
- * this collects business details, stored as a single JSON customer metafield
- * (custom.wholesale_profile). No approval, no gating.
+ * Wholesale business profile. The customer is authenticated (the account layout
+ * gates this) and already has wholesale access — this collects the trade
+ * details we need before opening the wholesale catalogue, one typed customer
+ * metafield per field.
  */
-export const meta: MetaFunction<typeof loader> = () => [
+export const meta: MetaFunction = () => [
   {title: 'Business profile | The New Greenhouse'},
-];
-
-const BUSINESS_TYPES = [
-  'Florist',
-  'Wedding planner',
-  'Event planner',
-  'Funeral home',
-  'Hotel',
-  'Restaurant',
-  'Retail shop',
-  'Corporate buyer',
-  'Designer/decorator',
-  'Other',
-];
-
-/** Fields persisted in the profile JSON. */
-const FIELDS = [
-  'firstName',
-  'lastName',
-  'businessName',
-  'phone',
-  'businessType',
-  'address',
-  'city',
-  'deliveryArea',
-  'website',
-  'frequency',
-  'notes',
-] as const;
-type Field = (typeof FIELDS)[number];
-type Profile = Partial<Record<Field, string>>;
-
-const REQUIRED: Field[] = [
-  'firstName',
-  'lastName',
-  'businessName',
-  'phone',
-  'businessType',
-  'address',
-  'city',
-  'deliveryArea',
 ];
 
 export async function loader({context}: LoaderFunctionArgs) {
   const {data: d} = await context.customerAccount.query(WHOLESALE_PROFILE_QUERY);
-  const c = d?.customer;
-  let saved: Profile = {};
-  try {
-    if (c?.wholesaleProfile?.value)
-      saved = JSON.parse(c.wholesaleProfile.value) as Profile;
-  } catch {
-    saved = {};
+  const customer = d?.customer;
+  const profile = toProfile(customer?.metafields);
+
+  // Seed the phone from the account when the buyer has not set a trade number.
+  if (!profile.business_phone && customer?.phoneNumber?.phoneNumber) {
+    profile.business_phone = customer.phoneNumber.phoneNumber;
   }
-  const profile: Profile = {
-    firstName: saved.firstName ?? c?.firstName ?? '',
-    lastName: saved.lastName ?? c?.lastName ?? '',
-    phone: saved.phone ?? c?.phoneNumber?.phoneNumber ?? '',
-    businessName: saved.businessName ?? '',
-    businessType: saved.businessType ?? '',
-    address: saved.address ?? '',
-    city: saved.city ?? '',
-    deliveryArea: saved.deliveryArea ?? '',
-    website: saved.website ?? '',
-    frequency: saved.frequency ?? '',
-    notes: saved.notes ?? '',
-  };
-  return data({profile, email: c?.emailAddress?.emailAddress ?? ''});
+
+  return data({
+    profile,
+    email: customer?.emailAddress?.emailAddress ?? '',
+    name: [customer?.firstName, customer?.lastName].filter(Boolean).join(' '),
+  });
 }
 
 export async function action({context, request}: ActionFunctionArgs) {
   const form = await request.formData();
   const profile: Profile = {};
-  for (const f of FIELDS) {
-    const v = String(form.get(f) ?? '').trim();
-    if (v) profile[f] = v;
+  for (const field of WHOLESALE_PROFILE_FIELDS) {
+    const value = String(form.get(field.key) ?? '').trim();
+    if (value) profile[field.key] = value;
   }
 
-  const missing = REQUIRED.filter((f) => !profile[f]);
+  const missing = missingProfileFields(profile);
   if (missing.length) {
     return data({ok: false, missing, error: null}, {status: 400});
   }
 
-  // ownerId is required by metafieldsSet — fetch the authenticated customer id.
-  const {data: who} = await context.customerAccount.query(WHOLESALE_PROFILE_QUERY);
-  const ownerId = who?.customer?.id;
+  // metafieldsSet requires the owner id — read it from the authenticated session.
+  let ownerId: string | undefined;
+  try {
+    const {data: who} = await context.customerAccount.query(
+      WHOLESALE_PROFILE_QUERY,
+    );
+    ownerId = who?.customer?.id;
+  } catch {
+    ownerId = undefined;
+  }
   if (!ownerId) {
-    return data({ok: false, missing: [], error: 'Not signed in.'}, {status: 401});
+    return data(
+      {
+        ok: false,
+        missing: [],
+        error: 'Your session has expired. Please sign in again to save.',
+      },
+      {status: 401},
+    );
   }
 
   const {data: res, errors} = await context.customerAccount.mutate(
     WHOLESALE_PROFILE_MUTATION,
     {
       variables: {
-        metafields: [
-          {
-            ownerId,
-            namespace: 'custom',
-            key: 'wholesale_profile',
-            type: 'json',
-            value: JSON.stringify(profile),
-          },
-        ],
+        metafields: WHOLESALE_PROFILE_FIELDS.map((field) => ({
+          ownerId,
+          namespace: 'custom',
+          key: field.key,
+          type: field.type,
+          value: profile[field.key] ?? '',
+        })),
       },
     },
   );
@@ -141,15 +112,21 @@ export async function action({context, request}: ActionFunctionArgs) {
     );
   }
 
+  // Return the buyer to whatever they were trying to reach.
+  const to = new URL(request.url).searchParams.get('return');
+  if (to?.startsWith('/')) throw redirect(to);
+
   return data({ok: true, missing: [], error: null});
 }
 
 export default function WholesaleProfile() {
-  const {profile, email} = useLoaderData<typeof loader>();
+  const {profile, email, name} = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
   const nav = useNavigation();
   const saving = nav.state !== 'idle';
   const actionData = useActionData<typeof action>();
-  const missing = actionData && !actionData.ok ? actionData.missing : [];
+  const missing = new Set(actionData?.ok === false ? actionData.missing : []);
+  const gated = Boolean(searchParams.get('return'));
 
   return (
     <div className="ng-wsprofile">
@@ -157,14 +134,16 @@ export default function WholesaleProfile() {
         <p className="ng-wsprofile-eyebrow">Wholesale</p>
         <h2 className="ng-wsprofile-title">Your business profile</h2>
         <p className="ng-wsprofile-sub">
-          Tell us about your business so we can serve you better. You already
-          have wholesale access — this takes a minute.
+          {gated
+            ? 'One step before the trade catalogue — tell us about your business.'
+            : 'Keep your trade details current so we can serve you better.'}
+          {name ? ` Signed in as ${name}.` : null}
         </p>
       </div>
 
       {actionData?.ok ? (
         <p className="ng-wsprofile-success" role="status">
-          Saved. Thank you — your business profile is up to date.
+          Saved. Your business profile is up to date.
         </p>
       ) : null}
       {actionData?.error ? (
@@ -172,41 +151,26 @@ export default function WholesaleProfile() {
           {actionData.error}
         </p>
       ) : null}
-      {missing.length ? (
+      {missing.size ? (
         <p className="ng-wsprofile-error" role="alert">
-          Please complete the required fields.
+          Please complete the highlighted required fields.
         </p>
       ) : null}
 
       <Form method="POST" className="ng-wsprofile-form">
         <div className="ng-wsprofile-grid">
-          <Field name="firstName" label="First name" required defaultValue={profile.firstName} />
-          <Field name="lastName" label="Last name" required defaultValue={profile.lastName} />
-          <Field name="businessName" label="Business name" required defaultValue={profile.businessName} />
-          <label className="ng-wsprofile-field">
-            <span>
-              Business type<span aria-hidden="true"> *</span>
-            </span>
-            <select name="businessType" required defaultValue={profile.businessType}>
-              <option value="">Select…</option>
-              {BUSINESS_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Field name="phone" label="Phone" required defaultValue={profile.phone} type="tel" />
+          {WHOLESALE_PROFILE_FIELDS.map((field) => (
+            <ProfileField
+              key={field.key}
+              field={field}
+              value={profile[field.key] ?? ''}
+              invalid={missing.has(field.key)}
+            />
+          ))}
           <label className="ng-wsprofile-field">
             <span>Email</span>
             <input type="email" value={email} readOnly />
           </label>
-          <Field name="address" label="Business address" required defaultValue={profile.address} full />
-          <Field name="city" label="City / parish" required defaultValue={profile.city} />
-          <Field name="deliveryArea" label="Preferred delivery area" required defaultValue={profile.deliveryArea} />
-          <Field name="website" label="Website or Instagram (optional)" defaultValue={profile.website} full />
-          <Field name="frequency" label="Expected purchasing frequency (optional)" defaultValue={profile.frequency} />
-          <Field name="notes" label="Additional notes (optional)" defaultValue={profile.notes} full textarea />
         </div>
 
         <button type="submit" className="ng-wsprofile-submit" disabled={saving}>
@@ -217,38 +181,48 @@ export default function WholesaleProfile() {
   );
 }
 
-function Field({
-  name,
-  label,
-  required,
-  defaultValue,
-  type = 'text',
-  full,
-  textarea,
+function ProfileField({
+  field,
+  value,
+  invalid,
 }: {
-  name: string;
-  label: string;
-  required?: boolean;
-  defaultValue?: string;
-  type?: string;
-  full?: boolean;
-  textarea?: boolean;
+  field: WholesaleProfileField;
+  value: string;
+  invalid: boolean;
 }) {
+  const label = (
+    <span>
+      {field.label}
+      {field.required ? <span aria-hidden="true"> *</span> : null}
+    </span>
+  );
+  const shared = {
+    name: field.key,
+    required: field.required,
+    defaultValue: value,
+    'aria-invalid': invalid || undefined,
+  };
+
   return (
-    <label className={`ng-wsprofile-field${full ? ' is-full' : ''}`}>
-      <span>
-        {label}
-        {required ? <span aria-hidden="true"> *</span> : null}
-      </span>
-      {textarea ? (
-        <textarea name={name} rows={3} defaultValue={defaultValue} />
+    <label
+      className={`ng-wsprofile-field${field.full ? ' is-full' : ''}${
+        invalid ? ' is-invalid' : ''
+      }`}
+    >
+      {label}
+      {field.options ? (
+        <select {...shared}>
+          <option value="">Select…</option>
+          {field.options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      ) : field.textarea ? (
+        <textarea {...shared} rows={3} />
       ) : (
-        <input
-          name={name}
-          type={type}
-          required={required}
-          defaultValue={defaultValue}
-        />
+        <input {...shared} type={field.inputType ?? 'text'} />
       )}
     </label>
   );

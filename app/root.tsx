@@ -29,6 +29,7 @@ import interBody from '~/assets/fonts/inter-400.woff2?url';
 import cormorantDisplay from '~/assets/fonts/cormorant-600.woff2?url';
 import {PageLayout} from './components/PageLayout';
 import {ExperienceProvider} from '~/components/ExperienceProvider';
+import {NotFound} from '~/components/NotFound';
 import {
   themeForPath,
   PREMIUM_ROUTE,
@@ -290,15 +291,12 @@ export function ErrorBoundary() {
     errorMessage = error.message;
   }
 
-  return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
-    </div>
-  );
+  // Shoppers get a designed, navigable page in the house green — never a stack
+  // trace. The underlying message stays available to developers in the console.
+  if (import.meta.env.DEV && errorMessage) {
+     
+    console.error(`[${errorStatus}]`, errorMessage);
+  }
+
+  return <NotFound status={errorStatus} />;
 }

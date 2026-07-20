@@ -38,6 +38,12 @@ export type CatalogProductItemFragment = Pick<
 
 export type CatalogueCollectionQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
+  first: StorefrontAPI.Scalars['Int']['input'];
+  filters?: StorefrontAPI.InputMaybe<
+    Array<StorefrontAPI.ProductFilter> | StorefrontAPI.ProductFilter
+  >;
+  sortKey?: StorefrontAPI.InputMaybe<StorefrontAPI.ProductCollectionSortKeys>;
+  reverse?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Boolean']['input']>;
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
 }>;
@@ -47,11 +53,26 @@ export type CatalogueCollectionQuery = {
     Pick<StorefrontAPI.Collection, 'id' | 'title'> & {
       products: {
         nodes: Array<
-          Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+          Pick<
+            StorefrontAPI.Product,
+            | 'id'
+            | 'handle'
+            | 'title'
+            | 'vendor'
+            | 'productType'
+            | 'tags'
+            | 'availableForSale'
+          > & {
             featuredImage?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.Image, 'url' | 'altText' | 'width' | 'height'>
             >;
             priceRange: {
+              minVariantPrice: Pick<
+                StorefrontAPI.MoneyV2,
+                'amount' | 'currencyCode'
+              >;
+            };
+            compareAtPriceRange: {
               minVariantPrice: Pick<
                 StorefrontAPI.MoneyV2,
                 'amount' | 'currencyCode'
@@ -709,38 +730,6 @@ export type HubProductsQuery = {
   };
 };
 
-export type CollectionFragment = Pick<
-  StorefrontAPI.Collection,
-  'id' | 'title' | 'handle' | 'description'
-> & {
-  image?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
-  >;
-};
-
-export type StoreCollectionsQueryVariables = StorefrontAPI.Exact<{
-  country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
-  language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
-}>;
-
-export type StoreCollectionsQuery = {
-  collections: {
-    nodes: Array<
-      Pick<
-        StorefrontAPI.Collection,
-        'id' | 'title' | 'handle' | 'description'
-      > & {
-        image?: StorefrontAPI.Maybe<
-          Pick<
-            StorefrontAPI.Image,
-            'id' | 'url' | 'altText' | 'width' | 'height'
-          >
-        >;
-      }
-    >;
-  };
-};
-
 export type PageQueryVariables = StorefrontAPI.Exact<{
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -1376,7 +1365,7 @@ export type PredictiveSearchQuery = {
 };
 
 interface GeneratedQueryTypes {
-  '#graphql\n  query CatalogueCollection(\n    $handle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      title\n      products(first: 24) {\n        nodes {\n          id\n          handle\n          title\n          featuredImage {\n            url\n            altText\n            width\n            height\n          }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query CatalogueCollection(\n    $handle: String!\n    $first: Int!\n    $filters: [ProductFilter!]\n    $sortKey: ProductCollectionSortKeys\n    $reverse: Boolean\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collection(handle: $handle) {\n      id\n      title\n      products(\n        first: $first\n        filters: $filters\n        sortKey: $sortKey\n        reverse: $reverse\n      ) {\n        nodes {\n          id\n          handle\n          title\n          vendor\n          productType\n          tags\n          availableForSale\n          featuredImage {\n            url\n            altText\n            width\n            height\n          }\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          compareAtPriceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: CatalogueCollectionQuery;
     variables: CatalogueCollectionQueryVariables;
   };
@@ -1407,10 +1396,6 @@ interface GeneratedQueryTypes {
   '#graphql\n  #graphql\n  fragment CatalogMoney on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment CatalogProductItem on Product {\n    id\n    handle\n    title\n    vendor\n    productType\n    tags\n    availableForSale\n    description(truncateAt: 200)\n    featuredImage {\n      id\n      altText\n      url\n      width\n      height\n    }\n    images(first: 2) {\n      nodes {\n        id\n        altText\n        url\n        width\n        height\n      }\n    }\n    priceRange {\n      minVariantPrice {\n        ...CatalogMoney\n      }\n      maxVariantPrice {\n        ...CatalogMoney\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        ...CatalogMoney\n      }\n    }\n  }\n\n  query HubProducts(\n    $country: CountryCode\n    $language: LanguageCode\n    $query: String\n    $sortKey: ProductSortKeys!\n    $reverse: Boolean\n    $first: Int\n    $last: Int\n    $startCursor: String\n    $endCursor: String\n  ) @inContext(country: $country, language: $language) {\n    products(\n      first: $first\n      last: $last\n      before: $startCursor\n      after: $endCursor\n      query: $query\n      sortKey: $sortKey\n      reverse: $reverse\n    ) {\n      nodes {\n        ...CatalogProductItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        startCursor\n        endCursor\n      }\n    }\n  }\n': {
     return: HubProductsQuery;
     variables: HubProductsQueryVariables;
-  };
-  '#graphql\n  fragment Collection on Collection {\n    id\n    title\n    handle\n    description\n    image {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n  query StoreCollections(\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    collections(first: 50, sortKey: TITLE) {\n      nodes {\n        ...Collection\n      }\n    }\n  }\n': {
-    return: StoreCollectionsQuery;
-    variables: StoreCollectionsQueryVariables;
   };
   '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      handle\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n    }\n  }\n': {
     return: PageQuery;

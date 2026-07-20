@@ -46,10 +46,11 @@ function useCatalogParams() {
     });
   }
 
-  /** Remove every facet/availability/price param; keep sort untouched. */
+  /** Remove search + every facet/availability/price param; keep sort untouched. */
   function clearAll() {
     commit((params) => {
       for (const facet of FACETS) params.delete(facet.key);
+      params.delete('q');
       params.delete('avail');
       params.delete('minp');
       params.delete('maxp');

@@ -1,38 +1,41 @@
 import {redirect, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, TRADE_COLLECTIONS} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
 import {getWholesaleAccess} from '~/lib/wholesale';
+import {requireWholesaleProfile} from '~/lib/wholesaleProfile';
 
 export const meta: MetaFunction = () => [
   {title: 'Wholesale Supplies | The New Greenhouse'},
 ];
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   const {access} = await getWholesaleAccess(context.customerAccount);
   if (access !== 'authenticated') throw redirect('/wholesale');
+  await requireWholesaleProfile(context.customerAccount, request);
 
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: TRADE_COLLECTIONS.wholesaleSupplies},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('wholesale supplies catalogue failed', error);
-  }
-  return {products};
+  return loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    TRADE_COLLECTIONS.wholesaleSupplies,
+    request,
+    'wholesale-supplies',
+  );
 }
 
 export default function WholesaleSupplies() {
-  const {products} = useLoaderData<typeof loader>();
+  const cat = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Wholesale"
       title="Supplies"
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="wholesale-supplies"
+      variant="supply"
+      noun="item"
       back={{to: '/wholesale', label: 'Wholesale'}}
     />
   );

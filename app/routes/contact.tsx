@@ -1,5 +1,5 @@
 import type {MetaFunction} from 'react-router';
-import {CONTACT} from '~/lib/companyContent';
+import {CONTACT, DELIVERY_CUTOFF} from '~/lib/companyContent';
 
 export const meta: MetaFunction = () => [
   {title: 'Contact Us | The New Greenhouse'},
@@ -32,6 +32,13 @@ export default function Contact() {
             <dt>Email</dt>
             <dd>
               <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+            </dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd>
+              Kingston &amp; St. Andrew, same day before {DELIVERY_CUTOFF}.
+              Island-wide by arrangement.
             </dd>
           </div>
         </dl>

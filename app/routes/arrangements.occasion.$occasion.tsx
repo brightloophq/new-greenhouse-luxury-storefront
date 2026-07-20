@@ -1,38 +1,40 @@
 import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, OCCASIONS, findBySlug} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {OCCASIONS, findBySlug, loadCatalogue} from '~/lib/catalogues';
 
 export const meta: MetaFunction<typeof loader> = ({data: d}) => [
   {title: `${d?.label ?? 'Occasion'} Arrangements | The New Greenhouse`},
 ];
 
-export async function loader({context, params}: LoaderFunctionArgs) {
+export async function loader({context, params, request}: LoaderFunctionArgs) {
   const occasion = findBySlug(OCCASIONS, params.occasion);
   if (!occasion) throw data('Occasion not found', {status: 404});
 
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: occasion.handle},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('occasion catalogue failed', error);
-  }
-  return {products, label: occasion.label};
+  const result = await loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    occasion.handle,
+    request,
+    'arrangements',
+  );
+  return {...result, label: occasion.label};
 }
 
 /** Occasion catalogue — stays GREEN (never premium). */
 export default function OccasionCatalogue() {
-  const {products, label} = useLoaderData<typeof loader>();
+  const {label, ...cat} = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Occasion"
       title={label}
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="arrangements"
+      variant="retail"
+      noun="arrangement"
       back={{to: '/arrangements/occasion', label: 'Occasions'}}
     />
   );

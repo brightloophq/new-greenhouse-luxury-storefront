@@ -1,35 +1,36 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, ARRANGEMENT_COLLECTIONS} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {ARRANGEMENT_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
 
 export const meta: MetaFunction = () => [
   {title: 'Mixed Arrangements | The New Greenhouse'},
 ];
 
-export async function loader({context}: LoaderFunctionArgs) {
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: ARRANGEMENT_COLLECTIONS.mixed},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('mixed catalogue failed', error);
-  }
-  return {products};
+export async function loader({context, request}: LoaderFunctionArgs) {
+  return loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    ARRANGEMENT_COLLECTIONS.mixed,
+    request,
+    'arrangements',
+  );
 }
 
 /** Mixed arrangements — stays GREEN. */
 export default function MixedArrangements() {
-  const {products} = useLoaderData<typeof loader>();
+  const cat = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Arrangements"
       title="Mixed"
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="arrangements"
+      variant="retail"
+      noun="arrangement"
       back={{to: '/arrangements', label: 'Arrangements'}}
     />
   );

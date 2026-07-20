@@ -1,37 +1,39 @@
 import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
-import {
-  ArrangementsCatalogue,
-  type ArrangementProduct,
-} from '~/components/arrangements/ArrangementsCatalogue';
-import {CATALOGUE_QUERY, SUPPLY_CATEGORIES, findBySlug} from '~/lib/catalogues';
+import {CatalogueView} from '~/components/catalogue/CatalogueView';
+import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
+import {SUPPLY_CATEGORIES, findBySlug, loadCatalogue} from '~/lib/catalogues';
 
 export const meta: MetaFunction<typeof loader> = ({data: d}) => [
   {title: `${d?.label ?? 'Supplies'} | The New Greenhouse`},
 ];
 
-export async function loader({context, params}: LoaderFunctionArgs) {
+export async function loader({context, params, request}: LoaderFunctionArgs) {
   const category = findBySlug(SUPPLY_CATEGORIES, params.category);
   if (!category) throw data('Category not found', {status: 404});
 
-  let products: ArrangementProduct[] = [];
-  try {
-    const {collection} = await context.storefront.query(CATALOGUE_QUERY, {
-      variables: {handle: category.handle},
-    });
-    products = collection?.products?.nodes ?? [];
-  } catch (error) {
-    console.error('supplies catalogue failed', error);
-  }
-  return {products, label: category.label};
+  const result = await loadCatalogue<CatalogueProduct>(
+    context.storefront,
+    category.handle,
+    request,
+    'supplies',
+  );
+  return {...result, label: category.label};
 }
 
 export default function SuppliesCategory() {
-  const {products, label} = useLoaderData<typeof loader>();
+  const {label, ...cat} = useLoaderData<typeof loader>();
   return (
-    <ArrangementsCatalogue
+    <CatalogueView
       eyebrow="Supplies"
       title={label}
-      products={products}
+      products={cat.products}
+      filters={cat.filters}
+      sort={cat.sort}
+      missing={cat.missing}
+      failed={cat.failed}
+      context="supplies"
+      variant="supply"
+      noun="item"
       back={{to: '/supplies', label: 'Supplies'}}
     />
   );
