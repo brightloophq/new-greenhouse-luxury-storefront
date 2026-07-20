@@ -21,7 +21,11 @@
     "images:optimize": "node scripts/images/optimize.mjs",
     "images:integrate": "node scripts/images/integrate.mjs",
     "images:validate": "node scripts/images/validate.mjs",
-    "images:flowers": "node scripts/images/flower-library.mjs"
+    "images:flowers": "node scripts/images/flower-library.mjs",
+    "shopify:collections": "node scripts/shopify/collections.mjs",
+    "shopify:metafields": "node scripts/shopify/metafields.mjs",
+    "shopify:tags": "node scripts/shopify/tags.mjs",
+    "shopify:setup": "npm run shopify:collections && npm run shopify:metafields && npm run shopify:tags"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

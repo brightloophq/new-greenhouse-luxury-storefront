@@ -37,23 +37,32 @@ and the five supply categories (`vases-and-containers`, `ribbon`,
 
 ---
 
-## 2. Product tagging (blocks two filters)
+## 2. Product tagging (a small gap, not a missing taxonomy)
 
-Filtering is live and working, but two facets have no data behind them.
+**Correction to an earlier version of this document.** It claimed no products
+carried `color:` or `flower:` tags. That was wrong — it generalised from a
+five-product sample. A full scan of all 206 products shows the taxonomy is
+largely in place:
 
-Products are currently tagged with `channel:*`, `occasion:*`, `type:*`,
-`delivery:*`, `format:*`, `collection:*`, `experience:*`.
+| Facet | Tagged | Untagged | Status |
+|---|---|---|---|
+| `occasion:` | 188 | 18 | ✅ Working |
+| `color:` | 177 | 29 | Mostly working |
+| `flower:` | 176 | 30 | Mostly working |
 
-| Facet | Tag prefix | Status |
-|---|---|---|
-| Occasion | `occasion:` | ✅ Working — e.g. `?occasion=birthday` returns 6 products |
-| Colour | `color:` | ⚠️ **No products tagged** — the filter returns nothing |
-| Flower type | `flower:` | ⚠️ **No products tagged** — `?flower=tulips` returns 0 |
+The untagged products are concentrated in the **luxury Floral Arrangements**,
+which is exactly the group that populates `/retail/flowers` — so the gap was far
+more visible than its size suggests.
 
-**To do:** tag products with `color:<value>` and `flower:<handle>` using the
-vocabularies in `app/lib/catalog.ts` (`FACETS`) and
-`app/lib/flowerCategories.ts`. Until then those two filter groups will correctly
-show "No matches" rather than silently ignoring the shopper's choice.
+Run `npm run shopify:tags` (§6) for the current plan. As of the last scan it
+would add **13 colour tags**, each one stated outright in the product's own
+title (e.g. *Grand Red Rose Arrangement* → `color:red`). It never guesses.
+
+**24 products need your judgement** because the title does not state the answer
+— e.g. *Thank You Bouquet*, *Corporate Elegance Arrangement*, and the ribbons
+and vases whose colour varies by variant. The script lists them rather than
+inventing a value; a wrong colour tag is worse than a missing one, because it
+makes the filter lie to the shopper.
 
 ### Optional: enable storefront filters (performance)
 
@@ -112,7 +121,53 @@ matches what is actually shown.
 
 ---
 
-## 5. Not done — needs your decision
+## 5. Automating §1–§3 (recommended)
+
+Sections 1–3 are scripted. They need an **Admin API token**, which this project
+does not have — the storefront only ever gets read-only Storefront tokens, by
+design. Creating the token is the one step only you can do.
+
+### One-time setup (about a minute)
+
+1. Shopify admin → **Settings → Apps and sales channels → Develop apps →
+   Create an app**. Name it e.g. *Storefront Setup*.
+2. **Configure Admin API scopes** — tick exactly these four:
+   - `read_products`, `write_products` — collections and product tags
+   - `read_customers`, `write_customers` — customer metafield definitions
+3. **Install app**, then reveal the **Admin API access token** (`shpat_…`).
+4. Add it to `.env` (already gitignored — it is never committed):
+
+   ```
+   SHOPIFY_ADMIN_API_TOKEN=shpat_xxxxxxxxxxxx
+   ```
+
+Keep the token in the file. Don't paste it into chat or a commit.
+
+### Then run
+
+Every command is **dry run by default** — it prints exactly what it would do and
+writes nothing. Add `--apply` only when the plan looks right.
+
+```bash
+npm run shopify:collections          # §1 — preview
+npm run shopify:collections -- --apply
+
+npm run shopify:metafields           # §3 — preview
+npm run shopify:metafields -- --apply
+
+npm run shopify:tags                 # §2 — preview (also lists the 24 unresolved)
+npm run shopify:tags -- --apply
+
+npm run shopify:setup                # all three, dry run
+```
+
+All three are **idempotent and additive**. Existing collections, definitions and
+tags are reported and left untouched — nothing is overwritten or deleted, so
+re-running is always safe.
+
+---
+
+## 6. Not done — needs your decision
 
 - **The flower library at `/flowers`** (25 categories, generated imagery) is
   intact and reachable but is **not linked from the approved navigation**. It was
