@@ -666,3 +666,88 @@ button.ng-chooser-card {
 [data-experience='deluxe'] .ng-arrcat-card-media {
   background: #241d15;
 }
+
+/* ---- Wholesale business profile (account) ---- */
+.ng-wsprofile { max-width: 52rem; margin: 0 auto; }
+.ng-wsprofile-head { margin-bottom: 1.5rem; }
+.ng-wsprofile-eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #4d6a50;
+}
+.ng-wsprofile-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.9rem;
+  color: #2f4a37;
+}
+.ng-wsprofile-sub { margin: 0; color: #5a6b58; }
+.ng-wsprofile-success {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: #e4ecdf;
+  color: #2f4a37;
+}
+.ng-wsprofile-error {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: #f6e7e3;
+  color: #8a3b2b;
+}
+.ng-wsprofile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+.ng-wsprofile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ng-wsprofile-field.is-full { grid-column: 1 / -1; }
+.ng-wsprofile-field > span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #3f5a44;
+}
+.ng-wsprofile-field input,
+.ng-wsprofile-field select,
+.ng-wsprofile-field textarea {
+  padding: 0.7rem 0.8rem;
+  border: 1.5px solid #cdd8c9;
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  color: #222;
+}
+.ng-wsprofile-field input:focus,
+.ng-wsprofile-field select:focus,
+.ng-wsprofile-field textarea:focus {
+  outline: 2px solid #4d6a50;
+  outline-offset: 1px;
+  border-color: #4d6a50;
+}
+.ng-wsprofile-field input[readonly] { background: #f2f0ea; color: #6a786a; }
+.ng-wsprofile-submit {
+  margin-top: 1.5rem;
+  padding: 0.9rem 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: #2f4a37;
+  color: #f4efe4;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsprofile-submit:hover:not(:disabled) {
+  background: #24382a;
+  transform: translateY(-1px);
+}
+.ng-wsprofile-submit:disabled { opacity: 0.6; cursor: default; }
+@media (max-width: 40em) {
+  .ng-wsprofile-grid { grid-template-columns: 1fr; }
+}

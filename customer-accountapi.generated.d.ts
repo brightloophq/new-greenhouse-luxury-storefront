@@ -515,6 +515,44 @@ export type WholesaleApprovalQuery = {
   };
 };
 
+export type WholesaleProfileQueryVariables = CustomerAccountAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type WholesaleProfileQuery = {
+  customer: Pick<
+    CustomerAccountAPI.Customer,
+    'id' | 'firstName' | 'lastName'
+  > & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    phoneNumber?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerPhoneNumber, 'phoneNumber'>
+    >;
+    wholesaleProfile?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.Metafield, 'value'>
+    >;
+  };
+};
+
+export type SetWholesaleProfileMutationVariables = CustomerAccountAPI.Exact<{
+  metafields:
+    | Array<CustomerAccountAPI.MetafieldsSetInput>
+    | CustomerAccountAPI.MetafieldsSetInput;
+}>;
+
+export type SetWholesaleProfileMutation = {
+  metafieldsSet?: CustomerAccountAPI.Maybe<{
+    metafields?: CustomerAccountAPI.Maybe<
+      Array<Pick<CustomerAccountAPI.Metafield, 'key' | 'namespace' | 'value'>>
+    >;
+    userErrors: Array<
+      Pick<CustomerAccountAPI.MetafieldsSetUserError, 'field' | 'message'>
+    >;
+  }>;
+};
+
 interface GeneratedQueryTypes {
   '#graphql\n  query CustomerDetails($language: LanguageCode) @inContext(language: $language) {\n    customer {\n      ...Customer\n    }\n  }\n  #graphql\n  fragment Customer on Customer {\n    id\n    firstName\n    lastName\n    defaultAddress {\n      ...Address\n    }\n    addresses(first: 6) {\n      nodes {\n        ...Address\n      }\n    }\n  }\n  fragment Address on CustomerAddress {\n    id\n    formatted\n    firstName\n    lastName\n    company\n    address1\n    address2\n    territoryCode\n    zoneCode\n    city\n    zip\n    phoneNumber\n  }\n\n': {
     return: CustomerDetailsQuery;
@@ -531,6 +569,10 @@ interface GeneratedQueryTypes {
   '#graphql\n  query WholesaleApproval {\n    customer {\n      firstName\n      metafield(namespace: "custom", key: "wholesale_approved") {\n        value\n      }\n    }\n  }\n': {
     return: WholesaleApprovalQuery;
     variables: WholesaleApprovalQueryVariables;
+  };
+  '#graphql\n  query WholesaleProfile {\n    customer {\n      id\n      firstName\n      lastName\n      emailAddress {\n        emailAddress\n      }\n      phoneNumber {\n        phoneNumber\n      }\n      wholesaleProfile: metafield(namespace: "custom", key: "wholesale_profile") {\n        value\n      }\n    }\n  }\n': {
+    return: WholesaleProfileQuery;
+    variables: WholesaleProfileQueryVariables;
   };
 }
 
@@ -550,6 +592,10 @@ interface GeneratedMutationTypes {
   '#graphql\n  mutation customerUpdate(\n    $customer: CustomerUpdateInput!\n    $language: LanguageCode\n  ) @inContext(language: $language) {\n    customerUpdate(input: $customer) {\n      customer {\n        firstName\n        lastName\n        emailAddress {\n          emailAddress\n        }\n        phoneNumber {\n          phoneNumber\n        }\n      }\n      userErrors {\n        code\n        field\n        message\n      }\n    }\n  }\n': {
     return: CustomerUpdateMutation;
     variables: CustomerUpdateMutationVariables;
+  };
+  '#graphql\n  mutation SetWholesaleProfile($metafields: [MetafieldsSetInput!]!) {\n    metafieldsSet(metafields: $metafields) {\n      metafields {\n        key\n        namespace\n        value\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n': {
+    return: SetWholesaleProfileMutation;
+    variables: SetWholesaleProfileMutationVariables;
   };
 }
 
