@@ -22,78 +22,70 @@
 
 /* ------------------------------------------------------------------ Hero -- */
 .ng-brandhero {
-  position: relative;
-  display: grid;
-  align-items: end;
-  min-height: clamp(32rem, 62vh, 46rem);
+  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem 0;
+  background: #e7dac9; /* matches the arrangement's seamless cream ground */
+  text-align: center;
   overflow: hidden;
-  isolation: isolate;
-}
-.ng-brandhero-media {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-}
-.ng-brandhero-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  animation: ngh-slow-zoom 18s ease-out both;
-}
-.ng-brandhero-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    180deg,
-    rgba(30, 42, 32, 0.04) 0%,
-    rgba(30, 42, 32, 0.14) 45%,
-    rgba(18, 28, 20, 0.46) 100%
-  );
 }
 .ng-brandhero-inner {
-  width: min(100% - 3rem, 70rem);
+  max-width: 56rem;
   margin: 0 auto;
-  padding: 3rem 0 clamp(2.5rem, 6vw, 5rem);
-  text-align: center;
-  color: #fff;
   animation: ngh-fade-up 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .ng-brandhero-eyebrow {
-  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 0 0 1.3rem;
   font-size: 0.72rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  opacity: 0.92;
+  color: var(--ngh-green-deep);
+}
+.ng-brandhero-rule {
+  display: inline-block;
+  width: clamp(1.5rem, 6vw, 3.5rem);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
 }
 .ng-brandhero-wordmark {
-  margin: 0 0 1.6rem;
+  margin: 0 0 1.3rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-weight: 500;
-  font-size: clamp(2.6rem, 1.2rem + 6vw, 6rem);
-  line-height: 0.98;
-  letter-spacing: 0.04em;
+  font-size: clamp(2.6rem, 1rem + 6.6vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.045em;
   text-transform: uppercase;
-  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.28);
+  color: var(--ngh-green-deep);
+}
+.ng-brandhero-tagline {
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.18rem);
+  line-height: 1.55;
+  color: #5c5346;
 }
 .ng-brandhero-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.95rem 2rem;
+  gap: 0.55rem;
+  padding: 0.92rem 2.2rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--ngh-green-deep);
+  background: var(--ngh-green-deep);
+  color: #f4efe4;
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 10px 26px rgba(47, 74, 55, 0.22);
   transition: transform 0.25s ease, background 0.25s ease;
 }
 .ng-brandhero-cta:hover {
   transform: translateY(-2px);
-  background: #fff;
+  background: #24382a;
 }
 .ng-brandhero-cta-arrow {
   transition: transform 0.25s ease;
@@ -101,11 +93,55 @@
 .ng-brandhero-cta:hover .ng-brandhero-cta-arrow {
   transform: translateY(3px);
 }
+.ng-brandhero-bloom {
+  max-width: 64rem;
+  margin: clamp(1.5rem, 4vw, 3rem) auto 0;
+  animation: ngh-fade-up 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.ng-brandhero-bloom img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Feather all four edges so the arrangement melts into the cream ground (no
+     visible rectangle). Flowers sit centre, so only the cream margin fades. */
+  -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 5%,
+      #000 96%,
+      transparent 100%
+    );
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 5%,
+      #000 96%,
+      transparent 100%
+    );
+  mask-composite: intersect;
+}
 
 /* -------------------------------------------------------------- Chooser -- */
 .ng-chooser {
-  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem;
-  background: var(--ngh-cream);
+  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(3.5rem, 7vw, 6rem);
+  /* Same warm cream as the hero ground so the two sections read as one
+     continuous editorial canvas — no color step. */
+  background: #e7dac9;
   scroll-margin-top: 5rem;
 }
 .ng-chooser-head {
@@ -260,8 +296,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ng-brandhero-media img,
-  .ng-brandhero-inner {
+  .ng-brandhero-inner,
+  .ng-brandhero-bloom {
     animation: none;
   }
   .ng-chooser-card,
