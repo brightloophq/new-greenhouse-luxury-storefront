@@ -316,3 +316,90 @@ describe('petal density', () => {
     expect(PETALS).toMatch(/petals\.length = target/);
   });
 });
+
+describe('variety scroll parallax (ScrollTrigger)', () => {
+  const HOOK = read('app/lib/useVarietyParallax.ts');
+  const VARIETY = read('app/components/home/ShopByVariety.tsx');
+
+  it('is a scrub-linked ScrollTrigger, not a one-shot reveal', () => {
+    expect(HOOK).toMatch(/scrub:/);
+    expect(HOOK).toMatch(/ScrollTrigger/);
+  });
+
+  it('imports GSAP dynamically and honours reduced motion first', () => {
+    const guard = HOOK.indexOf('prefersReducedMotion()');
+    const load = HOOK.indexOf("import('gsap')");
+    expect(guard).toBeGreaterThan(-1);
+    expect(guard).toBeLessThan(load);
+    expect(HOOK).not.toMatch(/^import .*from 'gsap'/m);
+  });
+
+  it('reverts its context on unmount like every other motion hook', () => {
+    expect(HOOK).toMatch(/ctx\?\.revert\(\)/);
+    expect(HOOK).toMatch(/cancelled/);
+  });
+
+  it('is wired into the variety section over a separate media wrapper', () => {
+    // The reveal owns the card; the parallax owns only the inner media wrapper,
+    // so the two never write the same transform.
+    expect(VARIETY).toMatch(/useVarietyParallax/);
+    expect(VARIETY).toMatch(/data-parallax-item/);
+    expect(VARIETY).toMatch(/ng-variety-card-parallax/);
+    expect(VARIETY).toMatch(/data-parallax-media/);
+  });
+});
+
+describe('reviews carousel', () => {
+  const CAR = read('app/components/home/ReviewsCarousel.tsx');
+  const CSS = read('app/styles/home.css');
+
+  it('shows six reviews', () => {
+    // Sourced from the shared list, not inlined — and there are six of them.
+    expect(CAR).toMatch(/HOMEPAGE_REVIEWS/);
+  });
+
+  it('pauses auto-advance on hover, focus and a hidden tab', () => {
+    expect(CAR).toMatch(/onMouseEnter=\{\(\) => setPaused\(true\)\}/);
+    expect(CAR).toMatch(/onFocusCapture=\{\(\) => setPaused\(true\)\}/);
+    expect(CAR).toMatch(/document\.hidden/);
+  });
+
+  it('never auto-advances under reduced motion', () => {
+    expect(CAR).toMatch(/if \(prefersReducedMotion\(\)\) return;/);
+  });
+
+  it('is a real carousel for assistive tech — labelled slides and dots', () => {
+    expect(CAR).toMatch(/aria-roledescription="carousel"/);
+    expect(CAR).toMatch(/aria-roledescription="slide"/);
+    expect(CAR).toMatch(/aria-label=\{`\$\{index \+ 1\} of \$\{count\}`\}/);
+    expect(CAR).toMatch(/aria-current=/);
+  });
+
+  it('scrolls the track, never the page, when advancing', () => {
+    // scrollIntoView would drag the whole page to the section; the track must
+    // scroll internally instead — driven by scrollLeft, not the element API.
+    expect(CAR).toMatch(/track\.scrollLeft = /);
+    expect(CAR).not.toMatch(/scrollIntoView/);
+  });
+
+  it('drives its own scroll tween instead of trusting behavior:smooth', () => {
+    // Some engines quietly no-op `behavior: 'smooth'`, and CSS scroll-snap can
+    // cancel it mid-flight, so navigation would silently do nothing. A manual
+    // rAF tween moves regardless — and jumps instantly under reduced motion.
+    expect(CAR).toMatch(/requestAnimationFrame/);
+    expect(CAR).toMatch(/cancelAnimationFrame/);
+    expect(CAR).toMatch(/if \(prefersReducedMotion\(\)\) \{\s*track\.scrollLeft = target/);
+  });
+
+  it('steps from the centred slide, not lagging React state', () => {
+    // Auto-advance and the arrows must read scroll position, or they desync and
+    // an arrow press can land back on the slide you are already viewing.
+    expect(CAR).toMatch(/currentIndex/);
+    expect(CAR).toMatch(/const step =/);
+  });
+
+  it('is built on native scroll-snap so it works without JS', () => {
+    expect(CSS).toMatch(/\.ng-reviews-track \{[\s\S]*scroll-snap-type: x proximity/);
+    expect(CSS).toMatch(/\.ng-reviews-slide \{[\s\S]*scroll-snap-align: center/);
+  });
+});

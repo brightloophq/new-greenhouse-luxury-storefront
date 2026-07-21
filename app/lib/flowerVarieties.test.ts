@@ -6,12 +6,33 @@ import {
   FLOWER_VARIETIES,
   loadFlowerVarieties,
   varietyPath,
+  varietyNote,
+  varietyFacetAlias,
+  VARIETY_AVAILABILITY_QUERY,
 } from './flowerVarieties';
 
 const ROOT = join(__dirname, '..', '..');
 const read = (p: string) => readFileSync(join(ROOT, p), 'utf8');
 
-function storefront(handles: {handle: string; empty?: boolean}[]) {
+/**
+ * @param handles      collection availability, for handle-backed varieties
+ * @param facetsInStock tags whose one-product probe should return a hit; omit to
+ *                      default every facet variety to "in stock"
+ */
+function storefront(
+  handles: {handle: string; empty?: boolean}[],
+  facetsInStock?: string[],
+) {
+  const facetVarieties = FLOWER_VARIETIES.filter((v) => v.facet);
+  const inStock = new Set(
+    facetsInStock ?? facetVarieties.map((v) => v.facet!.tag),
+  );
+  const probes: Record<string, {nodes: {id: string}[]}> = {};
+  for (const v of facetVarieties) {
+    probes[`facet_${v.facet!.tag}`] = {
+      nodes: inStock.has(v.facet!.tag) ? [{id: 'gid://p'}] : [],
+    };
+  }
   return {
     query: vi.fn().mockResolvedValue({
       collections: {
@@ -20,19 +41,59 @@ function storefront(handles: {handle: string; empty?: boolean}[]) {
           products: {nodes: h.empty ? [] : [{id: 'gid://1'}]},
         })),
       },
+      ...probes,
     }),
   };
 }
 
-const ALL_STOCKED = FLOWER_VARIETIES.map((v) => ({handle: v.handle}));
+// Handle-backed varieties only — facet varieties are resolved by their probes.
+const ALL_STOCKED = FLOWER_VARIETIES.filter((v) => !v.facet).map((v) => ({
+  handle: v.handle,
+}));
 
 describe('flower variety data', () => {
-  it('routes every card to a public collection page, never to wholesale', () => {
+  it('routes every card to a public page, never to an auth-gated one', () => {
     for (const variety of FLOWER_VARIETIES) {
-      expect(varietyPath(variety)).toBe(`/collections/${variety.handle}`);
-      // Wholesale stock is auth-gated — a homepage card must never land a guest
-      // on a sign-in wall.
-      expect(variety.handle).not.toMatch(/wholesale|bulk/);
+      const path = varietyPath(variety);
+      if (variety.facet) {
+        // Tag-backed: lands on a public FLOWER_HUB, pre-filtered by tag. The
+        // hub (bulk-flowers) is publicly readable — it is NOT one of the
+        // auth-gated `wholesale-*` collections.
+        expect(path).toBe(
+          `/collections/${variety.facet.collection}?flower=${variety.facet.tag}`,
+        );
+        expect(variety.facet.collection).not.toMatch(/^wholesale/);
+      } else {
+        expect(path).toBe(`/collections/${variety.handle}`);
+        expect(variety.handle).not.toMatch(/wholesale/);
+      }
+    }
+  });
+
+  it('flags tag-backed varieties as bulk, so pricing is never a surprise', () => {
+    // A shopper following a facet card lands on by-the-box pricing; the card
+    // must say so up front. Handle-backed varieties carry no note.
+    for (const variety of FLOWER_VARIETIES) {
+      expect(varietyNote(variety)).toBe(variety.facet ? 'By the box' : null);
+    }
+  });
+
+  it('gives every facet variety a matching probe alias in the query', () => {
+    // The availability query resolves facet cards by a per-tag alias; a facet
+    // whose alias is missing from the document would silently never light up.
+    for (const variety of FLOWER_VARIETIES) {
+      const alias = varietyFacetAlias(variety);
+      if (variety.facet) {
+        expect(alias).toBe(`facet_${variety.facet.tag}`);
+        expect(VARIETY_AVAILABILITY_QUERY).toContain(`${alias}: products(`);
+        // Probes ask "does anything exist", never fetch a catalogue for local
+        // filtering.
+        expect(VARIETY_AVAILABILITY_QUERY).toContain(
+          `tag:'flower:${variety.facet.tag}' AND available_for_sale:true`,
+        );
+      } else {
+        expect(alias).toBeNull();
+      }
     }
   });
 
@@ -154,9 +215,34 @@ describe('loadFlowerVarieties', () => {
 
   it('drops a variety whose collection is MISSING entirely', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const result = await loadFlowerVarieties(storefront([{handle: 'orchids'}]));
+    // Only orchids stocked, and no facet probe returns a hit.
+    const result = await loadFlowerVarieties(
+      storefront([{handle: 'orchids'}], []),
+    );
 
     expect(result.map((v) => v.handle)).toEqual(['orchids']);
+    warn.mockRestore();
+  });
+
+  it('lights up a facet variety on its tag probe, not a collection', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // No handle-backed collections, but the tulips tag probe returns a hit —
+    // so tulips (and only tulips) should appear.
+    const result = await loadFlowerVarieties(storefront([], ['tulips']));
+
+    expect(result.map((v) => v.handle)).toEqual(['tulips']);
+    warn.mockRestore();
+  });
+
+  it('drops a facet variety whose tag has sold out', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // Every handle collection stocked, but the carnations tag probe is empty.
+    const result = await loadFlowerVarieties(storefront(ALL_STOCKED, ['tulips']));
+
+    const handles = result.map((v) => v.handle);
+    expect(handles).toContain('tulips');
+    expect(handles).not.toContain('carnations');
+    expect(handles).not.toContain('hydrangea');
     warn.mockRestore();
   });
 

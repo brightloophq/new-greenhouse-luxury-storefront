@@ -37,14 +37,16 @@ describe('homepage', () => {
     expect(titles).toEqual(['Wholesale', 'Retail', 'Arrangements', 'Supplies']);
   });
 
-  it('renders exactly the three approved sections, in order', () => {
-    // Hero → four shopping paths → variety discovery. Anything else appearing
-    // here is a regression, not an addition.
+  it('renders exactly the four approved sections, in order', () => {
+    // Hero → four shopping paths → variety discovery → reviews. Anything else
+    // appearing here is a regression, not an addition. Reviews were added last
+    // and deliberately sit at the foot, after the reader has seen the range.
     const components = [...HOMEPAGE.matchAll(/<([A-Z]\w+)/g)].map((m) => m[1]);
     expect(components).toEqual([
       'BrandHero',
       'ExperienceChooser',
       'ShopByVariety',
+      'ReviewsCarousel',
     ]);
   });
 
@@ -52,8 +54,12 @@ describe('homepage', () => {
     expect(HOMEPAGE).not.toMatch(/heritage|four decades|since 1984|our story/i);
   });
 
-  it('has no testimonials', () => {
-    expect(HOMEPAGE).not.toMatch(/testimonial|review|what .*clients? say/i);
+  it('shows reviews ONLY through the dedicated carousel component', () => {
+    // Reviews are allowed now — but only as the ReviewsCarousel island, never
+    // as inlined testimonial markup that would drift from the shared source.
+    const inlineQuote = /<blockquote|testimonial-grid|<figure[^>]*>[\s\S]*&ldquo;/i;
+    expect(HOMEPAGE).not.toMatch(inlineQuote);
+    expect(HOMEPAGE).toMatch(/<ReviewsCarousel/);
   });
 
   it('has no newsletter or trade-list capture', () => {

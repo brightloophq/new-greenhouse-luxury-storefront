@@ -99,6 +99,10 @@ export type VarietyAvailabilityQuery = {
       }
     >;
   };
+  facet_hydrangea: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+  facet_tulips: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+  facet_tropicals: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
+  facet_carnations: {nodes: Array<Pick<StorefrontAPI.Product, 'id'>>};
 };
 
 export type MoneyFragment = Pick<
@@ -1385,7 +1389,7 @@ interface GeneratedQueryTypes {
     return: CatalogueCollectionQuery;
     variables: CatalogueCollectionQueryVariables;
   };
-  '#graphql\n  query VarietyAvailability($first: Int!, $country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    collections(first: $first) {\n      nodes {\n        handle\n        products(first: 1) {\n          nodes {\n            id\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query VarietyAvailability($first: Int!, $country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    collections(first: $first) {\n      nodes {\n        handle\n        products(first: 1) {\n          nodes {\n            id\n          }\n        }\n      }\n    }\n    facet_hydrangea: products(first: 1, query: "tag:\'flower:hydrangea\' AND available_for_sale:true") {\n      nodes { id }\n    }\n    facet_tulips: products(first: 1, query: "tag:\'flower:tulips\' AND available_for_sale:true") {\n      nodes { id }\n    }\n    facet_tropicals: products(first: 1, query: "tag:\'flower:tropicals\' AND available_for_sale:true") {\n      nodes { id }\n    }\n    facet_carnations: products(first: 1, query: "tag:\'flower:carnations\' AND available_for_sale:true") {\n      nodes { id }\n    }\n  }\n': {
     return: VarietyAvailabilityQuery;
     variables: VarietyAvailabilityQueryVariables;
   };

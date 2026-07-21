@@ -100,6 +100,69 @@ export interface HomeContent {
 
 const SLOGAN = 'Not just flowers, whatever it takes.';
 
+/**
+ * Homepage reviews carousel.
+ *
+ * These six are the brand-approved testimonials already used on the Deluxe and
+ * Classic homepages and the /reviews route — reused here, NOT newly written, so
+ * nothing on the carousel is a fabricated review. The unified homepage serves
+ * gifting and trade alike, so it draws three of each voice.
+ *
+ * The rating badge is a REAL aggregate: 4.5 from 44 Google reviews, linking to
+ * the live Google listing. Do not raise the score or the count without a
+ * matching change on Google — the badge links straight to the source.
+ */
+export interface HomeReview {
+  quote: string;
+  name: string;
+  context: string;
+}
+
+export const HOMEPAGE_REVIEW_RATING = {
+  score: '4.5',
+  count: 44,
+  href: 'https://maps.app.goo.gl/hdR7bXAwxgyLiZ1c7',
+} as const;
+
+export const HOMEPAGE_REVIEWS: HomeReview[] = [
+  {
+    quote:
+      'Every arrangement arrived with the polish of a luxury gift and the warmth of something personal.',
+    name: 'Marsha L.',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'The bouquet I sent for our anniversary was breathtaking — exactly the statement I hoped for.',
+    name: 'Danielle R.',
+    context: 'Anniversary gift',
+  },
+  {
+    quote:
+      'Consistent quality by the box — our studio orders every week and it has never let us down.',
+    name: 'Studio florist',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'Beautifully presented and delivered right on time. They are my go-to for every celebration.',
+    name: 'Repeat client',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'Bulk greenery and fillers always arrive fresh and graded. It saves my team hours on every event.',
+    name: 'Event planner',
+    context: 'St. Andrew',
+  },
+  {
+    quote:
+      'Our standing order for the lobby is effortless and always beautiful. Reordering is simple.',
+    name: 'Hospitality buyer',
+    context: 'Kingston',
+  },
+];
+
 /** Luxury arrangement photography (Deluxe only), served from /public. */
 const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
 

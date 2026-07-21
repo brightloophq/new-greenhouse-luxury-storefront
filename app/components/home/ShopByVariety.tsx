@@ -1,10 +1,12 @@
 import {useRef} from 'react';
 import {Link} from 'react-router';
 import {useReveal} from '~/lib/useReveal';
+import {useVarietyParallax} from '~/lib/useVarietyParallax';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {
   varietyPath,
+  varietyNote,
   type FlowerVariety,
   type VarietySpan,
 } from '~/lib/flowerVarieties';
@@ -70,6 +72,7 @@ function spansFor(count: number): VarietySpan[] {
 export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
   const scope = useRef<HTMLElement>(null);
   useReveal(scope, {enabled: varieties.length > 0});
+  useVarietyParallax(scope, {enabled: varieties.length > 0});
 
   if (!varieties.length) return null;
 
@@ -101,6 +104,7 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
               key={variety.handle}
               className={`ng-variety-cell ng-variety-cell--${spans[index]}`}
               data-reveal-item
+              data-parallax-item
             >
               <Link
                 className="ng-variety-card"
@@ -108,22 +112,34 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
                 prefetch="intent"
               >
                 <span className="ng-variety-card-media">
-                  <img
-                    src={media.src}
-                    srcSet={media.srcSet}
-                    sizes="(min-width: 64em) 34vw, (min-width: 45em) 48vw, 82vw"
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    width={800}
-                    height={1000}
-                  />
+                  {/* The parallax hook moves this wrapper's yPercent; hover
+                      scales the <img> inside it. Two elements, two transforms,
+                      so scroll drift and hover zoom never overwrite each other. */}
+                  <span className="ng-variety-card-parallax" data-parallax-media>
+                    <img
+                      src={media.src}
+                      srcSet={media.srcSet}
+                      sizes="(min-width: 64em) 34vw, (min-width: 45em) 48vw, 82vw"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      width={800}
+                      height={1000}
+                    />
+                  </span>
                 </span>
                 <span className="ng-variety-card-foot">
                   <span className="ng-variety-card-no" aria-hidden="true">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-                  <span className="ng-variety-card-name">{variety.label}</span>
+                  <span className="ng-variety-card-label">
+                    <span className="ng-variety-card-name">{variety.label}</span>
+                    {varietyNote(variety) ? (
+                      <span className="ng-variety-card-note">
+                        {varietyNote(variety)}
+                      </span>
+                    ) : null}
+                  </span>
                   <span className="ng-variety-card-arrow" aria-hidden="true">
                     →
                   </span>

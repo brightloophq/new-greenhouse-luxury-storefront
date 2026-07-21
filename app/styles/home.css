@@ -1001,6 +1001,20 @@ button.ng-chooser-card {
 .ng-variety-cell--wide .ng-variety-card-media {
   aspect-ratio: 3 / 1;
 }
+/* Over-tall so the scroll parallax has headroom: the wrapper drifts ±7% within
+   the frame and must never expose a gap at the top or bottom edge. Sized 100%
+   when JS is absent (no drift), grown to 116% and re-centred only once the
+   parallax hook is active, so a no-JS render still fills the frame exactly. */
+.ng-variety-card-parallax {
+  display: block;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+.ng-variety:has([data-parallax-media][style]) .ng-variety-card-parallax {
+  height: 120%;
+  margin-top: -10%;
+}
 .ng-variety-card-media img {
   width: 100%;
   height: 100%;
@@ -1029,11 +1043,30 @@ button.ng-chooser-card {
   color: var(--ng-green-faint);
   font-variant-numeric: tabular-nums;
 }
+.ng-variety-card-label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.7rem;
+  min-width: 0;
+}
 .ng-variety-card-name {
   font-family: var(--ng-font-heading);
   font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.6rem);
   letter-spacing: 0.01em;
   color: var(--ng-green-deep);
+}
+/* Bulk-pricing flag on tag-backed varieties — a quiet capsule, not a shout. */
+.ng-variety-card-note {
+  align-self: center;
+  padding: 0.18em 0.6em;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 999px;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  white-space: nowrap;
 }
 .ng-variety-card-arrow {
   font-size: 0.95rem;
@@ -1086,6 +1119,204 @@ button.ng-chooser-card {
 @media (prefers-reduced-motion: reduce) {
   .ng-variety-card-media img,
   .ng-variety-card-arrow {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Reviews · carousel
+   Native scroll-snap track — the browser owns the motion. JS layers prev/next,
+   dots, keyboard and a pausable auto-advance on top of markup that already
+   scrolls, so a non-hydrated render is still a usable slider.
+   ========================================================================== */
+.ng-reviews {
+  position: relative;
+  padding: clamp(3.5rem, 7vw, 6rem) 0 clamp(4rem, 8vw, 7rem);
+  background: var(--ng-ground-warm);
+  overflow-x: clip;
+}
+.ng-reviews-head {
+  max-width: 78rem;
+  margin: 0 auto clamp(2rem, 4vw, 3.25rem);
+  padding-inline: clamp(1.5rem, 5vw, 4rem);
+  text-align: center;
+}
+.ng-reviews-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-reviews-eyebrow::before {
+  content: '';
+  display: block;
+  width: 2.25rem;
+  height: 1px;
+  margin: 0 auto 0.85rem;
+  background: var(--ng-green-line);
+}
+.ng-reviews-title {
+  margin: 0 0 1.1rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  letter-spacing: 0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-reviews-rating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  color: var(--ng-green-muted);
+  text-decoration: none;
+}
+.ng-reviews-rating:hover {
+  color: var(--ng-green-deep);
+}
+.ng-reviews-stars {
+  color: var(--ng-gold);
+  letter-spacing: 0.1em;
+}
+.ng-reviews-rating strong {
+  color: var(--ng-green-deep);
+  font-weight: 600;
+}
+
+.ng-reviews-viewport {
+  position: relative;
+}
+.ng-reviews-track {
+  display: flex;
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+  margin: 0;
+  /* Side padding centres the first and last slide under center snap-align:
+     half the leftover width beside a full 44rem slide, floored so narrow
+     viewports keep a small gutter instead of a negative inset. */
+  padding-block: 0.5rem;
+  padding-inline: max(1.5rem, calc((100% - 44rem) / 2));
+  list-style: none;
+  overflow-x: auto;
+  /* proximity, NOT mandatory: mandatory snap re-targets every frame and freezes
+     a programmatic smooth scrollTo mid-animation, so the arrows and dots would
+     stick after the first press. proximity still snaps a free drag to the
+     nearest slide but leaves button-driven smooth scrolls alone. */
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ng-reviews-track::-webkit-scrollbar {
+  display: none;
+}
+.ng-reviews-slide {
+  flex: 0 0 min(44rem, 88vw);
+  scroll-snap-align: center;
+}
+.ng-review-card {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 4vw, 3.5rem);
+  background: var(--ng-ground-panel, #fff);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  text-align: center;
+}
+.ng-review-mark {
+  display: block;
+  font-family: var(--ng-font-heading);
+  font-size: 3.5rem;
+  line-height: 0.6;
+  color: var(--ng-green-faint);
+}
+.ng-review-quote {
+  margin: 1rem 0 1.75rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.42;
+  color: var(--ng-green-deep);
+}
+.ng-review-by {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.ng-review-name {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ng-green-deep);
+}
+.ng-review-context {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+
+.ng-reviews-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+.ng-reviews-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ng-green-deep);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.ng-reviews-arrow:hover {
+  background: var(--ng-green);
+  border-color: var(--ng-green);
+  color: var(--ng-on-green, #fff);
+}
+.ng-reviews-arrow:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+.ng-reviews-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-reviews-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--ng-green-line);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.ng-reviews-dot.is-active {
+  background: var(--ng-green);
+  transform: scale(1.35);
+}
+.ng-reviews-dot:focus-visible {
+  outline: 2px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-reviews-track {
+    scroll-behavior: auto;
+  }
+  .ng-reviews-arrow,
+  .ng-reviews-dot {
     transition: none;
   }
 }
