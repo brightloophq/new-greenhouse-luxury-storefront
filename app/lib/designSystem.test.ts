@@ -188,3 +188,38 @@ describe('the Glasshouse signature system', () => {
     expect(pageTitle).toMatch(/--ng-font-heading/);
   });
 });
+
+/**
+ * The footer — the closing room.
+ *
+ * A compact editorial footer in the Glasshouse register, not the old
+ * black-and-gold dark-luxury block. These lock the two things that regressed
+ * before: the duplicate padding that inflated it, and gold painted across every
+ * accent instead of rationed to one warm hover.
+ */
+describe('the greenhouse footer', () => {
+  const css = read('app/styles/shell/footer.css');
+
+  it('carries no duplicate block padding on the inner wrapper', () => {
+    // The bloat was an editorial 112px inner pad stacked on the root pad.
+    const inner = css.slice(css.indexOf('.ng-shell-footer-inner {'), css.indexOf('.ng-shell-footer-inner {') + 160);
+    expect(inner).toMatch(/padding-block: 0/);
+    expect(inner).not.toMatch(/--ng-section-editorial/);
+  });
+
+  it('opens with a glazing seam, not a gold border', () => {
+    expect(css).toMatch(/\.ng-shell-footer::before \{/);
+    const root = css.slice(css.indexOf('.ng-shell-footer {'), css.indexOf('.ng-shell-footer::before'));
+    expect(root).not.toMatch(/luxury-gold/);
+  });
+
+  it('rations gold to hover only — column titles are on-green, not gold', () => {
+    const title = css.slice(css.indexOf('.ng-shell-footer-col-title {'), css.indexOf('.ng-shell-footer-col-title {') + 220);
+    expect(title).not.toMatch(/luxury-gold|--ng-gold\b/);
+    expect(title).toMatch(/--ng-text-inverse/);
+  });
+
+  it('drops the dead newsletter block entirely', () => {
+    expect(css).not.toMatch(/ng-shell-newsletter/);
+  });
+});
