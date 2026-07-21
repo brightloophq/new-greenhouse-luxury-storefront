@@ -8,8 +8,8 @@ import {
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
-// Disabled — see TODO(masthead-compression) below.
-// import {useMastheadCompression} from '~/lib/useMastheadCompression';
+
+import {useMastheadCompression} from '~/lib/useMastheadCompression';
 import {useCloseOnRouteChange} from '~/lib/useCloseOnRouteChange';
 import {cx, Icon, IconButton} from '~/components/ui';
 import {useExperience} from '~/components/ExperienceProvider';
@@ -42,14 +42,10 @@ const SOCIAL = [
  */
 export function Header({header, isLoggedIn, cart}: HeaderProps) {
   const {shop} = header;
-  const scrolled = useScrolled(80); // drives .is-compressed once the TODO is fixed
+  const scrolled = useScrolled(80);
   const {open} = useAside();
   const ref = useRef<HTMLDivElement>(null);
-  // TODO(masthead-compression): useMastheadCompression(ref, scrolled) throws
-  // "useMastheadCompression is not defined" at runtime despite a correct import
-  // and a clean rebuild, which leaves the header non-interactive. Disabled
-  // rather than shipped broken. The hook and its CSS states are written and
-  // typecheck; the `.is-compressed` styles are inert until this is resolved.
+  useMastheadCompression(ref, scrolled);
 
   return (
     <div
