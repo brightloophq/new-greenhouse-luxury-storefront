@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
+import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {useReveal} from '~/lib/useReveal';
 
 /**
@@ -119,6 +120,8 @@ export function ExperienceChooser() {
           Four ways into the greenhouse
         </h2>
       </div>
+
+      <BotanicalSpine />
 
       <ol className="ng-bays-list">
         {PATHWAYS.map((pathway) => (

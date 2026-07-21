@@ -444,6 +444,45 @@
   text-wrap: balance;
 }
 
+.ng-bays {
+  position: relative;
+}
+
+/* Botanical spine — a decorative stem drawn down the outer margin as the
+   reader scrolls the bays. It lives OUTSIDE the bays' 82rem measure, so it can
+   never overlap text or imagery, and it is removed entirely below the width
+   where that margin exists. */
+.ng-spine {
+  position: absolute;
+  inset-block: clamp(3rem, 6vw, 6rem) 0;
+  inset-inline-start: clamp(1rem, 3vw, 3rem);
+  inline-size: clamp(48px, 5vw, 84px);
+  color: var(--ng-green);
+  /* Present enough to read as a drawn element rather than a smudge, quiet
+     enough that it never competes with the photography. */
+  opacity: 0.45;
+  pointer-events: none;
+}
+.ng-spine-svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* Below this width the page has no outer margin to spare — the bays run edge
+   to edge, so the stem would sit on top of the photographs. */
+@media (max-width: 78em) {
+  .ng-spine {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The stem is drawn by scroll; with motion off it would sit permanently
+     half-drawn, which reads as a rendering fault rather than a flourish. */
+  .ng-spine {
+    display: none;
+  }
+}
+
 .ng-bays-list {
   margin: 0;
   padding: 0;
