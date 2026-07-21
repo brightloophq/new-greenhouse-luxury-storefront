@@ -1,6 +1,12 @@
 import {CONTACT, DELIVERY_CUTOFF} from '~/lib/companyContent';
 
 /**
+ * NOT CURRENTLY RENDERED. Wired into the homepage, then unwired: the band
+ * landed at top:677 — inside the hero/bays region — instead of after the
+ * gallery. `.home--general` places it wrongly and the cause was not found.
+ * The component and its CSS are correct in isolation; only the placement is
+ * unresolved. Re-wire once that is understood.
+ *
  * Service band — the three facts a flower buyer checks before ordering:
  * can it arrive today, where do you deliver, and how do I reach a human.
  *

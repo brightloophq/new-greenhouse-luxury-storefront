@@ -1481,11 +1481,11 @@ button.ng-chooser-card {
   /* `.home--general` sizes its children by content, so a plain block <aside>
      collapsed to 420px and stretched to full viewport height. These make the
      band span the row whichever layout mode the parent is using. */
+  /* Fill the row and size to content. Deliberately NO grid-column span: an
+     earlier attempt used `grid-column: 1 / -1`, which placed the band in the
+     parent's first grid row and painted it on top of the pathway bays. */
   width: 100%;
-  grid-column: 1 / -1;
   align-self: start;
-  /* The parent is a flex column with a min-height, so the LAST child was
-     absorbing the leftover space and stretching to the full viewport. */
   flex: 0 0 auto;
   height: auto;
 

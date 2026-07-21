@@ -3,7 +3,6 @@ import type {Route} from './+types/_index';
 import {BrandHero} from '~/components/home/BrandHero';
 import {ExperienceChooser} from '~/components/home/ExperienceChooser';
 import {ShopByVariety} from '~/components/home/ShopByVariety';
-import {ServiceBand} from '~/components/home/ServiceBand';
 import {loadFlowerVarieties} from '~/lib/flowerVarieties';
 
 /**
@@ -55,7 +54,6 @@ export default function Homepage() {
       <BrandHero />
       <ExperienceChooser />
       <ShopByVariety varieties={varieties} />
-      <ServiceBand />
     </div>
   );
 }

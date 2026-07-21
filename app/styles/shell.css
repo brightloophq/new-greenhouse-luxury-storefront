@@ -31,9 +31,12 @@
   /* Height changes come from the rows; this eases the whole block. */
   transition: box-shadow var(--ng-motion-nav) var(--ng-motion-ease);
 }
+/* Near-opaque, not translucent. At 0.92 the page scrolled visibly through the
+   bar — stray words and flower crops appeared behind the navigation. A sticky
+   masthead has to be a surface, not a filter. */
 .ng-masthead.is-compressed {
-  background: rgb(251 250 245 / 0.92);
-  backdrop-filter: blur(8px);
+  background: rgb(251 250 245 / 0.985);
+  backdrop-filter: blur(10px);
   box-shadow: 0 1px 0 var(--ng-green-line);
 }
 
@@ -108,12 +111,20 @@
 .ng-masthead-account:hover {
   color: var(--ng-green);
 }
-.ng-masthead .ng-icon-button {
+/* EVERY control in the masthead, not just .ng-icon-button. The cart is
+   .ng-shell-cart and was inheriting the dark-shell's near-white ink, which on
+   this cream ground left only the count badge visible. */
+.ng-masthead .ng-icon-button,
+.ng-masthead .ng-shell-cart,
+.ng-masthead button,
+.ng-masthead .ng-shell-cart svg {
   color: var(--ng-green-deep);
+  stroke: currentColor;
   background: none;
   border: 0;
 }
-.ng-masthead .ng-icon-button:hover {
+.ng-masthead .ng-icon-button:hover,
+.ng-masthead .ng-shell-cart:hover {
   color: var(--ng-green);
   background: none;
 }
