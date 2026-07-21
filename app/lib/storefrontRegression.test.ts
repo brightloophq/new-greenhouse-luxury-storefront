@@ -37,11 +37,15 @@ describe('homepage', () => {
     expect(titles).toEqual(['Wholesale', 'Retail', 'Arrangements', 'Supplies']);
   });
 
-  it('renders only the hero and the chooser', () => {
-    // The homepage is deliberately two sections. Anything else that renders
+  it('renders exactly the three approved sections, in order', () => {
+    // Hero → four shopping paths → variety discovery. Anything else appearing
     // here is a regression, not an addition.
     const components = [...HOMEPAGE.matchAll(/<([A-Z]\w+)/g)].map((m) => m[1]);
-    expect(new Set(components)).toEqual(new Set(['BrandHero', 'ExperienceChooser']));
+    expect(components).toEqual([
+      'BrandHero',
+      'ExperienceChooser',
+      'ShopByVariety',
+    ]);
   });
 
   it('has no heritage / four-decades section', () => {
@@ -166,6 +170,28 @@ describe('wholesale entry', () => {
     expect(CHOOSER).toMatch(/WholesaleAuthModal/);
     // The Wholesale card must be a button (opens the modal), never a Link.
     expect(CHOOSER).toMatch(/card\.action === 'wholesale' \?[\s\S]{0,120}<button/);
+  });
+
+  it('returns focus to the element that opened it', () => {
+    const modal = read('app/components/wholesale/WholesaleAuthModal.tsx');
+    expect(modal).toMatch(/openerRef/);
+    // Captured before focus moves into the dialog, restored in cleanup.
+    expect(modal).toMatch(/openerRef\.current = document\.activeElement/);
+    expect(modal).toMatch(/opener\?\.isConnected.*\n?.*opener\.focus\(\)/);
+  });
+
+  it('renders the Wholesale button identically to the anchor cards', () => {
+    // Wholesale is a <button> and the other three are <a>. Without an explicit
+    // reset the button inherits the design system's uppercase button styling,
+    // and Wholesale alone shouts in ALL CAPS across the homepage's main row.
+    const css = read('app/styles/home.css');
+    const rule = css.slice(
+      css.indexOf('.ng-chooser-card {'),
+      css.indexOf('.ng-chooser-card:hover'),
+    );
+    expect(rule).toMatch(/text-transform: none/);
+    expect(rule).toMatch(/font: inherit/);
+    expect(rule).toMatch(/text-align: start/);
   });
 
   it('has no manual approval gate', () => {

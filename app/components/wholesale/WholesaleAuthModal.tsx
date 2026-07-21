@@ -14,6 +14,8 @@ export function WholesaleAuthModal({
   onClose: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  /** The element that opened the dialog — focus must go back to it on close. */
+  const openerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -21,14 +23,23 @@ export function WholesaleAuthModal({
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    // Focus the close control when the dialog opens.
+
+    // Remember who opened us BEFORE moving focus into the dialog, so closing
+    // returns the keyboard user to the Wholesale card rather than dumping them
+    // at the top of the document.
+    openerRef.current = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
+
     // Prevent background scroll while the modal is open.
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
+      // Only restore if focus is still inside the dialog — if the customer has
+      // moved on (e.g. the OAuth hand-off), don't yank it back.
+      const opener = openerRef.current;
+      if (opener?.isConnected) opener.focus();
     };
   }, [open, onClose]);
 

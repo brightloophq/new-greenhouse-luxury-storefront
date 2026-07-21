@@ -154,6 +154,20 @@
   list-style: none;
 }
 .ng-chooser-card {
+  /* Wholesale is a <button> (it opens the auth modal) while the other three are
+     <a>. Without this reset the button inherits the design system's uppercase
+     button styling and Wholesale alone renders in ALL CAPS, breaking the row. */
+  appearance: none;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: start;
+  text-transform: none;
+  letter-spacing: inherit;
+  cursor: pointer;
+
   position: relative;
   display: block;
   overflow: hidden;
@@ -540,6 +554,165 @@ button.ng-chooser-card {
 @media (max-width: 34em) {
   .ng-chooser-grid--three {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------- Shop by Flower Variety -- */
+/* An asymmetric editorial composition, deliberately NOT another four-up tile
+   row — the shopping chooser above already uses that rhythm. Labels sit on the
+   cream ground beneath each plate rather than in a white box over the image. */
+.ng-variety {
+  padding: clamp(3.5rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 7rem);
+  background: #eef2e9;
+}
+.ng-variety-head {
+  max-width: 78rem;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+}
+.ng-variety-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  line-height: 1.05;
+  color: var(--ngh-green-deep, #2f4a37);
+}
+.ng-variety-sub {
+  max-width: 28rem;
+  margin: 0;
+  color: #5a6b58;
+}
+
+/* 12-column editorial grid: tall plate | two stacked | wide plate. */
+.ng-variety-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1rem, 1.6vw, 1.6rem);
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ng-variety-cell--tall {
+  grid-column: span 5;
+  grid-row: span 2;
+}
+.ng-variety-cell--regular {
+  grid-column: span 7;
+}
+.ng-variety-cell--wide {
+  grid-column: span 12;
+}
+.ng-variety-cell {
+  min-width: 0;
+}
+
+/* The hover/focus states are listed explicitly: a global `a:hover` rule in the
+   design system re-applies an underline that would otherwise paint through the
+   variety label and arrow. */
+.ng-variety .ng-variety-card,
+.ng-variety .ng-variety-card:hover,
+.ng-variety .ng-variety-card:focus,
+.ng-variety .ng-variety-card:focus-visible {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.ng-variety-card-media {
+  display: block;
+  flex: 1 1 auto;
+  overflow: hidden;
+  /* Square-ish corners read couture; heavy radii read Shopify. */
+  border-radius: 3px;
+  background: #e4ecdf;
+}
+/* The tall plate spans two rows, so its height is set by the stack beside it —
+   these landscape ratios are chosen so the resulting portrait lands near 2:3
+   rather than stretching into a sliver, and so the whole section stays close to
+   two viewports instead of three. */
+.ng-variety-cell--tall .ng-variety-card-media {
+  aspect-ratio: 4 / 5;
+}
+.ng-variety-cell--regular .ng-variety-card-media {
+  aspect-ratio: 2 / 1;
+}
+.ng-variety-cell--wide .ng-variety-card-media {
+  aspect-ratio: 3 / 1;
+}
+.ng-variety-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-variety-card:hover .ng-variety-card-media img {
+  transform: scale(1.04);
+}
+
+/* Label on the ground, not on the photograph. */
+.ng-variety-card-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.1rem 0;
+  border-top: 1px solid rgb(47 74 55 / 0.16);
+  margin-top: 0.85rem;
+}
+.ng-variety-card-name {
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.35rem);
+  letter-spacing: 0.01em;
+  color: var(--ngh-green-deep, #2f4a37);
+}
+.ng-variety-card-arrow {
+  font-size: 0.95rem;
+  color: var(--ngh-green, #4d6a50);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-variety-card:hover .ng-variety-card-arrow {
+  transform: translateX(5px);
+}
+.ng-variety-card:hover .ng-variety-card-name {
+  color: #24382a;
+}
+.ng-variety-card:focus-visible {
+  outline: 3px solid var(--ngh-gold, #c8a96a);
+  outline-offset: 4px;
+}
+
+@media (max-width: 64em) {
+  /* Tablet — two equal columns, composition flattens. */
+  .ng-variety-cell--tall,
+  .ng-variety-cell--regular {
+    grid-column: span 6;
+    grid-row: auto;
+  }
+  .ng-variety-cell--tall .ng-variety-card-media,
+  .ng-variety-cell--regular .ng-variety-card-media {
+    aspect-ratio: 4 / 5;
+  }
+  .ng-variety-cell--wide .ng-variety-card-media {
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (max-width: 45em) {
+  .ng-variety-cell--tall,
+  .ng-variety-cell--regular,
+  .ng-variety-cell--wide {
+    grid-column: span 12;
+  }
+  .ng-variety-cell--tall .ng-variety-card-media,
+  .ng-variety-cell--regular .ng-variety-card-media,
+  .ng-variety-cell--wide .ng-variety-card-media {
+    aspect-ratio: 3 / 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-variety-card-media img,
+  .ng-variety-card-arrow {
+    transition: none;
   }
 }
 
