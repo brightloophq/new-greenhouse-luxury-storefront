@@ -8,6 +8,8 @@ import {
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
+// Disabled — see TODO(masthead-compression) below.
+// import {useMastheadCompression} from '~/lib/useMastheadCompression';
 import {useCloseOnRouteChange} from '~/lib/useCloseOnRouteChange';
 import {cx, Icon, IconButton} from '~/components/ui';
 import {useExperience} from '~/components/ExperienceProvider';
@@ -20,48 +22,91 @@ interface HeaderProps {
   publicStoreDomain: string;
 }
 
+const SOCIAL = [
+  {name: 'instagram' as const, label: 'Instagram', href: 'https://www.instagram.com/newgreenhouse'},
+  {name: 'facebook' as const, label: 'Facebook', href: 'https://www.facebook.com/TheNewGreenhouse/'},
+  {name: 'whatsapp' as const, label: 'WhatsApp', href: 'https://wa.me/18768438964'},
+];
+
+/**
+ * Editorial masthead — two levels, not a navbar.
+ *
+ *   Row 1  socials · WORDMARK · search / account / cart
+ *   Row 2  centred primary navigation, hairline rule beneath
+ *
+ * The wordmark is the anchor: large and centred, the way an apothecary or
+ * magazine masthead works, rather than the small-logo-plus-menu bar every
+ * Shopify theme ships. On scroll the two rows compress into one (see
+ * `useMastheadCompression`) so the masthead earns its height only at the top
+ * of the page.
+ */
 export function Header({header, isLoggedIn, cart}: HeaderProps) {
   const {shop} = header;
-  const scrolled = useScrolled(24);
+  const scrolled = useScrolled(80); // drives .is-compressed once the TODO is fixed
   const {open} = useAside();
+  const ref = useRef<HTMLDivElement>(null);
+  // TODO(masthead-compression): useMastheadCompression(ref, scrolled) throws
+  // "useMastheadCompression is not defined" at runtime despite a correct import
+  // and a clean rebuild, which leaves the header non-interactive. Disabled
+  // rather than shipped broken. The hook and its CSS states are written and
+  // typecheck; the `.is-compressed` styles are inert until this is resolved.
 
   return (
-    <div className={cx('ng-shell-header', scrolled && 'is-solid')}>
-      <header className="ng-shell-nav">
-        <div className="ng-shell-nav-inner">
-          <div className="ng-shell-nav-left">
-            <IconButton
-              className="ng-shell-burger"
-              aria-label="Open menu"
-              onClick={() => open('mobile')}
-            >
-              <Icon name="menu" />
-            </IconButton>
-            <DesktopNav />
-          </div>
+    <div
+      ref={ref}
+      className={cx('ng-masthead', scrolled && 'is-compressed')}
+      data-compressed={scrolled ? 'true' : 'false'}
+    >
+      <header className="ng-masthead-top">
+        <ul className="ng-masthead-social" aria-label="Social media">
+          {SOCIAL.map((social) => (
+            <li key={social.name}>
+              <a
+                className="ng-masthead-social-link"
+                href={social.href}
+                aria-label={social.label}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Icon name={social.name} size="sm" />
+              </a>
+            </li>
+          ))}
+        </ul>
 
-          <NavLink className="ng-shell-logo" prefetch="intent" to="/" end>
-            <span className="ng-shell-logo-mark">{shop.name || 'The New Greenhouse'}</span>
+        <IconButton
+          className="ng-masthead-burger"
+          aria-label="Open menu"
+          onClick={() => open('mobile')}
+        >
+          <Icon name="menu" />
+        </IconButton>
+
+        <NavLink className="ng-masthead-wordmark" prefetch="intent" to="/" end>
+          {shop.name || 'The New Greenhouse'}
+        </NavLink>
+
+        <div className="ng-masthead-actions">
+          <IconButton aria-label="Search" onClick={() => open('search')}>
+            <Icon name="search" />
+          </IconButton>
+          <NavLink className="ng-masthead-account" prefetch="intent" to="/account">
+            <Icon name="user" />
+            <span className="ng-masthead-account-label">
+              <Suspense fallback="Sign in">
+                <Await resolve={isLoggedIn} errorElement="Sign in">
+                  {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
+                </Await>
+              </Suspense>
+            </span>
           </NavLink>
-
-          <div className="ng-shell-actions">
-            <IconButton aria-label="Search" onClick={() => open('search')}>
-              <Icon name="search" />
-            </IconButton>
-            <NavLink className="ng-shell-action-account" prefetch="intent" to="/account">
-              <Icon name="user" />
-              <span className="ng-shell-action-label">
-                <Suspense fallback="Sign in">
-                  <Await resolve={isLoggedIn} errorElement="Sign in">
-                    {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
-                  </Await>
-                </Suspense>
-              </span>
-            </NavLink>
-            <CartToggle cart={cart} />
-          </div>
+          <CartToggle cart={cart} />
         </div>
       </header>
+
+      <div className="ng-masthead-navrow">
+        <DesktopNav />
+      </div>
     </div>
   );
 }

@@ -13,7 +13,183 @@
 }
 
 /* --------------------------------------------------------------------------
-   Header + announcement
+   Masthead — two-level editorial header (Concept A · The Glasshouse)
+
+   Row 1  socials · WORDMARK · search / account / cart      84px → 56px
+   Row 2  centred primary navigation                        48px (never hidden)
+
+   A cream ground with a deep-green wordmark, hairline rules and no container
+   box. On scroll the TOP row compresses (wordmark scales, socials leave) while
+   the nav row stays put, so navigation is reachable in both states.
+   -------------------------------------------------------------------------- */
+.ng-masthead {
+  position: sticky;
+  top: 0;
+  z-index: var(--ng-z-sticky);
+  background: var(--ng-ground-panel);
+  border-bottom: 1px solid var(--ng-green-line);
+  /* Height changes come from the rows; this eases the whole block. */
+  transition: box-shadow var(--ng-motion-nav) var(--ng-motion-ease);
+}
+.ng-masthead.is-compressed {
+  background: rgb(251 250 245 / 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 0 var(--ng-green-line);
+}
+
+/* ---- Row 1 --------------------------------------------------------------- */
+.ng-masthead-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--ng-space-4);
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: var(--ng-space-4) var(--ng-space-6);
+  transition: padding var(--ng-motion-nav) var(--ng-motion-ease);
+}
+.ng-masthead.is-compressed .ng-masthead-top {
+  padding-block: var(--ng-space-2);
+}
+
+.ng-masthead-social {
+  display: flex;
+  align-items: center;
+  gap: var(--ng-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-masthead-social-link {
+  display: inline-flex;
+  color: var(--ng-green);
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-masthead-social-link:hover {
+  color: var(--ng-green-deep);
+}
+
+/* The wordmark is the anchor: large, centred, deep green. */
+.ng-masthead-wordmark {
+  justify-self: center;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.6rem, 1rem + 1.9vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  color: var(--ng-green-deep);
+  /* GSAP animates scale; the origin keeps it centred as it shrinks. */
+  transform-origin: center center;
+}
+.ng-masthead-wordmark:hover {
+  color: var(--ng-green-pressed);
+}
+
+.ng-masthead-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ng-space-3);
+}
+.ng-masthead-account {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ng-space-2);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ng-green-deep);
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-masthead-account:hover {
+  color: var(--ng-green);
+}
+.ng-masthead .ng-icon-button {
+  color: var(--ng-green-deep);
+  background: none;
+  border: 0;
+}
+.ng-masthead .ng-icon-button:hover {
+  color: var(--ng-green);
+  background: none;
+}
+/* Burger is mobile-only; the desktop nav lives in row 2. */
+.ng-masthead-burger {
+  display: none;
+}
+
+/* ---- Row 2 — navigation -------------------------------------------------- */
+.ng-masthead-navrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Target 48px — the brief's 42–54px band. The inner nav list carries its own
+     padding for the shell header, so it is zeroed here and the row owns the
+     height instead. */
+  min-height: 3rem;
+  border-top: 1px solid var(--ng-green-line);
+  padding: 0 var(--ng-space-6);
+  transition: min-height var(--ng-motion-nav) var(--ng-motion-ease);
+}
+.ng-masthead-navrow .ng-shell-primary,
+.ng-masthead-navrow .ng-shell-primary-list {
+  padding-block: 0;
+  margin-block: 0;
+}
+.ng-masthead.is-compressed .ng-masthead-navrow {
+  min-height: 2.5rem;
+}
+
+/* Editorial nav typography — wide tracking, small caps, green ink. */
+.ng-masthead-navrow .ng-shell-primary-list {
+  gap: clamp(1.5rem, 2.4vw, 3rem);
+}
+.ng-masthead-navrow a,
+.ng-masthead-navrow button {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green-deep);
+}
+
+/* ---- Responsive ---------------------------------------------------------- */
+@media (max-width: 68.75em) {
+  /* Below the desktop nav breakpoint the second row has nothing to show, so
+     the masthead becomes a single compact row with a burger. */
+  .ng-masthead-top {
+    grid-template-columns: auto 1fr auto;
+    padding: var(--ng-space-3) var(--ng-space-4);
+  }
+  .ng-masthead-social {
+    display: none;
+  }
+  .ng-masthead-burger {
+    display: inline-flex;
+  }
+  .ng-masthead-navrow {
+    display: none;
+  }
+  .ng-masthead-account-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-masthead,
+  .ng-masthead-top,
+  .ng-masthead-navrow,
+  .ng-masthead-social-link,
+  .ng-masthead-account {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Legacy header + announcement (retained for non-homepage shells)
    -------------------------------------------------------------------------- */
 .ng-shell-header {
   position: sticky;
