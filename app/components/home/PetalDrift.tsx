@@ -18,7 +18,15 @@ import {prefersReducedMotion} from '~/lib/motion';
  *   · reduced motion    → never starts, canvas never mounts work
  * and the loop is cancelled on unmount, so nothing survives a route change.
  */
-export function PetalDrift({count = 18}: {count?: number}) {
+export function PetalDrift({density = 16}: {
+  /**
+   * Petals per 1000px of section height, NOT a fixed total — the bays and the
+   * gallery are very different heights, and a fixed count would leave the
+   * taller one visibly emptier. Capped so an unusually long section cannot
+   * turn this into a particle storm.
+   */
+  density?: number;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -45,18 +53,23 @@ export function PetalDrift({count = 18}: {count?: number}) {
     // Cap DPR: past 2 the extra pixels are invisible and the fill cost is real.
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    const petals = Array.from({length: count}, () => ({
+    const makePetal = () => ({
       x: Math.random(),
       y: Math.random(),
       r: 4 + Math.random() * 7,
-      speed: 0.12 + Math.random() * 0.28,
+      // Wide speed spread, not a uniform rate: petals falling at visibly
+      // different speeds read as depth, where one shared speed reads as a
+      // texture scrolling past. Units are px/frame.
+      speed: 0.55 + Math.random() * 0.85,
       sway: Math.random() * Math.PI * 2,
-      swaySpeed: 0.003 + Math.random() * 0.006,
+      swaySpeed: 0.006 + Math.random() * 0.01,
       rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.006,
-      alpha: 0.1 + Math.random() * 0.16,
+      rotSpeed: (Math.random() - 0.5) * 0.014,
+      alpha: 0.14 + Math.random() * 0.2,
       colour: palette[Math.floor(Math.random() * palette.length)],
-    }));
+    });
+
+    const petals: ReturnType<typeof makePetal>[] = [];
 
     function resize() {
       const rect = canvas!.getBoundingClientRect();
@@ -65,6 +78,12 @@ export function PetalDrift({count = 18}: {count?: number}) {
       canvas!.width = Math.round(width * dpr);
       canvas!.height = Math.round(height * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Grow or trim toward the density target rather than rebuilding, so a
+      // resize never restarts every petal from a fresh random position.
+      const target = Math.min(140, Math.round((height / 1000) * density));
+      while (petals.length < target) petals.push(makePetal());
+      if (petals.length > target) petals.length = target;
     }
     resize();
 
@@ -84,7 +103,7 @@ export function PetalDrift({count = 18}: {count?: number}) {
           p.y = -0.05;
           p.x = Math.random();
         }
-        const x = p.x * width + Math.sin(p.sway) * 18;
+        const x = p.x * width + Math.sin(p.sway) * 26;
         const y = p.y * height;
 
         ctx!.save();
@@ -125,7 +144,7 @@ export function PetalDrift({count = 18}: {count?: number}) {
       observerResize.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [count]);
+  }, [density]);
 
   return <canvas ref={canvasRef} className="ng-petals" aria-hidden="true" />;
 }

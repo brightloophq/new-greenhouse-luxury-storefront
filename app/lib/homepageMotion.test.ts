@@ -295,3 +295,24 @@ describe('ambient background motion', () => {
     expect(SPINE).toMatch(/ctx\?\.revert\(\)/);
   });
 });
+
+describe('petal density', () => {
+  const PETALS = read('app/components/home/PetalDrift.tsx');
+
+  it('scales petal count to section height instead of a fixed total', () => {
+    // The bays and the gallery differ by well over 1000px; a fixed count would
+    // leave the taller one visibly emptier.
+    expect(PETALS).toMatch(/height \/ 1000\) \* density/);
+  });
+
+  it('caps the count so a long section cannot become a particle storm', () => {
+    expect(PETALS).toMatch(/Math\.min\(140,/);
+  });
+
+  it('does not restart every petal on resize', () => {
+    // Growing/trimming toward the target keeps existing petals mid-fall; a
+    // rebuild would make every resize look like the effect blinked.
+    expect(PETALS).toMatch(/while \(petals\.length < target\) petals\.push/);
+    expect(PETALS).toMatch(/petals\.length = target/);
+  });
+});
