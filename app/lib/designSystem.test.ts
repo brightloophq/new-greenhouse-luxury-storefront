@@ -118,3 +118,73 @@ describe('premium register stays scoped', () => {
     expect(leaks).toEqual([]);
   });
 });
+
+/**
+ * The Glasshouse — the signature system.
+ *
+ * One architectural language shared by every room. These lock the primitives so
+ * a future edit can't quietly drop the frame, the divider, or the flourish that
+ * make the storefront read as a conservatory rather than a shop.
+ */
+describe('the Glasshouse signature system', () => {
+  const ds = read('app/styles/design-system.css');
+
+  it('names the glazing tokens in the token layer', () => {
+    for (const token of [
+      '--ng-glass-line',
+      '--ng-glass-line-strong',
+      '--ng-glass-joint',
+      '--ng-font-size-display-2xl',
+    ]) {
+      expect(ds, token).toContain(`${token}:`);
+    }
+  });
+
+  it('defines the four signature primitives', () => {
+    for (const primitive of [
+      '.ng-glass-corners',
+      '.ng-glaze-rule',
+      '.ng-plate-label',
+      '.ng-editorial-title',
+      '.ng-flourish',
+    ]) {
+      expect(
+        ds.includes(`${primitive} {`) || ds.includes(`${primitive},`),
+        primitive,
+      ).toBe(true);
+    }
+  });
+
+  it('draws the mullion frame with no extra DOM — corners are backgrounds', () => {
+    const rule = ds.slice(
+      ds.indexOf('.ng-glass-corners,'),
+      ds.indexOf('.ng-glaze-rule {'),
+    );
+    // Eight gradients = four corner brackets, positioned at the four corners.
+    expect((rule.match(/linear-gradient/g) ?? []).length).toBeGreaterThanOrEqual(8);
+    expect(rule).toMatch(/background-position:/);
+  });
+
+  it('keeps the flourish botanical — green, never a second colour', () => {
+    const rule = ds.slice(ds.indexOf('.ng-flourish {'), ds.indexOf('.ng-flourish {') + 140);
+    expect(rule).toMatch(/color: var\(--ng-green\)/);
+    expect(rule).toMatch(/font-style: italic/);
+  });
+
+  it('is worn by the homepage sections and the interior pages alike', () => {
+    // Same language across rooms: the entrances, the register, the reviews, the
+    // closing band, and the shared interior-page masthead.
+    const chooser = read('app/components/home/ExperienceChooser.tsx');
+    const variety = read('app/components/home/ShopByVariety.tsx');
+    const reviews = read('app/components/home/ReviewsCarousel.tsx');
+    const conservatory = read('app/components/home/ConservatoryBand.tsx');
+    for (const src of [chooser, variety, reviews, conservatory]) {
+      expect(src).toMatch(/ng-plate-label/);
+      expect(src).toMatch(/ng-flourish/);
+    }
+    // The interior masthead inherits the register through shared CSS.
+    const home = read('app/styles/home.css');
+    const pageTitle = home.slice(home.indexOf('.ng-page-title {'), home.indexOf('.ng-page-title {') + 200);
+    expect(pageTitle).toMatch(/--ng-font-heading/);
+  });
+});

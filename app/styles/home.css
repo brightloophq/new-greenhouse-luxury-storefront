@@ -432,16 +432,25 @@
   text-transform: uppercase;
   color: var(--ng-green);
 }
+/* The glazing seam that opens each section head — the doorway into a new pane
+   of the greenhouse. Shared across every section masthead. */
+.ng-section-seam {
+  margin-bottom: clamp(1.5rem, 3vw, 2.4rem);
+}
 .ng-bays-title {
-  max-width: 20ch;
-  margin: 0;
-  font-family: var(--ng-font-heading);
-  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  max-width: 22ch;
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.4rem, 1.2rem + 4vw, 4.6rem);
   font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: 0.005em;
+  line-height: 0.98;
   color: var(--ng-green-deep);
-  text-wrap: balance;
+}
+.ng-bays-lede {
+  max-width: 42ch;
+  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  color: var(--ng-green-muted);
+  font-size: 1.02rem;
+  line-height: 1.6;
 }
 
 .ng-bays {
@@ -928,11 +937,10 @@ button.ng-chooser-card {
   color: var(--ng-green);
 }
 .ng-variety-title {
-  margin: 0;
-  font-family: var(--ng-font-heading);
-  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.4rem, 1.2rem + 4vw, 4.6rem);
   font-weight: 500;
-  line-height: 1.02;
+  line-height: 0.98;
   color: var(--ng-green-deep);
 }
 
@@ -1157,11 +1165,15 @@ button.ng-chooser-card {
   background: var(--ng-green-line);
 }
 .ng-reviews-title {
-  margin: 0 0 1.1rem;
-  font-family: var(--ng-font-heading);
-  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
-  letter-spacing: 0.01em;
+  margin: 0.9rem 0 1.1rem;
+  font-size: clamp(2.2rem, 1.2rem + 3.4vw, 4rem);
+  font-weight: 500;
+  line-height: 0.98;
   color: var(--ng-green-deep);
+}
+/* The plate label centres with the rest of the reviews masthead. */
+.ng-reviews-head .ng-plate-label {
+  justify-content: center;
 }
 .ng-reviews-rating {
   display: inline-flex;
@@ -1319,6 +1331,67 @@ button.ng-chooser-card {
   .ng-reviews-dot {
     transition: none;
   }
+}
+
+/* ============================================================================
+   The Conservatory · closing invitation
+   The Glasshouse language at full volume: one mullion-framed panel, an
+   oversized flourish statement, one action. The page's final breath.
+   ========================================================================== */
+.ng-conservatory {
+  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(4.5rem, 9vw, 8rem);
+  background: var(--ng-ground-sage);
+}
+.ng-conservatory-frame {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: clamp(2.75rem, 6vw, 5.5rem) clamp(1.75rem, 5vw, 4.5rem);
+  text-align: center;
+  /* The mullion frame breathes — the corner joints want air inside them. */
+}
+.ng-conservatory .ng-plate-label {
+  justify-content: center;
+}
+.ng-conservatory-title {
+  margin: 1rem 0 0;
+  font-size: clamp(2.6rem, 1.4rem + 5vw, 5.75rem);
+  font-weight: 500;
+  line-height: 0.96;
+  color: var(--ng-green-deep);
+}
+.ng-conservatory-lede {
+  max-width: 46ch;
+  margin: clamp(1.4rem, 2.6vw, 2rem) auto 0;
+  color: var(--ng-green-muted);
+  font-size: 1.05rem;
+  line-height: 1.62;
+}
+.ng-conservatory-cta {
+  align-items: center;
+  color: var(--ng-green-deep);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  gap: 0.85rem;
+  letter-spacing: 0.2em;
+  margin-top: clamp(1.8rem, 3.4vw, 2.75rem);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.ng-conservatory-cta-rule {
+  background: var(--ng-green-deep);
+  block-size: 1px;
+  display: inline-block;
+  inline-size: 2.75rem;
+  transition: inline-size var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-conservatory-cta:hover .ng-conservatory-cta-rule {
+  inline-size: 4.25rem;
+}
+.ng-conservatory-cta:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 4px;
 }
 
 /* ---- Catalogue surface (green by default; elevated only on premium) -------- */
@@ -1792,18 +1865,34 @@ button.ng-chooser-card {
   margin: 0 auto;
   padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
 }
+/* Interior-page masthead in the Glasshouse register: the eyebrow carries the
+   plate-label's leading joint, the title takes the architectural scale — so
+   About / Contact / Reviews read as rooms of the same building, not add-ons. */
 .ng-page-eyebrow {
-  margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  align-items: center;
+  display: flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ng-green);
 }
+.ng-page-eyebrow::before {
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  content: "";
+  inline-size: 2.25rem;
+}
 .ng-page-title {
-  margin: 0 0 0.75rem;
-  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
-  font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
+  margin: 0 0 0.9rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2.4rem, 1.2rem + 4vw, 4.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: 0.005em;
   color: var(--ng-green-deep);
+  text-wrap: balance;
 }
 .ng-page-lead { margin: 0 0 2rem; color: var(--ng-green-muted); line-height: 1.6; }
 .ng-page-facts { display: grid; gap: 1rem; margin: 0; }

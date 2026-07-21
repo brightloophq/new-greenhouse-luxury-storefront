@@ -37,16 +37,17 @@ describe('homepage', () => {
     expect(titles).toEqual(['Wholesale', 'Retail', 'Arrangements', 'Supplies']);
   });
 
-  it('renders exactly the four approved sections, in order', () => {
-    // Hero → four shopping paths → variety discovery → reviews. Anything else
-    // appearing here is a regression, not an addition. Reviews were added last
-    // and deliberately sit at the foot, after the reader has seen the range.
+  it('renders exactly the five approved sections, in order', () => {
+    // Hero → entrances → botanical register → reviews → the closing invitation.
+    // Anything else appearing here is a regression, not an addition. The
+    // Conservatory band is the page's final architectural breath.
     const components = [...HOMEPAGE.matchAll(/<([A-Z]\w+)/g)].map((m) => m[1]);
     expect(components).toEqual([
       'BrandHero',
       'ExperienceChooser',
       'ShopByVariety',
       'ReviewsCarousel',
+      'ConservatoryBand',
     ]);
   });
 

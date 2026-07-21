@@ -4,6 +4,7 @@ import {BrandHero} from '~/components/home/BrandHero';
 import {ExperienceChooser} from '~/components/home/ExperienceChooser';
 import {ShopByVariety} from '~/components/home/ShopByVariety';
 import {ReviewsCarousel} from '~/components/home/ReviewsCarousel';
+import {ConservatoryBand} from '~/components/home/ConservatoryBand';
 import {loadFlowerVarieties} from '~/lib/flowerVarieties';
 
 /**
@@ -56,6 +57,7 @@ export default function Homepage() {
       <ExperienceChooser />
       <ShopByVariety varieties={varieties} />
       <ReviewsCarousel />
+      <ConservatoryBand />
     </div>
   );
 }

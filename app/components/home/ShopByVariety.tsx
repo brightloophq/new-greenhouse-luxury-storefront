@@ -2,6 +2,7 @@ import {useRef} from 'react';
 import {Link} from 'react-router';
 import {useReveal} from '~/lib/useReveal';
 import {useVarietyParallax} from '~/lib/useVarietyParallax';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {
@@ -90,9 +91,13 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
       <BotanicalSpine side="end" />
 
       <div className="ng-variety-head" data-reveal-heading>
-        <p className="ng-variety-eyebrow">The collection</p>
-        <h2 id="ng-variety-title" className="ng-variety-title">
-          Shop by Flower Variety
+        <GlasshouseDivider className="ng-section-seam" />
+        <p className="ng-plate-label">
+          <span className="ng-plate-label__index">II</span>
+          The register
+        </p>
+        <h2 id="ng-variety-title" className="ng-variety-title ng-editorial-title">
+          The botanical <em className="ng-flourish">register</em>
         </h2>
       </div>
 

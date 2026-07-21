@@ -5,6 +5,48 @@ invent values. `app/lib/designSystem.test.ts` enforces the rules below.
 
 ---
 
+## 0. The Glasshouse — the signature system
+
+The storefront's identity is **Luxury Botanical Architecture**: not a flower
+shop but a conservatory. One architectural language runs through every room so
+each page reads as another pane of the same building, never another website.
+
+It is deliberately **not** the reference's territory. Wildstem is soft, organic,
+atelier; The New Greenhouse is *structural* — the Victorian glasshouse: thin
+mullion frames, glazing-bar joints, windowpane geometry, botanical line-work
+climbing a structural spine. Structure is what we own.
+
+### The four signature primitives
+
+They live in `app/styles/design-system.css`, so **every** surface inherits them
+— homepage, interior pages, and any room built later — rather than each page
+reinventing a frame.
+
+| Primitive | Class | Role |
+|---|---|---|
+| **Mullion frame** | `.ng-glass-corners`, `.ng-glass-framed` | Corner-bracket joints (an `::after` overlay, no extra DOM) that frame a plate like a glazed panel. `--framed` adds the full hairline border. |
+| **Glazing-bar divider** | `.ng-glaze-rule` (component: `GlasshouseDivider`) | The join where two panes meet — a full-measure hairline broken at centre by a structural node. Replaces `<hr>` and opens each section head. |
+| **Plate label** | `.ng-plate-label` | An engraved section marker: italic index numeral, a rule, then the name in the caption register — like a glasshouse-door plate. |
+| **Editorial display + flourish** | `.ng-editorial-title`, `.ng-flourish` | The oversized architectural moment, with an italic accent carrying one word inside it. The flourish is **always house green** — the emphasis reads botanical, never as a second colour. |
+
+### Tokens
+
+`--ng-glass-line` / `--ng-glass-line-strong` (cooler and quieter than a content
+hairline — this is architecture, not emphasis), `--ng-glass-joint` (bracket arm
+length), `--ng-font-size-display-2xl` (the one true oversized step, above
+`display-xl`, reserved for the largest word on a screen).
+
+### How a room wears it
+
+Every section masthead opens the same way: a glazing seam, a plate label
+(`I` … `IV`), then an editorial title whose accent word is the flourish. The
+homepage runs the full score — entrances → the botanical register → reviews →
+the closing Conservatory band — and the shared interior-page masthead
+(`.ng-page-*`, used by About / Contact / Reviews) inherits the same register
+through CSS, so no interior page falls back to a generic heading.
+
+---
+
 ## 1. Colour
 
 The palette lives in `app/styles/design-system.css`. Nothing else may declare a

@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {useReveal} from '~/lib/useReveal';
 
 /**
@@ -75,7 +76,7 @@ function BayInner({pathway}: {pathway: Pathway}) {
   const media = srcSet(pathway.dir, pathway.img);
   return (
     <>
-      <span className="ng-bay-media">
+      <span className="ng-bay-media ng-glass-corners">
         <img
           src={media.src}
           srcSet={media.srcSet}
@@ -96,7 +97,7 @@ function BayInner({pathway}: {pathway: Pathway}) {
         <span className="ng-bay-blurb">{pathway.blurb}</span>
         <span className="ng-bay-cue" aria-hidden="true">
           <span className="ng-bay-cue-rule" />
-          Explore
+          Enter
         </span>
       </span>
     </>
@@ -116,10 +117,18 @@ export function ExperienceChooser() {
       aria-labelledby="ng-bays-title"
     >
       <div className="ng-bays-head" data-reveal-heading>
-        <p className="ng-bays-eyebrow">Where would you like to begin?</p>
-        <h2 id="ng-bays-title" className="ng-bays-title">
-          Four ways into the greenhouse
+        <GlasshouseDivider className="ng-section-seam" />
+        <p className="ng-plate-label">
+          <span className="ng-plate-label__index">I</span>
+          Where to begin
+        </p>
+        <h2 id="ng-bays-title" className="ng-bays-title ng-editorial-title">
+          Choose your <em className="ng-flourish">entrance</em>
         </h2>
+        <p className="ng-bays-lede">
+          Four doors into the same greenhouse — trade, gift, arrangement and
+          studio. Step through whichever is yours.
+        </p>
       </div>
 
       <PetalDrift />

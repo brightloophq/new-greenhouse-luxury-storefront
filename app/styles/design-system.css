@@ -216,6 +216,29 @@
   --ng-ratio-editorial: 16 / 9;
   --ng-ratio-square: 1;
 
+  /* ------------------------------------------------------------------------
+     THE GLASSHOUSE — the signature system.
+
+     One architectural language shared by every room of the store: thin
+     structural mullion frames with corner joints, glazing-bar dividers,
+     plate labels, and an oversized editorial display step. This is what makes
+     the storefront read as a conservatory rather than a shop — and it lives
+     HERE, in the token layer, so every page inherits it rather than each
+     surface reinventing a frame.
+     ------------------------------------------------------------------------ */
+
+  /* Glazing — the structural line. Cooler and quieter than a content hairline,
+     because it is architecture, not emphasis. */
+  --ng-glass-line: rgb(47 74 55 / 0.20);
+  --ng-glass-line-strong: rgb(47 74 55 / 0.40);
+  --ng-glass-joint: 15px; /* length of a corner-bracket arm */
+  --ng-glass-inset: clamp(0.9rem, 2.2vw, 1.75rem); /* frame breathing room */
+
+  /* Editorial display — the architectural "moment". One true oversized step
+     above the existing display-xl, for the single largest word on a screen. */
+  --ng-font-size-display-2xl: clamp(3.25rem, 9vw, 8rem);
+  --ng-line-architve: 0.94; /* tight, structural leading for display moments */
+
   /* Legacy aliases used by existing components */
   --color-botanical: var(--ng-color-accent-green);
   --color-leaf: #2f6b4f;
@@ -740,6 +763,157 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ==========================================================================
+   THE GLASSHOUSE — signature primitives
+   Architectural framing shared by every room. Purely presentational; each
+   attaches to existing semantic markup and never changes behaviour.
+   ========================================================================== */
+
+/* --- Mullion frame -------------------------------------------------------
+   A thin structural frame with corner joints, like a glazed conservatory
+   panel. The four corner brackets are drawn as eight background gradients on
+   the element itself — no extra DOM, no shadow. `--ng-glass-framed` adds the
+   full hairline border too; the base class is corners-only, which reads
+   lighter and is the default for editorial plates. */
+.ng-glass-corners,
+.ng-glass-framed {
+  position: relative;
+}
+/* The corner brackets ride an ::after overlay, not the element's own
+   background — so a plate that sets its own background (or clips overflow) keeps
+   its frame. pointer-events:none so it never intercepts a click. */
+.ng-glass-corners::after,
+.ng-glass-framed::after {
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  --_t: 1px; /* stroke */
+  --_a: var(--ng-glass-joint); /* arm length */
+  --_c: var(--ng-glass-line-strong);
+  background-image:
+    linear-gradient(var(--_c), var(--_c)), linear-gradient(var(--_c), var(--_c)),
+    linear-gradient(var(--_c), var(--_c)), linear-gradient(var(--_c), var(--_c)),
+    linear-gradient(var(--_c), var(--_c)), linear-gradient(var(--_c), var(--_c)),
+    linear-gradient(var(--_c), var(--_c)), linear-gradient(var(--_c), var(--_c));
+  background-repeat: no-repeat;
+  background-size:
+    var(--_a) var(--_t), var(--_t) var(--_a),
+    var(--_a) var(--_t), var(--_t) var(--_a),
+    var(--_a) var(--_t), var(--_t) var(--_a),
+    var(--_a) var(--_t), var(--_t) var(--_a);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+}
+
+.ng-glass-framed {
+  border: 1px solid var(--ng-glass-line);
+}
+
+/* --- Glazing-bar divider -------------------------------------------------
+   The architectural replacement for <hr>: a full-measure hairline that breaks
+   at centre for a small vertical drop and a node — the join where two panes
+   of glass meet. Structure is one element; the node and its ticks are
+   pseudo-elements. */
+.ng-glaze-rule {
+  align-items: center;
+  color: var(--ng-glass-line-strong);
+  display: flex;
+  gap: 1.15rem;
+  inline-size: 100%;
+}
+.ng-glaze-rule::before,
+.ng-glaze-rule::after {
+  background: var(--ng-glass-line);
+  block-size: 1px;
+  content: "";
+  flex: 1;
+}
+.ng-glaze-node {
+  block-size: 7px;
+  border: 1px solid currentcolor;
+  inline-size: 7px;
+  position: relative;
+  rotate: 45deg;
+}
+/* the vertical drops above and below the node — the mullion continuing */
+.ng-glaze-node::before,
+.ng-glaze-node::after {
+  background: var(--ng-glass-line);
+  content: "";
+  inline-size: 1px;
+  block-size: 0.85rem;
+  left: 50%;
+  position: absolute;
+  rotate: -45deg;
+  translate: -50% 0;
+}
+.ng-glaze-node::before {
+  bottom: calc(100% + 3px);
+}
+.ng-glaze-node::after {
+  top: calc(100% + 3px);
+}
+
+/* --- Plate label ---------------------------------------------------------
+   An architectural section marker: a roman/index numeral, a short rule, then
+   the section name in the uppercase caption register. Reads like the engraved
+   label on a museum plate or a glasshouse door. */
+.ng-plate-label {
+  align-items: center;
+  color: var(--ng-green);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  gap: 0.85rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.ng-plate-label__index {
+  color: var(--ng-green-faint);
+  font-family: var(--ng-font-heading);
+  font-style: italic;
+  font-size: 1.15em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.ng-plate-label__index::after {
+  background: var(--ng-glass-line-strong);
+  content: "";
+  display: inline-block;
+  block-size: 1px;
+  inline-size: 2.25rem;
+  margin-inline-start: 0.85rem;
+  translate: 0 -0.28em;
+}
+
+/* --- Editorial display + flourish ---------------------------------------
+   The oversized architectural moment, and the italic accent that carries a
+   single word inside it. The flourish is the house green — never a second
+   colour — so the emphasis reads as botanical, not decorative. */
+.ng-editorial-title {
+  color: var(--ng-green-deep);
+  font-family: var(--ng-font-heading);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: var(--ng-line-architve);
+  text-wrap: balance;
+}
+/* Opt-in to the true oversized architectural moment (hero-adjacent). Sections
+   set their own smaller size; this modifier is for closing statements. */
+.ng-editorial-title--xl {
+  font-size: var(--ng-font-size-display-2xl);
+}
+.ng-flourish {
+  color: var(--ng-green);
+  font-style: italic;
+  font-weight: 500;
 }
 
 @media (prefers-reduced-motion: reduce) {

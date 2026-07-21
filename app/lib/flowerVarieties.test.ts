@@ -272,12 +272,15 @@ describe('homepage composition', () => {
     expect(VARIETY).toMatch(/if \(!varieties\.length\) return null/);
   });
 
-  it('carries no marketing copy — an eyebrow and a title, nothing else', () => {
-    // The supporting sentence is gone: the gallery masthead is now a two-word
-    // eyebrow over the heading, which says less than the line it replaced.
-    const eyebrows = [...VARIETY.matchAll(/className="ng-variety-eyebrow">([^<]*)</g)];
-    expect(eyebrows).toHaveLength(1);
-    expect(eyebrows[0][1].trim().split(/\s+/).length).toBeLessThanOrEqual(3);
+  it('carries no marketing copy — a plate label and a title, nothing else', () => {
+    // The masthead is now a Glasshouse plate label (index + a terse name) over
+    // an editorial title — no supporting paragraph.
+    expect(VARIETY).toMatch(/ng-plate-label/);
+    const label = VARIETY.match(
+      /ng-plate-label__index">[\s\S]*?<\/span>\s*([^<]*)</,
+    );
+    expect(label).not.toBeNull();
+    expect(label![1].trim().split(/\s+/).length).toBeLessThanOrEqual(3);
     // No paragraph of body copy anywhere in the section.
     expect(VARIETY).not.toMatch(/ng-variety-sub/);
   });

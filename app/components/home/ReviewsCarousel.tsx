@@ -4,6 +4,7 @@ import {
   HOMEPAGE_REVIEW_RATING,
 } from '~/lib/homeContent';
 import {useReveal} from '~/lib/useReveal';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {prefersReducedMotion} from '~/lib/motion';
 
 /**
@@ -162,9 +163,13 @@ export function ReviewsCarousel() {
       aria-labelledby="ng-reviews-title"
     >
       <div className="ng-reviews-head" data-reveal-heading>
-        <p className="ng-reviews-eyebrow">Loved in Kingston</p>
-        <h2 id="ng-reviews-title" className="ng-reviews-title">
-          What our customers say
+        <GlasshouseDivider className="ng-section-seam" />
+        <p className="ng-plate-label">
+          <span className="ng-plate-label__index">III</span>
+          Loved in Kingston
+        </p>
+        <h2 id="ng-reviews-title" className="ng-reviews-title ng-editorial-title">
+          Kept, and <em className="ng-flourish">quoted</em>
         </h2>
         <a
           className="ng-reviews-rating"
