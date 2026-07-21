@@ -11,22 +11,13 @@
   }
 }
 
-.home--general {
-  --ngh-green-deep: #2f4a37;
-  --ngh-green: #4d6a50;
-  --ngh-leaf: #6f9a74;
-  --ngh-gold: #c8a96a;
-  --ngh-cream: #faf8f4;
-  --ngh-ink: #222;
-}
-
 /* ------------------------------------------------------------------ Hero -- */
 .ng-brandhero {
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   align-items: stretch;
   min-height: clamp(31rem, 82vh, 48rem);
-  background: #eef2e9; /* soft sage-cream — bright, fresh, green-leaning */
+  background: var(--ng-ground-sage); /* soft sage-cream — bright, fresh, green-leaning */
   overflow: hidden;
 }
 /* The copy block's entrance is owned by the GSAP hero timeline (useHeroTimeline)
@@ -43,7 +34,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--ngh-green);
+  color: var(--ng-green);
 }
 .ng-brandhero-wordmark {
   margin: 0 0 1.1rem;
@@ -53,14 +44,14 @@
   line-height: 0.98;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ngh-green-deep);
+  color: var(--ng-green-deep);
 }
 .ng-brandhero-tagline {
   max-width: 26rem;
   margin: 0 0 1.9rem;
   font-size: clamp(1rem, 0.95rem + 0.2vw, 1.12rem);
   line-height: 1.5;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-brandhero-cta {
   display: inline-flex;
@@ -69,8 +60,8 @@
   gap: 0.55rem;
   padding: 0.9rem 2.1rem;
   border-radius: 999px;
-  background: var(--ngh-green-deep);
-  color: #f4efe4;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -81,7 +72,7 @@
 }
 .ng-brandhero-cta:hover {
   transform: translateY(-2px);
-  background: #24382a;
+  background: var(--ng-green-pressed);
 }
 .ng-brandhero-cta-arrow {
   transition: transform 0.25s ease;
@@ -126,7 +117,7 @@
 .ng-chooser {
   padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(3.5rem, 7vw, 6rem);
   /* Bright warm white — fresh and clean under the sage hero. */
-  background: #f6f4ee;
+  background: var(--ng-ground-warm);
   scroll-margin-top: 5rem;
 }
 .ng-chooser-head {
@@ -139,14 +130,14 @@
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--ngh-green);
+  color: var(--ng-green);
 }
 .ng-chooser-head h2 {
   margin: 0;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
   line-height: 1.05;
-  color: var(--ngh-green-deep);
+  color: var(--ng-green-deep);
 }
 .ng-chooser-grid {
   display: grid;
@@ -259,19 +250,19 @@
   );
 }
 .ng-chooser-card--premium .ng-chooser-card-body {
-  border-bottom: 2px solid var(--ngh-gold);
+  border-bottom: 2px solid var(--ng-gold);
 }
 .ng-chooser-card--premium .ng-chooser-card-title {
-  color: #f4e3c4;
+  color: var(--ng-gold-pale);
 }
 .ng-chooser-card--premium .ng-chooser-card-cta {
-  color: var(--ngh-gold);
+  color: var(--ng-gold);
 }
 
 /* Focus visibility */
 .ng-brandhero-cta:focus-visible,
 .ng-chooser-card:focus-visible {
-  outline: 3px solid var(--ngh-gold);
+  outline: 3px solid var(--ng-gold);
   outline-offset: 3px;
 }
 
@@ -343,7 +334,7 @@ button.ng-chooser-card {
   width: min(100%, 30rem);
   padding: clamp(1.9rem, 4vw, 2.6rem);
   border-radius: 18px;
-  background: #fbfaf5;
+  background: var(--ng-ground-panel);
   box-shadow: 0 30px 80px rgba(20, 30, 22, 0.35);
   text-align: center;
 }
@@ -356,32 +347,32 @@ button.ng-chooser-card {
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
   font-size: 1.6rem;
   line-height: 1;
   cursor: pointer;
 }
 .ng-wsmodal-close:hover {
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-wsmodal-eyebrow {
   margin: 0 0 0.5rem;
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-wsmodal-title {
   margin: 0 0 0.7rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.9rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-wsmodal-body {
   margin: 0 0 1.5rem;
   font-size: 0.95rem;
   line-height: 1.55;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-wsmodal-actions {
   display: grid;
@@ -391,24 +382,24 @@ button.ng-chooser-card {
   display: block;
   padding: 0.85rem 1.5rem;
   border-radius: 999px;
-  background: #2f4a37;
-  color: #f4efe4;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .ng-wsmodal-btn:hover {
-  background: #24382a;
+  background: var(--ng-green-pressed);
   transform: translateY(-1px);
 }
 .ng-wsmodal-btn--ghost {
   background: transparent;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
   box-shadow: inset 0 0 0 1.5px #cdd8c9;
 }
 .ng-wsmodal-btn--ghost:hover {
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
 }
 .ng-wsmodal-foot {
   margin: 1.25rem 0 0;
@@ -416,13 +407,13 @@ button.ng-chooser-card {
   color: #7a857a;
 }
 .ng-wsmodal-foot a {
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 
 /* ---- Gate page (direct /classic/wholesale for guests / pending) ---- */
 .ng-wsgate {
   padding: clamp(3rem, 8vw, 6rem) 1.5rem;
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
 }
 .ng-wsgate-inner {
   max-width: 42rem;
@@ -434,20 +425,20 @@ button.ng-chooser-card {
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-wsgate-title {
   margin: 0 0 1rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-wsgate-body {
   max-width: 34rem;
   margin: 0 auto 2rem;
   font-size: 1.02rem;
   line-height: 1.6;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-wsgate-actions {
   display: flex;
@@ -460,23 +451,23 @@ button.ng-chooser-card {
   display: inline-block;
   padding: 0.85rem 1.9rem;
   border-radius: 999px;
-  background: #2f4a37;
-  color: #f4efe4;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .ng-wsgate-btn:hover {
-  background: #24382a;
+  background: var(--ng-green-pressed);
   transform: translateY(-2px);
 }
 .ng-wsgate-btn--ghost {
   background: transparent;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
   box-shadow: inset 0 0 0 1.5px #cdd8c9;
 }
 .ng-wsgate-btn--ghost:hover {
-  background: #e4ecdf;
+  background: var(--ng-ground-tint);
 }
 .ng-wsgate-perks {
   display: flex;
@@ -492,13 +483,13 @@ button.ng-chooser-card {
 .ng-wsgate-perks li::before {
   content: "✿";
   margin-right: 0.4rem;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-wholesale-welcome {
   margin: 0;
   padding: 0.9rem 1.5rem;
-  background: #eef2e9;
-  color: #2f4a37;
+  background: var(--ng-ground-sage);
+  color: var(--ng-green-deep);
   font-size: 0.92rem;
   text-align: center;
 }
@@ -506,7 +497,7 @@ button.ng-chooser-card {
 /* ---- Arrangements landing (still green) ---- */
 .ng-arr-hero {
   padding: clamp(3rem, 7vw, 5rem) 1.5rem clamp(1.5rem, 3vw, 2.5rem);
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
   text-align: center;
 }
 .ng-arr-eyebrow {
@@ -514,7 +505,7 @@ button.ng-chooser-card {
   font-size: 0.72rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-arr-title {
   margin: 0 0 0.6rem;
@@ -522,16 +513,16 @@ button.ng-chooser-card {
   font-size: clamp(2.4rem, 1rem + 4vw, 4.2rem);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-arr-sub {
   margin: 0 auto;
   max-width: 34rem;
   font-size: 1.05rem;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-arr-hero + .ng-chooser {
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
   padding-top: clamp(1rem, 3vw, 2rem);
 }
 .ng-chooser-grid--three {
@@ -555,7 +546,7 @@ button.ng-chooser-card {
    cream ground beneath each plate rather than in a white box over the image. */
 .ng-variety {
   padding: clamp(3.5rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 7rem);
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
 }
 .ng-variety-head {
   max-width: 78rem;
@@ -566,12 +557,12 @@ button.ng-chooser-card {
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
   line-height: 1.05;
-  color: var(--ngh-green-deep, #2f4a37);
+  color: var(--ng-green-deep);
 }
 .ng-variety-sub {
   max-width: 28rem;
   margin: 0;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 
 /* 12-column editorial grid: tall plate | two stacked | wide plate. */
@@ -620,7 +611,7 @@ button.ng-chooser-card {
   overflow: hidden;
   /* Square-ish corners read couture; heavy radii read Shopify. */
   border-radius: 3px;
-  background: #e4ecdf;
+  background: var(--ng-ground-tint);
 }
 /* The tall plate spans two rows, so its height is set by the stack beside it —
    these landscape ratios are chosen so the resulting portrait lands near 2:3
@@ -662,21 +653,21 @@ button.ng-chooser-card {
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.35rem);
   letter-spacing: 0.01em;
-  color: var(--ngh-green-deep, #2f4a37);
+  color: var(--ng-green-deep);
 }
 .ng-variety-card-arrow {
   font-size: 0.95rem;
-  color: var(--ngh-green, #4d6a50);
+  color: var(--ng-green);
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .ng-variety-card:hover .ng-variety-card-arrow {
   transform: translateX(5px);
 }
 .ng-variety-card:hover .ng-variety-card-name {
-  color: #24382a;
+  color: var(--ng-green-pressed);
 }
 .ng-variety-card:focus-visible {
-  outline: 3px solid var(--ngh-gold, #c8a96a);
+  outline: 3px solid var(--ng-gold);
   outline-offset: 4px;
 }
 
@@ -723,7 +714,7 @@ button.ng-chooser-card {
 .ng-shopcat {
   min-height: 60vh;
   padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
 }
 .ng-shopcat-head {
   max-width: 78rem;
@@ -736,18 +727,18 @@ button.ng-chooser-card {
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
   text-decoration: none;
 }
 .ng-shopcat-back:hover {
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-shopcat-eyebrow {
   margin: 0 0 0.5rem;
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-shopcat-title {
   margin: 0 0 0.5rem;
@@ -755,12 +746,12 @@ button.ng-chooser-card {
   font-size: clamp(2rem, 1.2rem + 2.6vw, 3.4rem);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-shopcat-sub {
   max-width: 32rem;
   margin: 0 auto;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 
 /* Sidebar filters + results. The sidebar collapses into the drawer below 64em. */
@@ -791,32 +782,32 @@ button.ng-chooser-card {
   padding: 0.45rem 0.7rem;
   font: inherit;
   font-size: 0.9rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
   background: transparent;
   border: 0;
   border-bottom: 1px solid #cfdcc9;
 }
 .ng-shopcat-search-input::placeholder {
-  color: #8a9a86;
+  color: var(--ng-green-faint);
 }
 .ng-shopcat-search-input:focus {
   outline: none;
-  border-bottom-color: #4d6a50;
+  border-bottom-color: var(--ng-green);
 }
 .ng-shopcat-search-submit {
   padding: 0.45rem 0.2rem;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
   background: none;
   border: 0;
   border-bottom: 1px solid transparent;
   cursor: pointer;
 }
 .ng-shopcat-search-submit:hover {
-  color: #2f4a37;
-  border-bottom-color: #4d6a50;
+  color: var(--ng-green-deep);
+  border-bottom-color: var(--ng-green);
 }
 
 /* Results — dim (never blank) while a filter/sort navigation is in flight. */
@@ -842,11 +833,11 @@ button.ng-chooser-card {
   margin: 0 0 0.4rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.3rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-shopcat-notice-body {
   margin: 0;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 
 /* Cards */
@@ -861,7 +852,7 @@ button.ng-chooser-card {
   overflow: hidden;
   aspect-ratio: 4 / 5;
   border-radius: 12px;
-  background: #e4ecdf;
+  background: var(--ng-ground-tint);
 }
 .ng-shopcat-card-media img {
   width: 100%;
@@ -880,8 +871,8 @@ button.ng-chooser-card {
   height: 100%;
   background: repeating-linear-gradient(
     45deg,
-    #e4ecdf,
-    #e4ecdf 10px,
+    var(--ng-ground-tint),
+    var(--ng-ground-tint) 10px,
     #dbe6d5 10px,
     #dbe6d5 20px
   );
@@ -896,39 +887,39 @@ button.ng-chooser-card {
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
   background: rgb(255 255 255 / 0.92);
   border-radius: 4px;
 }
 .ng-shopcat-card-flag--sale {
   color: #fff;
-  background: #4d6a50;
+  background: var(--ng-green);
 }
 .ng-shopcat-card-title {
   display: block;
   margin: 0.7rem 0 0.15rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.05rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-shopcat-card-spec {
   display: block;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #7b8a78;
+  color: var(--ng-green-soft);
 }
 .ng-shopcat-card-price {
   display: block;
   font-size: 0.9rem;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-shopcat-card-was {
   margin-left: 0.4rem;
-  color: #8a9a86;
+  color: var(--ng-green-faint);
 }
 .ng-shopcat-card-unit {
-  color: #7b8a78;
+  color: var(--ng-green-soft);
 }
 /* Wholesale buyers scan a lot of stems — denser grid, tighter imagery. */
 .ng-shopcat-card--wholesale .ng-shopcat-card-media,
@@ -967,51 +958,51 @@ button.ng-chooser-card {
 
 /* Elevated surface — ONLY on the premium-deluxe route (data-experience=deluxe). */
 [data-experience='deluxe'] .ng-shopcat {
-  background: #14100c;
+  background: var(--ng-premium-ground);
 }
 [data-experience='deluxe'] .ng-shopcat-eyebrow,
 [data-experience='deluxe'] .ng-shopcat-back {
-  color: #c8a96a;
+  color: var(--ng-gold);
 }
 [data-experience='deluxe'] .ng-shopcat-title,
 [data-experience='deluxe'] .ng-shopcat-notice-title {
-  color: #f4e3c4;
+  color: var(--ng-gold-pale);
 }
 [data-experience='deluxe'] .ng-shopcat-sub,
 [data-experience='deluxe'] .ng-shopcat-notice-body,
 [data-experience='deluxe'] .ng-shopcat-card-price {
-  color: #cbbfa6;
+  color: var(--ng-premium-text-muted);
 }
 [data-experience='deluxe'] .ng-shopcat-card-title {
-  color: #f4efe4;
+  color: var(--ng-premium-text);
 }
 [data-experience='deluxe'] .ng-shopcat-card-media {
-  background: #241d15;
+  background: var(--ng-premium-tint);
 }
 [data-experience='deluxe'] .ng-shopcat-search-input {
-  color: #f4efe4;
-  border-bottom-color: #3a3025;
+  color: var(--ng-premium-text);
+  border-bottom-color: var(--ng-premium-line);
 }
 [data-experience='deluxe'] .ng-shopcat-search-submit {
-  color: #c8a96a;
+  color: var(--ng-gold);
 }
 /* Toolbar controls sit on the dark premium surface — keep text legible
    (the default light-surface greys fall below contrast here). */
 [data-experience='deluxe'] .ng-catalog-toolbar-count,
 [data-experience='deluxe'] .ng-catalog-toolbar-sort-label {
-  color: #cbbfa6;
+  color: var(--ng-premium-text-muted);
 }
 [data-experience='deluxe'] .ng-catalog-toolbar-count-num {
-  color: #f4e3c4;
+  color: var(--ng-gold-pale);
 }
 [data-experience='deluxe'] .ng-catalog-toolbar-sort-select {
-  color: #f4efe4;
-  background: #1d1811;
-  border-color: #3a3025;
+  color: var(--ng-premium-text);
+  background: var(--ng-premium-surface);
+  border-color: var(--ng-premium-line);
 }
 [data-experience='deluxe'] .ng-catalog-toolbar-filters {
-  color: #f4e3c4;
-  border-color: #3a3025;
+  color: var(--ng-gold-pale);
+  border-color: var(--ng-premium-line);
 }
 
 /* The premium LANDING page (the category selector) must already read premium —
@@ -1020,14 +1011,14 @@ button.ng-chooser-card {
    `themeForPath` sets only under /arrangements/premium-deluxe, so the homepage
    chooser (always green) is untouched. */
 [data-experience='deluxe'] .ng-chooser {
-  background: #14100c;
+  background: var(--ng-premium-ground);
 }
 [data-experience='deluxe'] .ng-chooser-eyebrow {
-  color: #c8a96a;
+  color: var(--ng-gold);
 }
 [data-experience='deluxe'] .ng-chooser-head h1,
 [data-experience='deluxe'] .ng-chooser-head h2 {
-  color: #f4e3c4;
+  color: var(--ng-gold-pale);
 }
 
 /* ---- 404 / error surface -------------------------------------------------- */
@@ -1039,25 +1030,25 @@ button.ng-chooser-card {
   min-height: 70vh;
   padding: clamp(3rem, 8vw, 6rem) 1.5rem;
   text-align: center;
-  background: #eef2e9;
+  background: var(--ng-ground-sage);
 }
 .ng-404-code {
   margin: 0 0 0.75rem;
   font-size: 0.75rem;
   letter-spacing: 0.3em;
-  color: #8a9a86;
+  color: var(--ng-green-faint);
 }
 .ng-404-title {
   margin: 0 0 0.75rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem);
   letter-spacing: 0.03em;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-404-sub {
   max-width: 34rem;
   margin: 0 0 2.5rem;
-  color: #5a6b58;
+  color: var(--ng-green-muted);
 }
 .ng-404-list {
   display: grid;
@@ -1085,13 +1076,13 @@ button.ng-chooser-card {
   display: block;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.05rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
 .ng-404-link-blurb {
   display: block;
   margin-top: 0.2rem;
   font-size: 0.82rem;
-  color: #7b8a78;
+  color: var(--ng-green-soft);
 }
 @media (max-width: 48em) {
   .ng-404-list {
@@ -1107,21 +1098,21 @@ button.ng-chooser-card {
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-wsprofile-title {
   margin: 0 0 0.5rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: 1.9rem;
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
-.ng-wsprofile-sub { margin: 0; color: #5a6b58; }
+.ng-wsprofile-sub { margin: 0; color: var(--ng-green-muted); }
 .ng-wsprofile-success {
   margin-bottom: 1.25rem;
   padding: 0.85rem 1.1rem;
   border-radius: 10px;
-  background: #e4ecdf;
-  color: #2f4a37;
+  background: var(--ng-ground-tint);
+  color: var(--ng-green-deep);
 }
 .ng-wsprofile-error {
   margin-bottom: 1.25rem;
@@ -1159,9 +1150,9 @@ button.ng-chooser-card {
 .ng-wsprofile-field input:focus,
 .ng-wsprofile-field select:focus,
 .ng-wsprofile-field textarea:focus {
-  outline: 2px solid #4d6a50;
+  outline: 2px solid var(--ng-green);
   outline-offset: 1px;
-  border-color: #4d6a50;
+  border-color: var(--ng-green);
 }
 .ng-wsprofile-field input[readonly] { background: #f2f0ea; color: #6a786a; }
 .ng-wsprofile-submit {
@@ -1169,14 +1160,14 @@ button.ng-chooser-card {
   padding: 0.9rem 2.2rem;
   border: 0;
   border-radius: 999px;
-  background: #2f4a37;
-  color: #f4efe4;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .ng-wsprofile-submit:hover:not(:disabled) {
-  background: #24382a;
+  background: var(--ng-green-pressed);
   transform: translateY(-1px);
 }
 .ng-wsprofile-submit:disabled { opacity: 0.6; cursor: default; }
@@ -1195,24 +1186,24 @@ button.ng-chooser-card {
   font-size: 0.72rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-page-title {
   margin: 0 0 0.75rem;
   font-family: var(--ng-font-display, "Cormorant Garamond", serif);
   font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
-  color: #2f4a37;
+  color: var(--ng-green-deep);
 }
-.ng-page-lead { margin: 0 0 2rem; color: #5a6b58; line-height: 1.6; }
+.ng-page-lead { margin: 0 0 2rem; color: var(--ng-green-muted); line-height: 1.6; }
 .ng-page-facts { display: grid; gap: 1rem; margin: 0; }
 .ng-page-facts dt {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #4d6a50;
+  color: var(--ng-green);
 }
 .ng-page-facts dd { margin: 0.2rem 0 0; color: #3f4a3f; }
-.ng-page-facts a { color: #2f4a37; }
+.ng-page-facts a { color: var(--ng-green-deep); }
 .ng-chooser-grid--two { grid-template-columns: repeat(2, 1fr); max-width: 52rem; }
 @media (max-width: 34em) {
   .ng-chooser-grid--two { grid-template-columns: 1fr; }

@@ -8,7 +8,15 @@
 import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {describe, expect, it} from 'vitest';
-import {DURATION, EASE, STAGGER, DISTANCE, REVEAL_START} from './motion';
+import {
+  DURATION,
+  EASE,
+  STAGGER,
+  DISTANCE,
+  REVEAL_START,
+  MOTION,
+  transitionFor,
+} from './motion';
 
 const ROOT = join(__dirname, '..', '..');
 const read = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -44,6 +52,60 @@ describe('motion tokens', () => {
   it('expresses the scroll start once, for every trigger to share', () => {
     expect(REVEAL_START).toMatch(/^top \d+%$/);
     expect(REVEAL).toContain('REVEAL_START');
+  });
+});
+
+describe('motion families', () => {
+  const REQUIRED = [
+    'hover',
+    'interact',
+    'card',
+    'modal',
+    'nav',
+    'page',
+    'reveal',
+    'hero',
+    'loading',
+    'success',
+    'error',
+  ] as const;
+
+  it.each(REQUIRED)('defines a "%s" family', (family) => {
+    expect(MOTION).toHaveProperty(family);
+  });
+
+  it('composes every family from the shared tokens — no loose numbers', () => {
+    const durations = new Set<number>(Object.values(DURATION));
+    const eases = new Set<string>(Object.values(EASE));
+    for (const [name, recipe] of Object.entries(MOTION)) {
+      expect(durations.has(recipe.duration), `${name} duration`).toBe(true);
+      expect(eases.has(recipe.ease), `${name} ease`).toBe(true);
+    }
+  });
+
+  it('keeps interaction families fast enough to feel instant', () => {
+    expect(MOTION.hover.duration).toBeLessThanOrEqual(0.25);
+    expect(MOTION.interact.duration).toBeLessThanOrEqual(0.25);
+  });
+
+  it('never expresses feedback as a bounce, even for errors', () => {
+    expect(MOTION.error.ease).not.toMatch(/bounce|elastic|back/i);
+    expect(MOTION.success.ease).not.toMatch(/bounce|elastic|back/i);
+  });
+
+  it('emits a usable CSS transition for a family', () => {
+    expect(transitionFor('hover', 'opacity')).toBe(
+      'opacity 0.2s cubic-bezier(0.2, 0.7, 0.2, 1)',
+    );
+  });
+
+  it('mirrors the families as CSS custom properties', () => {
+    // A hover written in CSS and a timeline written in GSAP must agree.
+    const css = read('app/styles/design-system.css');
+    for (const family of ['hover', 'card', 'modal', 'nav', 'reveal', 'hero']) {
+      expect(css, `--ng-motion-${family}`).toContain(`--ng-motion-${family}:`);
+    }
+    expect(css).toMatch(/--ng-motion-ease:\s*cubic-bezier/);
   });
 });
 

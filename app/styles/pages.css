@@ -87,8 +87,8 @@
   content: '→';
 }
 .ng-editorial-cta:hover {
-  background: var(--ng-color-luxury-gold, #c8a96a);
-  border-color: var(--ng-color-luxury-gold, #c8a96a);
+  background: var(--ng-color-luxury-gold, var(--ng-gold));
+  border-color: var(--ng-color-luxury-gold, var(--ng-gold));
   color: var(--ng-color-background, #090909);
   text-decoration: none;
 }
@@ -98,8 +98,8 @@
   color: var(--ng-color-warm-white, #faf8f4);
 }
 .ng-editorial-cta-light:hover {
-  background: var(--ng-color-accent-green, #4d6a50);
-  border-color: var(--ng-color-accent-green, #4d6a50);
+  background: var(--ng-color-accent-green, var(--ng-green));
+  border-color: var(--ng-color-accent-green, var(--ng-green));
   color: var(--ng-color-warm-white, #faf8f4);
 }
 
@@ -165,7 +165,7 @@
   }
 }
 .ng-editorial-feature {
-  border-top: 2px solid var(--ng-color-luxury-gold, #c8a96a);
+  border-top: 2px solid var(--ng-color-luxury-gold, var(--ng-gold));
   margin: 0;
   padding-top: 1rem;
 }
@@ -223,7 +223,7 @@
   line-height: 1.5;
 }
 .ng-delivery-list svg {
-  color: var(--ng-color-soft-gold, #4d6a50);
+  color: var(--ng-color-soft-gold, var(--ng-green));
   margin-top: 0.15rem;
 }
 .ng-delivery-bands-label {
@@ -287,7 +287,7 @@
   gap: 0.5rem;
 }
 .ng-delivery-contact-line svg {
-  color: var(--ng-color-soft-gold, #4d6a50);
+  color: var(--ng-color-soft-gold, var(--ng-green));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -333,7 +333,7 @@
 }
 .ng-supply-card-placeholder {
   align-items: center;
-  color: var(--ng-color-botanical-green, #4d6a50);
+  color: var(--ng-color-botanical-green, var(--ng-green));
   display: flex;
   height: 100%;
   justify-content: center;
@@ -356,7 +356,7 @@
   line-height: 1.45;
 }
 .ng-supply-card-cta {
-  color: var(--ng-color-botanical-green, #4d6a50);
+  color: var(--ng-color-botanical-green, var(--ng-green));
   font-size: 0.85rem;
   font-weight: 600;
   margin-top: 0.25rem;
@@ -367,7 +367,7 @@
   width: 100%;
 }
 .ng-delivery-map-full {
-  color: var(--ng-color-soft-gold, #4d6a50);
+  color: var(--ng-color-soft-gold, var(--ng-green));
   font-weight: 600;
   white-space: nowrap;
 }

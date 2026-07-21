@@ -157,7 +157,7 @@
 [data-experience='deluxe'] .ng-cat-card:hover,
 [data-experience='deluxe'] .greenhouse-occasion-grid > a:hover {
   transform: translateY(-4px);
-  border-color: var(--ng-color-luxury-gold, #c8a96a);
+  border-color: var(--ng-color-luxury-gold, var(--ng-gold));
 }
 /* Zoom the imagery inside its frame (frame clips the overflow). */
 [data-experience='deluxe'] .greenhouse-banner-card,
