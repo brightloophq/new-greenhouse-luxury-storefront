@@ -8,20 +8,15 @@
  * so a collection emptied in admin removes its card instead of rendering a
  * dead tile (see `loadFlowerVarieties`).
  *
- * WHY THIS LIST IS FOUR, NOT EIGHT
- * The brief suggested Roses, Lilies, Orchids, Hydrangea, Carnations, Tulips,
- * Tropical Flowers and Baby's Breath. An audit of the live store found only the
- * first three exist as retail-facing collections. The remainder are either
- * absent, or exist only as WHOLESALE stock behind authentication:
+ * SELF-ACTIVATING LIST
+ * All eight approved varieties are configured here, but only those whose
+ * collection currently holds stock are rendered. Four are live today (roses,
+ * orchids, lilies, greenery-and-fillers); the other four light up the moment
+ * `npm run shopify:varieties -- --apply` creates and fills their collections.
+ * No code change is needed when that happens.
  *
- *   hydrangea / tulips / tropicals / carnations  → only in `bulk-flowers`
- *                                                   (auth-gated, plural tags)
- *   tropical-flowers                             → collection exists, 0 products
- *   babys-breath                                 → 1 product, no collection
- *
- * Pointing a public homepage card at auth-gated wholesale stock would send a
- * guest into a sign-in wall, so those are excluded until the merchant creates
- * retail collections for them (see docs/MERCHANT-ACTIONS.md).
+ * Baby's Breath is deliberately absent: one product across the whole store is
+ * not a variety worth a homepage plate.
  */
 
 export interface FlowerVariety {
@@ -30,34 +25,61 @@ export interface FlowerVariety {
   label: string;
   /** Base path for the `-400/-600/-800.webp` responsive set under /public. */
   img: string;
-  /** Editorial weight in the asymmetric grid. */
-  span: 'tall' | 'wide' | 'regular';
+  /**
+   * Wholesale tag whose products seed this collection. Used ONLY by the Admin
+   * setup script — the storefront never reads it.
+   */
+  sourceTag?: string;
 }
 
+/** The editorial spans the grid composes with (see `spansFor`). */
+export type VarietySpan = 'tall' | 'wide' | 'regular' | 'half';
+
+/** Order drives the editorial rhythm; `spansFor` composes the grid. */
 export const FLOWER_VARIETIES: FlowerVariety[] = [
   {
     handle: 'roses',
     label: 'Roses',
     img: '/images/flowers/roses-in-stock/all',
-    span: 'tall',
   },
   {
     handle: 'orchids',
     label: 'Orchids',
     img: '/images/flowers/orchids/all',
-    span: 'regular',
   },
   {
     handle: 'lilies',
     label: 'Lilies',
     img: '/images/flowers/lilies/all',
-    span: 'regular',
+  },
+  {
+    handle: 'hydrangea',
+    label: 'Hydrangea',
+    img: '/images/flowers/hydrangea/all',
+    sourceTag: 'hydrangea',
+  },
+  {
+    handle: 'tulips',
+    label: 'Tulips',
+    img: '/images/flowers/tulips/all',
+    sourceTag: 'tulips',
+  },
+  {
+    handle: 'tropical-flowers',
+    label: 'Tropical Flowers',
+    img: '/images/flowers/tropicals/all',
+    sourceTag: 'tropicals',
+  },
+  {
+    handle: 'carnations',
+    label: 'Carnations',
+    img: '/images/flowers/carnations/all',
+    sourceTag: 'carnations',
   },
   {
     handle: 'greenery-and-fillers',
     label: 'Greenery & Fillers',
     img: '/images/flowers/greenery/all',
-    span: 'wide',
   },
 ];
 

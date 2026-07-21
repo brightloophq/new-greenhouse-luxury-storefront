@@ -1,7 +1,11 @@
 import {useRef} from 'react';
 import {Link} from 'react-router';
 import {useReveal} from '~/lib/useReveal';
-import {varietyPath, type FlowerVariety} from '~/lib/flowerVarieties';
+import {
+  varietyPath,
+  type FlowerVariety,
+  type VarietySpan,
+} from '~/lib/flowerVarieties';
 
 /**
  * The flower library is generated at 200/300/400/800 — NOT the 400/600/800 set
@@ -13,6 +17,40 @@ function srcSet(base: string) {
     src: `${base}-800.webp`,
     srcSet: [300, 400, 800].map((w) => `${base}-${w}.webp ${w}w`).join(', '),
   };
+}
+
+/**
+ * Editorial span patterns on a 12-column grid, keyed by how many varieties are
+ * actually available. Every row sums to exactly 12, so the composition resolves
+ * with no orphaned card and no hole at the right edge — whatever the count.
+ *
+ *   tall = 5 cols × 2 rows   regular = 7   half = 6   wide = 12
+ *
+ * Layout is decided HERE, not in the data: which varieties exist is a
+ * merchandising fact, how they're composed is a design decision, and the two
+ * change for different reasons. (Baking spans into the data produced exactly
+ * one bug: a pattern authored for eight cards left the fourth card stranded
+ * 482px short of the grid edge when only four were in stock.)
+ */
+const SPAN_PATTERNS: Record<number, VarietySpan[]> = {
+  1: ['wide'],
+  2: ['half', 'half'],
+  3: ['tall', 'regular', 'regular'],
+  4: ['tall', 'regular', 'regular', 'wide'],
+  5: ['tall', 'regular', 'regular', 'half', 'half'],
+  6: ['tall', 'regular', 'regular', 'half', 'half', 'wide'],
+  7: ['tall', 'regular', 'regular', 'half', 'half', 'wide', 'wide'],
+  8: ['tall', 'regular', 'regular', 'half', 'half', 'tall', 'regular', 'regular'],
+};
+
+function spansFor(count: number): VarietySpan[] {
+  const known = SPAN_PATTERNS[count];
+  if (known) return known;
+  // Beyond the authored range, fall back to even pairs closed by a full-width
+  // plate when the count is odd — still no ragged row.
+  const spans: VarietySpan[] = Array.from({length: count}, () => 'half');
+  if (count % 2 === 1) spans[count - 1] = 'wide';
+  return spans;
 }
 
 /**
@@ -33,6 +71,8 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
 
   if (!varieties.length) return null;
 
+  const spans = spansFor(varieties.length);
+
   return (
     <section
       ref={scope}
@@ -47,12 +87,12 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
       </div>
 
       <ul className="ng-variety-grid">
-        {varieties.map((variety) => {
+        {varieties.map((variety, index) => {
           const media = srcSet(variety.img);
           return (
             <li
               key={variety.handle}
-              className={`ng-variety-cell ng-variety-cell--${variety.span}`}
+              className={`ng-variety-cell ng-variety-cell--${spans[index]}`}
               data-reveal-item
             >
               <Link

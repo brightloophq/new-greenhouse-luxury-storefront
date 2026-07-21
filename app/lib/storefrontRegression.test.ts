@@ -245,6 +245,7 @@ describe('admin tooling survives storefront restoration', () => {
       'shopify:collections',
       'shopify:metafields',
       'shopify:tags',
+      'shopify:varieties',
       'shopify:setup',
     ]) {
       expect(pkg.scripts).toHaveProperty(name);

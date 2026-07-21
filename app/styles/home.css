@@ -599,6 +599,9 @@ button.ng-chooser-card {
 .ng-variety-cell--regular {
   grid-column: span 7;
 }
+.ng-variety-cell--half {
+  grid-column: span 6;
+}
 .ng-variety-cell--wide {
   grid-column: span 12;
 }
@@ -636,6 +639,9 @@ button.ng-chooser-card {
 }
 .ng-variety-cell--regular .ng-variety-card-media {
   aspect-ratio: 2 / 1;
+}
+.ng-variety-cell--half .ng-variety-card-media {
+  aspect-ratio: 3 / 2;
 }
 .ng-variety-cell--wide .ng-variety-card-media {
   aspect-ratio: 3 / 1;
@@ -685,12 +691,14 @@ button.ng-chooser-card {
 @media (max-width: 64em) {
   /* Tablet — two equal columns, composition flattens. */
   .ng-variety-cell--tall,
-  .ng-variety-cell--regular {
+  .ng-variety-cell--regular,
+  .ng-variety-cell--half {
     grid-column: span 6;
     grid-row: auto;
   }
   .ng-variety-cell--tall .ng-variety-card-media,
-  .ng-variety-cell--regular .ng-variety-card-media {
+  .ng-variety-cell--regular .ng-variety-card-media,
+  .ng-variety-cell--half .ng-variety-card-media {
     aspect-ratio: 4 / 5;
   }
   .ng-variety-cell--wide .ng-variety-card-media {
@@ -700,11 +708,13 @@ button.ng-chooser-card {
 @media (max-width: 45em) {
   .ng-variety-cell--tall,
   .ng-variety-cell--regular,
+  .ng-variety-cell--half,
   .ng-variety-cell--wide {
     grid-column: span 12;
   }
   .ng-variety-cell--tall .ng-variety-card-media,
   .ng-variety-cell--regular .ng-variety-card-media,
+  .ng-variety-cell--half .ng-variety-card-media,
   .ng-variety-cell--wide .ng-variety-card-media {
     aspect-ratio: 3 / 2;
   }

@@ -25,7 +25,8 @@
     "shopify:collections": "node scripts/shopify/collections.mjs",
     "shopify:metafields": "node scripts/shopify/metafields.mjs",
     "shopify:tags": "node scripts/shopify/tags.mjs",
-    "shopify:setup": "npm run shopify:collections && npm run shopify:metafields && npm run shopify:tags"
+    "shopify:varieties": "node scripts/shopify/varieties.mjs",
+    "shopify:setup": "npm run shopify:collections && npm run shopify:metafields && npm run shopify:tags && npm run shopify:varieties"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

@@ -48,11 +48,76 @@ describe('flower variety data', () => {
     }
   });
 
-  it('uses each editorial span so the grid stays asymmetric', () => {
-    const spans = FLOWER_VARIETIES.map((v) => v.span);
-    expect(spans).toContain('tall');
-    expect(spans).toContain('wide');
-    expect(spans).toContain('regular');
+  it('every span pattern fills its rows exactly — no orphaned card', () => {
+    // The bug this replaces: spans were fixed in the data for eight cards, so
+    // with only four in stock the last card sat alone 482px short of the grid
+    // edge. Layout is now chosen from the count, and every row must sum to 12.
+    // AREA, not width: `tall` is 5 columns × 2 rows, so it contributes 10 and
+    // pairs with the two 7-wide regulars beside it (10 + 7 + 7 = 24 = two full
+    // rows). A pattern whose total area is not a multiple of 12 must leave a
+    // hole somewhere.
+    const AREA = {tall: 10, regular: 7, half: 6, wide: 12} as const;
+    const source = read('app/components/home/ShopByVariety.tsx');
+    const patterns = [
+      ...source.matchAll(/^\s+(\d+): \[([^\]]+)\],$/gm),
+    ].map(([, count, body]) => ({
+      count: Number(count),
+      spans: body.split(',').map((s) => s.trim().replace(/'/g, '')),
+    }));
+
+    expect(patterns.length).toBeGreaterThanOrEqual(8);
+
+    for (const {count, spans} of patterns) {
+      expect(spans, `pattern ${count} length`).toHaveLength(count);
+      let area = 0;
+      for (const span of spans) {
+        const cells = AREA[span as keyof typeof AREA];
+        expect(cells, `unknown span "${span}" in pattern ${count}`).toBeDefined();
+        area += cells;
+      }
+      expect(area % 12, `pattern ${count} leaves a ragged row`).toBe(0);
+    }
+  });
+
+  it('defines and collapses every span the patterns use', () => {
+    const css = read('app/styles/home.css');
+    const tablet = css.slice(css.indexOf('@media (max-width: 64em)'));
+    const mobile = css.slice(css.indexOf('@media (max-width: 45em)'));
+    for (const span of ['tall', 'regular', 'half', 'wide']) {
+      expect(css, `.ng-variety-cell--${span}`).toContain(
+        `.ng-variety-cell--${span}`,
+      );
+      if (span === 'wide') continue; // already full width
+      expect(tablet, `tablet ${span}`).toContain(`.ng-variety-cell--${span}`);
+      expect(mobile, `mobile ${span}`).toContain(`.ng-variety-cell--${span}`);
+    }
+  });
+
+  it('keeps layout out of the data — spans are a presentation concern', () => {
+    const data = read('app/lib/flowerVarieties.ts');
+    expect(data).not.toMatch(/^\s+span:/m);
+  });
+
+  it('keeps the Admin script in step with the storefront config', () => {
+    // Every variety that needs a collection built must be in the script, and
+    // the script must not invent handles the storefront does not render.
+    const script = read('scripts/shopify/varieties.mjs');
+    for (const variety of FLOWER_VARIETIES.filter((v) => v.sourceTag)) {
+      expect(script, variety.handle).toContain(`handle: '${variety.handle}'`);
+      expect(script, variety.sourceTag).toContain(`tag: '${variety.sourceTag}'`);
+    }
+    const scriptHandles = [...script.matchAll(/handle: '([a-z-]+)',\n\s*title:/g)].map(
+      (m) => m[1],
+    );
+    const configured = new Set(FLOWER_VARIETIES.map((v) => v.handle));
+    for (const handle of scriptHandles) expect(configured.has(handle)).toBe(true);
+  });
+
+  it('never deletes: the script only creates, adds and tags', () => {
+    const script = read('scripts/shopify/varieties.mjs');
+    expect(script).not.toMatch(/collectionDelete|productDelete|tagsRemove/);
+    expect(script).toMatch(/collectionAddProducts/);
+    expect(script).toMatch(/tagsAdd/);
   });
 });
 

@@ -158,7 +158,10 @@ npm run shopify:metafields -- --apply
 npm run shopify:tags                 # §2 — preview (also lists the 24 unresolved)
 npm run shopify:tags -- --apply
 
-npm run shopify:setup                # all three, dry run
+npm run shopify:varieties            # §7 — preview
+npm run shopify:varieties -- --apply
+
+npm run shopify:setup                # all four, dry run
 ```
 
 All three are **idempotent and additive**. Existing collections, definitions and
@@ -167,7 +170,60 @@ re-running is always safe.
 
 ---
 
-## 6. Not done — needs your decision
+## 7. Flower variety collections + tag reconciliation
+
+`npm run shopify:varieties` does three things in one pass. It **never deletes**
+anything — no collection, no product, no tag.
+
+### a. Reconcile the singular/plural tag split (runs first, on purpose)
+
+The store carries two flower vocabularies: retail products (`all-flowers`) use
+singular tags (`flower:rose`, `flower:orchid`), wholesale products
+(`bulk-flowers`) use the plural forms the storefront facets expect
+(`flower:roses-in-stock`). That split is why a retail shopper filtering by a
+flower type got nothing back.
+
+The script **adds** the canonical plural to any product that has only the
+singular. The singular tag is **kept**, so nothing currently relying on it
+breaks. From the live data, 25 products are affected:
+
+| Canonical tag added | Products |
+|---|---|
+| `flower:roses-in-stock` | 8 |
+| `flower:orchids` | 5 |
+| `flower:lilies` | 4 |
+| `flower:chrysanthemums` | 4 |
+| `flower:carnations` | 2 |
+| `flower:spray-roses` | 1 |
+| `flower:calla-lilies` | 1 |
+
+This runs **before** the collection step so those retail products land in the
+retail-facing collections below — otherwise the new collections would contain
+wholesale stock only.
+
+### b. Create the missing variety collections
+
+| Handle | Seeded from | Products |
+|---|---|---|
+| `hydrangea` | `flower:hydrangea` | 5 |
+| `tulips` | `flower:tulips` | 6 |
+| `carnations` | `flower:carnations` | 7 (+2 after reconciliation) |
+
+### c. Populate `tropical-flowers` — **not** delete it
+
+`tropical-flowers` already exists with zero products. It is left in place and
+filled from `flower:tropicals` (7 products), not recreated and not removed.
+
+### Result
+
+The homepage variety section grows from four cards to eight on its own. The
+storefront already lists all eight and renders only those with stock, so **no
+code change or redeploy is needed** — the cards appear the moment the
+collections are filled.
+
+---
+
+## 8. Not done — needs your decision
 
 - **The flower library at `/flowers`** (25 categories, generated imagery) is
   intact and reachable but is **not linked from the approved navigation**. It was
