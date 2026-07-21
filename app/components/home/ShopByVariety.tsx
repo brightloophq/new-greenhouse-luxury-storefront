@@ -80,10 +80,10 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
       aria-labelledby="ng-variety-title"
     >
       <div className="ng-variety-head" data-reveal-heading>
+        <p className="ng-variety-eyebrow">The collection</p>
         <h2 id="ng-variety-title" className="ng-variety-title">
           Shop by Flower Variety
         </h2>
-        <p className="ng-variety-sub">Explore fresh flowers by type.</p>
       </div>
 
       <ul className="ng-variety-grid">
@@ -113,6 +113,9 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
                   />
                 </span>
                 <span className="ng-variety-card-foot">
+                  <span className="ng-variety-card-no" aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
                   <span className="ng-variety-card-name">{variety.label}</span>
                   <span className="ng-variety-card-arrow" aria-hidden="true">
                     →

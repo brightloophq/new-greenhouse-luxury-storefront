@@ -797,29 +797,37 @@ button.ng-chooser-card {
   padding: clamp(3.5rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 7rem);
   background: var(--ng-ground-sage);
 }
+/* Gallery masthead — matches the bays above: eyebrow, then display serif, then
+   a hairline that runs the full measure like a plate caption rule. */
 .ng-variety-head {
-  max-width: 78rem;
-  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  max-width: 82rem;
+  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(1.2rem, 2.4vw, 2rem);
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-variety-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-green);
 }
 .ng-variety-title {
-  margin: 0 0 0.5rem;
-  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
-  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
-  line-height: 1.05;
-  color: var(--ng-green-deep);
-}
-.ng-variety-sub {
-  max-width: 28rem;
   margin: 0;
-  color: var(--ng-green-muted);
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  font-weight: 500;
+  line-height: 1.02;
+  color: var(--ng-green-deep);
 }
 
 /* 12-column editorial grid: tall plate | two stacked | wide plate. */
 .ng-variety-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: clamp(1rem, 1.6vw, 1.6rem);
-  max-width: 78rem;
+  /* Gallery spacing: plates hang apart, they are not tiled. */
+  gap: clamp(2rem, 4vw, 4.5rem) clamp(1.25rem, 2.4vw, 2.5rem);
+  max-width: 82rem;
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -889,18 +897,26 @@ button.ng-chooser-card {
 }
 
 /* Label on the ground, not on the photograph. */
+/* Plate caption, museum-label idiom: catalogue number, title, quiet cue. */
 .ng-variety-card-foot {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 0.1rem 0;
-  border-top: 1px solid rgb(47 74 55 / 0.16);
-  margin-top: 0.85rem;
+  gap: 0.9rem;
+  padding: 0.9rem 0.1rem 0;
+  border-top: 1px solid var(--ng-green-line);
+  margin-top: 0.9rem;
+}
+.ng-variety-card-no {
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ng-green-faint);
+  font-variant-numeric: tabular-nums;
 }
 .ng-variety-card-name {
-  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
-  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.35rem);
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.6rem);
   letter-spacing: 0.01em;
   color: var(--ng-green-deep);
 }
@@ -1456,4 +1472,64 @@ button.ng-chooser-card {
 .ng-chooser-grid--two { grid-template-columns: repeat(2, 1fr); max-width: 52rem; }
 @media (max-width: 34em) {
   .ng-chooser-grid--two { grid-template-columns: 1fr; }
+}
+
+/* ==================================================== Service band ======== */
+/* Three facts on one rule. Not a benefits strip: no icons, no cards, no
+   headings. Sits between the gallery and the footer as a closing caption. */
+.ng-band {
+  /* `.home--general` sizes its children by content, so a plain block <aside>
+     collapsed to 420px and stretched to full viewport height. These make the
+     band span the row whichever layout mode the parent is using. */
+  width: 100%;
+  grid-column: 1 / -1;
+  align-self: start;
+  /* The parent is a flex column with a min-height, so the LAST child was
+     absorbing the leftover space and stretching to the full viewport. */
+  flex: 0 0 auto;
+  height: auto;
+
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem);
+  background: var(--ng-ground-warm);
+  border-top: 1px solid var(--ng-green-line);
+}
+.ng-band-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  max-width: 82rem;
+  margin: 0 auto;
+}
+.ng-band-item {
+  min-width: 0;
+}
+.ng-band-label {
+  margin: 0 0 0.4rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-band-value {
+  margin: 0;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.35rem);
+  line-height: 1.35;
+  color: var(--ng-green-deep);
+}
+.ng-band-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line-strong);
+  transition: border-color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-band-link:hover {
+  border-bottom-color: var(--ng-green-deep);
+}
+@media (max-width: 45em) {
+  .ng-band-list {
+    grid-template-columns: 1fr;
+    gap: clamp(1.1rem, 4vw, 1.6rem);
+  }
 }

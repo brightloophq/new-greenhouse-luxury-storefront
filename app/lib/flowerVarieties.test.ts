@@ -186,10 +186,14 @@ describe('homepage composition', () => {
     expect(VARIETY).toMatch(/if \(!varieties\.length\) return null/);
   });
 
-  it('keeps one supporting line, not marketing copy', () => {
-    const paragraphs = [...VARIETY.matchAll(/<p className="ng-variety-sub">([^<]*)</g)];
-    expect(paragraphs).toHaveLength(1);
-    expect(paragraphs[0][1].length).toBeLessThan(60);
+  it('carries no marketing copy — an eyebrow and a title, nothing else', () => {
+    // The supporting sentence is gone: the gallery masthead is now a two-word
+    // eyebrow over the heading, which says less than the line it replaced.
+    const eyebrows = [...VARIETY.matchAll(/className="ng-variety-eyebrow">([^<]*)</g)];
+    expect(eyebrows).toHaveLength(1);
+    expect(eyebrows[0][1].trim().split(/\s+/).length).toBeLessThanOrEqual(3);
+    // No paragraph of body copy anywhere in the section.
+    expect(VARIETY).not.toMatch(/ng-variety-sub/);
   });
 
   it('places the label on the ground, not in a box over the photograph', () => {

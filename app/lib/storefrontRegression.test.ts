@@ -45,6 +45,9 @@ describe('homepage', () => {
       'BrandHero',
       'ExperienceChooser',
       'ShopByVariety',
+      // Three delivery/contact facts on a rule — the things a flower buyer
+      // checks before ordering. Not a benefits section, not marketing copy.
+      'ServiceBand',
     ]);
   });
 

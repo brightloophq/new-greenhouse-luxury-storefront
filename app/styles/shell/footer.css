@@ -327,3 +327,38 @@
   outline: 2px solid var(--ng-focus-ring);
   outline-offset: 3px;
 }
+
+/* --------------------------------------------------------------------------
+   Compression pass — editorial publishing rhythm, not a giant site footer.
+
+   The footer measured 503px while its content blocks totalled only 298px: over
+   200px was gap. Nothing is removed here — every link, policy, contact detail
+   and social remains. Only the spacing is retuned, so the reduction comes out
+   of air rather than information.
+   -------------------------------------------------------------------------- */
+.ng-shell-footer {
+  padding-block: var(--ng-space-8);
+}
+.ng-shell-footer-stack {
+  gap: var(--ng-space-6);
+}
+/* Contact strip reads as a masthead rule: one tight line, hairline beneath. */
+.ng-shell-contact {
+  padding-block: var(--ng-space-4);
+  gap: var(--ng-space-5);
+}
+.ng-shell-footer-columns {
+  gap: var(--ng-space-5) var(--ng-space-8);
+}
+.ng-shell-footer-col-title {
+  margin-bottom: var(--ng-space-2);
+}
+.ng-shell-footer-nav-list {
+  gap: var(--ng-space-1);
+}
+.ng-shell-footer-blurb {
+  margin-bottom: var(--ng-space-3);
+}
+.ng-shell-footer-bottom {
+  padding-top: var(--ng-space-4);
+}
