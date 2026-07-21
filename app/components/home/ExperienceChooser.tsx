@@ -2,6 +2,7 @@ import {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
+import {PetalDrift} from '~/components/home/PetalDrift';
 import {useReveal} from '~/lib/useReveal';
 
 /**
@@ -121,7 +122,8 @@ export function ExperienceChooser() {
         </h2>
       </div>
 
-      <BotanicalSpine />
+      <PetalDrift />
+      <BotanicalSpine side="start" />
 
       <ol className="ng-bays-list">
         {PATHWAYS.map((pathway) => (

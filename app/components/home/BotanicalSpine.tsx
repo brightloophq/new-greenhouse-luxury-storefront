@@ -13,7 +13,12 @@ import {EASE, prefersReducedMotion} from '~/lib/motion';
  * scrubbed against scroll — but drawn in the house green and tied to the
  * existing motion system rather than its own easing.
  */
-export function BotanicalSpine() {
+export function BotanicalSpine({
+  side = 'start',
+}: {
+  /** Which margin the stem grows in. 'end' mirrors it. */
+  side?: 'start' | 'end';
+}) {
   const scope = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,7 +87,7 @@ export function BotanicalSpine() {
   }, []);
 
   return (
-    <div ref={scope} className="ng-spine" aria-hidden="true">
+    <div ref={scope} className={`ng-spine ng-spine--${side}`} aria-hidden="true">
       <svg
         className="ng-spine-svg"
         viewBox="0 0 120 1400"

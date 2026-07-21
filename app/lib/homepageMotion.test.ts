@@ -229,3 +229,69 @@ describe('reduced motion', () => {
     expect(blocks.length).toBeGreaterThanOrEqual(2);
   });
 });
+
+/**
+ * Ambient background motion — the drifting petals and the drawn stems.
+ *
+ * These are decorative and permanently running, which is exactly why they need
+ * hard rules: they must cost nothing when unseen, announce nothing to a screen
+ * reader, and never widen the page.
+ */
+describe('ambient background motion', () => {
+  const PETALS = read('app/components/home/PetalDrift.tsx');
+  const SPINE = read('app/components/home/BotanicalSpine.tsx');
+  const CSS = read('app/styles/home.css');
+
+  it('stops the petal loop whenever it cannot be seen', () => {
+    // Off-screen, hidden tab, and unmount must each halt the rAF loop —
+    // a decorative canvas burning frames in a background tab is a battery bug.
+    expect(PETALS).toMatch(/IntersectionObserver/);
+    expect(PETALS).toMatch(/visibilitychange/);
+    expect(PETALS).toMatch(/cancelAnimationFrame/);
+    expect(PETALS).toMatch(/observer\.disconnect\(\)/);
+    expect(PETALS).toMatch(/removeEventListener\('visibilitychange'/);
+  });
+
+  it('never starts the petals under reduced motion', () => {
+    // Guard sits before any observer or loop setup, not after.
+    const guard = PETALS.indexOf('prefersReducedMotion()');
+    expect(guard).toBeGreaterThan(-1);
+    expect(guard).toBeLessThan(PETALS.indexOf('requestAnimationFrame'));
+  });
+
+  it('keeps both decorations out of the accessibility tree', () => {
+    expect(PETALS).toMatch(/aria-hidden="true"/);
+    expect(SPINE).toMatch(/aria-hidden="true"/);
+  });
+
+  it('caps device pixel ratio so retina does not quadruple the fill cost', () => {
+    expect(PETALS).toMatch(/Math\.min\(window\.devicePixelRatio \|\| 1, 2\)/);
+  });
+
+  it('draws petals behind the content, never over it', () => {
+    const rule = CSS.slice(CSS.indexOf('.ng-petals {'), CSS.indexOf('.ng-petals {') + 200);
+    expect(rule).toMatch(/pointer-events: none/);
+    expect(rule).toMatch(/z-index: 0/);
+    expect(CSS).toMatch(/\.ng-bays-list,[\s\S]{0,120}z-index: 1/);
+  });
+
+  it('gives every spine side a rule, so `side` can never render unstyled', () => {
+    // The component emits `ng-spine--${side}`; both values must exist in CSS.
+    for (const side of ['start', 'end']) {
+      expect(CSS, `.ng-spine--${side} has no rule`).toMatch(
+        new RegExp('\\.ng-spine--' + side + '\\s*\\{'),
+      );
+    }
+    expect(CSS).toMatch(/\.ng-spine--end \{[^}]*transform: scaleX\(-1\)/);
+  });
+
+  it('clips the mirrored spine instead of letting it widen the page', () => {
+    const rule = CSS.slice(CSS.indexOf('.ng-variety {'), CSS.indexOf('.ng-variety {') + 300);
+    expect(rule).toMatch(/position: relative/);
+    expect(rule).toMatch(/overflow-x: clip/);
+  });
+
+  it('reverts the spine timelines on unmount', () => {
+    expect(SPINE).toMatch(/ctx\?\.revert\(\)/);
+  });
+});

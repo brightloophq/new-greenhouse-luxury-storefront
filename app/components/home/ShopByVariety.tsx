@@ -1,6 +1,7 @@
 import {useRef} from 'react';
 import {Link} from 'react-router';
 import {useReveal} from '~/lib/useReveal';
+import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {
   varietyPath,
   type FlowerVariety,
@@ -79,6 +80,8 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
       className="ng-variety"
       aria-labelledby="ng-variety-title"
     >
+      <BotanicalSpine side="end" />
+
       <div className="ng-variety-head" data-reveal-heading>
         <p className="ng-variety-eyebrow">The collection</p>
         <h2 id="ng-variety-title" className="ng-variety-title">

@@ -455,17 +455,43 @@
 .ng-spine {
   position: absolute;
   inset-block: clamp(3rem, 6vw, 6rem) 0;
-  inset-inline-start: clamp(1rem, 3vw, 3rem);
   inline-size: clamp(48px, 5vw, 84px);
   color: var(--ng-green);
   /* Present enough to read as a drawn element rather than a smudge, quiet
      enough that it never competes with the photography. */
-  opacity: 0.45;
+  opacity: 0.62;
   pointer-events: none;
+}
+.ng-spine--start {
+  inset-inline-start: clamp(1rem, 3vw, 3rem);
+}
+/* Mirrored so the two stems lean away from the page centre rather than both
+   leaning the same way, which would read as a repeated asset. */
+.ng-spine--end {
+  inset-inline-end: clamp(1rem, 3vw, 3rem);
+  transform: scaleX(-1);
 }
 .ng-spine-svg {
   inline-size: 100%;
   block-size: 100%;
+}
+
+/* Petals drift behind the section's content, never over it. */
+.ng-petals {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Everything the reader actually uses sits above the drift. */
+.ng-bays-head,
+.ng-bays-list,
+.ng-variety-head,
+.ng-variety-grid {
+  position: relative;
+  z-index: 1;
 }
 
 /* Below this width the page has no outer margin to spare — the bays run edge
@@ -880,8 +906,11 @@ button.ng-chooser-card {
    row — the shopping chooser above already uses that rhythm. Labels sit on the
    cream ground beneath each plate rather than in a white box over the image. */
 .ng-variety {
+  position: relative;
   padding: clamp(3.5rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 7rem);
   background: var(--ng-ground-sage);
+  /* The mirrored spine is anchored to this box; it must not push the page wide. */
+  overflow-x: clip;
 }
 /* Gallery masthead — matches the bays above: eyebrow, then display serif, then
    a hairline that runs the full measure like a plate caption rule. */
