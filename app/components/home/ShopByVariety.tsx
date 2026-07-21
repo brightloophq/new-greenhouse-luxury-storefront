@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {useReveal} from '~/lib/useReveal';
 import {useVarietyParallax} from '~/lib/useVarietyParallax';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
+import {focalStyle} from '~/lib/focalPoint';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {
@@ -130,6 +131,7 @@ export function ShopByVariety({varieties}: {varieties: FlowerVariety[]}) {
                       decoding="async"
                       width={800}
                       height={1000}
+                      style={focalStyle(variety.img)}
                     />
                   </span>
                 </span>

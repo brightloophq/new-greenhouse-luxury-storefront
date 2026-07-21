@@ -4,6 +4,7 @@ import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
+import {focalStyle} from '~/lib/focalPoint';
 import {useReveal} from '~/lib/useReveal';
 
 /**
@@ -86,6 +87,7 @@ function BayInner({pathway}: {pathway: Pathway}) {
           decoding="async"
           width={800}
           height={1000}
+          style={focalStyle(`/images/${pathway.dir}/${pathway.img}`)}
         />
       </span>
 

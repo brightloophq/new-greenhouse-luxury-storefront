@@ -151,6 +151,25 @@ remaining-work list.
 
 **Never list a width that is not on disk** — the browser will pick a 404.
 
+### Focal points
+
+Every photograph is a portrait bloom shot, but the frames that hold them are
+not — the entrances crop to 5:4 / 3:2, the variety plates to anything from 4:5
+to 3:1. A naive centred `object-fit: cover` decapitates a bouquet whose blooms
+sit high in the frame. `app/lib/focalPoint.ts` carries the subject position for
+each image as `object-position` percentages, read from the actual photograph,
+so the same image crops responsibly into any frame at any width.
+
+- Keyed by the image's path base (no `-{width}.webp`), so one entry covers every
+  responsive width.
+- Unregistered images fall back to the **botanical default** `50% 40%` — blooms
+  sit above stems, so a flower's honest centre is a little high.
+- Pure render-time metadata: no client JS, and `object-position` changes neither
+  layout nor the LCP, so there is no CLS or performance cost.
+- Applied on the entrances and the variety plates today; new cropped surfaces
+  (collection heroes, PDP galleries) should adopt `focalStyle()` as they are
+  built rather than re-centring by hand.
+
 ---
 
 ## 4. Layout
