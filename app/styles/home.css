@@ -171,7 +171,10 @@
   }
 }
 
-/* -------------------------------------------------------------- Chooser -- */
+/* --- Pathway selector (PathwaySelector.tsx) -------------------------------
+   Still used by /retail, /wholesale, /arrangements, /supplies, /occasion and
+   /premium-deluxe. The HOMEPAGE no longer uses these classes — it uses the
+   editorial bays below. Deleting them outright broke six routes. --- */
 .ng-chooser {
   padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(3.5rem, 7vw, 6rem);
   /* Bright warm white — fresh and clean under the sage hero. */
@@ -356,6 +359,194 @@
   }
   .ng-chooser-card {
     aspect-ratio: 16 / 10;
+  }
+}
+
+
+/* ============================================= Pathways · Editorial bays == */
+/* Four full-width bays, image side alternating, oversized index numeral
+   bleeding past the image edge. No cards, no equal grid, no shadows — the
+   shapes that make a page read as a theme. */
+.ng-bays {
+  padding: clamp(4rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
+  background: var(--ng-ground-warm);
+  scroll-margin-top: 5rem;
+}
+
+.ng-bays-head {
+  max-width: 78rem;
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+  padding-inline: clamp(1.5rem, 5vw, 4rem);
+}
+.ng-bays-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-bays-title {
+  max-width: 20ch;
+  margin: 0;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2rem, 1.1rem + 3.4vw, 4rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  color: var(--ng-green-deep);
+  text-wrap: balance;
+}
+
+.ng-bays-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One bay. A hairline separates them — the only rule in the section. */
+.ng-bay + .ng-bay {
+  border-top: 1px solid var(--ng-green-line);
+}
+
+.ng-bay-link {
+  /* Reset for the Wholesale <button> so it matches the three anchors exactly. */
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  max-width: 82rem;
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 5vw, 4rem);
+  text-decoration: none;
+}
+/* Alternate the image side. This is the section's rhythm. */
+.ng-bay:nth-child(even) .ng-bay-media {
+  order: 2;
+}
+
+.ng-bay-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  /* Near-square corners: radius is the tell. */
+  border-radius: 2px;
+  aspect-ratio: 5 / 4;
+  background: var(--ng-ground-tint);
+}
+.ng-bay-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ng-motion-ease);
+}
+.ng-bay-link:hover .ng-bay-media img {
+  transform: scale(1.03);
+}
+
+.ng-bay-text {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+/* The index numeral — oversized, quiet, and allowed to sit outside the text
+   column so the composition is not a tidy two-column box. */
+.ng-bay-index {
+  position: absolute;
+  top: -0.55em;
+  left: -0.12em;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(4rem, 2rem + 7vw, 9rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ng-green-deep);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ng-bay-title {
+  position: relative;
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2rem, 1.2rem + 2.8vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-bay-blurb {
+  display: block;
+  max-width: 30ch;
+  margin-bottom: clamp(1.2rem, 2.4vw, 1.8rem);
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.08rem);
+  line-height: 1.55;
+  color: var(--ng-green-muted);
+}
+
+/* A rule that draws on hover, not a button. */
+.ng-bay-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-bay-cue-rule {
+  display: block;
+  width: clamp(2rem, 4vw, 3.5rem);
+  height: 1px;
+  background: var(--ng-green);
+  transform-origin: left center;
+  transition: transform var(--ng-motion-card) var(--ng-motion-ease);
+}
+.ng-bay-link:hover .ng-bay-cue-rule {
+  transform: scaleX(1.5);
+}
+.ng-bay-link:hover .ng-bay-title {
+  color: var(--ng-green-pressed);
+}
+.ng-bay-link:focus-visible {
+  outline: 3px solid var(--ng-focus-ring);
+  outline-offset: -6px;
+}
+
+@media (max-width: 60em) {
+  .ng-bay-link {
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  /* Image always leads on narrow screens — alternation needs two columns to
+     read as rhythm; stacked, it just looks inconsistent. */
+  .ng-bay:nth-child(even) .ng-bay-media {
+    order: 0;
+  }
+  .ng-bay-media {
+    aspect-ratio: 3 / 2;
+  }
+  .ng-bay-index {
+    top: -0.42em;
+    font-size: clamp(3.5rem, 14vw, 6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-bay-media img,
+  .ng-bay-cue-rule {
+    transition: none;
   }
 }
 

@@ -168,8 +168,14 @@ describe('wholesale entry', () => {
   it('opens the auth modal from the homepage card instead of navigating', () => {
     expect(CHOOSER).toMatch(/action: 'wholesale'/);
     expect(CHOOSER).toMatch(/WholesaleAuthModal/);
-    // The Wholesale card must be a button (opens the modal), never a Link.
-    expect(CHOOSER).toMatch(/card\.action === 'wholesale' \?[\s\S]{0,120}<button/);
+    // Wholesale must render a <button> that opens the modal, never a <Link>.
+    // Asserted on the branch's SHAPE rather than the loop variable's name, so
+    // renaming `card` → `pathway` in a redesign doesn't read as a regression.
+    expect(CHOOSER).toMatch(
+      /\.action === 'wholesale' \?[\s\S]{0,200}<button[\s\S]{0,200}onClick=\{\(\) => set\w+\(true\)\}/,
+    );
+    // …and the other destinations stay links.
+    expect(CHOOSER).toMatch(/<Link[\s\S]{0,160}to=\{\w+\.to!\}/);
   });
 
   it('returns focus to the element that opened it', () => {

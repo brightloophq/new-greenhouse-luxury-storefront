@@ -4,54 +4,56 @@ import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 import {useReveal} from '~/lib/useReveal';
 
 /**
- * "Choose Your Shopping Experience" — the four entry points into the store.
- * Wayfinding cards, not product cards: a photograph, a title, one line of copy.
+ * The four ways into the store, composed as EDITORIAL BAYS rather than cards.
  *
- * Everything stays in the one bright, green brand:
- *   Wholesale     → opens the sign-in / register modal immediately (trade only)
- *   Retail        → shop flowers & supplies, guest checkout
- *   Arrangements  → the (still green) Arrangements page; Premium/Deluxe is a
- *                   deliberate choice one level deeper
- *   Supplies      → the florist supplies categories
+ * Four equal tiles in a row is the single clearest signal that a page was built
+ * on a theme, so the shape is gone: each destination is a full-width bay whose
+ * image side alternates, with an oversized index numeral bleeding past the
+ * image edge and the name set in display serif. Rhythm comes from the
+ * alternation and the numerals, not from a grid.
+ *
+ * Nothing about the flow changes. Wholesale is still a <button> that opens the
+ * auth modal without leaving `/`; the other three are still links.
  */
-interface ChooserCard {
+interface Pathway {
+  index: string;
   title: string;
   blurb: string;
   img: string;
   dir: string;
-  /** Internal link destination (Link). */
   to?: string;
-  /** Wholesale opens the auth modal instead of navigating. */
   action?: 'wholesale';
-  /** Adds the subtle premium hint to the card. */
-  premium?: boolean;
 }
 
-const CARDS: ChooserCard[] = [
+const PATHWAYS: Pathway[] = [
   {
+    index: '01',
     title: 'Wholesale',
-    blurb: 'Trade pricing by the box for florists & venues.',
+    blurb: 'Trade pricing by the box, for florists and venues.',
     img: 'wholesale-flowers',
     dir: 'collections',
     action: 'wholesale',
   },
   {
+    index: '02',
     title: 'Retail',
-    blurb: 'Ready-to-gift flowers, delivered across Kingston.',
+    blurb: 'Ready to gift, delivered across Kingston.',
     to: '/retail',
     img: 'retail',
     dir: 'homepage',
   },
   {
+    index: '03',
     title: 'Arrangements',
-    blurb: 'Hand-crafted designs — occasion, mixed & premium.',
+    blurb: 'Hand-composed — occasion, mixed and premium.',
     to: '/arrangements',
     img: 'arrangements',
     dir: 'homepage',
   },
   {
+    index: '04',
     title: 'Supplies',
-    blurb: 'Vases, ribbon, tools & packaging for the studio.',
+    blurb: 'Vases, ribbon, tools and packaging for the studio.',
     to: '/supplies',
     img: 'supplies',
     dir: 'homepage',
@@ -66,25 +68,33 @@ function srcSet(dir: string, img: string) {
   };
 }
 
-function CardInner({card}: {card: ChooserCard}) {
-  const {src, srcSet: ss} = srcSet(card.dir, card.img);
+/** The bay's inner content — identical for the button and the links. */
+function BayInner({pathway}: {pathway: Pathway}) {
+  const media = srcSet(pathway.dir, pathway.img);
   return (
     <>
-      <span className="ng-chooser-card-media">
+      <span className="ng-bay-media">
         <img
-          src={src}
-          srcSet={ss}
-          sizes="(min-width: 64em) 24vw, (min-width: 45em) 45vw, 90vw"
+          src={media.src}
+          srcSet={media.srcSet}
+          sizes="(min-width: 64em) 52vw, 92vw"
           alt=""
           loading="lazy"
           decoding="async"
+          width={800}
+          height={1000}
         />
       </span>
-      <span className="ng-chooser-card-body">
-        <span className="ng-chooser-card-title">{card.title}</span>
-        <span className="ng-chooser-card-blurb">{card.blurb}</span>
-        <span className="ng-chooser-card-cta" aria-hidden="true">
-          Explore <span className="ng-chooser-card-arrow">→</span>
+
+      <span className="ng-bay-text">
+        <span className="ng-bay-index" aria-hidden="true">
+          {pathway.index}
+        </span>
+        <span className="ng-bay-title">{pathway.title}</span>
+        <span className="ng-bay-blurb">{pathway.blurb}</span>
+        <span className="ng-bay-cue" aria-hidden="true">
+          <span className="ng-bay-cue-rule" />
+          Explore
         </span>
       </span>
     </>
@@ -94,44 +104,41 @@ function CardInner({card}: {card: ChooserCard}) {
 export function ExperienceChooser() {
   const [wholesaleOpen, setWholesaleOpen] = useState(false);
   const scope = useRef<HTMLElement>(null);
-  // ONE batched trigger for the whole section — heading then a card stagger.
-  // Four individual ScrollTriggers would cost more and read less coherently.
   useReveal(scope);
 
   return (
     <section
       ref={scope}
       id="choose-experience"
-      className="ng-chooser"
-      aria-labelledby="ng-chooser-title"
+      className="ng-bays"
+      aria-labelledby="ng-bays-title"
     >
-      <div className="ng-chooser-head" data-reveal-heading>
-        <p className="ng-chooser-eyebrow">Where would you like to begin?</p>
-        <h2 id="ng-chooser-title">Choose your shopping experience</h2>
+      <div className="ng-bays-head" data-reveal-heading>
+        <p className="ng-bays-eyebrow">Where would you like to begin?</p>
+        <h2 id="ng-bays-title" className="ng-bays-title">
+          Four ways into the greenhouse
+        </h2>
       </div>
 
-      <ul className="ng-chooser-grid">
-        {CARDS.map((card) => {
-          const className = `ng-chooser-card${card.premium ? ' ng-chooser-card--premium' : ''}`;
-          return (
-            <li key={card.title} data-reveal-item>
-              {card.action === 'wholesale' ? (
-                <button
-                  type="button"
-                  className={className}
-                  onClick={() => setWholesaleOpen(true)}
-                >
-                  <CardInner card={card} />
-                </button>
-              ) : (
-                <Link className={className} to={card.to!} prefetch="intent">
-                  <CardInner card={card} />
-                </Link>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <ol className="ng-bays-list">
+        {PATHWAYS.map((pathway) => (
+          <li key={pathway.title} className="ng-bay" data-reveal-item>
+            {pathway.action === 'wholesale' ? (
+              <button
+                type="button"
+                className="ng-bay-link"
+                onClick={() => setWholesaleOpen(true)}
+              >
+                <BayInner pathway={pathway} />
+              </button>
+            ) : (
+              <Link className="ng-bay-link" to={pathway.to!} prefetch="intent">
+                <BayInner pathway={pathway} />
+              </Link>
+            )}
+          </li>
+        ))}
+      </ol>
 
       <WholesaleAuthModal
         open={wholesaleOpen}
