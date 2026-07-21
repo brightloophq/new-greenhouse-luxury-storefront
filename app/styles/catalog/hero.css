@@ -82,12 +82,24 @@
 }
 
 .ng-catalog-hero-eyebrow {
+  align-items: center;
   color: var(--ng-color-luxury-gold);
+  display: inline-flex;
   font-family: var(--ng-font-body);
   font-size: var(--ng-font-size-label);
-  font-weight: 700;
-  letter-spacing: var(--ng-letter-label);
+  font-weight: 600;
+  gap: 0.8rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
+}
+/* Plate-label leading joint, so the collection masthead reads in the same
+   Glasshouse register as the homepage section labels. */
+.ng-catalog-hero-eyebrow::before {
+  background: currentcolor;
+  block-size: 1px;
+  content: "";
+  inline-size: 2rem;
+  opacity: 0.65;
 }
 
 .ng-catalog-hero-title {

@@ -223,3 +223,39 @@ describe('the greenhouse footer', () => {
     expect(css).not.toMatch(/ng-shell-newsletter/);
   });
 });
+
+/**
+ * The catalogue plate — the shopping grid in the Glasshouse language.
+ *
+ * Product cards read as editorial plates (framed image, label on the ground),
+ * not bordered Shopify tiles — but ONLY in the classic register; the approved
+ * deluxe/premium card treatment must stay untouched.
+ */
+describe('the catalogue plate', () => {
+  const grid = read('app/styles/catalog/grid.css');
+  const ds = read('app/styles/design-system.css');
+
+  it('frames the product media from the shared mullion primitive', () => {
+    // The catalogue media joins the corner-joint ::after rule rather than
+    // duplicating the eight-gradient definition.
+    expect(ds).toMatch(/\.ng-catalog-card \.ng-product-card-media::after/);
+  });
+
+  it('de-boxes the card only in the classic register', () => {
+    // Every de-box rule is scoped away from deluxe, so the premium cards keep
+    // their approved treatment.
+    expect(grid).toMatch(/html:not\(\[data-experience='deluxe'\]\) \.ng-catalog-card\.ng-product-card \{[^}]*border: 0/);
+    // No unscoped de-box that would hit deluxe.
+    expect(grid).not.toMatch(/^\.ng-catalog-card\.ng-product-card \{[^}]*border: 0/m);
+  });
+
+  it('carries the botanical focal default onto product images', () => {
+    expect(grid).toMatch(/\.ng-catalog-card-img \{[^}]*object-position: 50% 40%/);
+  });
+
+  it('puts the label on the ground beneath a hairline', () => {
+    expect(grid).toMatch(
+      /\.ng-catalog-card \.ng-product-card-body \{[^}]*border-top: 1px solid var\(--ng-green-line\)/,
+    );
+  });
+});

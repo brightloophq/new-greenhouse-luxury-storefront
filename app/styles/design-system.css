@@ -778,14 +778,18 @@
    full hairline border too; the base class is corners-only, which reads
    lighter and is the default for editorial plates. */
 .ng-glass-corners,
-.ng-glass-framed {
+.ng-glass-framed,
+.ng-catalog-card .ng-product-card-media {
   position: relative;
 }
 /* The corner brackets ride an ::after overlay, not the element's own
    background — so a plate that sets its own background (or clips overflow) keeps
-   its frame. pointer-events:none so it never intercepts a click. */
+   its frame. pointer-events:none so it never intercepts a click. The catalogue
+   card media joins in here so every product plate is framed like the entrances,
+   from the single source rather than a duplicated definition. */
 .ng-glass-corners::after,
-.ng-glass-framed::after {
+.ng-glass-framed::after,
+.ng-catalog-card .ng-product-card-media::after {
   content: "";
   inset: 0;
   pointer-events: none;
