@@ -372,6 +372,11 @@
 .ng-shell-primary-item {
   margin: 0;
 }
+/* Positioning context for the About popover, so it anchors to the trigger
+   rather than to the header (which is what made it span the full width). */
+.ng-shell-primary-item.has-mega {
+  position: relative;
+}
 
 .ng-shell-navlink {
   align-items: center;
@@ -421,46 +426,45 @@
   transform: rotate(180deg);
 }
 
+/* About dropdown — a COMPACT ANCHORED POPOVER, not a mega-menu.
+   It previously spanned `left:0; right:0` across the whole header and painted
+   itself with the PREMIUM palette (#090909 ground, cream text, gold titles),
+   which is both the full-width bug and the contrast bug: dark-theme tokens on
+   the cream masthead. It now anchors under the About item at its own width and
+   uses the green brand only. */
 .ng-mega {
-  background: var(--ng-color-background);
-  border-top: 1px solid var(--ng-border-inverse);
-  box-shadow: var(--ng-shadow-lg);
-  color: var(--ng-text-inverse);
-  left: 0;
-  opacity: 0;
   position: absolute;
-  right: 0;
-  top: 100%;
-  transform: translateY(-8px);
+  top: calc(100% + var(--ng-space-2));
+  left: 50%;
+  /* Anchored to the trigger, sized by its content, never the viewport. */
+  width: max-content;
+  min-width: 13.75rem; /* 220px */
+  max-width: 20rem; /*    320px */
+  background: var(--ng-ground-panel);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  box-shadow: 0 12px 32px rgb(47 74 55 / 0.14);
+  color: var(--ng-green-deep);
+  opacity: 0;
+  transform: translate(-50%, -6px);
   transition:
-    opacity var(--ng-duration-standard) var(--ng-ease-standard),
-    transform var(--ng-duration-standard) var(--ng-ease-luxury);
+    opacity var(--ng-motion-nav) var(--ng-motion-ease),
+    transform var(--ng-motion-nav) var(--ng-motion-ease);
   visibility: hidden;
   z-index: var(--ng-z-dropdown);
 }
 .ng-mega.is-open {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   visibility: visible;
 }
 .ng-mega-inner {
-  margin-inline: auto;
-  max-width: var(--ng-container-xl);
-  padding: var(--ng-space-10) var(--ng-container-gutter);
+  padding: var(--ng-space-3);
 }
 .ng-mega-columns {
-  display: grid;
-  /* Four fixed sections. "Flower Varieties" gets a wider (≈double) track so its
-     dense list can flow in two readable sub-columns; the other three are single
-     columns. The minmax() floors guarantee columns never collapse to the
-     character-wrapping widths the old `1fr auto` (feature image) layout caused. */
-  grid-template-columns:
-    minmax(150px, 0.85fr)
-    minmax(300px, 1.7fr)
-    minmax(150px, 0.85fr)
-    minmax(150px, 0.85fr);
-  gap: clamp(1.5rem, 3vw, 3.5rem);
-  align-items: start;
+  /* One column: About Us · Contact Us · Reviews. The old four-track grid was
+     sized for a flower-variety mega-menu that no longer exists here. */
+  display: block;
 }
 .ng-mega-column {
   min-width: 0;
@@ -478,37 +482,45 @@
   grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: var(--ng-space-1) var(--ng-space-6);
 }
+/* The single column heading duplicates the "About" trigger directly above it,
+   so it is hidden rather than repeated. Kept in the DOM as the list's
+   accessible name. */
 .ng-mega-column-title {
-  color: var(--ng-color-luxury-gold);
-  font-family: var(--ng-font-body);
-  font-size: var(--ng-font-size-label);
-  font-weight: 800;
-  letter-spacing: var(--ng-letter-label);
-  margin: 0 0 var(--ng-space-4);
-  text-transform: uppercase;
-  /* Horizontal, word-safe wrapping. */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  writing-mode: horizontal-tb;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
+
 .ng-mega-link {
-  color: var(--ng-color-light-gray);
   display: block;
+  padding: var(--ng-space-2) var(--ng-space-3);
+  border-radius: 2px;
+  /* Deep botanical green on the cream panel — AA at this size. Previously
+     --ng-color-light-gray, a dark-theme token, which was near-invisible here. */
+  color: var(--ng-green-deep);
   font-family: var(--ng-font-heading);
   font-size: 1rem;
   line-height: 1.4;
-  min-width: 0;
-  transition: var(--ng-transition-color);
-  /* Labels wrap between words only — never character-by-character or vertically. */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  writing-mode: horizontal-tb;
-}
-.ng-mega-link:hover {
-  color: var(--ng-text-inverse);
   text-decoration: none;
+  transition:
+    color var(--ng-motion-hover) var(--ng-motion-ease),
+    background var(--ng-motion-hover) var(--ng-motion-ease);
+  white-space: nowrap;
+}
+.ng-mega-link:hover,
+.ng-mega-link:focus-visible {
+  color: var(--ng-green-pressed);
+  background: var(--ng-ground-sage);
+  text-decoration: none;
+}
+.ng-mega-link:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: -2px;
 }
 
 /* --------------------------------------------------------------------------

@@ -92,10 +92,14 @@ describe('flower variety data', () => {
     // The bug this guards: at 768px only tall/regular/half were reset to 6
     // columns while `wide` stayed at 12, so it wrapped to its own row and left
     // a 360px hole beside the card before it.
+    // Scope the search to the VARIETY section. `indexOf` from the top of the
+    // file is brittle: any earlier section that adds its own breakpoint (the
+    // hero now does) would silently move these boundaries.
     const css = read('app/styles/home.css');
-    const tablet = css.slice(
-      css.indexOf('@media (max-width: 64em)'),
-      css.indexOf('@media (max-width: 45em)'),
+    const varietyBlock = css.slice(css.indexOf('Shop by Flower Variety'));
+    const tablet = varietyBlock.slice(
+      varietyBlock.indexOf('@media (max-width: 64em)'),
+      varietyBlock.indexOf('@media (max-width: 45em)'),
     );
     // A bare `.ng-variety-cell {` rule — not a span-specific one.
     expect(tablet).toMatch(/\.ng-variety-cell \{[^}]*grid-column: span 6/);

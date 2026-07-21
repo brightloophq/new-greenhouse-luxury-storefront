@@ -11,105 +11,163 @@
   }
 }
 
-/* ------------------------------------------------------------------ Hero -- */
-.ng-brandhero {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  align-items: stretch;
-  min-height: clamp(31rem, 82vh, 48rem);
-  background: var(--ng-ground-sage); /* soft sage-cream — bright, fresh, green-leaning */
-  overflow: hidden;
-}
-/* The copy block's entrance is owned by the GSAP hero timeline (useHeroTimeline)
-   so the eyebrow → wordmark → tagline → CTA sequence reads as one move. A CSS
-   animation here would fade the whole block in on top of that. */
-.ng-brandhero-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(2rem, 5vw, 5rem);
-}
-.ng-brandhero-eyebrow {
-  margin: 0 0 1.1rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--ng-green);
-}
-.ng-brandhero-wordmark {
-  margin: 0 0 1.1rem;
-  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
-  font-weight: 500;
-  font-size: clamp(2.4rem, 1rem + 4.2vw, 4.6rem);
-  line-height: 0.98;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ng-green-deep);
-}
-.ng-brandhero-tagline {
-  max-width: 26rem;
-  margin: 0 0 1.9rem;
-  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.12rem);
-  line-height: 1.5;
-  color: var(--ng-green-muted);
-}
-.ng-brandhero-cta {
-  display: inline-flex;
-  align-self: flex-start;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.9rem 2.1rem;
-  border-radius: 999px;
-  background: var(--ng-green-deep);
-  color: var(--ng-on-green);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  box-shadow: 0 10px 26px rgba(47, 74, 55, 0.22);
-  transition: transform 0.25s ease, background 0.25s ease;
-}
-.ng-brandhero-cta:hover {
-  transform: translateY(-2px);
-  background: var(--ng-green-pressed);
-}
-.ng-brandhero-cta-arrow {
-  transition: transform 0.25s ease;
-}
-.ng-brandhero-cta:hover .ng-brandhero-cta-arrow {
-  transform: translateY(3px);
-}
-.ng-brandhero-media {
+/* ================================================= Hero · The Glasshouse == */
+/* Full-bleed media, oversized wordmark ON the glass, fine glazing bars.
+   Replaces the split copy-panel + photo layout. */
+.ng-hero {
   position: relative;
+  display: grid;
+  /* Media and copy occupy the SAME cell — the type sits on the media rather
+     than beside it. */
+  grid-template-areas: 'stage';
+  align-items: end;
+  min-height: clamp(30rem, 82vh, 46rem);
   overflow: hidden;
+  background: var(--ng-ground-sage);
 }
-/* No entrance effect on the hero photograph. It is the LCP element, and a
-   multi-second transform on a full-bleed image costs paint on every frame for
-   no editorial gain — the brief asks for it to "become visible naturally". */
-.ng-brandhero-media img {
+.ng-hero-media,
+.ng-hero-copy {
+  grid-area: stage;
+}
+
+.ng-hero-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.ng-heromedia,
+.ng-heromedia-poster,
+.ng-heromedia-video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-@media (max-width: 60em) {
-  .ng-brandhero {
-    grid-template-columns: 1fr;
-    min-height: 0;
+/* The video fades over the poster once it is actually playing, so a stalled or
+   blocked video simply never appears. */
+.ng-heromedia-video {
+  opacity: 0;
+  transition: opacity var(--ng-motion-reveal) var(--ng-motion-ease);
+}
+.ng-heromedia-video.is-playing {
+  opacity: 1;
+}
+
+/* Tonal scrim — guarantees the wordmark holds contrast on EVERY frame of the
+   loop, not just on the poster. Weighted to the bottom where the copy sits. */
+.ng-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(30 42 32 / 0.16) 0%,
+    rgb(30 42 32 / 0.06) 38%,
+    rgb(24 36 27 / 0.62) 100%
+  );
+}
+
+/* Glazing bars — the greenhouse motif. Pure gradients: no images, no WebGL,
+   and they cost nothing to paint. */
+.ng-hero-glazing {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgb(244 239 228 / 0.14) 0 1px,
+      transparent 1px calc(100% / 6)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgb(244 239 228 / 0.08) 0 1px,
+      transparent 1px 33.333%
+    );
+  mix-blend-mode: soft-light;
+}
+
+.ng-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+  max-width: 62rem;
+  color: var(--ng-on-green);
+}
+.ng-hero-eyebrow {
+  margin: 0 0 clamp(0.75rem, 1.4vw, 1.2rem);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-gold-pale);
+}
+/* The display moment the site did not have. */
+.ng-hero-wordmark {
+  margin: 0 0 clamp(0.6rem, 1.2vw, 1rem);
+  font-family: var(--ng-font-heading);
+  font-weight: 500;
+  font-size: clamp(2.9rem, 1rem + 7.4vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--ng-on-green);
+  text-shadow: 0 2px 24px rgb(24 36 27 / 0.4);
+}
+.ng-hero-tagline {
+  max-width: 30rem;
+  margin: 0 0 clamp(1.4rem, 2.6vw, 2rem);
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
+  line-height: 1.5;
+  color: rgb(244 239 228 / 0.92);
+}
+
+/* Editorial CTA — a rule that draws, not a pill button. */
+.ng-hero-cta {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ng-on-green);
+}
+.ng-hero-cta-rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--ng-gold);
+  transform-origin: left center;
+  transition: transform var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-hero-cta:hover .ng-hero-cta-rule {
+  transform: scaleX(1.35);
+}
+.ng-hero-cta:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 6px;
+}
+
+@media (max-width: 45em) {
+  .ng-hero {
+    min-height: clamp(26rem, 76vh, 34rem);
   }
-  .ng-brandhero-copy {
-    align-items: center;
-    padding: clamp(2.25rem, 8vw, 3.5rem) 1.5rem;
-    text-align: center;
+  .ng-hero-glazing {
+    /* Fewer, wider panes at small sizes so the lines stay legible. */
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgb(244 239 228 / 0.12) 0 1px,
+        transparent 1px 33.333%
+      );
   }
-  .ng-brandhero-cta {
-    align-self: center;
-  }
-  .ng-brandhero-media {
-    min-height: 20rem;
-    aspect-ratio: 4 / 3;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-heromedia-video,
+  .ng-hero-cta-rule {
+    transition: none;
   }
 }
 
@@ -260,7 +318,7 @@
 }
 
 /* Focus visibility */
-.ng-brandhero-cta:focus-visible,
+.ng-hero-cta:focus-visible,
 .ng-chooser-card:focus-visible {
   outline: 3px solid var(--ng-gold);
   outline-offset: 3px;
@@ -280,7 +338,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ng-chooser-card,
   .ng-chooser-card-media img,
-  .ng-brandhero-cta,
+
   .ng-chooser-card-arrow {
     transition: none;
   }

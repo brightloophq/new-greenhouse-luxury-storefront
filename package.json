@@ -28,7 +28,8 @@
     "shopify:metafields": "node scripts/shopify/metafields.mjs",
     "shopify:tags": "node scripts/shopify/tags.mjs",
     "shopify:varieties": "node scripts/shopify/varieties.mjs",
-    "shopify:setup": "npm run shopify:collections && npm run shopify:metafields && npm run shopify:tags && npm run shopify:varieties"
+    "shopify:setup": "npm run shopify:collections && npm run shopify:metafields && npm run shopify:tags && npm run shopify:varieties",
+    "video:poster": "node scripts/images/hero-poster.mjs"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {

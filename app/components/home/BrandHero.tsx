@@ -1,15 +1,18 @@
 import {useRef} from 'react';
 import {useHeroTimeline} from '~/lib/useHeroTimeline';
+import {HeroMedia} from '~/components/home/HeroMedia';
 
 /**
- * Brand hero — one unified, bright, botanical identity (2026 redesign).
- * Split layout: minimal copy on a soft sage-cream panel (left) and a large,
- * vibrant botanical photograph (right). Green, fresh and welcoming — never a
- * dark luxury hero. "Explore More" smooth-scrolls to the shopping chooser.
+ * Brand hero — Concept A, "The Glasshouse".
  *
- * The photograph carries no entrance animation on purpose: it is the LCP
- * element, so it paints as early as the network allows and is never held back
- * by JavaScript. Only the copy sequences in.
+ * Full-bleed botanical media with the wordmark set oversized ON the glass: a
+ * fine glazing grid overlays the media, the way light reads through greenhouse
+ * panes. Replaces the previous split panel, which was the layout every Hydrogen
+ * theme ships.
+ *
+ * Legibility is not left to chance — a tonal scrim sits between the media and
+ * the type, so the wordmark holds AA contrast on every frame of the loop rather
+ * than only on the poster.
  */
 export function BrandHero() {
   const scope = useRef<HTMLElement>(null);
@@ -18,41 +21,34 @@ export function BrandHero() {
   return (
     <section
       ref={scope}
-      className="ng-brandhero"
-      aria-labelledby="ng-brandhero-title"
+      className="ng-hero"
+      aria-labelledby="ng-hero-title"
     >
-      <div className="ng-brandhero-copy">
-        <p className="ng-brandhero-eyebrow" data-hero-eyebrow>
-          Est. 1984 · Kingston, Jamaica
-        </p>
-        <h1
-          id="ng-brandhero-title"
-          className="ng-brandhero-wordmark"
-          data-hero-title
-        >
-          The New Greenhouse
-        </h1>
-        <p className="ng-brandhero-tagline" data-hero-tagline>
-          Fresh flowers, arrangements &amp; florist supplies — delivered daily
-          across Kingston.
-        </p>
-        <a className="ng-brandhero-cta" href="#choose-experience" data-hero-cta>
-          Explore More
-          <span className="ng-brandhero-cta-arrow" aria-hidden="true">↓</span>
-        </a>
+      <div className="ng-hero-media">
+        <HeroMedia
+          poster="/video/hero-poster.webp"
+          video={{src: '/video/hero.mp4'}}
+          alt="Morning light through the glass of a greenhouse, over cream and blush peonies"
+        />
+        {/* Scrim first, then glazing bars — both decorative. */}
+        <div className="ng-hero-scrim" aria-hidden="true" />
+        <div className="ng-hero-glazing" aria-hidden="true" />
       </div>
 
-      <div className="ng-brandhero-media">
-        <img
-          src="/images/homepage/hero-split-1200.webp"
-          srcSet="/images/homepage/hero-split-640.webp 640w, /images/homepage/hero-split-900.webp 900w, /images/homepage/hero-split-1200.webp 1200w"
-          sizes="(min-width: 60em) 50vw, 100vw"
-          alt="A vibrant New Greenhouse arrangement of colourful fresh flowers surrounded by lush green foliage in a bright botanical studio"
-          width={1200}
-          height={1500}
-          loading="eager"
-          decoding="async"
-        />
+      <div className="ng-hero-copy">
+        <p className="ng-hero-eyebrow" data-hero-eyebrow>
+          Est. 1984 · Kingston, Jamaica
+        </p>
+        <h1 id="ng-hero-title" className="ng-hero-wordmark" data-hero-title>
+          The New Greenhouse
+        </h1>
+        <p className="ng-hero-tagline" data-hero-tagline>
+          Not just a flower, whatever it takes.
+        </p>
+        <a className="ng-hero-cta" href="#choose-experience" data-hero-cta>
+          Explore More
+          <span className="ng-hero-cta-rule" aria-hidden="true" />
+        </a>
       </div>
     </section>
   );
