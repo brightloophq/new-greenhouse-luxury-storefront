@@ -69,14 +69,15 @@ export function WholesaleAuthModal({
           ×
         </button>
 
-        <p className="ng-wsmodal-eyebrow">Wholesale · For the trade</p>
+        <p className="ng-wsmodal-eyebrow">For the trade</p>
         <h2 id="ng-wsmodal-title" className="ng-wsmodal-title">
-          Sign in to shop wholesale
+          Wholesale Account
         </h2>
+        {/* One line. The previous three-sentence version explained who
+            qualifies before the shopper had chosen anything. */}
         <p className="ng-wsmodal-body">
-          Wholesale pricing is reserved for florists, event planners, hotels and
-          venues. Sign in to your trade account, or create one and our team will
-          set you up.
+          Sign in or create a business account to shop wholesale flowers and
+          supplies.
         </p>
 
         <div className="ng-wsmodal-actions">

@@ -3,6 +3,7 @@ import {
   DURATION,
   DISTANCE,
   EASE,
+  REVEAL_START,
   STAGGER,
   prefersReducedMotion,
 } from '~/lib/motion';
@@ -64,9 +65,9 @@ export function useReveal(
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: root,
-            // Fire a little before the section is fully on screen so the
-            // movement is finishing as the reader arrives, not starting.
-            start: 'top 78%',
+            start: REVEAL_START,
+            // Once only: a section that re-animates every time it scrolls past
+            // draws attention to the motion instead of the flowers.
             once: true,
           },
         });

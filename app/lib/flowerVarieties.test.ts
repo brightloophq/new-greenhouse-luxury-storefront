@@ -79,18 +79,28 @@ describe('flower variety data', () => {
     }
   });
 
-  it('defines and collapses every span the patterns use', () => {
+  it('defines every span the patterns use', () => {
     const css = read('app/styles/home.css');
-    const tablet = css.slice(css.indexOf('@media (max-width: 64em)'));
-    const mobile = css.slice(css.indexOf('@media (max-width: 45em)'));
     for (const span of ['tall', 'regular', 'half', 'wide']) {
       expect(css, `.ng-variety-cell--${span}`).toContain(
         `.ng-variety-cell--${span}`,
       );
-      if (span === 'wide') continue; // already full width
-      expect(tablet, `tablet ${span}`).toContain(`.ng-variety-cell--${span}`);
-      expect(mobile, `mobile ${span}`).toContain(`.ng-variety-cell--${span}`);
     }
+  });
+
+  it('resets EVERY cell at tablet, so no wide card strands its neighbour', () => {
+    // The bug this guards: at 768px only tall/regular/half were reset to 6
+    // columns while `wide` stayed at 12, so it wrapped to its own row and left
+    // a 360px hole beside the card before it.
+    const css = read('app/styles/home.css');
+    const tablet = css.slice(
+      css.indexOf('@media (max-width: 64em)'),
+      css.indexOf('@media (max-width: 45em)'),
+    );
+    // A bare `.ng-variety-cell {` rule — not a span-specific one.
+    expect(tablet).toMatch(/\.ng-variety-cell \{[^}]*grid-column: span 6/);
+    // And an odd trailing card must fill its row.
+    expect(tablet).toMatch(/:last-child:nth-child\(odd\)[^}]*grid-column: span 12/);
   });
 
   it('keeps layout out of the data — spans are a presentation concern', () => {

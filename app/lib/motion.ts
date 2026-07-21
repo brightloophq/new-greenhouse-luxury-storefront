@@ -38,8 +38,16 @@ export const DISTANCE = {
 
 export const STAGGER = {
   tight: 0.06,
-  cards: 0.09,
+  cards: 0.1,
 } as const;
+
+/**
+ * Where a scroll-revealed section starts animating, expressed once so every
+ * ScrollTrigger in the app agrees. "top 78%" fires a little before the section
+ * is fully on screen, so the movement is finishing as the reader arrives rather
+ * than starting.
+ */
+export const REVEAL_START = 'top 78%';
 
 /** True when the visitor has asked for reduced motion (SSR-safe). */
 export function prefersReducedMotion(): boolean {

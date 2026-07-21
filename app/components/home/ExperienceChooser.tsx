@@ -1,6 +1,7 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Link} from 'react-router';
 import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
+import {useReveal} from '~/lib/useReveal';
 
 /**
  * "Choose Your Shopping Experience" — the four entry points into the store.
@@ -92,14 +93,19 @@ function CardInner({card}: {card: ChooserCard}) {
 
 export function ExperienceChooser() {
   const [wholesaleOpen, setWholesaleOpen] = useState(false);
+  const scope = useRef<HTMLElement>(null);
+  // ONE batched trigger for the whole section — heading then a card stagger.
+  // Four individual ScrollTriggers would cost more and read less coherently.
+  useReveal(scope);
 
   return (
     <section
+      ref={scope}
       id="choose-experience"
       className="ng-chooser"
       aria-labelledby="ng-chooser-title"
     >
-      <div className="ng-chooser-head">
+      <div className="ng-chooser-head" data-reveal-heading>
         <p className="ng-chooser-eyebrow">Where would you like to begin?</p>
         <h2 id="ng-chooser-title">Choose your shopping experience</h2>
       </div>
@@ -108,7 +114,7 @@ export function ExperienceChooser() {
         {CARDS.map((card) => {
           const className = `ng-chooser-card${card.premium ? ' ng-chooser-card--premium' : ''}`;
           return (
-            <li key={card.title}>
+            <li key={card.title} data-reveal-item>
               {card.action === 'wholesale' ? (
                 <button
                   type="button"
