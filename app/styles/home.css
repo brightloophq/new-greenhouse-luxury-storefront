@@ -56,15 +56,27 @@
 
 /* Tonal scrim — guarantees the wordmark holds contrast on EVERY frame of the
    loop, not just on the poster. Weighted to the bottom where the copy sits. */
+/* Two gradients, because the copy is bottom-LEFT, not bottom-centre. The
+   vertical pass alone left its thinnest point (6%) exactly where the eyebrow
+   and wordmark sit, over the brightest petals. The horizontal pass carries the
+   protection across the copy column so the type holds on every frame of the
+   loop, not just the calm ones. */
 .ng-hero-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgb(30 42 32 / 0.16) 0%,
-    rgb(30 42 32 / 0.06) 38%,
-    rgb(24 36 27 / 0.62) 100%
-  );
+  background:
+    linear-gradient(
+      90deg,
+      rgb(24 36 27 / 0.58) 0%,
+      rgb(24 36 27 / 0.32) 42%,
+      rgb(24 36 27 / 0) 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(30 42 32 / 0.22) 0%,
+      rgb(30 42 32 / 0.12) 34%,
+      rgb(24 36 27 / 0.58) 100%
+    );
 }
 
 /* Glazing bars — the greenhouse motif. Pure gradients: no images, no WebGL,
@@ -94,6 +106,26 @@
   max-width: 62rem;
   color: var(--ng-on-green);
 }
+/* Eyebrows carry a short leading rule across every homepage section — hero,
+   bays and gallery — so the three read as one editorial system. */
+.ng-hero-eyebrow,
+.ng-bays-eyebrow,
+.ng-variety-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.ng-hero-eyebrow::before,
+.ng-bays-eyebrow::before,
+.ng-variety-eyebrow::before {
+  content: '';
+  inline-size: clamp(1.75rem, 3vw, 2.75rem);
+  block-size: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
 .ng-hero-eyebrow {
   margin: 0 0 clamp(0.75rem, 1.4vw, 1.2rem);
   font-size: var(--ng-font-size-caption);
@@ -113,6 +145,21 @@
   text-wrap: balance;
   color: var(--ng-on-green);
   text-shadow: 0 2px 24px rgb(24 36 27 / 0.4);
+}
+/* Line masks for the wordmark reveal. The clip must exist in CSS, not be
+   created by JS, so the type is never briefly visible outside its box on a
+   slow connection. `padding-bottom` + matching negative margin keeps
+   descenders and the italic overhang from being sheared by the clip. */
+.ng-hero-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.ng-hero-line-inner {
+  display: inline-block;
+  will-change: transform;
 }
 .ng-hero-tagline {
   max-width: 30rem;

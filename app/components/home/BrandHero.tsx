@@ -39,8 +39,17 @@ export function BrandHero() {
         <p className="ng-hero-eyebrow" data-hero-eyebrow>
           Est. 1984 · Kingston, Jamaica
         </p>
+        {/* Split into masked lines so the wordmark can rise out of a clip
+            rather than fade in. Each line is its own overflow box; the inner
+            span is what moves. Purely presentational — screen readers still
+            read one continuous heading. */}
         <h1 id="ng-hero-title" className="ng-hero-wordmark" data-hero-title>
-          The New Greenhouse
+          <span className="ng-hero-line">
+            <span className="ng-hero-line-inner">The New</span>
+          </span>{' '}
+          <span className="ng-hero-line">
+            <span className="ng-hero-line-inner">Greenhouse</span>
+          </span>
         </h1>
         <p className="ng-hero-tagline" data-hero-tagline>
           Not just a flower, whatever it takes.

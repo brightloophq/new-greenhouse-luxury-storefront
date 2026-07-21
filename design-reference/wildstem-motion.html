@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wildstem — Floral Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@1,400;1,500&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --porcelain:#F3F4F0;
+    --ink:#16211B;
+    --moss:#5A6F52;
+    --plum:#7C3B57;
+    --petal:#EFD9DD;
+    --line:rgba(22,33,27,.14);
+    --display:'Marcellus',serif;
+    --flourish:'Cormorant Garamond',serif;
+    --body:'Karla',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{overflow-x:hidden}
+  body{
+    background:var(--porcelain);color:var(--ink);
+    font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--petal)}
+  a{color:inherit;text-decoration:none}
+  svg{display:block}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+  a:focus-visible{outline:2px solid var(--plum);outline-offset:3px}
+
+  /* ---------- intro overlay ---------- */
+  #intro{
+    position:fixed;inset:0;background:var(--ink);z-index:100;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #intro h1{
+    font-family:var(--display);font-weight:400;color:var(--porcelain);
+    font-size:clamp(48px,9vw,120px);letter-spacing:.04em;overflow:hidden;
+    display:flex;
+  }
+  #intro h1 .ch{display:inline-block;transform:translateY(110%)}
+  #intro h1 .pl{color:var(--plum)}
+
+  /* ---------- petal canvas ---------- */
+  #petals{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 36px;
+    background:rgba(243,244,240,.75);backdrop-filter:blur(12px);
+    border-bottom:1px solid transparent;transition:border-color .3s;
+  }
+  nav.scrolled{border-color:var(--line)}
+  .logo{font-family:var(--display);font-size:24px;letter-spacing:.04em}
+  .logo span{color:var(--plum)}
+  .nav-links{display:flex;gap:32px;font-size:14px}
+  .nav-links a{position:relative;padding:4px 0}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--plum);transition:width .3s}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{border:1px solid var(--ink);border-radius:999px;padding:9px 20px;font-size:13px;transition:.25s}
+  .nav-cta:hover{background:var(--ink);color:var(--porcelain)}
+
+  main{position:relative;z-index:2}
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+    padding:140px 32px 80px;max-width:1200px;margin:0 auto;position:relative;
+  }
+  .hero-eyebrow{
+    font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--moss);
+    margin-bottom:26px;display:flex;gap:14px;align-items:center;
+  }
+  .hero-eyebrow::before{content:"";width:40px;height:1px;background:var(--moss)}
+  .hero h2{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(52px,9vw,128px);line-height:.98;letter-spacing:.005em;
+  }
+  .hero h2 .line{display:block;overflow:hidden}
+  .hero h2 .inner{display:inline-block}
+  .hero h2 .fl{font-family:var(--flourish);font-style:italic;font-weight:500;color:var(--plum)}
+  .hero p.lede{max-width:46ch;margin-top:30px;font-size:17px;font-weight:300;color:rgba(22,33,27,.75)}
+  .hero-actions{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
+  .btn{display:inline-block;border-radius:999px;padding:15px 34px;font-size:14px;letter-spacing:.06em;transition:.25s}
+  .btn-solid{background:var(--ink);color:var(--porcelain);border:1px solid var(--ink)}
+  .btn-solid:hover{background:var(--plum);border-color:var(--plum)}
+  .btn-ghost{border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .hero-bloom{
+    position:absolute;right:0;top:50%;transform:translateY(-50%);
+    width:min(42vw,520px);opacity:.9;pointer-events:none;
+  }
+  .scroll-hint{
+    position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+    font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--moss);
+  }
+
+  /* ---------- marquee ---------- */
+  .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden}
+  .marquee-track{display:flex;width:max-content}
+  .marquee span{font-family:var(--display);font-size:22px;letter-spacing:.06em;padding:20px 0;white-space:nowrap}
+  .marquee i{font-style:normal;color:var(--plum);padding:20px 30px;font-size:16px}
+
+  /* ---------- process (pinned stem) ---------- */
+  #process{position:relative;padding:140px 0}
+  .proc-grid{display:grid;grid-template-columns:280px 1fr;gap:80px;max-width:1100px;margin:0 auto;padding:0 32px}
+  .stem-wrap{position:relative}
+  .stem-svg{position:sticky;top:120px}
+  .step{min-height:52vh;display:flex;flex-direction:column;justify-content:center;opacity:.2}
+  .step .num{font-family:var(--flourish);font-style:italic;font-size:20px;color:var(--plum)}
+  .step h3{font-family:var(--display);font-weight:400;font-size:clamp(28px,3.4vw,44px);margin:10px 0 14px}
+  .step p{max-width:44ch;font-weight:300;color:rgba(22,33,27,.72)}
+
+  /* ---------- horizontal gallery ---------- */
+  #gallery{overflow:hidden}
+  .gal-head{padding:110px 32px 60px;max-width:1200px;margin:0 auto}
+  .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--moss);margin-bottom:14px}
+  h2.sec{font-family:var(--display);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.08}
+  h2.sec .fl{font-family:var(--flourish);font-style:italic;color:var(--plum)}
+  .gal-track{display:flex;gap:32px;padding:0 32px 120px;width:max-content}
+  .pcard{
+    width:min(74vw,380px);flex-shrink:0;background:#fff;border:1px solid var(--line);
+    border-radius:20px;overflow:hidden;
+  }
+  .pimg{height:340px;display:flex;align-items:flex-end;justify-content:center;position:relative}
+  .pimg.g1{background:linear-gradient(170deg,#EBD8DE,#D8AEBE)}
+  .pimg.g2{background:linear-gradient(170deg,#E4EADC,#B7C9AC)}
+  .pimg.g3{background:linear-gradient(170deg,#F1E6D8,#DCC3A4)}
+  .pimg.g4{background:linear-gradient(170deg,#DDE4EA,#A9BCCB)}
+  .pimg.g5{background:linear-gradient(170deg,#EFD9DD,#C98CA4)}
+  .tag{position:absolute;top:16px;left:16px;background:var(--ink);color:var(--porcelain);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+  .pbody{padding:22px 24px 26px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+  .pbody h3{font-family:var(--display);font-weight:400;font-size:19px}
+  .pbody small{display:block;font-size:13px;color:rgba(22,33,27,.55);font-weight:300;margin-top:4px}
+  .price{font-family:var(--display);font-size:18px;white-space:nowrap}
+
+  /* ---------- dark band ---------- */
+  #atelier{padding:0 32px 130px;max-width:1200px;margin:0 auto}
+  .band{
+    background:var(--ink);color:var(--porcelain);border-radius:30px;overflow:hidden;
+    display:grid;grid-template-columns:1fr 1fr;clip-path:inset(6% 4% round 30px);
+  }
+  .band-text{padding:76px 64px}
+  .band-text .eyebrow{color:#A9BCA0}
+  .band-text h2.sec{color:var(--porcelain)}
+  .band-text p{margin-top:22px;font-weight:300;color:rgba(243,244,240,.75);max-width:44ch}
+  .band-stats{display:flex;gap:44px;margin-top:44px;flex-wrap:wrap}
+  .band-stats strong{font-family:var(--display);font-size:32px;display:block}
+  .band-stats span{font-size:13px;color:rgba(243,244,240,.6)}
+  .band-visual{
+    background:radial-gradient(circle at 30% 70%,rgba(124,59,87,.55),transparent 60%),
+      radial-gradient(circle at 75% 25%,rgba(90,111,82,.6),transparent 55%),#223129;
+    display:flex;align-items:center;justify-content:center;min-height:440px;
+  }
+
+  /* ---------- outro ---------- */
+  #outro{
+    min-height:90svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:80px 24px;
+  }
+  #outro h2{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(44px,8vw,110px);line-height:1.02;
+  }
+  #outro .fl{font-family:var(--flourish);font-style:italic;color:var(--plum)}
+  #outro p{margin-top:24px;font-weight:300;color:rgba(22,33,27,.7)}
+  #outro .btn{margin-top:38px}
+
+  footer{background:var(--ink);color:var(--porcelain);position:relative;z-index:2}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;padding:34px 36px;font-size:13px;color:rgba(243,244,240,.65)}
+  .foot b{font-family:var(--display);font-weight:400;font-size:16px;color:var(--porcelain);letter-spacing:.04em}
+
+  @media(max-width:900px){
+    .nav-links{display:none}
+    .proc-grid{grid-template-columns:1fr;gap:20px}
+    .stem-svg{display:none}
+    .band{grid-template-columns:1fr;clip-path:none}
+    .band-text{padding:52px 34px}
+    .hero-bloom{opacity:.35}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #intro{display:none}
+    .step{opacity:1}
+    #petals{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="intro" aria-hidden="true">
+  <h1><span class="ch">W</span><span class="ch">i</span><span class="ch">l</span><span class="ch">d</span><span class="ch pl">s</span><span class="ch pl">t</span><span class="ch pl">e</span><span class="ch pl">m</span></h1>
+</div>
+
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<nav id="nav" aria-label="Main">
+  <a class="logo" href="#">Wild<span>stem</span></a>
+  <div class="nav-links">
+    <a href="#gallery">Shop</a>
+    <a href="#process">Our craft</a>
+    <a href="#atelier">Weddings</a>
+  </div>
+  <a class="nav-cta" href="#gallery">Order flowers</a>
+</nav>
+
+<main>
+  <header class="hero">
+    <p class="hero-eyebrow">Floral atelier · Est. 2019</p>
+    <h2 id="heroTitle">
+      <span class="line"><span class="inner">Flowers that</span></span>
+      <span class="line"><span class="inner">speak <span class="fl">before</span></span></span>
+      <span class="line"><span class="inner">you do.</span></span>
+    </h2>
+    <p class="lede">Hand-tied bouquets and sculptural arrangements, built each morning from the best stems in the market. Designed once, never repeated.</p>
+    <div class="hero-actions">
+      <a class="btn btn-solid" href="#gallery">Shop the collection</a>
+      <a class="btn btn-ghost" href="#process">See how we work</a>
+    </div>
+
+    <svg class="hero-bloom" id="heroBloom" viewBox="0 0 400 520" aria-hidden="true">
+      <g stroke="#16211B" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path class="bloom-path" d="M200 520 C200 400 200 300 200 180"/>
+        <path class="bloom-path" d="M200 340 C150 314 124 274 118 230"/>
+        <path class="bloom-path" d="M200 390 C256 362 284 320 290 274"/>
+        <path class="bloom-path" d="M200 460 C160 450 138 428 132 398 C168 402 190 424 200 460 Z"/>
+        <path class="bloom-path" d="M200 420 C242 410 264 388 270 358 C234 362 212 384 200 420 Z"/>
+      </g>
+      <g stroke="#7C3B57" stroke-width="1.6" fill="none">
+        <circle class="bloom-path" cx="200" cy="140" r="44"/>
+        <circle class="bloom-path" cx="200" cy="140" r="20"/>
+        <circle class="bloom-path" cx="112" cy="206" r="26"/>
+        <circle class="bloom-path" cx="296" cy="248" r="30"/>
+      </g>
+    </svg>
+
+    <span class="scroll-hint">Scroll</span>
+  </header>
+
+  <div class="marquee" aria-label="In season this week">
+    <div class="marquee-track" id="marqueeTrack">
+      <i>In season this week</i><span>Peonies</span><i>✳</i><span>Garden Roses</span><i>✳</i><span>Ranunculus</span><i>✳</i><span>Sweet Pea</span><i>✳</i><span>Delphinium</span><i>✳</i><span>Lisianthus</span><i>✳</i>
+      <i>In season this week</i><span>Peonies</span><i>✳</i><span>Garden Roses</span><i>✳</i><span>Ranunculus</span><i>✳</i><span>Sweet Pea</span><i>✳</i><span>Delphinium</span><i>✳</i><span>Lisianthus</span><i>✳</i>
+    </div>
+  </div>
+
+  <section id="process">
+    <div class="proc-grid">
+      <div class="stem-wrap">
+        <svg class="stem-svg" width="220" height="560" viewBox="0 0 220 560" aria-hidden="true">
+          <path id="stemPath" d="M110 560 C110 480 110 420 110 340 C110 300 80 280 70 240 C64 214 90 200 110 180 C130 160 156 150 150 118 C146 96 122 92 110 70"
+            stroke="#5A6F52" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <g id="stemBloom" opacity="0">
+            <circle cx="110" cy="46" r="26" stroke="#7C3B57" stroke-width="1.8" fill="none"/>
+            <circle cx="110" cy="46" r="11" stroke="#7C3B57" stroke-width="1.8" fill="none"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="step">
+          <span class="num">i.</span>
+          <h3>Cut at dawn</h3>
+          <p>We buy at the flower market before sunrise — stems are chosen one by one, never by the crate.</p>
+        </div>
+        <div class="step">
+          <span class="num">ii.</span>
+          <h3>Conditioned by hand</h3>
+          <p>Every stem is stripped, cut, and rested in cool water for hours before it's allowed anywhere near a bouquet.</p>
+        </div>
+        <div class="step">
+          <span class="num">iii.</span>
+          <h3>Arranged once</h3>
+          <p>No recipes, no repeats. Your arrangement is designed for you, photographed, and archived — then never made again.</p>
+        </div>
+        <div class="step">
+          <span class="num">iv.</span>
+          <h3>Delivered same day</h3>
+          <p>Order before 2pm and it's at their door by evening, wrapped, watered, and with a handwritten note.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="gal-head">
+      <p class="eyebrow">Best sellers</p>
+      <h2 class="sec">This week's <span class="fl">bouquets</span> →</h2>
+    </div>
+    <div class="gal-track" id="galTrack">
+      <article class="pcard"><div class="pimg g1"><span class="tag">Bestseller</span>
+        <svg viewBox="0 0 200 220" width="130"><g stroke="#7C3B57" stroke-width="1.5" fill="none"><path d="M100 220 V80"/><circle cx="100" cy="58" r="24"/><circle cx="64" cy="86" r="16"/><circle cx="138" cy="90" r="18"/></g></svg></div>
+        <div class="pbody"><div><h3>The Ada</h3><small>Garden roses · ranunculus · sweet pea</small></div><span class="price">$85</span></div>
+      </article>
+      <article class="pcard"><div class="pimg g2">
+        <svg viewBox="0 0 200 220" width="130"><g stroke="#3E5240" stroke-width="1.5" fill="none"><path d="M100 220 V70"/><path d="M100 120 C70 104 58 82 56 60"/><path d="M100 150 C132 136 146 112 148 88"/><circle cx="100" cy="50" r="20"/></g></svg></div>
+        <div class="pbody"><div><h3>The Meadow</h3><small>Wild-gathered seasonal stems</small></div><span class="price">$65</span></div>
+      </article>
+      <article class="pcard"><div class="pimg g3"><span class="tag">Designer's choice</span>
+        <svg viewBox="0 0 200 220" width="130"><g stroke="#8A6B3F" stroke-width="1.5" fill="none"><path d="M100 220 V90"/><circle cx="100" cy="64" r="26"/><circle cx="100" cy="64" r="12"/></g></svg></div>
+        <div class="pbody"><div><h3>Florist's Whim</h3><small>Our designers, unleashed</small></div><span class="price">from $55</span></div>
+      </article>
+      <article class="pcard"><div class="pimg g4">
+        <svg viewBox="0 0 200 220" width="130"><g stroke="#3E5266" stroke-width="1.5" fill="none"><path d="M100 220 V70"/><path d="M60 120 C80 108 92 90 100 70 C108 90 120 108 140 120"/><circle cx="100" cy="52" r="18"/></g></svg></div>
+        <div class="pbody"><div><h3>Blue Hour</h3><small>Delphinium · thistle · eucalyptus</small></div><span class="price">$75</span></div>
+      </article>
+      <article class="pcard"><div class="pimg g5"><span class="tag">New</span>
+        <svg viewBox="0 0 200 220" width="130"><g stroke="#7C3B57" stroke-width="1.5" fill="none"><path d="M100 220 V85"/><circle cx="100" cy="60" r="28"/><path d="M100 60 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0"/></g></svg></div>
+        <div class="pbody"><div><h3>The Plum Hour</h3><small>Dark dahlias · smoke bush · rose</small></div><span class="price">$95</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="atelier">
+    <div class="band" id="band">
+      <div class="band-text">
+        <p class="eyebrow">The atelier</p>
+        <h2 class="sec">Weddings, events &amp; <span class="fl" style="color:#D8AEBE">wild ideas</span></h2>
+        <p>From intimate dinners to full installations, our studio designs florals around your story — site visit, mood boards, and a dedicated designer included.</p>
+        <div class="band-stats">
+          <div><strong data-count="320">0</strong><span>events designed</span></div>
+          <div><strong data-count="4.9" data-dec="1">0</strong><span>client rating ★</span></div>
+          <div><strong data-count="48">0</strong><span>hr proposal turnaround</span></div>
+        </div>
+        <div style="margin-top:40px">
+          <a class="btn btn-solid" style="background:var(--porcelain);color:var(--ink);border-color:var(--porcelain)" href="#">Book a consultation</a>
+        </div>
+      </div>
+      <div class="band-visual">
+        <svg viewBox="0 0 240 280" width="180" id="bandBloom"><g stroke="#F3F4F0" stroke-width="1.4" fill="none" stroke-linecap="round"><path d="M120 280 V100"/><path d="M120 180 C90 164 76 140 74 116"/><path d="M120 210 C152 196 166 172 168 148"/><circle cx="120" cy="76" r="30"/><circle cx="120" cy="76" r="14"/><circle cx="70" cy="96" r="18"/><circle cx="172" cy="122" r="20"/></g></svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="outro">
+    <h2><span class="line" style="display:block;overflow:hidden"><span class="inner" style="display:inline-block">Say it with</span></span>
+    <span class="line" style="display:block;overflow:hidden"><span class="inner fl" style="display:inline-block">stems.</span></span></h2>
+    <p>Same-day delivery on orders before 2pm, Tuesday to Sunday.</p>
+    <a class="btn btn-solid" href="#gallery">Order flowers</a>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <b>Wildstem</b>
+    <span>14 Garden Lane · Tue–Sun 9–6</span>
+    <span>Instagram · Pinterest · TikTok</span>
+    <span>© 2026 Wildstem Atelier</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- petal drift (lightweight canvas, no WebGL needed) ---------- */
+  const canvas = document.getElementById('petals');
+  if (!reduced && canvas) {
+    const ctx = canvas.getContext('2d');
+    let W, H, petals = [];
+    const COLORS = ['rgba(124,59,87,.16)','rgba(239,217,221,.5)','rgba(90,111,82,.14)'];
+    function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    resize(); addEventListener('resize', resize);
+    for (let i = 0; i < 22; i++) {
+      petals.push({
+        x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+        r: 5 + Math.random()*9, sp: .25 + Math.random()*.6,
+        sway: Math.random()*Math.PI*2, swaySp: .004 + Math.random()*.008,
+        rot: Math.random()*Math.PI*2, rotSp: (Math.random()-.5)*.01,
+        c: COLORS[i % COLORS.length]
+      });
+    }
+    (function draw(){
+      ctx.clearRect(0,0,W,H);
+      for (const p of petals) {
+        p.y += p.sp; p.sway += p.swaySp; p.rot += p.rotSp;
+        p.x += Math.sin(p.sway)*.5;
+        if (p.y - p.r > H) { p.y = -p.r*2; p.x = Math.random()*W; }
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.r, p.r*.55, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(draw);
+    })();
+  }
+
+  if (typeof gsap === 'undefined') { document.getElementById('intro').style.display='none'; return; }
+  gsap.registerPlugin(ScrollTrigger);
+
+  if (reduced) { ScrollTrigger.getAll().forEach(t=>t.kill()); return; }
+
+  /* ---------- intro ---------- */
+  const tl = gsap.timeline();
+  tl.to('#intro .ch', { y: 0, duration: .9, ease: 'power4.out', stagger: .06, delay: .2 })
+    .to('#intro .ch', { y: '-110%', duration: .7, ease: 'power4.in', stagger: .04 }, '+=.5')
+    .to('#intro', { yPercent: -100, duration: .8, ease: 'power4.inOut' }, '-=.3')
+    .set('#intro', { display: 'none' })
+    .from('.hero h2 .inner', { yPercent: 110, duration: 1, ease: 'power4.out', stagger: .12 }, '-=.55')
+    .from('.hero-eyebrow, .hero .lede, .hero-actions, .scroll-hint', { opacity: 0, y: 24, duration: .8, ease: 'power3.out', stagger: .08 }, '-=.6');
+
+  /* ---------- hero bloom draws itself ---------- */
+  document.querySelectorAll('#heroBloom .bloom-path').forEach(p => {
+    const len = p.getTotalLength();
+    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+    gsap.to(p, { strokeDashoffset: 0, duration: 2.2, ease: 'power2.inOut', delay: 2 });
+  });
+  gsap.to('#heroBloom', {
+    yPercent: -18, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+
+  /* ---------- nav border on scroll ---------- */
+  ScrollTrigger.create({
+    start: 60, onToggle: s => document.getElementById('nav').classList.toggle('scrolled', s.isActive)
+  });
+
+  /* ---------- marquee ---------- */
+  gsap.to('#marqueeTrack', { xPercent: -50, ease: 'none', duration: 30, repeat: -1 });
+
+  /* ---------- process: stem grows with scroll ---------- */
+  const stem = document.getElementById('stemPath');
+  const stemLen = stem.getTotalLength();
+  gsap.set(stem, { strokeDasharray: stemLen, strokeDashoffset: stemLen });
+  gsap.to(stem, {
+    strokeDashoffset: 0, ease: 'none',
+    scrollTrigger: { trigger: '#process', start: 'top 60%', end: 'bottom 80%', scrub: .5 }
+  });
+  gsap.to('#stemBloom', {
+    opacity: 1, scale: 1.06, transformOrigin: '110px 46px', ease: 'power2.out',
+    scrollTrigger: { trigger: '#process', start: 'bottom 95%', end: 'bottom 75%', scrub: true }
+  });
+  gsap.utils.toArray('.step').forEach(step => {
+    gsap.to(step, {
+      opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: step, start: 'top 70%', end: 'top 40%', scrub: true }
+    });
+    gsap.from(step, {
+      x: 40, ease: 'power2.out', duration: 1,
+      scrollTrigger: { trigger: step, start: 'top 75%' }
+    });
+  });
+
+  /* ---------- horizontal gallery ---------- */
+  const track = document.getElementById('galTrack');
+  const getScroll = () => track.scrollWidth - document.documentElement.clientWidth + 64;
+  gsap.to(track, {
+    x: () => -getScroll(), ease: 'none',
+    scrollTrigger: {
+      trigger: '#gallery', start: 'top top', pin: true, scrub: 1,
+      end: () => '+=' + getScroll(), invalidateOnRefresh: true
+    }
+  });
+  gsap.utils.toArray('.pcard').forEach((card, i) => {
+    gsap.from(card, {
+      y: 60, opacity: 0, duration: .8, ease: 'power3.out',
+      scrollTrigger: { trigger: '#gallery', start: 'top 80%' }, delay: i * .08
+    });
+  });
+
+  /* ---------- dark band: clip reveal + counters ---------- */
+  gsap.to('#band', {
+    clipPath: 'inset(0% 0% round 30px)', ease: 'power2.out',
+    scrollTrigger: { trigger: '#atelier', start: 'top 75%', end: 'top 35%', scrub: true }
+  });
+  gsap.from('#bandBloom', {
+    scale: .6, rotate: -8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#atelier', start: 'top 70%', end: 'top 25%', scrub: true }
+  });
+  document.querySelectorAll('.band-stats strong').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const dec = parseInt(el.dataset.dec || 0);
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: target, duration: 1.6, ease: 'power2.out',
+      scrollTrigger: { trigger: '#atelier', start: 'top 55%' },
+      onUpdate: () => el.textContent = obj.v.toFixed(dec) + (dec ? '' : '+' === '+' && target >= 100 ? '+' : '')
+    });
+  });
+
+  /* ---------- outro ---------- */
+  gsap.from('#outro .inner', {
+    yPercent: 110, duration: 1, ease: 'power4.out', stagger: .12,
+    scrollTrigger: { trigger: '#outro', start: 'top 70%' }
+  });
+  gsap.from('#outro p, #outro .btn', {
+    opacity: 0, y: 24, duration: .8, stagger: .1, ease: 'power3.out',
+    scrollTrigger: { trigger: '#outro', start: 'top 60%' }
+  });
+})();
+</script>
+</body>
+</html>

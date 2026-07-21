@@ -32,27 +32,44 @@ export function useHeroTimeline(scope: RefObject<HTMLElement | null>) {
       if (cancelled) return;
 
       ctx = gsap.context(() => {
-        const steps = [
+        const lines = root.querySelectorAll('[data-hero-title] .ng-hero-line-inner');
+        const supporting = [
           '[data-hero-eyebrow]',
-          '[data-hero-title]',
           '[data-hero-tagline]',
           '[data-hero-cta]',
         ].filter((selector) => root.querySelector(selector));
-        if (!steps.length) return;
+        if (!lines.length && !supporting.length) return;
 
-        gsap
-          .timeline({defaults: {ease: EASE.out, immediateRender: false}})
-          .fromTo(
-            steps,
+        const tl = gsap.timeline({
+          defaults: {ease: EASE.out, immediateRender: false},
+        });
+
+        // The wordmark rises out of its clip. yPercent (not y) so the distance
+        // scales with the line's own size — the hero type ranges from 2.9rem to
+        // 8rem, and a fixed pixel offset would under-travel at the top end.
+        if (lines.length) {
+          tl.fromTo(
+            lines,
+            {yPercent: 108},
+            {yPercent: 0, duration: DURATION.hero * 0.72, stagger: 0.09},
+          );
+        }
+
+        // Supporting copy follows, overlapping the tail of the wordmark so the
+        // hero reads as one gesture rather than two.
+        if (supporting.length) {
+          tl.fromTo(
+            supporting,
             {y: DISTANCE.sm, opacity: 0},
             {
               y: 0,
               opacity: 1,
               duration: DURATION.hero * 0.55,
-              // Each line follows the one above rather than arriving together.
               stagger: 0.11,
             },
+            lines.length ? '-=0.5' : 0,
           );
+        }
       }, root);
     })();
 
