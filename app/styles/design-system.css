@@ -241,9 +241,11 @@
   --ng-glass-inset: clamp(0.9rem, 2.2vw, 1.75rem); /* frame breathing room */
 
   /* Editorial display — the architectural "moment". One true oversized step
-     above the existing display-xl, for the single largest word on a screen. */
-  --ng-font-size-display-2xl: clamp(3.25rem, 9vw, 8rem);
-  --ng-line-architve: 0.94; /* tight, structural leading for display moments */
+     above the existing display-xl, for the single largest word on a screen.
+     Sized for Montserrat, which is ~15% wider than the retired serif, so the
+     max is pulled in from 8rem to keep long words on the measure. */
+  --ng-font-size-display-2xl: clamp(2.75rem, 6.5vw, 6rem);
+  --ng-line-architve: 1; /* structural leading — safe for two-line display in Montserrat */
 
   /* Legacy aliases used by existing components */
   --color-botanical: var(--ng-color-accent-green);
@@ -910,8 +912,9 @@
 .ng-editorial-title {
   color: var(--ng-green-deep);
   font-family: var(--ng-font-heading);
+  /* Montserrat display reads best a touch lighter and tightly tracked. */
   font-weight: 400;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.01em;
   line-height: var(--ng-line-architve);
   text-wrap: balance;
 }
@@ -923,7 +926,8 @@
 .ng-flourish {
   color: var(--ng-green);
   font-style: italic;
-  font-weight: 500;
+  /* Lighter italic reads as an elegant accent in Montserrat, not a heavy slab. */
+  font-weight: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {

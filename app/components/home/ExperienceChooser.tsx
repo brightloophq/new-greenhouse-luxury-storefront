@@ -72,16 +72,20 @@ function srcSet(dir: string, img: string) {
   };
 }
 
-/** The bay's inner content — identical for the button and the links. */
+/**
+ * The bay's inner content — an image-led panel: the photograph fills the panel,
+ * a soft gradient rises from the foot, and the destination's name sits over it,
+ * bottom-aligned. Identical for the button and the links.
+ */
 function BayInner({pathway}: {pathway: Pathway}) {
   const media = srcSet(pathway.dir, pathway.img);
   return (
     <>
-      <span className="ng-bay-media ng-glass-corners">
+      <span className="ng-bay-media">
         <img
           src={media.src}
           srcSet={media.srcSet}
-          sizes="(min-width: 64em) 52vw, 92vw"
+          sizes="(min-width: 64em) 55vw, 92vw"
           alt=""
           loading="lazy"
           decoding="async"
@@ -90,6 +94,7 @@ function BayInner({pathway}: {pathway: Pathway}) {
           style={focalStyle(`/images/${pathway.dir}/${pathway.img}`)}
         />
       </span>
+      <span className="ng-bay-scrim" aria-hidden="true" />
 
       <span className="ng-bay-text">
         <span className="ng-bay-index" aria-hidden="true">
@@ -136,9 +141,15 @@ export function ExperienceChooser() {
       <PetalDrift />
       <BotanicalSpine side="start" />
 
+      {/* Asymmetric: the first panel is dominant (tall on desktop), the other
+          three support it — never four equal cards. */}
       <ol className="ng-bays-list">
-        {PATHWAYS.map((pathway) => (
-          <li key={pathway.title} className="ng-bay" data-reveal-item>
+        {PATHWAYS.map((pathway, index) => (
+          <li
+            key={pathway.title}
+            className={`ng-bay${index === 0 ? ' ng-bay--dominant' : ''}`}
+            data-reveal-item
+          >
             {pathway.action === 'wholesale' ? (
               <button
                 type="button"

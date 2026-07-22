@@ -40,82 +40,56 @@
   padding-block: 0;
 }
 
-.ng-shell-footer-stack {
-  gap: clamp(1.2rem, 2.4vw, 1.6rem);
-}
-
 /* ------------------------------------------------------------------ *
- * a. Contact strip — one hairline-bounded editorial rule
+ * One compact editorial grid: brand · shop · company · contact
  * ------------------------------------------------------------------ */
-.ng-shell-contact {
-  border-block: 1px solid
-    color-mix(in srgb, var(--ng-text-inverse) 14%, transparent);
+.ng-shell-footer-grid {
   display: grid;
-  gap: var(--ng-space-4);
   grid-template-columns: 1fr;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  padding-block: clamp(0.8rem, 1.5vw, 1.05rem);
+  gap: clamp(1.5rem, 3vw, 2rem) var(--ng-space-8);
 }
 
 @media (min-width: 40em) {
-  .ng-shell-contact {
+  .ng-shell-footer-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 64em) {
-  .ng-shell-contact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--ng-space-6);
+  .ng-shell-footer-grid {
+    /* Brand and contact a touch wider than the two link columns. */
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: var(--ng-space-8);
   }
 }
 
-.ng-shell-contact-item {
-  align-items: center;
-  color: var(--ng-text-inverse);
-  display: flex;
-  gap: var(--ng-space-3);
+/* Contact column — a compact list in the same register as the link columns. */
+.ng-shell-footer-contactlist {
+  display: grid;
+  gap: var(--ng-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-
-.ng-shell-contact-item .ng-trust-icon {
-  color: color-mix(in srgb, var(--ng-text-inverse) 66%, transparent);
-}
-
-.ng-shell-contact-item .ng-trust-label {
+.ng-shell-footer-contactitem {
+  color: color-mix(in srgb, var(--ng-text-inverse) 82%, transparent);
   font-size: var(--ng-font-size-small);
-  letter-spacing: 0.01em;
+  line-height: 1.45;
 }
-
-.ng-shell-contact-phones {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
-}
-
-.ng-shell-contact-link {
+.ng-shell-footer-contact a.ng-shell-footer-link {
   color: inherit;
+  margin-inline-end: var(--ng-space-3);
   text-decoration: none;
   transition: var(--ng-transition-color);
 }
-
-.ng-shell-contact-link:hover,
-.ng-shell-contact-link:focus-visible {
+.ng-shell-footer-contact a.ng-shell-footer-link:hover,
+.ng-shell-footer-contact a.ng-shell-footer-link:focus-visible {
   color: var(--ng-gold-pale);
 }
-
-.ng-shell-contact-link:focus-visible {
+.ng-shell-footer-contact a.ng-shell-footer-link:focus-visible {
   border-radius: var(--ng-radius-xs);
   outline: 2px solid var(--ng-color-luxury-gold);
   outline-offset: 3px;
-}
-
-/* ------------------------------------------------------------------ *
- * c. Editorial columns
- * ------------------------------------------------------------------ */
-.ng-shell-footer-columns {
-  gap: clamp(1.5rem, 3vw, 2rem) var(--ng-space-8);
 }
 
 /* Brand column */

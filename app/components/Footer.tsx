@@ -4,13 +4,9 @@ import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {
   Container,
   cx,
-  Grid,
   Icon,
   NavLinkStyled,
-  Stack,
   Text,
-  TrustGrid,
-  TrustItem,
 } from '~/components/ui';
 import {navFor} from '~/lib/navigation';
 import {useExperience} from '~/components/ExperienceProvider';
@@ -59,34 +55,29 @@ export function Footer({
         {(footer) => (
           <footer className="ng-shell-footer">
             <Container size="xl" className="ng-shell-footer-inner">
-              <Stack className="ng-shell-footer-stack">
-                {/* a. Contact strip */}
-                <ContactStrip />
+              {/* One compact editorial grid — brand, the two link columns, and
+                  contact in a single row rather than a stacked contact strip
+                  above them. Nothing is dropped; the height comes out of air. */}
+              <div className="ng-shell-footer-grid">
+                <BrandColumn />
+                <FooterColumn title="Shop" links={nav.footerShop} />
+                <FooterColumn title="Company" links={COMPANY_LINKS} />
+                <ContactColumn />
+              </div>
 
-                {/* c. Editorial footer columns */}
-                {/* Shop + Company only. "Services" listed the same three links
-                    as Company (About/Contact/Reviews) — one duplicated column
-                    on every page. A minimal footer says each thing once. */}
-                <Grid cols={3} className="ng-shell-footer-columns">
-                  <BrandColumn />
-                  <FooterColumn title="Shop" links={nav.footerShop} />
-                  <FooterColumn title="Company" links={COMPANY_LINKS} />
-                </Grid>
-
-                {/* d. Bottom bar */}
-                <div className="ng-shell-footer-bottom">
-                  <p className="ng-shell-footer-copyright">
-                    &copy; 2026 The New Greenhouse. Kingston, Jamaica.
-                  </p>
-                  {footer?.menu && header.shop.primaryDomain?.url ? (
-                    <FooterMenu
-                      menu={footer.menu}
-                      primaryDomainUrl={header.shop.primaryDomain.url}
-                      publicStoreDomain={publicStoreDomain}
-                    />
-                  ) : null}
-                </div>
-              </Stack>
+              {/* Bottom bar */}
+              <div className="ng-shell-footer-bottom">
+                <p className="ng-shell-footer-copyright">
+                  &copy; 2026 The New Greenhouse. Kingston, Jamaica.
+                </p>
+                {footer?.menu && header.shop.primaryDomain?.url ? (
+                  <FooterMenu
+                    menu={footer.menu}
+                    primaryDomainUrl={header.shop.primaryDomain.url}
+                    publicStoreDomain={publicStoreDomain}
+                  />
+                ) : null}
+              </div>
             </Container>
           </footer>
         )}
@@ -97,51 +88,32 @@ export function Footer({
 
 
 /* -------------------------------------------------------------------------- */
-/* b. Contact strip                                                           */
+/* b. Contact column — phones, email, address, delivery (compact)             */
 /* -------------------------------------------------------------------------- */
 
-function ContactStrip() {
+function ContactColumn() {
   return (
-    <TrustGrid
-      className="ng-shell-contact"
-      aria-label="Contact and delivery information"
-    >
-      <TrustItem
-        className="ng-shell-contact-item"
-        icon={<Icon name="phone" size="sm" />}
-        label={
-          <span className="ng-shell-contact-phones">
-            {CONTACT.phones.map((phone) => (
-              <a key={phone.href} className="ng-shell-contact-link" href={phone.href}>
-                {phone.display}
-              </a>
-            ))}
-          </span>
-        }
-      />
-      <TrustItem
-        className="ng-shell-contact-item"
-        icon={<Icon name="mail" size="sm" />}
-        label={
-          <a
-            className="ng-shell-contact-link"
-            href={`mailto:${CONTACT.email}`}
-          >
+    <div className="ng-shell-footer-col ng-shell-footer-contact">
+      <h2 className="ng-shell-footer-col-title">Visit &amp; contact</h2>
+      <ul className="ng-shell-footer-contactlist">
+        <li className="ng-shell-footer-contactitem">
+          {CONTACT.phones.map((phone) => (
+            <a key={phone.href} className="ng-shell-footer-link" href={phone.href}>
+              {phone.display}
+            </a>
+          ))}
+        </li>
+        <li className="ng-shell-footer-contactitem">
+          <a className="ng-shell-footer-link" href={`mailto:${CONTACT.email}`}>
             {CONTACT.email}
           </a>
-        }
-      />
-      <TrustItem
-        className="ng-shell-contact-item"
-        icon={<Icon name="map-pin" size="sm" />}
-        label={CONTACT.address.full}
-      />
-      <TrustItem
-        className="ng-shell-contact-item"
-        icon={<Icon name="clock" size="sm" />}
-        label={`Same-day delivery before ${DELIVERY_CUTOFF_SHORT}`}
-      />
-    </TrustGrid>
+        </li>
+        <li className="ng-shell-footer-contactitem">{CONTACT.address.full}</li>
+        <li className="ng-shell-footer-contactitem">
+          Same-day delivery before {DELIVERY_CUTOFF_SHORT}
+        </li>
+      </ul>
+    </div>
   );
 }
 

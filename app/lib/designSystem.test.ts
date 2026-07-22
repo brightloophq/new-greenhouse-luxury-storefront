@@ -259,3 +259,70 @@ describe('the catalogue plate', () => {
     );
   });
 });
+
+/**
+ * Mockup UI migration — brand typography and homepage presentation.
+ *
+ * Locks the Step 1–3 decisions: the production brand faces, no mockup fonts or
+ * branding in production, the asymmetric image-led shopping panels with the
+ * Wholesale popup preserved, and the folded compact footer.
+ */
+describe('mockup UI migration', () => {
+  it('uses Montserrat + Raleway as the production brand faces', () => {
+    const ds = read('app/styles/design-system.css');
+    expect(ds).toMatch(/--ng-font-heading:\s*Montserrat/);
+    expect(ds).toMatch(/--ng-font-body:\s*Raleway/);
+    expect(ds).not.toMatch(/--ng-font-heading:\s*"?Cormorant/);
+  });
+
+  it('self-hosts the brand fonts and uses none of the mockups’ faces', () => {
+    const fonts = strip(read('app/styles/fonts.css')); // ignore documented names in prose
+    expect(fonts).toMatch(/font-family: 'Montserrat'/);
+    expect(fonts).toMatch(/font-family: 'Raleway'/);
+    expect(fonts).not.toMatch(/googleapis\.com|@import/);
+    expect(fonts).not.toMatch(/Marcellus|Cormorant|Karla|Fraunces|Jost/);
+  });
+
+  it('carries no mockup branding into production home components', () => {
+    for (const f of [
+      'ExperienceChooser',
+      'ShopByVariety',
+      'ReviewsCarousel',
+      'ConservatoryBand',
+      'BrandHero',
+    ]) {
+      const src = read(`app/components/home/${f}.tsx`);
+      expect(src, f).not.toMatch(/wildstem|verdant/i);
+    }
+  });
+
+  it('composes the shopping section as asymmetric image-led panels', () => {
+    const chooser = read('app/components/home/ExperienceChooser.tsx');
+    const css = read('app/styles/home.css');
+    expect(chooser).toMatch(/ng-bay--dominant/);
+    expect(chooser).toMatch(/ng-bay-scrim/);
+    // one dominant panel spanning the grid — not four equal columns
+    expect(css).toMatch(/\.ng-bay--dominant \{[\s\S]*?grid-row: 1 \/ 4/);
+    expect(css).toMatch(/\.ng-bays-list \{[\s\S]*?grid-template-columns: 1\.32fr 1fr/);
+  });
+
+  it('keeps Wholesale a popup trigger and the other three real links', () => {
+    const chooser = read('app/components/home/ExperienceChooser.tsx');
+    expect(chooser).toMatch(/setWholesaleOpen\(true\)/);
+    expect(chooser).toMatch(/<button[\s\S]*?className="ng-bay-link"/);
+    expect(chooser).toMatch(/<Link className="ng-bay-link" to=\{pathway\.to!\}/);
+  });
+
+  it('folds contact into a compact footer grid — no strip, no newsletter', () => {
+    const footer = read('app/components/Footer.tsx');
+    expect(footer).toMatch(/ng-shell-footer-grid/);
+    expect(footer).toMatch(/ContactColumn/);
+    expect(footer).not.toMatch(/ContactStrip|TrustGrid/);
+    expect(footer).not.toMatch(/newsletter|Stay in Bloom|trade list/i);
+    // every approved contact detail is still rendered
+    expect(footer).toMatch(/CONTACT\.phones/);
+    expect(footer).toMatch(/CONTACT\.email/);
+    expect(footer).toMatch(/CONTACT\.address\.full/);
+    expect(footer).toMatch(/DELIVERY_CUTOFF_SHORT/);
+  });
+});
