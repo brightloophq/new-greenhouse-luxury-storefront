@@ -678,7 +678,21 @@
 }
 
 .ng-image-frame:hover > img {
-  transform: scale(1.025);
+  /* One image-response across the store: the product + collection grids now
+     breathe at the same amplitude as the homepage cards (was a near-inert
+     1.025 that made catalogue imagery feel dead next to the home grid). */
+  transform: scale(1.04);
+}
+/* Honour reduced-motion for the shared hover zoom — the CSS hover layer was
+   never gated, only the GSAP reveals were. Craft + accessibility. */
+@media (prefers-reduced-motion: reduce) {
+  .ng-image-frame > img,
+  .ng-image-cover {
+    transition: none;
+  }
+  .ng-image-frame:hover > img {
+    transform: none;
+  }
 }
 
 .ng-ratio-product {
