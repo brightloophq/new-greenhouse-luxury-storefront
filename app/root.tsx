@@ -23,6 +23,7 @@ import pageStyles from '~/styles/pages.css?url';
 import homeStyles from '~/styles/home.css?url';
 import experienceStyles from '~/styles/experience.css?url';
 import suppliesStyles from '~/styles/supplies.css?url';
+import arrangementsStyles from '~/styles/arrangements.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 // Critical brand faces preloaded to minimise FOUT on the above-the-fold hero:
@@ -248,6 +249,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={homeStyles}></link>
         <link rel="stylesheet" href={experienceStyles}></link>
         <link rel="stylesheet" href={suppliesStyles}></link>
+        <link rel="stylesheet" href={arrangementsStyles}></link>
         <Meta />
         <Links />
       </head>

@@ -61,16 +61,18 @@ export function CatalogueView({
   // "refining" state — the grid dims rather than being replaced by a spinner.
   const busy = navigation.state === 'loading';
 
-  // Retail and standalone Supplies get the editorial (homepage) presentation,
-  // scoped by CONTEXT — not by variant, because variant is shared across sections.
-  // Only the retail-* and the standalone `supplies` contexts opt in, so Wholesale,
-  // Arrangements, and the retail-supplies / wholesale-supplies contexts keep their
-  // own presentation. Each experience owns its modifier in its own stylesheet.
+  // Retail, standalone Supplies and Arrangements get the editorial (homepage)
+  // presentation, scoped by CONTEXT — not by variant, because variant is shared
+  // across sections. The `arrangements` context covers Mixed and Occasion; Premium
+  // stays context="premium" and keeps its own elevated (deluxe) catalogue. Each
+  // experience owns its modifier in its own stylesheet.
   const editorialModifier = context.startsWith('retail')
     ? ' ng-shopcat--retail'
     : context.startsWith('supplies')
       ? ' ng-shopcat--supplies'
-      : '';
+      : context.startsWith('arrangements')
+        ? ' ng-shopcat--arrangements'
+        : '';
 
   return (
     <div className={`ng-shopcat${editorialModifier}`}>
