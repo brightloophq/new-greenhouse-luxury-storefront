@@ -26,6 +26,7 @@ import suppliesStyles from '~/styles/supplies.css?url';
 import arrangementsStyles from '~/styles/arrangements.css?url';
 import informationalStyles from '~/styles/informational.css?url';
 import wholesaleStyles from '~/styles/wholesale.css?url';
+import productStyles from '~/styles/product.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 // Critical brand faces preloaded to minimise FOUT on the above-the-fold hero:
@@ -254,6 +255,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={arrangementsStyles}></link>
         <link rel="stylesheet" href={informationalStyles}></link>
         <link rel="stylesheet" href={wholesaleStyles}></link>
+        <link rel="stylesheet" href={productStyles}></link>
         <Meta />
         <Links />
       </head>

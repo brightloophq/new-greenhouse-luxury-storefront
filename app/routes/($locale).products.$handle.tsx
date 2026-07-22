@@ -15,6 +15,7 @@ import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {useExperience} from '~/components/ExperienceProvider';
 import {ProductGrid} from '~/components/catalog/ProductGrid';
+import {EditorialProductDetail} from '~/components/product/EditorialProductDetail';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {DELIVERY_CUTOFF} from '~/lib/companyContent';
@@ -218,6 +219,19 @@ export default function Product() {
     .filter((item) => productInExperience(item, experience))
     .slice(0, 4)
     .map(toRecommendationCard);
+
+  // Classic gets the new editorial exhibition. Deluxe / premium keeps its own
+  // approved presentation below — same data, untouched markup and styling.
+  if (!deluxe) {
+    return (
+      <EditorialProductDetail
+        product={product}
+        selectedVariant={selectedVariant}
+        productOptions={productOptions}
+        related={related}
+      />
+    );
+  }
 
   return (
     <div className="product commerce-product">
