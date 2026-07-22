@@ -1715,6 +1715,16 @@ button.ng-chooser-card {
    Wholesale / Supplies / Arrangements keep their own presentation — higher
    specificity (two classes) means these win without reordering the base rules.
    ========================================================================== */
+/* The shared <main> caps every route at 1440px, which left the gallery floating
+   in the middle of a wide viewport. Only when <main> actually holds the retail
+   listing (:has) do we release that cap and its inline padding, so the gallery
+   spans the width. Scrollbar-safe (no 100vw), and no other route's <main> is
+   touched — the selector only matches on the retail listing. */
+main:has(> .ng-shopcat--retail) {
+  max-width: none;
+  padding-inline: 0;
+}
+
 /* Compound selector: same specificity as the base `.ng-shopcat` ground but wins
    regardless of source order, since it sits earlier in the file.
    The surface also owns the fold: a much tighter top pulls the gallery up (was a
@@ -1725,11 +1735,14 @@ button.ng-chooser-card {
     radial-gradient(120% 70% at 50% -8%, rgb(200 169 106 / 0.06), transparent 60%),
     var(--ng-ground-warm);
 }
-/* A wider content island — imagery leads instead of floating in a narrow column
-   inside a wide viewport (was 78rem / 1248px). */
+/* The gallery spans the viewport instead of floating in a narrow column (was
+   78rem / 1248px). The cap sits past common wide monitors so the island fills the
+   width up to ~1920px, with the section's side padding as the only breathing
+   room; a column tier below keeps the cards premium rather than oversized. */
 .ng-shopcat--retail .ng-shopcat-head,
 .ng-shopcat--retail .ng-shopcat-layout {
-  max-width: 88rem;
+  max-width: 120rem;
+  margin-inline: auto;
 }
 /* Compact editorial intro — measured rhythm so the controls and first product
    row reach the fold sooner. */
@@ -1807,7 +1820,13 @@ button.ng-chooser-card {
   font-size: 0.95rem;
 }
 /* Column steps — restated under retail so they beat the base grid media rules
-   (equal single-class specificity). 4 → 3 below the wide island, → 2 on tablet. */
+   (equal single-class specificity). 5 on a wide monitor → 4 → 3 below the island
+   → 2 on tablet, so the imagery spans the width without any single card ballooning. */
+@media (min-width: 104em) {
+  .ng-shopcat--retail .ng-shopcat-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
 @media (max-width: 78em) {
   .ng-shopcat--retail .ng-shopcat-grid {
     grid-template-columns: repeat(3, 1fr);
