@@ -1,0 +1,555 @@
+/* ==========================================================================
+   Editorial cart — Step 10 (presentation only)
+   --------------------------------------------------------------------------
+   Scoped ENTIRELY under `.ng-cart` (the CartMain root). No premium tokens, no
+   bare top-level element selectors. This restyles the SHARED cart components
+   (CartMain, CartLineItem, CartSummary) into the greenhouse editorial language
+   without touching a single line of Shopify cart logic (mutations, checkout
+   URL, discounts, gift cards, quantity/remove forms, analytics).
+
+   ROOT-CAUSE NOTE (bug audit, §12): the previous cart rules in app.css were
+   written for Hydrogen's original fixed `<aside>` — `--aside-width: 420px`, an
+   absolutely-positioned summary pinned with hard-coded `--cart-aside-summary-
+   height` numbers, and `.cart-main { overflow-y:auto; max-height:… }`. The
+   drawer is now a flex column (`.ng-drawer` → `.ng-drawer-body` is the single
+   scroll container). Against that structure the old geometry produced a
+   torn-out, mis-sized (380px in a 448px panel) summary that overlapped the
+   list, and a nested double-scroll container. Those rules were removed at the
+   source (app.css) and the cart presentation is re-expressed here for the
+   flex-column drawer: the body scrolls the line items, the summary is a proper
+   sticky footer that is always reachable. Same components, correct geometry.
+   ========================================================================== */
+
+.ng-cart {
+  color: var(--ng-text-primary);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ng-font-body);
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Header — an editorial preamble, not a page title
+   The drawer already carries the dialog heading ("Your cart"), so inside the
+   drawer only the intent line shows; the /cart page keeps the full header.
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-luxury-header {
+  display: grid;
+  gap: var(--ng-space-2);
+  margin-bottom: var(--ng-space-5);
+}
+.ng-cart .cart-luxury-header h2 {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  margin: 0;
+}
+.ng-cart .cart-intro {
+  color: var(--ng-green-muted);
+  font-size: var(--ng-font-size-small);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 40ch;
+}
+/* In the drawer the dialog header already says "Your cart" — suppress the
+   duplicate kicker + title, keep only the refined intent line. */
+.ng-drawer .ng-cart .cart-luxury-header {
+  margin-bottom: var(--ng-space-4);
+}
+.ng-drawer .ng-cart .cart-luxury-header .greenhouse-kicker,
+.ng-drawer .ng-cart .cart-luxury-header h2 {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Line items — editorial arrangement cards
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-details {
+  display: flex;
+  flex-direction: column;
+}
+.ng-cart .cart-details > div > ul {
+  display: grid;
+  gap: var(--ng-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ng-cart .cart-line {
+  background: var(--ng-ground-warm);
+  border: 1px solid var(--ng-glass-line);
+  border-radius: var(--ng-radius-sm);
+  padding: var(--ng-space-4);
+}
+.ng-cart .cart-line-inner {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--ng-space-4);
+}
+/* Hydrogen <Image> — a fine botanical frame, generous but not oversized. */
+.ng-cart .cart-line img {
+  aspect-ratio: 1 / 1;
+  background: var(--ng-ground-tint);
+  border: 1px solid var(--ng-glass-line);
+  border-radius: var(--ng-radius-xs);
+  display: block;
+  flex: 0 0 auto;
+  height: auto;
+  object-fit: cover;
+  width: clamp(4.5rem, 22vw, 5.5rem);
+}
+.ng-cart .cart-line-inner > div {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--ng-space-2);
+  min-width: 0;
+}
+.ng-cart .cart-line-inner a {
+  color: var(--ng-green-deep);
+  text-decoration: none;
+}
+.ng-cart .cart-line-inner a strong {
+  font-family: var(--ng-font-heading);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+.ng-cart .cart-line-inner a:hover strong {
+  color: var(--ng-gold-text);
+}
+/* Price hierarchy: name → variant → price. */
+.ng-cart .cart-line .product-price {
+  color: var(--ng-text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.ng-cart .cart-line .product-price-on-sale {
+  align-items: baseline;
+  display: flex;
+  gap: var(--ng-space-2);
+}
+.ng-cart .cart-line .product-price-on-sale s {
+  color: var(--ng-green-soft);
+  font-weight: 400;
+}
+.ng-cart .cart-line-inner ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-1) var(--ng-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ng-cart .cart-line-inner ul small {
+  color: var(--ng-green-soft);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.02em;
+}
+
+/* Nested child lines (warranties / add-ons) stay quietly indented. */
+.ng-cart .cart-line-children {
+  border-top: 1px solid var(--ng-glass-line);
+  list-style: none;
+  margin-top: var(--ng-space-3);
+  padding: var(--ng-space-3) 0 0 var(--ng-space-4);
+}
+
+/* --------------------------------------------------------------------------
+   Quantity + remove — one refined control row
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-line-quantity {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-3);
+  justify-content: space-between;
+  margin-top: var(--ng-space-1);
+}
+/* CartForm renders a <form>; collapse it so its button joins the flex row. */
+.ng-cart .cart-line-stepper > form,
+.ng-cart .cart-line-quantity > form {
+  display: contents;
+}
+.ng-cart .cart-line-stepper {
+  align-items: center;
+  border: 1px solid var(--ng-green-line-strong);
+  border-radius: var(--ng-radius-pill);
+  display: inline-flex;
+  overflow: hidden;
+}
+.ng-cart .cart-line-step {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--ng-green-deep);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.05rem;
+  height: 2.75rem;
+  justify-content: center;
+  line-height: 1;
+  min-width: 2.75rem;
+  padding: 0;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease),
+    color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-cart .cart-line-step:hover:not(:disabled) {
+  background: var(--ng-ground-sage);
+}
+.ng-cart .cart-line-step:disabled {
+  color: var(--ng-green-faint);
+  cursor: not-allowed;
+}
+.ng-cart .cart-line-count {
+  font-size: var(--ng-font-size-small);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  min-width: 2.5ch;
+  padding: 0 var(--ng-space-1);
+  text-align: center;
+}
+.ng-cart .cart-line-remove {
+  background: none;
+  border: 0;
+  color: var(--ng-green-soft);
+  cursor: pointer;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.1em;
+  padding: var(--ng-space-2) 0;
+  position: relative;
+  text-transform: uppercase;
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-cart .cart-line-remove::after {
+  background: currentcolor;
+  bottom: var(--ng-space-1);
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-motion-hover) var(--ng-motion-ease);
+  width: 100%;
+}
+.ng-cart .cart-line-remove:hover,
+.ng-cart .cart-line-remove:focus-visible {
+  color: var(--ng-green-deep);
+}
+.ng-cart .cart-line-remove:hover::after,
+.ng-cart .cart-line-remove:focus-visible::after {
+  transform: scaleX(1);
+}
+.ng-cart .cart-line-remove:disabled {
+  color: var(--ng-green-faint);
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Gift message — an unhurried, optional note
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-luxury-notes {
+  display: grid;
+  gap: var(--ng-space-2);
+  margin-top: var(--ng-space-5);
+}
+.ng-cart .cart-luxury-notes label {
+  color: var(--ng-green-deep);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ng-cart .cart-luxury-notes textarea {
+  background: var(--ng-color-warm-white);
+  border: 1px solid var(--ng-glass-line);
+  border-radius: var(--ng-radius-xs);
+  color: var(--ng-text-primary);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  padding: var(--ng-space-3);
+  resize: vertical;
+  width: 100%;
+}
+.ng-cart .cart-luxury-notes textarea:focus-visible {
+  border-color: var(--ng-green);
+  outline: 2px solid var(--ng-green-line-strong);
+  outline-offset: 1px;
+}
+.ng-cart .cart-luxury-notes p {
+  color: var(--ng-green-soft);
+  font-size: var(--ng-font-size-caption);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Summary — subtotal, notes, architectural checkout
+   In the drawer the cart is a flex column: the header stays put, the line
+   items scroll, and the summary docks as a fixed footer so the checkout is
+   ALWAYS reachable without scrolling (§9). On the /cart page everything sits
+   in normal flow.
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-summary {
+  display: grid;
+  gap: var(--ng-space-3);
+  margin-top: var(--ng-space-5);
+}
+
+/* Drawer-only flex-column geometry. `.ng-cart` is already a flex column; make
+   it fill the drawer body so the middle region can scroll under a docked
+   footer. The body stops scrolling (the cart owns it) — no double scroller. */
+.ng-drawer .ng-drawer-body:has(.ng-cart) {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.ng-drawer .ng-cart {
+  height: 100%;
+}
+.ng-drawer .ng-cart .cart-luxury-header {
+  flex: 0 0 auto;
+}
+.ng-drawer .ng-cart .cart-details {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--ng-space-4);
+}
+.ng-drawer .ng-cart .cart-summary-dock {
+  flex: 0 0 auto;
+  margin: 0 calc(var(--ng-space-6) * -1);
+}
+.ng-drawer .ng-cart .cart-summary {
+  background: var(--ng-ground-panel);
+  border-top: 1px solid var(--ng-glass-line-strong);
+  box-shadow: 0 -14px 30px -24px rgb(20 24 20 / 60%);
+  margin-top: 0;
+  padding: var(--ng-space-4) var(--ng-space-6) var(--ng-space-5);
+}
+.ng-cart .cart-summary h4 {
+  color: var(--ng-green-soft);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin: 0;
+  text-transform: uppercase;
+}
+.ng-cart .cart-subtotal {
+  align-items: baseline;
+  border-top: 1px solid var(--ng-glass-line-strong);
+  display: flex;
+  gap: var(--ng-space-4);
+  justify-content: space-between;
+  margin: 0;
+  padding-top: var(--ng-space-3);
+}
+.ng-cart .cart-subtotal dt {
+  font-family: var(--ng-font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.ng-cart .cart-subtotal dd {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+}
+.ng-cart .cart-summary-note {
+  color: var(--ng-green-soft);
+  font-size: var(--ng-font-size-caption);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Discounts + gift cards — quiet, functional, on-brand. */
+.ng-cart .cart-summary section {
+  display: grid;
+  gap: var(--ng-space-2);
+}
+.ng-cart .cart-summary section dl {
+  display: grid;
+  gap: var(--ng-space-1);
+  margin: 0;
+}
+.ng-cart .cart-summary section dt {
+  color: var(--ng-green-soft);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ng-cart .cart-discount {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-2);
+}
+.ng-cart .cart-summary section div:has(> input) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ng-space-2);
+}
+.ng-cart .cart-summary input[type='text'] {
+  background: var(--ng-color-warm-white);
+  border: 1px solid var(--ng-glass-line);
+  border-radius: var(--ng-radius-xs);
+  color: var(--ng-text-primary);
+  flex: 1 1 8rem;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+  min-width: 0;
+  padding: var(--ng-space-2) var(--ng-space-3);
+}
+.ng-cart .cart-summary input[type='text']:focus-visible {
+  border-color: var(--ng-green);
+  outline: 2px solid var(--ng-green-line-strong);
+  outline-offset: 1px;
+}
+.ng-cart .cart-summary section button {
+  background: transparent;
+  border: 1px solid var(--ng-green-line-strong);
+  border-radius: var(--ng-radius-xs);
+  color: var(--ng-green-deep);
+  cursor: pointer;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: var(--ng-space-2) var(--ng-space-3);
+  text-transform: uppercase;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-cart .cart-summary section button:hover {
+  background: var(--ng-ground-sage);
+}
+.ng-cart .cart-summary code {
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-small);
+}
+
+/* --------------------------------------------------------------------------
+   Checkout — architectural, glasshouse-framed, restrained hover (§5)
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-checkout {
+  align-items: center;
+  background: var(--ng-green-deep);
+  border: 1px solid var(--ng-green-deep);
+  box-shadow: inset 0 0 0 1px rgb(246 244 238 / 14%);
+  color: var(--ng-color-warm-white);
+  display: flex;
+  gap: var(--ng-space-2);
+  justify-content: center;
+  margin-top: var(--ng-space-1);
+  min-height: 3.25rem;
+  padding: var(--ng-space-3) var(--ng-space-5);
+  text-decoration: none;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease),
+    transform var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-cart .cart-checkout:hover {
+  background: var(--ng-green-pressed);
+  transform: translateY(-1px);
+}
+.ng-cart .cart-checkout:focus-visible {
+  outline: 2px solid var(--ng-gold);
+  outline-offset: 2px;
+}
+.ng-cart .cart-checkout-label {
+  font-family: var(--ng-font-heading);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ng-cart .cart-checkout-arrow {
+  transition: transform var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-cart .cart-checkout:hover .cart-checkout-arrow {
+  transform: translateX(3px);
+}
+
+/* --------------------------------------------------------------------------
+   Empty state — the greenhouse waiting, warmly lit (§3)
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-4);
+  padding: var(--ng-space-10) var(--ng-space-4) var(--ng-space-8);
+  text-align: center;
+}
+.ng-cart .cart-empty-art {
+  color: var(--ng-green);
+  height: auto;
+  width: clamp(5rem, 30vw, 7rem);
+}
+.ng-cart .cart-empty-title {
+  color: var(--ng-green-deep);
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.35rem, 4vw, 1.7rem);
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0;
+  max-width: 24ch;
+}
+.ng-cart .cart-empty-copy {
+  color: var(--ng-green-muted);
+  font-size: var(--ng-font-size-small);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 34ch;
+}
+.ng-cart .cart-empty-state .greenhouse-button {
+  margin-top: var(--ng-space-2);
+}
+
+/* --------------------------------------------------------------------------
+   /cart page — a touch more room than the drawer
+   -------------------------------------------------------------------------- */
+.cart {
+  margin: 0 auto;
+  max-width: var(--ng-container-sm);
+  padding: var(--ng-space-10) var(--ng-container-gutter) var(--ng-space-16);
+}
+.cart > h1 {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 500;
+  margin: 0 0 var(--ng-space-6);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile — full-height editorial sheet, nothing clipped (§9)
+   -------------------------------------------------------------------------- */
+@media (max-width: 30rem) {
+  .ng-cart .cart-line {
+    padding: var(--ng-space-3);
+  }
+  .ng-cart .cart-line-inner {
+    gap: var(--ng-space-3);
+  }
+  .ng-cart .cart-line-quantity {
+    gap: var(--ng-space-2);
+  }
+  .cart {
+    padding: var(--ng-space-8) var(--ng-space-4) var(--ng-space-12);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — remove every transition, keep every state reachable (§10)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ng-cart .cart-line-step,
+  .ng-cart .cart-line-remove,
+  .ng-cart .cart-line-remove::after,
+  .ng-cart .cart-checkout,
+  .ng-cart .cart-checkout-arrow,
+  .ng-cart .cart-summary section button {
+    transition: none;
+  }
+}

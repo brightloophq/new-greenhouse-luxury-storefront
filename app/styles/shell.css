@@ -788,13 +788,10 @@
   font-size: var(--ng-font-size-caption);
 }
 
-/* --------------------------------------------------------------------------
-   Cart drawer presentation (chrome only; cart logic is M6)
-   The drawer already provides the heading, so suppress CartMain's own header.
-   -------------------------------------------------------------------------- */
-.ng-drawer .cart-luxury-header {
-  display: none;
-}
+/* Cart drawer presentation is owned by the class-scoped app/styles/cart.css
+   (Step 10). The drawer's own <header> supplies the dialog heading; cart.css
+   keeps only the editorial intent line inside the drawer and shows the full
+   CartMain header on the /cart page. */
 
 /* --------------------------------------------------------------------------
    Responsive

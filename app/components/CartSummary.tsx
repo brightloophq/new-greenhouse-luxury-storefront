@@ -10,8 +10,9 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
-  const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
+  const className = `cart-summary ${
+    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside'
+  }`;
   const summaryId = useId();
   const discountsHeadingId = useId();
   const discountCodeInputId = useId();
@@ -20,7 +21,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
+      <h4 id={summaryId}>Order summary</h4>
       <dl role="group" className="cart-subtotal">
         <dt>Subtotal</dt>
         <dd>
@@ -31,6 +32,10 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
+      <p className="cart-summary-note">
+        Taxes and delivery are calculated at checkout. Our Kingston team confirms
+        your delivery window after your order is placed.
+      </p>
       <CartDiscounts
         discountCodes={cart?.discountCodes}
         discountsHeadingId={discountsHeadingId}
@@ -50,12 +55,12 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
-      </a>
-      <br />
-    </div>
+    <a className="cart-checkout" href={checkoutUrl} target="_self">
+      <span className="cart-checkout-label">Continue to checkout</span>
+      <span className="cart-checkout-arrow" aria-hidden="true">
+        &rarr;
+      </span>
+    </a>
   );
 }
 
