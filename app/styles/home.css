@@ -1792,8 +1792,12 @@ main:has(> .ng-shopcat--retail) {
 /* The products carry the page: four generous columns where the viewport allows,
    stepping down to three then two. Retail-scoped at every breakpoint so it wins
    over the base grid's responsive rules (single-class, so it must be restated). */
+/* An intrinsic gallery: the grid fits as many ~14.5rem columns as the main area
+   holds and stretches them to fill, so it spans the width at every size without
+   fixed column-count breakpoints. Rough result — 1920:5–6 · 1440:4 · 1200:3 ·
+   768:2 · 390:1. min(100%, …) keeps a single column from overflowing on mobile. */
 .ng-shopcat--retail .ng-shopcat-grid {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.5rem), 1fr));
   gap: clamp(1.5rem, 2.2vw, 2rem) clamp(1.25rem, 1.8vw, 1.6rem);
   margin-top: 1.25rem;
 }
@@ -1818,24 +1822,6 @@ main:has(> .ng-shopcat--retail) {
 }
 .ng-shopcat--retail .ng-shopcat-card-price {
   font-size: 0.95rem;
-}
-/* Column steps — restated under retail so they beat the base grid media rules
-   (equal single-class specificity). 5 on a wide monitor → 4 → 3 below the island
-   → 2 on tablet, so the imagery spans the width without any single card ballooning. */
-@media (min-width: 104em) {
-  .ng-shopcat--retail .ng-shopcat-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-@media (max-width: 78em) {
-  .ng-shopcat--retail .ng-shopcat-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 52em) {
-  .ng-shopcat--retail .ng-shopcat-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 /* ---- Catalogue surface (green by default; elevated only on premium) -------- */
@@ -1893,6 +1879,21 @@ main:has(> .ng-shopcat--retail) {
 }
 .ng-shopcat-main {
   min-width: 0;
+}
+/* The scaffold ships a global `aside { position: fixed; height: 100vh; width:
+   var(--aside-width); background; box-shadow }` for its cart drawer (app.css) —
+   which was also catching THIS filter sidebar, parking it off-screen and leaving
+   the layout grid with a single in-flow child (main). Main then collapsed into
+   the 15rem track, so every product crammed into ~240px and spilled left. Reset
+   the sidebar to a normal in-flow grid column; shared by every catalogue route. */
+.ng-shopcat-aside {
+  position: static;
+  inset: auto;
+  inline-size: auto;
+  block-size: auto;
+  background: none;
+  box-shadow: none;
+  transition: none;
 }
 
 /* Search */
