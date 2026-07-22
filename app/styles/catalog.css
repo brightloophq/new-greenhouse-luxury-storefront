@@ -220,50 +220,6 @@
   border-color: var(--ng-btn-primary-bg-hover);
 }
 
-/* --------------------------------------------------------------------------
-   The catalogue's breathing room — one pane of greenhouse set into the grid.
-   Spans the full measure so the rhythm genuinely breaks; hairline seams above
-   and below read as glazing bars rather than a content box.
-   -------------------------------------------------------------------------- */
-.ng-catalog-moment {
-  border-block: 1px solid var(--ng-glass-line);
-  grid-column: 1 / -1;
-  margin-block: var(--ng-space-4);
-  padding-block: clamp(2.25rem, 5vw, 3.5rem);
-  text-align: center;
-}
-.ng-catalog-moment-inner {
-  margin-inline: auto;
-  max-width: 34rem;
-  padding-inline: var(--ng-space-4);
-}
-.ng-catalog-moment-stem {
-  block-size: clamp(2.75rem, 6vw, 3.5rem);
-  color: var(--ng-green);
-  display: block;
-  inline-size: auto;
-  margin: 0 auto var(--ng-space-4);
-  opacity: 0.7;
-}
-.ng-catalog-moment-eyebrow {
-  color: var(--ng-gold-text);
-  font-family: var(--ng-font-heading);
-  font-size: var(--ng-font-size-caption);
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  margin: 0 0 var(--ng-space-3);
-  text-transform: uppercase;
-}
-.ng-catalog-moment-note {
-  color: var(--ng-green-deep);
-  font-family: var(--ng-font-heading);
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
-  font-weight: 400;
-  line-height: 1.55;
-  margin: 0;
-  text-wrap: balance;
-}
-
 .ng-search-error {
   color: var(--ng-color-error, #b3261e);
   text-align: center;
