@@ -76,9 +76,12 @@
 .ng-masthead-wordmark {
   justify-self: center;
   font-family: var(--ng-font-heading);
-  font-size: clamp(1.6rem, 1rem + 1.9vw, 2.6rem);
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  /* Montserrat is a wider geometric face than the old serif — a touch smaller
+     and generously tracked reads as a considered masthead rather than a
+     stretched logo. */
+  font-size: clamp(1.35rem, 0.95rem + 1.6vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
   line-height: 1;
   text-transform: uppercase;
   text-decoration: none;
@@ -397,10 +400,12 @@
   cursor: pointer;
   display: inline-flex;
   gap: var(--ng-space-1);
-  font-family: var(--ng-font-body);
-  font-size: var(--ng-font-size-nav);
-  font-weight: 700;
-  letter-spacing: var(--ng-letter-nav);
+  /* Montserrat, matching the wordmark — the masthead speaks in one architectural
+     voice. Medium weight + open tracking reads refined, not heavy. */
+  font-family: var(--ng-font-heading);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   line-height: 1;
   padding: var(--ng-space-3) 0;
   position: relative;
@@ -514,8 +519,12 @@
   /* Deep botanical green on the cream panel — AA at this size. Previously
      --ng-color-light-gray, a dark-theme token, which was near-invisible here. */
   color: var(--ng-green-deep);
-  font-family: var(--ng-font-heading);
-  font-size: 1rem;
+  /* Dropdown destinations are a reading list — the secondary face (Raleway)
+     suits them better than the display face. */
+  font-family: var(--ng-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   line-height: 1.4;
   text-decoration: none;
   transition:
@@ -725,7 +734,9 @@
   color: var(--ng-text-primary);
   display: block;
   font-family: var(--ng-font-heading);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   padding: var(--ng-space-2) 0;
 }
 .ng-mobilenav-link:hover {
