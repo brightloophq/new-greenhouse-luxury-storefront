@@ -651,48 +651,86 @@
   max-width: var(--ng-container-md);
   width: 100%;
 }
+/* The field is the whole moment: a large editorial line with a champagne
+   underline that draws itself across as the field takes focus. */
 .ng-search-field {
   align-items: center;
   border-bottom: 1px solid var(--ng-border-strong);
   display: flex;
-  gap: var(--ng-space-3);
-  padding-bottom: var(--ng-space-3);
+  gap: var(--ng-space-4);
+  padding-bottom: var(--ng-space-4);
+  position: relative;
+}
+.ng-search-field::after {
+  background: var(--ng-gold);
+  bottom: -1px;
+  content: '';
+  height: 2px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+.ng-search-field:focus-within::after {
+  transform: scaleX(1);
 }
 .ng-search-icon {
-  color: var(--ng-text-muted);
+  color: var(--ng-green);
   flex: 0 0 auto;
+  transition: color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-search-field:focus-within .ng-search-icon {
+  color: var(--ng-green-deep);
 }
 .ng-search-field input {
   background: transparent;
   border: 0;
-  color: var(--ng-text-primary);
+  color: var(--ng-green-deep);
   flex: 1 1 auto;
   font-family: var(--ng-font-heading);
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   min-width: 0;
   outline: 0;
   padding: var(--ng-space-2) 0;
 }
 .ng-search-field input::placeholder {
-  color: var(--ng-text-muted);
+  color: var(--ng-green-faint);
 }
+/* The submit folds into the one store-wide button system (was a leftover
+   black 800-weight ecommerce button). */
 .ng-search-submit {
-  background: var(--ng-color-background);
-  border: 0;
-  border-radius: var(--ng-radius-sm);
-  color: var(--ng-text-inverse);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  color: var(--ng-btn-primary-fg);
   cursor: pointer;
   flex: 0 0 auto;
+  font-family: var(--ng-font-heading);
   font-size: var(--ng-font-size-button);
-  font-weight: 800;
-  letter-spacing: var(--ng-letter-nav);
+  font-weight: var(--ng-btn-weight);
+  letter-spacing: var(--ng-btn-tracking);
   min-height: var(--ng-button-height-sm);
   padding: 0 var(--ng-space-5);
   text-transform: uppercase;
+  transition: var(--ng-transition-color);
+}
+.ng-search-submit:hover {
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+}
+.ng-search-seam {
+  margin: var(--ng-space-6) 0 0;
 }
 .ng-search-status {
-  color: var(--ng-text-muted);
-  padding: var(--ng-space-8) 0;
+  color: var(--ng-green-soft);
+  font-family: var(--ng-font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  padding: var(--ng-space-12) 0;
   text-align: center;
 }
 .ng-search-results {
@@ -702,11 +740,34 @@
   color: var(--ng-gold-text);
   display: inline-block;
   font-weight: 700;
+  letter-spacing: 0.04em;
   margin-top: var(--ng-space-4);
+  position: relative;
+}
+.ng-search-viewall::after {
+  background: currentcolor;
+  bottom: -2px;
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-duration-standard) var(--ng-ease-luxury);
+}
+.ng-search-viewall:hover::after {
+  transform: scaleX(1);
 }
 /* Style the predictive-search internals rendered by SearchResultsPredictive */
 .ng-search-results .predictive-search-result h5 {
-  color: var(--ng-color-luxury-gold);
+  color: var(--ng-gold-text);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin: 0 0 var(--ng-space-3);
+  text-transform: uppercase;
 }
 .ng-search-results ul {
   list-style: none;
@@ -714,7 +775,12 @@
   padding: 0;
 }
 .ng-search-results a {
-  color: var(--ng-text-primary);
+  color: var(--ng-green-deep);
+  transition: color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-search-results a:hover {
+  color: var(--ng-gold-text);
+  text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------

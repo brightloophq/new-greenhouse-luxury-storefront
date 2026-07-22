@@ -17,6 +17,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Accordion, AccordionItem, Icon} from '~/components/ui';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {CONTACT, DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 interface PageLayoutProps {
@@ -97,6 +98,11 @@ function SearchAside() {
             </div>
           )}
         </SearchFormPredictive>
+
+        {/* The glazing seam that frames the search field — the same structural
+            join used between sections everywhere else, so the overlay reads as
+            another pane of the greenhouse rather than a search box. */}
+        <GlasshouseDivider className="ng-search-seam" />
 
         <SearchResultsPredictive>
           {({items, total, term, state, closeSearch}) => {
