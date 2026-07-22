@@ -42,10 +42,10 @@
   --transition-standard: 180ms ease;
 }
 
-img {
-  border-radius: var(--radius-card);
-  display: block;
-}
+/* Global image normalization (max-width, height:auto, display:block) lives in
+   the base layer, reset.css — not here. The scaffold's decorative
+   `img { border-radius }` was dead (overridden to 0px across the cascade) and
+   was removed; components round their own media containers. */
 
 /*
 * --------------------------------------------------
