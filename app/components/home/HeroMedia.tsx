@@ -48,7 +48,14 @@ export function HeroMedia({poster, video, alt}: HeroMediaProps) {
     // Wait a tick past first paint so the poster wins the LCP race.
     const id = window.setTimeout(() => setShowVideo(true), 200);
     return () => window.clearTimeout(id);
-  }, [video]);
+    // Depend on the SOURCE STRING, not the `video` object. Callers pass an
+    // inline literal (`video={{src: '…'}}`), which is a new identity on every
+    // render — depending on the object re-ran this effect each time, and the
+    // cleanup cleared the pending 200ms timer before it could fire. With the
+    // hero's GSAP timeline driving renders, the mount could be deferred
+    // indefinitely and the video never appeared at all.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [video?.src]);
 
   // Pause when off-screen or on a hidden tab — no work for something unseen.
   useEffect(() => {
