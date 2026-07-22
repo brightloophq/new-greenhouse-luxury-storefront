@@ -4,7 +4,7 @@ import {useEffect, useRef} from 'react';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
-import {CartSummary} from './CartSummary';
+import {CartSummary, CartExtras} from './CartSummary';
 import {useExperience} from '~/components/ExperienceProvider';
 import {primaryShopPath} from '~/lib/navigation';
 import {DISTANCE, MOTION, STAGGER, prefersReducedMotion} from '~/lib/motion';
@@ -141,10 +141,17 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
             <p>Same-day delivery windows are confirmed by our Kingston team.</p>
           </div>
         )}
+        {/* Discount + gift-card entry lives in the scrolling region so the
+            docked subtotal + checkout stay short and always reachable (§9). */}
+        {cartHasItems && (
+          <div data-cart-reveal>
+            <CartExtras cart={cart} />
+          </div>
+        )}
       </div>
-      {/* Summary sits OUTSIDE the scrolling `.cart-details` so, inside the
-          drawer, it docks as a fixed footer — checkout is always reachable
-          without scrolling (§9). On the /cart page it simply follows in flow. */}
+      {/* Subtotal + checkout sit OUTSIDE the scrolling `.cart-details` so, inside
+          the drawer, they dock as a compact fixed footer — checkout is always
+          reachable without scrolling (§9). On the /cart page it follows in flow. */}
       {cartHasItems && (
         <div className="cart-summary-dock" data-cart-reveal>
           <CartSummary cart={cart} layout={layout} />

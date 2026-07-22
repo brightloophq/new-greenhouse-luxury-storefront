@@ -39,11 +39,12 @@
   margin-bottom: var(--ng-space-5);
 }
 .ng-cart .cart-luxury-header h2 {
+  color: var(--ng-green-deep);
   font-family: var(--ng-font-heading);
   font-size: clamp(1.6rem, 4vw, 2.1rem);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
   margin: 0;
 }
 .ng-cart .cart-intro {
@@ -79,8 +80,8 @@
 }
 .ng-cart .cart-line {
   background: var(--ng-ground-warm);
-  border: 1px solid var(--ng-glass-line);
-  border-radius: var(--ng-radius-sm);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
   padding: var(--ng-space-4);
 }
 .ng-cart .cart-line-inner {
@@ -88,17 +89,19 @@
   display: flex;
   gap: var(--ng-space-4);
 }
-/* Hydrogen <Image> — a fine botanical frame, generous but not oversized. */
+/* Hydrogen <Image> — a framed botanical plate, matched to the PDP frame
+   (inset hairline + soft radius + the same off-centre floral crop). */
 .ng-cart .cart-line img {
   aspect-ratio: 1 / 1;
   background: var(--ng-ground-tint);
-  border: 1px solid var(--ng-glass-line);
-  border-radius: var(--ng-radius-xs);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px var(--ng-glass-line);
   display: block;
   flex: 0 0 auto;
   height: auto;
   object-fit: cover;
-  width: clamp(4.5rem, 22vw, 5.5rem);
+  object-position: 50% 42%;
+  width: clamp(5rem, 22vw, 5.75rem);
 }
 .ng-cart .cart-line-inner > div {
   display: flex;
@@ -174,10 +177,14 @@
 .ng-cart .cart-line-quantity > form {
   display: contents;
 }
+/* Matches the shared .ng-qty-stepper (PDP) exactly — a bordered rectangle with
+   inset dividers, not a bespoke pill — so the control reads the same in the
+   cart as it does on the product page. */
 .ng-cart .cart-line-stepper {
-  align-items: center;
-  border: 1px solid var(--ng-green-line-strong);
-  border-radius: var(--ng-radius-pill);
+  align-items: stretch;
+  background: var(--ng-color-warm-white);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: 3px;
   display: inline-flex;
   overflow: hidden;
 }
@@ -185,31 +192,36 @@
   align-items: center;
   background: transparent;
   border: 0;
-  color: var(--ng-green-deep);
+  color: var(--ng-text-primary);
   cursor: pointer;
   display: inline-flex;
   font-size: 1.05rem;
-  height: 2.75rem;
   justify-content: center;
   line-height: 1;
+  min-height: 2.75rem;
   min-width: 2.75rem;
   padding: 0;
   transition: background var(--ng-motion-hover) var(--ng-motion-ease),
     color var(--ng-motion-hover) var(--ng-motion-ease);
 }
 .ng-cart .cart-line-step:hover:not(:disabled) {
-  background: var(--ng-ground-sage);
+  background: var(--ng-bg-surface-muted);
+  color: var(--ng-gold-text);
 }
 .ng-cart .cart-line-step:disabled {
   color: var(--ng-green-faint);
   cursor: not-allowed;
 }
 .ng-cart .cart-line-count {
+  align-items: center;
+  border-inline: 1px solid var(--ng-border-subtle);
+  display: inline-flex;
   font-size: var(--ng-font-size-small);
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  min-width: 2.5ch;
-  padding: 0 var(--ng-space-1);
+  font-weight: 700;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 0 var(--ng-space-2);
   text-align: center;
 }
 .ng-cart .cart-line-remove {
@@ -267,8 +279,8 @@
 }
 .ng-cart .cart-luxury-notes textarea {
   background: var(--ng-color-warm-white);
-  border: 1px solid var(--ng-glass-line);
-  border-radius: var(--ng-radius-xs);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: 3px;
   color: var(--ng-text-primary);
   font-family: var(--ng-font-body);
   font-size: var(--ng-font-size-small);
@@ -294,10 +306,17 @@
    ALWAYS reachable without scrolling (§9). On the /cart page everything sits
    in normal flow.
    -------------------------------------------------------------------------- */
+/* On the /cart page the summary is an editorial panel, matched to the PDP
+   spec panel (ground-panel, hairline, 4px). In the drawer it is overridden
+   into a full-bleed docked footer below. */
 .ng-cart .cart-summary {
+  background: var(--ng-ground-panel);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
   display: grid;
-  gap: var(--ng-space-3);
+  gap: var(--ng-space-4);
   margin-top: var(--ng-space-5);
+  padding: var(--ng-space-5);
 }
 
 /* Drawer-only flex-column geometry. `.ng-cart` is already a flex column; make
@@ -325,10 +344,13 @@
 }
 .ng-drawer .ng-cart .cart-summary {
   background: var(--ng-ground-panel);
-  border-top: 1px solid var(--ng-glass-line-strong);
-  box-shadow: 0 -14px 30px -24px rgb(20 24 20 / 60%);
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--ng-green-line);
+  box-shadow: 0 -12px 26px -24px rgb(20 24 20 / 42%);
+  gap: var(--ng-space-3);
   margin-top: 0;
-  padding: var(--ng-space-4) var(--ng-space-6) var(--ng-space-5);
+  padding: var(--ng-space-4) var(--ng-space-6);
 }
 .ng-cart .cart-summary h4 {
   color: var(--ng-green-soft);
@@ -341,12 +363,15 @@
 }
 .ng-cart .cart-subtotal {
   align-items: baseline;
-  border-top: 1px solid var(--ng-glass-line-strong);
   display: flex;
   gap: var(--ng-space-4);
   justify-content: space-between;
   margin: 0;
-  padding-top: var(--ng-space-3);
+}
+/* The glazing-bar seam that separates the itemised summary from the final
+   action — the same divider used between sections on every other page. */
+.ng-cart .cart-summary-seam {
+  margin-block: 0;
 }
 .ng-cart .cart-subtotal dt {
   font-family: var(--ng-font-heading);
@@ -365,17 +390,27 @@
   margin: 0;
 }
 
-/* Discounts + gift cards — quiet, functional, on-brand. */
-.ng-cart .cart-summary section {
+/* --------------------------------------------------------------------------
+   Discounts + gift cards — secondary entry, in the scrolling region, kept
+   quiet so the subtotal + checkout dock reads first.
+   -------------------------------------------------------------------------- */
+.ng-cart .cart-extras {
+  border-top: 1px solid var(--ng-green-line);
+  display: grid;
+  gap: var(--ng-space-4);
+  margin-top: var(--ng-space-4);
+  padding-top: var(--ng-space-4);
+}
+.ng-cart .cart-extras section {
   display: grid;
   gap: var(--ng-space-2);
 }
-.ng-cart .cart-summary section dl {
+.ng-cart .cart-extras section dl {
   display: grid;
   gap: var(--ng-space-1);
   margin: 0;
 }
-.ng-cart .cart-summary section dt {
+.ng-cart .cart-extras section dt {
   color: var(--ng-green-soft);
   font-size: var(--ng-font-size-caption);
   letter-spacing: 0.1em;
@@ -387,15 +422,15 @@
   flex-wrap: wrap;
   gap: var(--ng-space-2);
 }
-.ng-cart .cart-summary section div:has(> input) {
+.ng-cart .cart-extras section div:has(> input) {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ng-space-2);
 }
-.ng-cart .cart-summary input[type='text'] {
+.ng-cart .cart-extras input[type='text'] {
   background: var(--ng-color-warm-white);
-  border: 1px solid var(--ng-glass-line);
-  border-radius: var(--ng-radius-xs);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: 3px;
   color: var(--ng-text-primary);
   flex: 1 1 8rem;
   font-family: var(--ng-font-body);
@@ -403,15 +438,15 @@
   min-width: 0;
   padding: var(--ng-space-2) var(--ng-space-3);
 }
-.ng-cart .cart-summary input[type='text']:focus-visible {
+.ng-cart .cart-extras input[type='text']:focus-visible {
   border-color: var(--ng-green);
   outline: 2px solid var(--ng-green-line-strong);
   outline-offset: 1px;
 }
-.ng-cart .cart-summary section button {
+.ng-cart .cart-extras section button {
   background: transparent;
   border: 1px solid var(--ng-green-line-strong);
-  border-radius: var(--ng-radius-xs);
+  border-radius: 3px;
   color: var(--ng-green-deep);
   cursor: pointer;
   font-family: var(--ng-font-body);
@@ -420,38 +455,40 @@
   letter-spacing: 0.08em;
   padding: var(--ng-space-2) var(--ng-space-3);
   text-transform: uppercase;
-  transition: background var(--ng-motion-hover) var(--ng-motion-ease);
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease),
+    border-color var(--ng-motion-hover) var(--ng-motion-ease);
 }
-.ng-cart .cart-summary section button:hover {
+.ng-cart .cart-extras section button:hover {
   background: var(--ng-ground-sage);
+  border-color: var(--ng-green);
 }
-.ng-cart .cart-summary code {
+.ng-cart .cart-extras code {
   font-family: var(--ng-font-body);
   font-size: var(--ng-font-size-small);
 }
 
 /* --------------------------------------------------------------------------
-   Checkout — architectural, glasshouse-framed, restrained hover (§5)
+   Checkout — the same architectural button as the PDP's add-to-cart (§5):
+   green-deep, 3px, on-green type, quiet colour-only hover. No lift, no glow.
    -------------------------------------------------------------------------- */
 .ng-cart .cart-checkout {
   align-items: center;
   background: var(--ng-green-deep);
   border: 1px solid var(--ng-green-deep);
-  box-shadow: inset 0 0 0 1px rgb(246 244 238 / 14%);
-  color: var(--ng-color-warm-white);
+  border-radius: 3px;
+  color: var(--ng-on-green);
   display: flex;
   gap: var(--ng-space-2);
   justify-content: center;
-  margin-top: var(--ng-space-1);
   min-height: 3.25rem;
   padding: var(--ng-space-3) var(--ng-space-5);
   text-decoration: none;
   transition: background var(--ng-motion-hover) var(--ng-motion-ease),
-    transform var(--ng-motion-hover) var(--ng-motion-ease);
+    border-color var(--ng-motion-hover) var(--ng-motion-ease);
 }
 .ng-cart .cart-checkout:hover {
   background: var(--ng-green-pressed);
-  transform: translateY(-1px);
+  border-color: var(--ng-green-pressed);
 }
 .ng-cart .cart-checkout:focus-visible {
   outline: 2px solid var(--ng-gold);
@@ -459,9 +496,9 @@
 }
 .ng-cart .cart-checkout-label {
   font-family: var(--ng-font-heading);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 .ng-cart .cart-checkout-arrow {
@@ -491,7 +528,8 @@
   color: var(--ng-green-deep);
   font-family: var(--ng-font-heading);
   font-size: clamp(1.35rem, 4vw, 1.7rem);
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: -0.015em;
   line-height: 1.15;
   margin: 0;
   max-width: 24ch;

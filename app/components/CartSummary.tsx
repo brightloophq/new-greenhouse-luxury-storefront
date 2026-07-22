@@ -3,6 +3,7 @@ import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -14,10 +15,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside'
   }`;
   const summaryId = useId();
-  const discountsHeadingId = useId();
-  const discountCodeInputId = useId();
-  const giftCardHeadingId = useId();
-  const giftCardInputId = useId();
 
   return (
     <div aria-labelledby={summaryId} className={className}>
@@ -36,6 +33,26 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         Taxes and delivery are calculated at checkout. Our Kingston team confirms
         your delivery window after your order is placed.
       </p>
+      <GlasshouseDivider className="cart-summary-seam" />
+      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+    </div>
+  );
+}
+
+/**
+ * Discount + gift-card entry. Rendered in the SCROLLING region of the cart
+ * (not the docked footer) so the subtotal and checkout stay pinned and always
+ * reachable, while these secondary fields scroll with the line items. Logic is
+ * unchanged — the same discount/gift-card CartForms, only relocated in the DOM.
+ */
+export function CartExtras({cart}: {cart: CartSummaryProps['cart']}) {
+  const discountsHeadingId = useId();
+  const discountCodeInputId = useId();
+  const giftCardHeadingId = useId();
+  const giftCardInputId = useId();
+
+  return (
+    <div className="cart-extras">
       <CartDiscounts
         discountCodes={cart?.discountCodes}
         discountsHeadingId={discountsHeadingId}
@@ -46,7 +63,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         giftCardHeadingId={giftCardHeadingId}
         giftCardInputId={giftCardInputId}
       />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
     </div>
   );
 }
