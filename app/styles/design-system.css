@@ -101,9 +101,15 @@
      Use --ng-color-luxury-gold for gold on DARK / decorative / borders / buttons. */
   --ng-gold-text: #8a6a2a;
 
-  /* Typography */
-  --ng-font-heading: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --ng-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Typography — brand typefaces (mockup UI migration).
+     Primary   : Montserrat (headings, display, labels) → --ng-font-heading
+     Secondary : Raleway (body, UI copy)                → --ng-font-body
+     --ng-font-display is the architectural display family; it was referenced
+     across home.css but never defined (falling back to the old serif literal),
+     so it is named here now and resolves everything to Montserrat at once. */
+  --ng-font-heading: Montserrat, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ng-font-display: var(--ng-font-heading);
+  --ng-font-body: Raleway, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ng-font-size-display-xl: clamp(3rem, 7vw, 5.5rem);
   --ng-font-size-display-l: clamp(2.5rem, 5vw, 4rem);
   --ng-font-size-h1: clamp(2.25rem, 4.5vw, 3.5rem);

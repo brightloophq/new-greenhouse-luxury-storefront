@@ -30,8 +30,10 @@
   --color-surface: #fffdf8;
   --color-dark: var(--color-black);
   --color-light: var(--color-ivory);
-  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  /* Brand typefaces (mockup UI migration): Montserrat primary, Raleway
+     secondary. Names kept for compatibility; neither is a serif now. */
+  --font-serif: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif;
   --radius-control: 4px;
   --radius-card: 6px;
   --shadow-soft: 0 18px 50px rgb(21 21 17 / 8%);

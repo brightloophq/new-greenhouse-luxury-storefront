@@ -24,9 +24,10 @@ import homeStyles from '~/styles/home.css?url';
 import experienceStyles from '~/styles/experience.css?url';
 import fontStyles from '~/styles/fonts.css?url';
 import tailwindCss from './styles/tailwind.css?url';
-// Critical font faces preloaded to minimise FOUT on the above-the-fold hero
-import interBody from '~/assets/fonts/inter-400.woff2?url';
-import cormorantDisplay from '~/assets/fonts/cormorant-600.woff2?url';
+// Critical brand faces preloaded to minimise FOUT on the above-the-fold hero:
+// Raleway (body) and Montserrat (display). Both are variable — one file each.
+import ralewayBody from '~/assets/fonts/raleway-variable.woff2?url';
+import montserratDisplay from '~/assets/fonts/montserrat-variable.woff2?url';
 import {PageLayout} from './components/PageLayout';
 import {ExperienceProvider} from '~/components/ExperienceProvider';
 import {NotFound} from '~/components/NotFound';
@@ -93,14 +94,14 @@ export function links() {
       rel: 'preload',
       as: 'font',
       type: 'font/woff2',
-      href: interBody,
+      href: ralewayBody,
       crossOrigin: 'anonymous',
     },
     {
       rel: 'preload',
       as: 'font',
       type: 'font/woff2',
-      href: cormorantDisplay,
+      href: montserratDisplay,
       crossOrigin: 'anonymous',
     },
     // The New Greenhouse brand favicon / touch / PWA icon set (public/).
