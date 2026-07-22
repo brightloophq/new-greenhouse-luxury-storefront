@@ -48,7 +48,9 @@
   gap: var(--ng-space-4);
   max-width: 88rem;
   margin: 0 auto;
-  padding: var(--ng-space-4) var(--ng-space-6);
+  /* Row target ~66–68px: a considered masthead, not a dominant one. The block
+     padding (was space-4 / 1rem) is the height lever here. */
+  padding: var(--ng-space-3) var(--ng-space-6);
   transition: padding var(--ng-motion-nav) var(--ng-motion-ease);
 }
 .ng-masthead.is-compressed .ng-masthead-top {
@@ -141,10 +143,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Target 48px — the brief's 42–54px band. The inner nav list carries its own
-     padding for the shell header, so it is zeroed here and the row owns the
+  /* Target ~40px — the correction's 38–46px band. The inner nav list carries its
+     own padding for the shell header, so it is zeroed here and the row owns the
      height instead. */
-  min-height: 3rem;
+  min-height: 2.5rem;
   border-top: 1px solid var(--ng-green-line);
   padding: 0 var(--ng-space-6);
   transition: min-height var(--ng-motion-nav) var(--ng-motion-ease);
@@ -155,7 +157,7 @@
   margin-block: 0;
 }
 .ng-masthead.is-compressed .ng-masthead-navrow {
-  min-height: 2.5rem;
+  min-height: 2.25rem;
 }
 
 /* Editorial nav typography — wide tracking, small caps, green ink. */
