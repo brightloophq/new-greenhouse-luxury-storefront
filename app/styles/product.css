@@ -226,14 +226,14 @@
 .ng-pdp .add-to-cart-button {
   inline-size: 100%;
   padding: 1rem 1.5rem;
-  border: 1px solid var(--ng-green-deep);
-  border-radius: 3px;
-  background: var(--ng-green-deep);
-  color: var(--ng-on-green);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  background: var(--ng-btn-primary-bg);
+  color: var(--ng-btn-primary-fg);
   font-family: var(--ng-font-heading);
-  font-weight: 600;
+  font-weight: var(--ng-btn-weight);
   font-size: 0.86rem;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--ng-btn-tracking);
   text-transform: uppercase;
   cursor: pointer;
   transition:
@@ -241,8 +241,9 @@
     opacity var(--ng-motion-hover) var(--ng-motion-ease);
 }
 .ng-pdp .add-to-cart-button:hover:not(:disabled) {
-  background: var(--ng-green-pressed);
-  border-color: var(--ng-green-pressed);
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
 }
 .ng-pdp .add-to-cart-button:disabled {
   opacity: 0.5;
@@ -389,20 +390,21 @@
 .ng-pdp-related-cta {
   display: inline-block;
   padding: 0.85rem 1.6rem;
-  border: 1px solid var(--ng-green-deep);
-  border-radius: 3px;
-  background: var(--ng-green-deep);
-  color: var(--ng-on-green);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  background: var(--ng-btn-primary-bg);
+  color: var(--ng-btn-primary-fg);
   font-family: var(--ng-font-heading);
-  font-weight: 600;
+  font-weight: var(--ng-btn-weight);
   font-size: 0.82rem;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--ng-btn-tracking);
   text-transform: uppercase;
   text-decoration: none;
   transition: background var(--ng-motion-hover) var(--ng-motion-ease);
 }
 .ng-pdp-related-cta:hover {
-  background: var(--ng-green-pressed);
+  background: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
 }
 
 /* ---- Responsive: image first, comfortable controls --------------------- */

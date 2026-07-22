@@ -203,7 +203,7 @@ function CartEmpty({hidden = false}: {hidden: boolean}) {
         Beautiful flowers are ready whenever you are.
       </p>
       <Link
-        className="greenhouse-button greenhouse-button-dark"
+        className="ng-button ng-button-primary"
         to={primaryShopPath(experience)}
         onClick={close}
         prefetch="viewport"

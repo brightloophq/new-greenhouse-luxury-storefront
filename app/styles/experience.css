@@ -49,12 +49,22 @@
   --ng-font-body: Raleway, ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Radii — the main site is sharp everywhere except pills. Square the card +
-     control radii; --ng-radius-pill (999px) is left intact for buttons/toggle. */
-  --ng-radius-xs: 0;
-  --ng-radius-sm: 0;
-  --ng-radius-md: 0;
-  --ng-radius-lg: 0;
+  /* Radii — Step 11 identity unification. The flagship editorial rooms (home,
+     product, cart, arrangements, supplies) all adopted the soft 2–4px greenhouse
+     corner, but the catalogue + system controls stayed square because Classic
+     zeroed these tokens. Inheriting the base soft scale (xs 2 / sm 4 / md 6 /
+     lg 10) gives every card, control and panel ONE corner across the store.
+     --ng-radius-pill (999px) is unchanged. To match the sharp live main site
+     instead, restore `--ng-radius-xs/sm/md/lg: 0` here — nothing else depends
+     on the square value. */
+
+  /* Primary button — Classic re-themes the ONE shared button recipe (defined in
+     design-system.css) to the editorial green-deep used by the cart + PDP, so
+     every filled CTA in the Classic store is the same button. */
+  --ng-btn-primary-bg: var(--ng-green-deep);
+  --ng-btn-primary-fg: var(--ng-on-green);
+  --ng-btn-primary-bg-hover: var(--ng-green-pressed);
+  --ng-btn-primary-fg-hover: var(--ng-on-green);
 }
 
 /* --------------------------------------------------------------------------

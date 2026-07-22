@@ -473,10 +473,10 @@
    -------------------------------------------------------------------------- */
 .ng-cart .cart-checkout {
   align-items: center;
-  background: var(--ng-green-deep);
-  border: 1px solid var(--ng-green-deep);
-  border-radius: 3px;
-  color: var(--ng-on-green);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  color: var(--ng-btn-primary-fg);
   display: flex;
   gap: var(--ng-space-2);
   justify-content: center;
@@ -487,8 +487,9 @@
     border-color var(--ng-motion-hover) var(--ng-motion-ease);
 }
 .ng-cart .cart-checkout:hover {
-  background: var(--ng-green-pressed);
-  border-color: var(--ng-green-pressed);
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
 }
 .ng-cart .cart-checkout:focus-visible {
   outline: 2px solid var(--ng-gold);
@@ -541,7 +542,7 @@
   margin: 0;
   max-width: 34ch;
 }
-.ng-cart .cart-empty-state .greenhouse-button {
+.ng-cart .cart-empty-state .ng-button {
   margin-top: var(--ng-space-2);
 }
 

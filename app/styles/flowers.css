@@ -44,16 +44,16 @@
 
 .flower-shop-cta {
   align-items: center;
-  background: var(--ng-color-background, #090909);
-  border: 1px solid var(--ng-color-background, #090909);
-  border-radius: var(--ng-radius-sm, 4px);
-  color: var(--ng-color-warm-white, #faf8f4);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  color: var(--ng-btn-primary-fg);
   display: inline-flex;
-  font-family: var(--ng-font-body, Inter, sans-serif);
+  font-family: var(--ng-font-heading);
   font-size: var(--ng-font-size-button, 0.78rem);
-  font-weight: 800;
+  font-weight: var(--ng-btn-weight);
   gap: 0.5rem;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--ng-btn-tracking);
   margin-block-start: 1.5rem;
   min-height: var(--ng-button-height-md, 2.75rem);
   padding: 0 1.4rem;

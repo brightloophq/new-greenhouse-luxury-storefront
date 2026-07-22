@@ -210,6 +210,22 @@
   --ng-button-height-sm: 2.25rem;
   --ng-button-height-md: 2.75rem;
   --ng-button-height-lg: 3.25rem;
+
+  /* Button system (Step 11) — ONE primary recipe for the whole store, re-themed
+     per [data-experience]. Base = Deluxe (black + warm-white, botanical-green
+     hover); Classic overrides to green-deep in experience.css. Every filled
+     primary CTA — system buttons, flowers, PDP add-to-cart, cart checkout —
+     reads from these so they are the same button in every room. */
+  --ng-btn-radius: var(--ng-radius-sm);
+  --ng-btn-weight: 600;
+  --ng-btn-tracking: 0.12em;
+  --ng-btn-primary-bg: var(--ng-color-background);
+  --ng-btn-primary-fg: var(--ng-color-warm-white);
+  --ng-btn-primary-bg-hover: var(--ng-color-accent-green);
+  --ng-btn-primary-fg-hover: var(--ng-color-warm-white);
+  /* Danger — destructive confirmation only (a restrained oxblood, never red). */
+  --ng-btn-danger-bg: #7a3b32;
+  --ng-btn-danger-bg-hover: #5f2c25;
   --ng-input-height-sm: 2.35rem;
   --ng-input-height-md: 2.75rem;
   --ng-input-height-lg: 3.25rem;
@@ -444,42 +460,57 @@
 
 /* Buttons */
 .ng-button,
+.ng-button-primary,
 .ng-button-secondary,
 .ng-button-outline,
 .ng-button-ghost,
 .ng-button-text,
+.ng-button-danger,
 .ng-icon-button {
   align-items: center;
-  border-radius: var(--ng-radius-sm);
+  /* One button recipe: Montserrat, unified corner + tracking. */
+  border-radius: var(--ng-btn-radius);
   display: inline-flex;
-  font-family: var(--ng-font-body);
+  font-family: var(--ng-font-heading);
   font-size: var(--ng-font-size-button);
-  font-weight: 800;
+  font-weight: var(--ng-btn-weight);
   gap: var(--ng-space-2);
   justify-content: center;
-  letter-spacing: var(--ng-letter-nav);
+  letter-spacing: var(--ng-btn-tracking);
   line-height: 1;
   min-height: var(--ng-button-height-md);
   padding: 0 var(--ng-space-5);
   text-decoration: none;
   text-transform: uppercase;
-  transition: var(--ng-transition-color), var(--ng-transition-transform);
+  /* Colour-only hover — no lift. The whole store's buttons move the same way. */
+  transition: var(--ng-transition-color);
 }
 
 .ng-button,
 .ng-button-primary {
-  background: var(--ng-color-background);
-  border: 1px solid var(--ng-color-background);
-  color: var(--ng-color-warm-white);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  color: var(--ng-btn-primary-fg);
 }
 
 .ng-button:hover,
 .ng-button-primary:hover {
-  background: var(--ng-color-accent-green);
-  border-color: var(--ng-color-accent-green);
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
+  text-decoration: none;
+}
+
+.ng-button-danger {
+  background: var(--ng-btn-danger-bg);
+  border: 1px solid var(--ng-btn-danger-bg);
+  color: var(--ng-color-warm-white);
+}
+.ng-button-danger:hover {
+  background: var(--ng-btn-danger-bg-hover);
+  border-color: var(--ng-btn-danger-bg-hover);
   color: var(--ng-color-warm-white);
   text-decoration: none;
-  transform: translateY(-1px);
 }
 
 .ng-button-secondary {
