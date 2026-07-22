@@ -1880,21 +1880,10 @@ main:has(> .ng-shopcat--retail) {
 .ng-shopcat-main {
   min-width: 0;
 }
-/* The scaffold ships a global `aside { position: fixed; height: 100vh; width:
-   var(--aside-width); background; box-shadow }` for its cart drawer (app.css) —
-   which was also catching THIS filter sidebar, parking it off-screen and leaving
-   the layout grid with a single in-flow child (main). Main then collapsed into
-   the 15rem track, so every product crammed into ~240px and spilled left. Reset
-   the sidebar to a normal in-flow grid column; shared by every catalogue route. */
-.ng-shopcat-aside {
-  position: static;
-  inset: auto;
-  inline-size: auto;
-  block-size: auto;
-  background: none;
-  box-shadow: none;
-  transition: none;
-}
+/* The filter rail is a plain in-flow grid column (15rem track). It previously
+   needed a defensive reset here because the scaffold's global `aside {…}` forced
+   fixed positioning onto it; that rule has since been removed at the source
+   (app.css), so no reset is required. */
 
 /* Search */
 /* Search is a utility, not a focal point — restrained, and capped in width so
