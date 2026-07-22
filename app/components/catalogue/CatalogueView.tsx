@@ -61,14 +61,19 @@ export function CatalogueView({
   // "refining" state — the grid dims rather than being replaced by a spinner.
   const busy = navigation.state === 'loading';
 
-  // Retail gets the editorial (homepage) presentation, scoped by CONTEXT — not
-  // by variant, because variant="retail" is shared with Arrangements. Only the
-  // retail-* contexts opt in, so Wholesale / Supplies / Arrangements are
-  // untouched by this sprint.
-  const editorial = context.startsWith('retail');
+  // Retail and standalone Supplies get the editorial (homepage) presentation,
+  // scoped by CONTEXT — not by variant, because variant is shared across sections.
+  // Only the retail-* and the standalone `supplies` contexts opt in, so Wholesale,
+  // Arrangements, and the retail-supplies / wholesale-supplies contexts keep their
+  // own presentation. Each experience owns its modifier in its own stylesheet.
+  const editorialModifier = context.startsWith('retail')
+    ? ' ng-shopcat--retail'
+    : context.startsWith('supplies')
+      ? ' ng-shopcat--supplies'
+      : '';
 
   return (
-    <div className={`ng-shopcat${editorial ? ' ng-shopcat--retail' : ''}`}>
+    <div className={`ng-shopcat${editorialModifier}`}>
       <header className="ng-shopcat-head">
         {back ? (
           <Link className="ng-shopcat-back" to={back.to} prefetch="intent">
