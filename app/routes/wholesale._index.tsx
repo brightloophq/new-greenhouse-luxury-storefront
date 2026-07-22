@@ -21,18 +21,14 @@ export default function WholesaleIndex() {
   const {access, firstName} = useLoaderData<typeof loader>();
 
   if (access !== 'authenticated') {
-    return (
-      <div className="home--general">
-        <WholesaleGate />
-      </div>
-    );
+    return <WholesaleGate />;
   }
 
   return (
     <div className="home--general">
       {firstName ? (
         <p className="ng-wholesale-welcome">
-          Welcome back, {firstName} — you’re signed in to trade pricing.
+          Welcome back, <b>{firstName}</b> — your wholesale workspace is open.
         </p>
       ) : null}
       <PathwaySelector

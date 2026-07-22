@@ -1,0 +1,420 @@
+/* ============================================================================
+   Wholesale — the trade conservatory (Step 8).
+
+   Presentation only, around the existing auth flow. Two surfaces:
+     .ng-trade-*        — the invitation modal (opened by the homepage Wholesale
+                          card) and the signed-out /wholesale gate, which share a
+                          language.
+     .ng-wholesale-*    — the signed-in welcome line.
+   Self-contained and scoped; loaded after informational.css. The auth handoff,
+   routing and approval logic are untouched — this file styles nothing but the
+   invitation, the gate, the loading affordance and the welcome.
+   ========================================================================== */
+
+/* ---- Backdrop: soft botanical blur + a quiet vignette -------------------- */
+.ng-trade-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ng-z-modal, 1100);
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2rem);
+  background:
+    radial-gradient(120% 120% at 50% 42%, transparent 52%, rgb(9 14 10 / 0.38) 100%),
+    rgb(19 33 23 / 0.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ---- The modal: an asymmetric private room ------------------------------ */
+.ng-trade-modal {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  inline-size: min(100%, 54rem);
+  max-block-size: min(92vh, 40rem);
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--ng-ground-warm);
+  box-shadow: 0 40px 100px rgb(12 20 14 / 0.45);
+}
+.ng-trade-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--ng-ground-sage);
+}
+.ng-trade-media img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+/* A hairline gilt seam between photograph and room. */
+.ng-trade-media::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 1px;
+  background: rgb(200 169 106 / 0.35);
+}
+.ng-trade-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: clamp(1.75rem, 3.5vw, 3rem);
+  min-block-size: 0;
+  overflow-y: auto;
+}
+.ng-trade-close {
+  position: absolute;
+  inset-block-start: 0.6rem;
+  inset-inline-end: 0.7rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.7);
+  color: var(--ng-green-deep);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-trade-close:hover {
+  background: rgb(255 255 255 / 0.95);
+}
+.ng-trade-eyebrow {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-trade-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+.ng-trade-title {
+  margin: 0 0 0.85rem;
+  font-size: clamp(1.9rem, 1.3rem + 1.6vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-trade-body {
+  margin: 0 0 1.25rem;
+  max-width: 34ch;
+  color: var(--ng-green-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.ng-trade-perks {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+.ng-trade-perks li {
+  position: relative;
+  padding-inline-start: 1.35rem;
+  color: var(--ng-green-deep);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.ng-trade-perks li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.55em;
+  inset-inline-start: 0;
+  inline-size: 0.85rem;
+  block-size: 1px;
+  background: var(--ng-gold);
+}
+.ng-trade-actions {
+  display: grid;
+  gap: 0.7rem;
+}
+/* Architectural, not default Shopify: crisp 3px plates, generous, considered. */
+.ng-trade-btn {
+  display: block;
+  padding: 0.85rem 1.4rem;
+  border: 1px solid var(--ng-green-deep);
+  border-radius: 3px;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+  font-family: var(--ng-font-heading);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--ng-motion-hover) var(--ng-motion-ease),
+    color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-trade-btn:hover {
+  background: var(--ng-green-pressed);
+  border-color: var(--ng-green-pressed);
+}
+.ng-trade-btn--ghost {
+  background: transparent;
+  color: var(--ng-green-deep);
+}
+.ng-trade-btn--ghost:hover {
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+}
+.ng-trade-btn--text {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ng-green-muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  padding-block: 0.5rem;
+}
+.ng-trade-btn--text:hover {
+  background: transparent;
+  color: var(--ng-green-deep);
+}
+.ng-trade-foot {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--ng-green-muted);
+}
+.ng-trade-foot a {
+  color: var(--ng-green-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-trade-foot a:hover {
+  border-bottom-color: var(--ng-green);
+}
+
+/* ---- Editorial loading (the hand-off is opening) ------------------------ */
+.ng-trade-loading {
+  display: grid;
+  gap: 1.1rem;
+  place-content: center;
+  min-block-size: 12rem;
+  text-align: center;
+}
+.ng-trade-loading-text {
+  margin: 0;
+  font-family: var(--ng-font-heading);
+  font-size: 1.1rem;
+  color: var(--ng-green-deep);
+}
+.ng-trade-loading-bar {
+  position: relative;
+  display: block;
+  inline-size: min(16rem, 60%);
+  block-size: 2px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--ng-green-line);
+  border-radius: 2px;
+}
+.ng-trade-loading-bar span {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 40%;
+  background: var(--ng-gold);
+  border-radius: 2px;
+  animation: ng-trade-slide 1.15s ease-in-out infinite;
+}
+@keyframes ng-trade-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-trade-loading-bar span {
+    animation: none;
+    inline-size: 100%;
+    opacity: 0.6;
+  }
+}
+
+/* ---- Mobile: a full-height editorial sheet ------------------------------ */
+@media (max-width: 48em) {
+  .ng-trade-backdrop {
+    place-items: end stretch;
+    padding: 0;
+  }
+  .ng-trade-modal {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(9rem, 30vh) 1fr;
+    inline-size: 100%;
+    max-block-size: 92vh;
+    border-radius: 14px 14px 0 0;
+  }
+  .ng-trade-media::after {
+    inset: auto 0 0 0;
+    inline-size: auto;
+    block-size: 1px;
+  }
+  .ng-trade-panel {
+    padding: clamp(1.5rem, 6vw, 2rem);
+  }
+  /* Comfortable tap targets on touch. */
+  .ng-trade-btn {
+    padding-block: 0.95rem;
+  }
+}
+
+/* ============================================================================
+   The signed-out /wholesale gate — the same invitation as a full room.
+   ========================================================================== */
+.ng-trade-gate {
+  position: relative;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgb(77 106 80 / 0.08), transparent 60%),
+    var(--ng-ground-sage);
+}
+.ng-trade-gate-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: center;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+.ng-trade-gate-body {
+  max-width: 40rem;
+}
+.ng-trade-gate-back {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-trade-gate-back:hover {
+  color: var(--ng-green-deep);
+}
+.ng-trade-gate-eyebrow {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-trade-gate-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+.ng-trade-gate-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 1.7rem + 2.4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-trade-gate-lead {
+  max-width: 46ch;
+  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  color: var(--ng-green-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.ng-trade-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: clamp(1.5rem, 3vw, 2rem) 0 0;
+}
+.ng-trade-gate-actions .ng-trade-btn {
+  display: inline-block;
+}
+.ng-trade-gate-perks {
+  margin: clamp(1.75rem, 3vw, 2.25rem) 0 0;
+  padding: clamp(1.5rem, 3vw, 2rem) 0 0;
+  border-top: 1px solid var(--ng-green-line);
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+.ng-trade-gate-perks li {
+  position: relative;
+  padding-inline-start: 1.35rem;
+  color: var(--ng-green-deep);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+.ng-trade-gate-perks li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.6em;
+  inset-inline-start: 0;
+  inline-size: 0.85rem;
+  block-size: 1px;
+  background: var(--ng-gold);
+}
+.ng-trade-gate-media {
+  margin: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  box-shadow: inset 0 0 0 1px var(--ng-glass-line);
+}
+.ng-trade-gate-media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+
+/* ---- Signed-in welcome line --------------------------------------------- */
+.ng-wholesale-welcome {
+  max-width: 78rem;
+  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
+  padding: 0 clamp(1.5rem, 4vw, 2rem);
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.35rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-wholesale-welcome b {
+  font-weight: 600;
+}
+
+@media (max-width: 60em) {
+  .ng-trade-gate-inner {
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 5vw, 2.5rem);
+  }
+  .ng-trade-gate-media {
+    aspect-ratio: 3 / 2;
+    max-width: 34rem;
+  }
+}
