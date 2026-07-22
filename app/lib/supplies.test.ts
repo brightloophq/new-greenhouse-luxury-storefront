@@ -31,11 +31,12 @@ describe('supplies landing', () => {
   });
 
   it('presents departments as image-led panels in the homepage register', () => {
-    expect(landing).toMatch(/ng-supplies-panel-scrim/); // foot gradient, not a card box
+    expect(landing).toMatch(/EditorialPanel/); // shared image-led panel primitive
+    expect(landing).toMatch(/className="ng-supplies-panel"/); // keeps its own visual language
+    expect(landing).toMatch(/EditorialSectionHeader/); // shared masthead (glazing seam lives here)
     expect(landing).toMatch(/ng-flourish/); // the italic accent word
     expect(landing).toMatch(/focalStyle\(/); // focal-point crops
     expect(landing).toMatch(/useReveal/); // existing GSAP reveal, no new system
-    expect(landing).toMatch(/GlasshouseDivider/); // the glazing seam
   });
 
   it('cross-sells to a real route, not a placeholder', () => {
