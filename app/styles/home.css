@@ -458,11 +458,11 @@
   color: var(--ng-green-deep);
 }
 .ng-bays-lede {
-  max-width: 42ch;
-  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  max-width: 44ch;
+  margin: clamp(1.3rem, 2.4vw, 1.9rem) 0 0;
   color: var(--ng-green-muted);
   font-size: 1.02rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .ng-bays {
@@ -535,9 +535,10 @@
    panel; the name sits over a soft gradient at the foot. */
 .ng-bays-list {
   display: grid;
-  grid-template-columns: 1.32fr 1fr;
+  /* Dominant a touch less wide than before — hierarchy kept, weight eased. */
+  grid-template-columns: 1.24fr 1fr;
   grid-template-rows: repeat(3, auto);
-  gap: clamp(0.85rem, 1.5vw, 1.35rem);
+  gap: clamp(0.9rem, 1.6vw, 1.5rem);
   max-width: 82rem;
   margin: 0 auto;
   padding: 0 clamp(1.5rem, 5vw, 4rem);
@@ -577,7 +578,10 @@
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
 }
 .ng-bay:not(.ng-bay--dominant) .ng-bay-link {
-  aspect-ratio: 16 / 9;
+  /* Shorter supporting panels lower the whole right column, which is what the
+     dominant spans — so the Wholesale panel eases ~17% without losing its
+     lead. The wider crop also reads as a deliberate cinematic slice. */
+  aspect-ratio: 2.15 / 1;
 }
 
 .ng-bay-media {
@@ -596,17 +600,23 @@
   transform: scale(1.045);
 }
 
-/* Gradient rising from the foot, so the name holds AA over any photograph. */
+/* A lighter gradient rising from the foot — enough to hold the name at AA, but
+   confined low so the photograph carries the panel rather than the overlay. A
+   soft text-shadow (on the text below) does the rest of the legibility work. */
 .ng-bay-scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Confined low and cleared fast: the bottom band is dark enough for text on
+     even the brightest photograph (the wholesale flower wall), but the upper
+     ~half of every panel is unobscured, so the photography carries the panel.
+     The glyph-level legibility is finished by the text-shadow below. */
   background: linear-gradient(
     to top,
-    rgb(19 33 23 / 0.86) 0%,
-    rgb(19 33 23 / 0.42) 34%,
-    rgb(19 33 23 / 0.04) 66%,
-    transparent 100%
+    rgb(19 33 23 / 0.82) 0%,
+    rgb(19 33 23 / 0.5) 20%,
+    rgb(19 33 23 / 0.12) 42%,
+    transparent 58%
   );
 }
 
@@ -616,8 +626,13 @@
   inset-block-end: 0;
   z-index: 1;
   display: block;
-  padding: clamp(1.25rem, 2.4vw, 2.25rem);
+  padding: clamp(1.35rem, 2.6vw, 2.4rem);
   color: var(--ng-on-green);
+  /* A tight halo plus a soft one keeps the name readable on a light patch of
+     photo without needing to darken the whole panel. */
+  text-shadow:
+    0 1px 3px rgb(9 14 10 / 0.66),
+    0 2px 20px rgb(9 14 10 / 0.5);
 }
 /* The index becomes a quiet overline over the image rather than a ghost
    numeral, which only read on the cream ground. */
@@ -644,15 +659,15 @@
   color: var(--ng-on-green);
 }
 .ng-bay--dominant .ng-bay-title {
-  font-size: clamp(2.1rem, 1.3rem + 2.6vw, 3.4rem);
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3rem);
 }
 .ng-bay-blurb {
   display: block;
   max-width: 34ch;
-  margin-bottom: clamp(0.9rem, 1.8vw, 1.3rem);
+  margin-bottom: clamp(1rem, 1.9vw, 1.45rem);
   font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
-  line-height: 1.5;
-  color: rgb(244 239 228 / 0.86);
+  line-height: 1.6;
+  color: rgb(244 239 228 / 0.9);
 }
 /* Supporting panels are shorter — trim the blurb so text never crowds. */
 .ng-bay:not(.ng-bay--dominant) .ng-bay-blurb {
@@ -980,10 +995,13 @@ button.ng-chooser-card {
    cream ground beneath each plate rather than in a white box over the image. */
 .ng-variety {
   position: relative;
-  padding: clamp(3.5rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 7rem);
-  background: var(--ng-ground-sage);
-  /* The mirrored spine is anchored to this box; it must not push the page wide. */
+  /* Clip so the mirrored spine can't widen the page. */
   overflow-x: clip;
+  padding: clamp(4rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 6.5rem);
+  /* A whisper of sage over the warm ground rather than a full sage block, so the
+     step from the cream sections above and below is a gentle undulation, not a
+     hard colour edge — the page reads as one continuous greenhouse. */
+  background: color-mix(in srgb, var(--ng-ground-sage) 45%, var(--ng-ground-warm));
 }
 /* Gallery masthead — matches the bays above: eyebrow, then display serif, then
    a hairline that runs the full measure like a plate caption rule. */
@@ -1410,8 +1428,10 @@ button.ng-chooser-card {
    oversized flourish statement, one action. The page's final breath.
    ========================================================================== */
 .ng-conservatory {
-  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(4.5rem, 9vw, 8rem);
-  background: var(--ng-ground-sage);
+  padding: clamp(4rem, 7vw, 6.5rem) 1.5rem clamp(4.5rem, 8vw, 7rem);
+  /* Matched to the variety ground so the closing band settles into the same
+     continuous surface rather than reintroducing a hard sage block. */
+  background: color-mix(in srgb, var(--ng-ground-sage) 45%, var(--ng-ground-warm));
 }
 .ng-conservatory-frame {
   max-width: 62rem;

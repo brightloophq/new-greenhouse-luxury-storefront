@@ -303,7 +303,8 @@ describe('mockup UI migration', () => {
     expect(chooser).toMatch(/ng-bay-scrim/);
     // one dominant panel spanning the grid — not four equal columns
     expect(css).toMatch(/\.ng-bay--dominant \{[\s\S]*?grid-row: 1 \/ 4/);
-    expect(css).toMatch(/\.ng-bays-list \{[\s\S]*?grid-template-columns: 1\.32fr 1fr/);
+    // an asymmetric column ratio (dominant wider than the supporting column)
+    expect(css).toMatch(/\.ng-bays-list \{[\s\S]*?grid-template-columns: 1\.\d+fr 1fr/);
   });
 
   it('keeps Wholesale a popup trigger and the other three real links', () => {
