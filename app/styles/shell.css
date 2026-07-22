@@ -640,7 +640,9 @@
   padding: var(--ng-space-6);
 }
 .ng-drawer-loading {
-  color: var(--ng-text-muted);
+  color: var(--ng-green-soft);
+  padding-block: var(--ng-space-8);
+  text-align: center;
 }
 
 /* --------------------------------------------------------------------------

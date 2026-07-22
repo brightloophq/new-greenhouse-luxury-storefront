@@ -660,6 +660,57 @@
   padding: var(--ng-card-padding-lg);
 }
 
+/* --------------------------------------------------------------------------
+   The glasshouse loading language — light moving across a pane.
+
+   One waiting state for the whole store. It is INDETERMINATE by design: a
+   single slow pass of light along a glazing bar. It never fakes progress, never
+   spins, never counts. The bar occupies 1px of a hairline that is already part
+   of the visual language, so nothing shifts when it resolves (zero CLS) and a
+   failed chunk degrades to a plain hairline rather than a broken spinner.
+   -------------------------------------------------------------------------- */
+.ng-loading-glaze {
+  background: var(--ng-glass-line);
+  block-size: 1px;
+  display: block;
+  inline-size: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.ng-loading-glaze::after {
+  animation: ng-glaze-sweep 2.6s var(--ng-ease-luxury) infinite;
+  background: linear-gradient(90deg, transparent, var(--ng-gold), transparent);
+  content: '';
+  inline-size: 36%;
+  inset-block: 0;
+  position: absolute;
+}
+@keyframes ng-glaze-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+/* Reduced motion: the light rests rather than travels. */
+@media (prefers-reduced-motion: reduce) {
+  .ng-loading-glaze::after {
+    animation: none;
+    inline-size: 100%;
+    opacity: 0.45;
+  }
+}
+/* The line of copy that sits under the glaze — quiet, editorial, unhurried. */
+.ng-loading-note {
+  color: var(--ng-green-soft);
+  font-family: var(--ng-font-heading);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin: var(--ng-space-4) 0 0;
+}
+
 /* Image standards */
 .ng-image-frame {
   background: var(--ng-bg-surface-muted);

@@ -63,7 +63,14 @@ export function PageLayout({
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
     <Aside type="cart" heading="Your cart" position="right">
-      <Suspense fallback={<p className="ng-drawer-loading">Loading cart …</p>}>
+      <Suspense
+        fallback={
+          <div className="ng-drawer-loading" role="status">
+            <span className="ng-loading-glaze" aria-hidden="true" />
+            <p className="ng-loading-note">Gathering your selections…</p>
+          </div>
+        }
+      >
         <Await resolve={cart}>
           {(resolved) => <CartMain cart={resolved} layout="aside" />}
         </Await>
@@ -109,7 +116,12 @@ function SearchAside() {
             const {articles, collections, pages, products, queries} = items;
 
             if (state === 'loading' && term.current) {
-              return <div className="ng-search-status">Searching…</div>;
+              return (
+                <div className="ng-search-status" role="status">
+                  <span className="ng-loading-glaze" aria-hidden="true" />
+                  <p className="ng-loading-note">Searching…</p>
+                </div>
+              );
             }
             if (!total) {
               return (
