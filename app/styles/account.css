@@ -1,0 +1,309 @@
+/* ============================================================================
+   Account — the storefront-controlled customer area (Step 15).
+
+   Shopify's hosted credential screens are untouched; this styles only the
+   pages we own: the account shell, orders, profile, addresses and the business
+   profile. Everything is scoped under .ng-account, so element rules inside the
+   panel cannot reach the rest of the storefront.
+
+   The scaffold markup those routes ship (bare <fieldset>, <legend>, <input>,
+   <button>) is styled here rather than rewritten route by route — the house
+   language arrives without touching Hydrogen's form logic.
+   ========================================================================== */
+
+.ng-account {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2.5rem) clamp(3.5rem, 7vw, 6rem);
+  color: var(--ng-green-deep);
+}
+
+/* ---- Masthead ------------------------------------------------------------ */
+.ng-account-masthead {
+  padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-account-eyebrow {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-account-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+.ng-account-title {
+  margin: 0;
+  font-size: clamp(2.2rem, 1.6rem + 2vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+.ng-account-meta {
+  margin: 0.9rem 0 0;
+  max-width: 46ch;
+  color: var(--ng-green-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* ---- Shell: a quiet index beside the working panel ----------------------- */
+.ng-account-body {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  align-items: start;
+}
+.ng-account-nav-list {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-account-nav-link {
+  display: block;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid transparent;
+  color: var(--ng-green-muted);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-account-nav-link:hover {
+  color: var(--ng-green-deep);
+}
+.ng-account-nav-link.is-active {
+  color: var(--ng-green-deep);
+  border-bottom-color: var(--ng-gold);
+}
+.ng-account-logout {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  padding-top: clamp(1rem, 2vw, 1.25rem);
+  border-top: 1px solid var(--ng-green-line);
+}
+.ng-account-logout-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ng-green-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-account-logout-btn:hover {
+  color: var(--ng-green-deep);
+}
+
+/* ---- The panel: house language over the routes' own markup --------------- */
+.ng-account-panel {
+  min-width: 0;
+}
+.ng-account-panel h2 {
+  margin: 0 0 1.25rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.4rem, 1.1rem + 0.9vw, 1.8rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-account-panel h3 {
+  margin: 0 0 0.75rem;
+  font-family: var(--ng-font-heading);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.ng-account-panel p {
+  color: var(--ng-green-muted);
+  line-height: 1.65;
+}
+.ng-account-panel a {
+  color: var(--ng-green-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-account-panel a:hover {
+  border-bottom-color: var(--ng-gold);
+}
+/* Orders and addresses ship each record inside a bare <fieldset>. */
+.ng-account-panel fieldset {
+  margin: 0 0 1rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  background: var(--ng-ground-warm);
+}
+.ng-account-panel legend {
+  padding-inline: 0.4rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-account-panel label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-account-panel input,
+.ng-account-panel select {
+  inline-size: 100%;
+  max-inline-size: 26rem;
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  background: var(--ng-ground-warm);
+  color: var(--ng-green-deep);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.ng-account-panel input:focus-visible,
+.ng-account-panel select:focus-visible {
+  outline: 2px solid var(--ng-gold);
+  outline-offset: 1px;
+}
+.ng-account-panel button {
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--ng-green-deep);
+  border-radius: 3px;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+  font-family: var(--ng-font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-account-panel button:hover:not([disabled]) {
+  background: var(--ng-green-pressed);
+  border-color: var(--ng-green-pressed);
+}
+/* The profile route surfaces its action error in a <mark>. */
+.ng-account-panel mark {
+  display: inline-block;
+  padding: 0.35rem 0.6rem;
+  border-radius: 3px;
+  background: rgb(200 169 106 / 0.18);
+  color: var(--ng-green-deep);
+}
+.ng-account-panel button[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+/* The address/profile routes separate controls with bare <br>; keep them quiet
+   rather than rewriting Hydrogen's form markup. */
+.ng-account-panel br {
+  line-height: 0.6;
+}
+
+/* ---- Orders -------------------------------------------------------------- */
+.ng-account-order {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(1.1rem, 2.5vw, 1.5rem);
+  margin-bottom: 0.85rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  background: var(--ng-ground-warm);
+}
+.ng-account-order-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.ng-account-order-number {
+  margin: 0;
+  font-family: var(--ng-font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.ng-account-order-date {
+  margin: 0;
+  color: var(--ng-green-muted);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ng-account-order-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1.25rem;
+  margin: 0;
+  font-size: 0.95rem;
+}
+.ng-account-order-facts dt {
+  color: var(--ng-green);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ng-account-order-facts dd {
+  margin: 0;
+  color: var(--ng-green-deep);
+}
+.ng-account-order-link {
+  justify-self: start;
+  font-size: 0.9rem;
+}
+.ng-account-empty {
+  display: grid;
+  gap: 0.75rem;
+  padding: clamp(2rem, 5vw, 3rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  text-align: center;
+}
+.ng-account-empty p {
+  margin: 0;
+}
+
+/* ---- Mobile: the index becomes a scrollable rail ------------------------- */
+@media (max-width: 48em) {
+  .ng-account-body {
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 5vw, 2rem);
+  }
+  .ng-account-nav-list {
+    display: flex;
+    gap: 1.1rem;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scrollbar-width: none;
+  }
+  .ng-account-nav-list::-webkit-scrollbar {
+    display: none;
+  }
+  .ng-account-nav-link {
+    white-space: nowrap;
+  }
+  .ng-account-panel input,
+  .ng-account-panel select {
+    max-inline-size: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-account-nav-link,
+  .ng-account-logout-btn,
+  .ng-account-panel button {
+    transition: none;
+  }
+}

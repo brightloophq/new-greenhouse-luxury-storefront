@@ -1,40 +1,118 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
+import {useLocation} from 'react-router';
 import {cardImage} from '~/lib/catalogues';
+import {loginHref} from '~/lib/authReturnTo';
 import {prefersReducedMotion} from '~/lib/motion';
 
 /**
- * Wholesale invitation modal. Opening the homepage Wholesale card surfaces this
- * immediately — no interstitial, no URL change. Shopify's Customer Account API is
- * OAuth-based, so both actions hand off to /account/login (the same server
- * redirect as before); we never collect credentials in-app.
+ * The one authentication modal — a branded entry point to Shopify's hosted
+ * Customer Accounts flow. Two variants share the room:
  *
- * Presentation only: an asymmetric private room (photograph + invitation) with a
- * GSAP entrance/exit drawn from the house motion vocabulary, a focus trap, and an
- * editorial loading affordance while the hand-off opens. Reduced motion, SSR
- * visibility and focus return are all preserved.
+ *   account   — the masthead / mobile-drawer account entry for a guest
+ *   wholesale — the homepage trade card and the signed-out /wholesale gate
+ *
+ * Shopify's Customer Account API is OAuth-based, so every action hands off to
+ * `/account/login` (a server 302 into Shopify's hosted screen). We never render
+ * a credential field and we never see a password.
+ *
+ * One primary action, deliberately. Hydrogen's `LoginOptions` exposes only
+ * `locale`, `countryCode`, `acrValues`, `loginHint` and `loginHintMode` — there
+ * is no create-account endpoint or parameter to point a second button at, and
+ * inventing one would be fiction. New customers are created inside the same
+ * Shopify screen, which the copy says plainly.
+ *
+ * Presentation is the asymmetric private room: photograph + invitation, a GSAP
+ * entrance/exit from the house motion vocabulary, focus trap, scroll lock,
+ * reduced-motion and SSR-visible content, with focus returned to the opener.
  */
-const AUTH_HREF = '/account/login';
-const GATE_IMG = '/images/collections/wholesale-flowers';
-const PERKS = [
-  'Trade pricing by the bunch & box',
-  'Fresh, graded stems — 40+ years supplying Jamaica',
-  'Same-day delivery across Kingston & St. Andrew',
-];
 
-export function WholesaleAuthModal({
+type AuthVariant = 'account' | 'wholesale';
+
+interface VariantContent {
+  image: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  perks: string[];
+  action: string;
+  loading: string;
+  foot: React.ReactNode;
+}
+
+const CONTENT: Record<AuthVariant, VariantContent> = {
+  account: {
+    image: '/images/collections/signature-collection',
+    eyebrow: 'Your account',
+    title: 'Sign in to The New Greenhouse',
+    body: 'Your orders, addresses and saved details live here. We hand you to Shopify’s secure sign-in — never a password on our side. New customers are created in the same step.',
+    perks: [
+      'Every order and delivery, tracked',
+      'Saved addresses for a faster checkout',
+      'Secured end-to-end by Shopify',
+    ],
+    action: 'Continue to secure sign-in',
+    loading: 'Opening secure sign-in…',
+    foot: (
+      <>
+        Need a hand? <a href="/contact">Talk to our team →</a>
+      </>
+    ),
+  },
+  wholesale: {
+    image: '/images/collections/wholesale-flowers',
+    eyebrow: 'For the trade',
+    title: 'A private trade conservatory',
+    body: 'Trade pricing is reserved for florists, event professionals and wholesale partners. Sign in to continue — a trade account is created in the same secure step, and access is immediate.',
+    perks: [
+      'Trade pricing by the bunch & box',
+      'Fresh, graded stems — 40+ years supplying Jamaica',
+      'Same-day delivery across Kingston & St. Andrew',
+    ],
+    action: 'Continue to secure sign-in',
+    loading: 'Opening your wholesale workspace…',
+    foot: (
+      <>
+        Prefer to apply first? <a href="/contact">Contact our team →</a>
+      </>
+    ),
+  },
+};
+
+/**
+ * How long the hand-off may take before we offer a retry. The click starts a
+ * full-page navigation, so in the happy path this component is torn down long
+ * before the timer fires; it only surfaces when the redirect never happens
+ * (offline, a blocked navigation, a failing edge).
+ */
+const HANDOFF_TIMEOUT_MS = 10_000;
+
+type Status = 'idle' | 'opening' | 'failed';
+
+export function AuthModal({
   open,
   onClose,
+  variant = 'account',
+  returnTo,
 }: {
   open: boolean;
   onClose: () => void;
+  variant?: AuthVariant;
+  /** Overrides the current location as the post-sign-in destination. */
+  returnTo?: string;
 }) {
   const backdropRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   /** The element that opened the dialog — focus must return to it on close. */
   const openerRef = useRef<HTMLElement | null>(null);
-  const [status, setStatus] = useState<'idle' | 'opening'>('idle');
-  const media = cardImage(GATE_IMG);
+  const [status, setStatus] = useState<Status>('idle');
+  const location = useLocation();
+  const content = CONTENT[variant];
+  const media = cardImage(content.image);
+  const href = loginHref(
+    returnTo ?? `${location.pathname}${location.search}`,
+  );
 
   /** Close gracefully: reverse the entrance, then unmount via onClose. */
   const requestClose = useCallback(() => {
@@ -62,6 +140,25 @@ export function WholesaleAuthModal({
     // Safety net if the library never resolves.
     window.setTimeout(finish, 420);
   }, [onClose]);
+
+  /**
+   * Start the hand-off. Guarded so a double-click (or Enter held on the link)
+   * cannot fire two navigations, and armed with a timer that offers a retry if
+   * the redirect never lands.
+   */
+  const startHandoff = useCallback((event: React.MouseEvent) => {
+    if (status === 'opening') {
+      event.preventDefault();
+      return;
+    }
+    setStatus('opening');
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== 'opening') return;
+    const timer = window.setTimeout(() => setStatus('failed'), HANDOFF_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [status]);
 
   useEffect(() => {
     if (!open) return;
@@ -155,7 +252,11 @@ export function WholesaleAuthModal({
 
   if (!open) return null;
 
-  return (
+  // Portalled to <body>. The drawer opens its own stacking context, so a modal
+  // rendered inside the drawer's subtree would sit *under* the drawer scrim no
+  // matter how high its z-index climbed. Safe on the server: `open` is always
+  // false until a customer clicks, so this path is client-only.
+  return createPortal(
     <div
       ref={backdropRef}
       className="ng-trade-backdrop"
@@ -199,46 +300,61 @@ export function WholesaleAuthModal({
               <span className="ng-trade-loading-bar" aria-hidden="true">
                 <span />
               </span>
-              <p className="ng-trade-loading-text">
-                Opening your wholesale workspace…
+              {/* Carries the dialog's label id through every state, so the
+                  accessible name never disappears mid-hand-off. */}
+              <p id="ng-trade-title" className="ng-trade-loading-text">
+                {content.loading}
               </p>
+            </div>
+          ) : status === 'failed' ? (
+            <div className="ng-trade-failure" role="alert">
+              <h2 id="ng-trade-title" className="ng-trade-title ng-editorial-title">
+                That took longer than it should
+              </h2>
+              <p className="ng-trade-body">
+                Secure sign-in didn’t open. Your connection may have dropped —
+                nothing was submitted, so it’s safe to try again.
+              </p>
+              <div className="ng-trade-actions">
+                <a
+                  className="ng-trade-btn"
+                  href={href}
+                  onClick={() => setStatus('opening')}
+                >
+                  Try again
+                </a>
+                <button
+                  type="button"
+                  className="ng-trade-btn ng-trade-btn--text"
+                  onClick={requestClose}
+                >
+                  Continue shopping
+                </button>
+              </div>
             </div>
           ) : (
             <>
               <p className="ng-trade-eyebrow" data-trade-item>
-                For the trade
+                {content.eyebrow}
               </p>
               <h2
                 id="ng-trade-title"
                 className="ng-trade-title ng-editorial-title"
                 data-trade-item
               >
-                A private trade conservatory
+                {content.title}
               </h2>
               <p className="ng-trade-body" data-trade-item>
-                Trade pricing is reserved for approved florists, event
-                professionals and wholesale partners. Sign in to continue, or
-                create a trade account.
+                {content.body}
               </p>
               <ul className="ng-trade-perks" data-trade-item>
-                {PERKS.map((perk) => (
+                {content.perks.map((perk) => (
                   <li key={perk}>{perk}</li>
                 ))}
               </ul>
               <div className="ng-trade-actions" data-trade-item>
-                <a
-                  className="ng-trade-btn"
-                  href={AUTH_HREF}
-                  onClick={() => setStatus('opening')}
-                >
-                  Sign in
-                </a>
-                <a
-                  className="ng-trade-btn ng-trade-btn--ghost"
-                  href={AUTH_HREF}
-                  onClick={() => setStatus('opening')}
-                >
-                  Create trade account
+                <a className="ng-trade-btn" href={href} onClick={startHandoff}>
+                  {content.action}
                 </a>
                 <button
                   type="button"
@@ -249,12 +365,13 @@ export function WholesaleAuthModal({
                 </button>
               </div>
               <p className="ng-trade-foot" data-trade-item>
-                Prefer to apply first? <a href="/contact">Contact our team →</a>
+                {content.foot}
               </p>
             </>
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

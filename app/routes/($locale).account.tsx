@@ -34,72 +34,73 @@ export async function loader({context}: Route.LoaderArgs) {
   );
 }
 
+/** The storefront-controlled account area — Shopify's hosted screens are not
+ *  touched. Scaffold markup (inline styles, <br> spacing, entity separators)
+ *  is gone; presentation lives in app/styles/account.css. */
+const ACCOUNT_NAV = [
+  {to: '/account/orders', label: 'Orders'},
+  {to: '/account/profile', label: 'Account details'},
+  {to: '/account/addresses', label: 'Addresses'},
+  {to: '/account/wholesale-profile', label: 'Business profile'},
+  {to: '/classic/wholesale', label: 'Wholesale dashboard'},
+];
+
 export default function AccountLayout() {
   const {customer} = useLoaderData<typeof loader>();
 
-  const heading = customer
-    ? customer.firstName
-      ? `Welcome, ${customer.firstName}`
-      : `Welcome to your account.`
-    : 'Account Details';
-
   return (
-    <div className="account">
-      <h1>{heading}</h1>
-      <br />
-      <AccountMenu />
-      <br />
-      <br />
-      <Outlet context={{customer}} />
+    <div className="ng-account">
+      <header className="ng-account-masthead">
+        <p className="ng-account-eyebrow">Your account</p>
+        <h1 className="ng-account-title ng-editorial-title">
+          {customer?.firstName ? `Welcome, ${customer.firstName}` : 'Welcome back'}
+        </h1>
+        <p className="ng-account-meta">
+          Orders, addresses and trade details — all in one place.
+        </p>
+      </header>
+
+      <div className="ng-account-body">
+        <AccountMenu />
+        <div className="ng-account-panel">
+          <Outlet context={{customer}} />
+        </div>
+      </div>
     </div>
   );
 }
 
 function AccountMenu() {
-  function isActiveStyle({
-    isActive,
-    isPending,
-  }: {
-    isActive: boolean;
-    isPending: boolean;
-  }) {
-    return {
-      fontWeight: isActive ? 'bold' : undefined,
-      color: isPending ? 'grey' : 'black',
-    };
-  }
-
   return (
-    <nav role="navigation">
-      <NavLink to="/classic/wholesale" style={isActiveStyle}>
-        Wholesale dashboard &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/orders" style={isActiveStyle}>
-        &nbsp; Orders &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Account details &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/wholesale-profile" style={isActiveStyle}>
-        &nbsp; Business profile &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
-        &nbsp; Addresses &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
+    <nav className="ng-account-nav" aria-label="Account">
+      <ul className="ng-account-nav-list">
+        {ACCOUNT_NAV.map((item) => (
+          <li key={item.to}>
+            <NavLink
+              to={item.to}
+              prefetch="intent"
+              className={({isActive}) =>
+                isActive ? 'ng-account-nav-link is-active' : 'ng-account-nav-link'
+              }
+            >
+              {item.label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
       <Logout />
     </nav>
   );
 }
 
+/** POSTs to the existing logout action, which revokes the Shopify session and
+ *  clears the cookie — the storefront adds no session handling of its own. */
 function Logout() {
   return (
-    <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+    <Form className="ng-account-logout" method="POST" action="/account/logout">
+      <button type="submit" className="ng-account-logout-btn">
+        Sign out
+      </button>
     </Form>
   );
 }

@@ -26,6 +26,7 @@ import suppliesStyles from '~/styles/supplies.css?url';
 import arrangementsStyles from '~/styles/arrangements.css?url';
 import informationalStyles from '~/styles/informational.css?url';
 import wholesaleStyles from '~/styles/wholesale.css?url';
+import accountStyles from '~/styles/account.css?url';
 import productStyles from '~/styles/product.css?url';
 import cartStyles from '~/styles/cart.css?url';
 import fontStyles from '~/styles/fonts.css?url';
@@ -256,6 +257,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={arrangementsStyles}></link>
         <link rel="stylesheet" href={informationalStyles}></link>
         <link rel="stylesheet" href={wholesaleStyles}></link>
+        <link rel="stylesheet" href={accountStyles}></link>
         <link rel="stylesheet" href={productStyles}></link>
         <link rel="stylesheet" href={cartStyles}></link>
         <Meta />

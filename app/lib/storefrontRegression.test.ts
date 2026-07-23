@@ -174,7 +174,7 @@ describe('global navigation', () => {
 describe('wholesale entry', () => {
   it('opens the auth modal from the homepage card instead of navigating', () => {
     expect(CHOOSER).toMatch(/action: 'wholesale'/);
-    expect(CHOOSER).toMatch(/WholesaleAuthModal/);
+    expect(CHOOSER).toMatch(/AuthModal/);
     // Wholesale must render a <button> that opens the modal, never a <Link>.
     // Asserted on the branch's SHAPE rather than the loop variable's name, so
     // renaming `card` → `pathway` in a redesign doesn't read as a regression.
@@ -186,7 +186,7 @@ describe('wholesale entry', () => {
   });
 
   it('returns focus to the element that opened it', () => {
-    const modal = read('app/components/wholesale/WholesaleAuthModal.tsx');
+    const modal = read('app/components/auth/AuthModal.tsx');
     expect(modal).toMatch(/openerRef/);
     // Captured before focus moves into the dialog, restored in cleanup.
     expect(modal).toMatch(/openerRef\.current = document\.activeElement/);

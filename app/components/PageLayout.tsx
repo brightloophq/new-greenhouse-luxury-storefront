@@ -6,6 +6,7 @@ import type {
   HeaderQuery,
 } from 'storefrontapi.generated';
 import {Aside, useAside} from '~/components/Aside';
+import {AccountEntry} from '~/components/auth/AccountEntry';
 import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
 import {navFor} from '~/lib/navigation';
@@ -225,14 +226,17 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
         </Accordion>
 
         <div className="ng-mobilenav-footer">
-          <Link to="/account" prefetch="intent" onClick={close} className="ng-mobilenav-account">
-            <Icon name="user" size="sm" />
-            <Suspense fallback="Sign in">
-              <Await resolve={isLoggedIn} errorElement="Sign in">
-                {(loggedIn) => (loggedIn ? 'My account' : 'Sign in')}
-              </Await>
-            </Suspense>
-          </Link>
+          {/* Same entry as the masthead: guest → modal, member → /account.
+              Navigating closes the drawer; opening the modal leaves it open
+              beneath, so dismissing the modal returns the customer to the menu. */}
+          <AccountEntry
+            isLoggedIn={isLoggedIn}
+            className="ng-mobilenav-account"
+            guestLabel="Sign in"
+            memberLabel="My account"
+            iconSize="sm"
+            onNavigate={close}
+          />
           <a href={`mailto:${CONTACT.email}`} className="ng-mobilenav-contact">
             <Icon name="mail" size="sm" /> {CONTACT.email}
           </a>

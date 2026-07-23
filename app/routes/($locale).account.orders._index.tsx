@@ -94,21 +94,19 @@ function OrdersTable({
 
 function EmptyOrders({hasFilters = false}: {hasFilters?: boolean}) {
   return (
-    <div>
+    <div className="ng-account-empty">
       {hasFilters ? (
         <>
-          <p>No orders found matching your search.</p>
-          <br />
+          <p>No orders match that search.</p>
           <p>
             <Link to="/account/orders">Clear filters →</Link>
           </p>
         </>
       ) : (
         <>
-          <p>You haven&apos;t placed any orders yet.</p>
-          <br />
+          <p>No orders yet — your first arrangement will appear here.</p>
           <p>
-            <Link to="/retail">Start Shopping →</Link>
+            <Link to="/retail">Start shopping →</Link>
           </p>
         </>
       )}
@@ -202,21 +200,39 @@ function OrderSearchForm({
 function OrderItem({order}: {order: OrderItemFragment}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
   return (
-    <>
-      <fieldset>
-        <Link to={`/account/orders/${btoa(order.id)}`}>
-          <strong>#{order.number}</strong>
-        </Link>
-        <p>{new Date(order.processedAt).toDateString()}</p>
-        {order.confirmationNumber && (
-          <p>Confirmation: {order.confirmationNumber}</p>
-        )}
-        <p>{order.financialStatus}</p>
-        {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
-        <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
-      </fieldset>
-      <br />
-    </>
+    <article className="ng-account-order">
+      <div className="ng-account-order-head">
+        <h3 className="ng-account-order-number">Order #{order.number}</h3>
+        <p className="ng-account-order-date">
+          {new Date(order.processedAt).toDateString()}
+        </p>
+      </div>
+      <dl className="ng-account-order-facts">
+        {order.confirmationNumber ? (
+          <>
+            <dt>Confirmation</dt>
+            <dd>{order.confirmationNumber}</dd>
+          </>
+        ) : null}
+        <dt>Payment</dt>
+        <dd>{order.financialStatus}</dd>
+        {fulfillmentStatus ? (
+          <>
+            <dt>Fulfilment</dt>
+            <dd>{fulfillmentStatus}</dd>
+          </>
+        ) : null}
+        <dt>Total</dt>
+        <dd>
+          <Money data={order.totalPrice} />
+        </dd>
+      </dl>
+      <Link
+        className="ng-account-order-link"
+        to={`/account/orders/${btoa(order.id)}`}
+      >
+        View order <span aria-hidden="true">→</span>
+      </Link>
+    </article>
   );
 }

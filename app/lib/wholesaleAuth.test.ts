@@ -6,18 +6,27 @@ const ROOT = join(__dirname, '..', '..');
 const read = (p: string) => readFileSync(join(ROOT, p), 'utf8');
 
 /**
- * Step 8 — editorial wholesale authentication (presentation only). These lock
- * the behaviour that must survive the redesign: the auth hand-off, the dialog
- * a11y contract, and the untouched approval logic.
+ * Editorial wholesale authentication. Step 8 introduced the invitation modal;
+ * Step 15 consolidated it into the shared `AuthModal` (variant="wholesale") so
+ * the trade card, the /wholesale gate and the masthead all use one component.
+ * These lock what must survive: the Shopify hand-off, the dialog a11y contract,
+ * and the untouched approval logic.
  */
-describe('wholesale invitation modal', () => {
-  const modal = read('app/components/wholesale/WholesaleAuthModal.tsx');
+describe('wholesale invitation modal (shared AuthModal, wholesale variant)', () => {
+  const modal = read('app/components/auth/AuthModal.tsx');
 
-  it('preserves the Shopify auth hand-off (both actions → /account/login)', () => {
-    expect(modal).toMatch(/AUTH_HREF = '\/account\/login'/);
-    // Two actions, both pointing at the hand-off — no in-app credential capture.
-    expect(modal.match(/href=\{AUTH_HREF\}/g)?.length).toBe(2);
+  it('preserves the Shopify auth hand-off and never collects credentials', () => {
+    // The hand-off URL is built by loginHref() — always /account/login.
+    expect(modal).toMatch(/loginHref/);
+    expect(modal).toMatch(/href=\{href\}/);
     expect(modal).not.toMatch(/type="password"|<input/); // never collects credentials
+  });
+
+  it('keeps the wholesale copy on the wholesale variant', () => {
+    expect(modal).toMatch(/A private trade conservatory/);
+    expect(modal).toMatch(/Trade pricing by the bunch & box/);
+    expect(modal).toMatch(/40\+ years supplying Jamaica/);
+    expect(modal).toMatch(/access is immediate/);
   });
 
   it('keeps the dialog accessibility contract', () => {
@@ -58,8 +67,14 @@ describe('wholesale gate (signed-out /wholesale)', () => {
   const gate = read('app/components/wholesale/WholesaleGate.tsx');
   const route = read('app/routes/wholesale._index.tsx');
 
-  it('preserves the auth actions and approved trade copy', () => {
-    expect(gate.match(/href="\/account\/login"/g)?.length).toBe(2);
+  it('opens the shared modal instead of navigating straight to Shopify', () => {
+    expect(gate).toMatch(/AuthModal/);
+    expect(gate).toMatch(/variant="wholesale"/);
+    expect(gate).toMatch(/onClick=\{\(\) => setAuthOpen\(true\)\}/);
+    expect(gate).not.toMatch(/href="\/account\/login"/); // the modal owns the hand-off
+  });
+
+  it('preserves the approved trade copy', () => {
     expect(gate).toMatch(/florists, event planners, hotels and venues/); // approved body
     expect(gate).toMatch(/Trade pricing by the bunch/); // approved perk
     expect(gate).toMatch(/40\+ years supplying Jamaica/);

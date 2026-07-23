@@ -1,6 +1,6 @@
 import {useRef, useState} from 'react';
 import {Link} from 'react-router';
-import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
+import {AuthModal} from '~/components/auth/AuthModal';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
@@ -167,8 +167,12 @@ export function ExperienceChooser() {
         ))}
       </ol>
 
-      <WholesaleAuthModal
+      {/* Signing in from the trade card should land the customer in the trade
+          area, not back on the homepage. */}
+      <AuthModal
         open={wholesaleOpen}
+        variant="wholesale"
+        returnTo="/wholesale"
         onClose={() => setWholesaleOpen(false)}
       />
     </section>

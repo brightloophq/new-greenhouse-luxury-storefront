@@ -1,5 +1,6 @@
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import {Link} from 'react-router';
+import {AuthModal} from '~/components/auth/AuthModal';
 import {cardImage} from '~/lib/catalogues';
 import {useReveal} from '~/lib/useReveal';
 
@@ -21,6 +22,7 @@ export function WholesaleGate() {
   const scope = useRef<HTMLElement>(null);
   useReveal(scope);
   const media = cardImage(GATE_IMG);
+  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <section ref={scope} className="ng-trade-gate" aria-labelledby="ng-trade-gate-title">
@@ -42,13 +44,16 @@ export function WholesaleGate() {
             supplies — access is immediate.
           </p>
           <div className="ng-trade-gate-actions">
-            {/* Full navigation — /account/login redirects to Shopify sign-in. */}
-            <a className="ng-trade-btn" href="/account/login">
-              Sign in
-            </a>
-            <a className="ng-trade-btn ng-trade-btn--ghost" href="/account/login">
-              Create wholesale account
-            </a>
+            {/* One entry, shared with the masthead and the homepage trade card:
+                the modal explains the hand-off, then /account/login redirects
+                into Shopify's hosted sign-in. */}
+            <button
+              type="button"
+              className="ng-trade-btn"
+              onClick={() => setAuthOpen(true)}
+            >
+              Sign in to shop wholesale
+            </button>
           </div>
           <ul className="ng-trade-gate-perks">
             {PERKS.map((perk) => (
@@ -70,6 +75,12 @@ export function WholesaleGate() {
           />
         </figure>
       </div>
+
+      <AuthModal
+        open={authOpen}
+        variant="wholesale"
+        onClose={() => setAuthOpen(false)}
+      />
     </section>
   );
 }

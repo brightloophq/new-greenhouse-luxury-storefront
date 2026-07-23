@@ -116,6 +116,19 @@
 .ng-masthead-account:hover {
   color: var(--ng-green);
 }
+/* The account entry is an <a> for a signed-in customer and a <button> for a
+   guest (it opens the auth modal). Both must read identically — without this
+   the button inherits the design system's own button type and padding. */
+button.ng-masthead-account {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
 /* EVERY control in the masthead, not just .ng-icon-button. The cart is
    .ng-shell-cart and was inheriting the dark-shell's near-white ink, which on
    this cream ground left only the count badge visible. */
@@ -850,6 +863,18 @@
   display: inline-flex;
   gap: var(--ng-space-2);
   font-size: var(--ng-font-size-small);
+}
+/* Guest variant of the drawer's account entry — see the masthead note above. */
+button.ng-mobilenav-account {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--ng-font-size-small);
+  text-align: start;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
 }
 .ng-mobilenav-note {
   color: var(--ng-text-muted);

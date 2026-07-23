@@ -7,6 +7,7 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {AccountEntry} from '~/components/auth/AccountEntry';
 import {useScrolled} from '~/lib/useScrolled';
 
 import {useMastheadCompression} from '~/lib/useMastheadCompression';
@@ -86,16 +87,14 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
           <IconButton aria-label="Search" onClick={() => open('search')}>
             <Icon name="search" />
           </IconButton>
-          <NavLink className="ng-masthead-account" prefetch="intent" to="/account">
-            <Icon name="user" />
-            <span className="ng-masthead-account-label">
-              <Suspense fallback="Sign in">
-                <Await resolve={isLoggedIn} errorElement="Sign in">
-                  {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
-                </Await>
-              </Suspense>
-            </span>
-          </NavLink>
+          {/* Guest → branded modal; signed in → straight to /account. */}
+          <AccountEntry
+            isLoggedIn={isLoggedIn}
+            className="ng-masthead-account"
+            labelClassName="ng-masthead-account-label"
+            guestLabel="Sign in"
+            memberLabel="Account"
+          />
           <CartToggle cart={cart} />
         </div>
       </header>
