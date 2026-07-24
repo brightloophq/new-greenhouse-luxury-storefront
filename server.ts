@@ -2,6 +2,7 @@ import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 import {experienceEntryResponse} from '~/lib/experienceEntry';
+import {previewGateResponse} from '~/lib/previewGate';
 
 /**
  * Export a fetch handler in module format.
@@ -13,6 +14,14 @@ export default {
     executionContext: ExecutionContext,
   ): Promise<Response> {
     try {
+      // Private-preview gate. When PREVIEW_MODE === 'true', every non-asset
+      // request without a valid preview cookie is redirected to the launch
+      // page. When the flag is unset/false this returns null and the store
+      // behaves exactly as today. Runs first so nothing (including the
+      // /classic·/deluxe entry links) can slip past the gate.
+      const previewRedirect = previewGateResponse(request, env);
+      if (previewRedirect) return previewRedirect;
+
       // Experience entry policy: /classic, /deluxe and their deep links set the
       // ng_experience cookie and 302 to the canonical store path. Resolved here
       // (before routing) so nested /classic/collections/* deep links can't
