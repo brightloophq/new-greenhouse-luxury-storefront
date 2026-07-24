@@ -50,7 +50,13 @@ export default {
       const response = await handleRequest(request);
 
       if (hydrogenContext.session.isPending) {
-        response.headers.set(
+        // APPEND, not set: a route may already have attached its own Set-Cookie
+        // (e.g. the private-preview access cookie from the /preview action). The
+        // scaffold's `.set` replaced ALL Set-Cookie headers with the session
+        // cookie, silently dropping the route's — so a fresh visitor whose cart
+        // session was pending on the login POST would lose `preview_access` and
+        // bounce back to the gate. Appending keeps both (valid HTTP).
+        response.headers.append(
           'Set-Cookie',
           await hydrogenContext.session.commit(),
         );
