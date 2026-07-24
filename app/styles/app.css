@@ -489,6 +489,15 @@ button.reset:hover:not(:has(> *)) {
   padding-right: var(--page-gutter);
 }
 
+/* The hero is the one full-bleed child: its media must reach both viewport
+   edges, and its copy carries its own padding. The shared gutter padding above
+   would otherwise inset the media (16px band on one side, clipped on the other
+   under the hero's overflow:hidden) — the "cut" hero. */
+.home > .ng-hero {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .greenhouse-home-announcement {
   align-items: center;
   background: var(--ng-color-luxury-gold);
