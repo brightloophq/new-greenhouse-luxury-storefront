@@ -182,11 +182,11 @@
   /* Below the desktop nav breakpoint the second row has nothing to show, so
      the masthead becomes a single compact row with a burger. */
   .ng-masthead-top {
-    /* minmax(0, 1fr), not 1fr: a plain 1fr track keeps its implicit
-       min-width:auto (= the wordmark's min-content), so the nowrap wordmark
-       (~351px) could not shrink and forced the header — and the whole
-       document — wider than a phone, making mobile browsers zoom out. */
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    /* Symmetric flanking columns keep the brand (leaf on mobile, wordmark on
+       tablet) centred in the viewport regardless of the burger vs icon-group
+       widths. The wordmark's wrap-safety below prevents the old nowrap
+       min-content from forcing the header wider than the screen. */
+    grid-template-columns: 1fr auto 1fr;
     padding: var(--ng-space-3) var(--ng-space-4);
   }
   /* Tablet (768–1100px) keeps the wordmark; cap it to its column and allow a
