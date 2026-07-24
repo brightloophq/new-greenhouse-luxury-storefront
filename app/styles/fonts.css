@@ -1,77 +1,48 @@
 /*
  * Self-hosted brand fonts (latin subset), served same-origin so the strict
  * Content-Security-Policy needs no external font/style sources.
- * Display: Cormorant Garamond (both experiences).
- * Body: Inter (Deluxe) · DM Sans (Classic — matches the main website).
- * font-display: swap keeps text visible during load; critical faces are
- * preloaded in root.tsx to minimise FOUT on the hero.
+ *
+ * The New Greenhouse brand typefaces (mockup UI migration):
+ *   Primary   — Montserrat  (headings, display, labels — "typography is architecture")
+ *   Secondary — Raleway     (body, UI copy)
+ *
+ * Both are variable fonts (one file per family covers every weight), with a
+ * separate italic axis file. font-display: swap keeps text visible during load;
+ * the critical faces are preloaded in root.tsx to minimise FOUT on the hero.
+ *
+ * The mockups' own fonts (Marcellus / Cormorant / Karla) are deliberately NOT
+ * production faces — the previous Cormorant / Inter / DM Sans faces were retired
+ * with this migration.
  */
 
-/* ---- DM Sans (Classic body — variable, weights 300–500) ---- */
+/* ---- Montserrat (primary — variable 100–900, normal + italic) ---- */
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'Montserrat';
   font-style: normal;
-  font-weight: 300 500;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('../assets/fonts/dmsans-variable.woff2') format('woff2');
-}
-
-/* ---- Inter (Deluxe body) ---- */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../assets/fonts/inter-400.woff2') format('woff2');
+  src: url('../assets/fonts/montserrat-variable.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('../assets/fonts/inter-500.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../assets/fonts/inter-600.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../assets/fonts/inter-700.woff2') format('woff2');
-}
-
-/* ---- Cormorant Garamond (display) ---- */
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../assets/fonts/cormorant-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
+  font-family: 'Montserrat';
   font-style: italic;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('../assets/fonts/cormorant-400-italic.woff2') format('woff2');
+  src: url('../assets/fonts/montserrat-variable-italic.woff2') format('woff2');
+}
+
+/* ---- Raleway (secondary — variable 100–900, normal + italic) ---- */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/raleway-variable.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 500;
+  font-family: 'Raleway';
+  font-style: italic;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('../assets/fonts/cormorant-500.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../assets/fonts/cormorant-600.woff2') format('woff2');
+  src: url('../assets/fonts/raleway-variable-italic.woff2') format('woff2');
 }

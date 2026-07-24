@@ -1,0 +1,427 @@
+/* ============================================================================
+   Product detail — the botanical exhibition plate (Step 9, CLASSIC only).
+
+   Presentation for the classic PDP (EditorialProductDetail). Deluxe / premium
+   keeps its own `.product-*` styling, untouched. Everything here is scoped under
+   `.ng-pdp`, including the restyle of the shared purchase controls (ProductForm,
+   ProductPrice, AddToCartButton) — no component logic is touched. Loaded after
+   wholesale.css.
+   ========================================================================== */
+
+.ng-pdp {
+  padding-block: clamp(1.5rem, 3vw, 2.5rem) clamp(3rem, 6vw, 5rem);
+  color: var(--ng-green-deep);
+}
+
+/* ---- Breadcrumb --------------------------------------------------------- */
+.ng-pdp-crumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.06em;
+  color: var(--ng-green-muted);
+}
+.ng-pdp-crumb a {
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-pdp-crumb a:hover {
+  color: var(--ng-green-deep);
+}
+.ng-pdp-crumb [aria-current='page'] {
+  color: var(--ng-green-deep);
+}
+
+/* ---- Editorial hero: the photograph dominates --------------------------- */
+.ng-pdp-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 0.78fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.ng-pdp-gallery {
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  min-width: 0;
+}
+.ng-pdp-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--ng-ground-tint, var(--ng-ground-sage));
+  box-shadow: inset 0 0 0 1px var(--ng-glass-line);
+}
+.ng-pdp-frame .product-image,
+.ng-pdp-frame .product-image img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.ng-pdp-frame img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+.ng-pdp-frame-num {
+  position: absolute;
+  inset-block-end: 0.7rem;
+  inset-inline-end: 0.8rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.82);
+  color: var(--ng-green-deep);
+  font-family: var(--ng-font-heading);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+/* The secondary shots read as an editorial strip of framed plates. */
+.ng-pdp-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---- Purchase column ---------------------------------------------------- */
+.ng-pdp-buy {
+  min-width: 0;
+}
+.ng-pdp-kicker {
+  margin: 0 0 0.5rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-pdp-title {
+  margin: 0 0 0.9rem;
+  font-size: clamp(2rem, 1.4rem + 1.8vw, 2.9rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-pdp-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+.ng-pdp-price .product-price {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.7rem);
+  color: var(--ng-green-deep);
+}
+.ng-pdp-price .product-price-on-sale {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.ng-pdp-price .product-price-on-sale s {
+  color: var(--ng-green-faint);
+  font-size: 0.85em;
+}
+.ng-pdp-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-pdp-stock::before {
+  content: "";
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--ng-botanical, var(--ng-green));
+}
+.ng-pdp-stock.is-out {
+  color: var(--ng-green-faint);
+}
+.ng-pdp-stock.is-out::before {
+  background: var(--ng-green-faint);
+}
+.ng-pdp-delivery {
+  margin: 0 0 1.5rem;
+  max-width: 42ch;
+  color: var(--ng-green-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* ---- Purchase controls (restyle of the shared ProductForm) -------------- */
+.ng-pdp .product-form {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  background: var(--ng-ground-panel);
+}
+.ng-pdp .product-options {
+  display: grid;
+  gap: 0.6rem;
+}
+.ng-pdp .product-options-label {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-pdp .product-options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.ng-pdp .product-options-item {
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  background: var(--ng-ground-warm);
+  color: var(--ng-green-deep);
+  font-family: var(--ng-font-heading);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    border-color var(--ng-motion-hover) var(--ng-motion-ease),
+    background var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-pdp .product-options-item:hover {
+  border-color: var(--ng-green);
+}
+.ng-pdp .product-options-item.is-selected {
+  border-color: var(--ng-green-deep);
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+}
+.ng-pdp .product-options-item.is-unavailable {
+  opacity: 0.45;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+.ng-pdp .product-quantity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.ng-pdp .product-quantity-label {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+/* Add to cart — architectural, full-width, crafted (not the default control). */
+.ng-pdp .add-to-cart-button {
+  inline-size: 100%;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  background: var(--ng-btn-primary-bg);
+  color: var(--ng-btn-primary-fg);
+  font-family: var(--ng-font-heading);
+  font-weight: var(--ng-btn-weight);
+  font-size: 0.86rem;
+  letter-spacing: var(--ng-btn-tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--ng-motion-hover) var(--ng-motion-ease),
+    opacity var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-pdp .add-to-cart-button:hover:not(:disabled) {
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
+}
+.ng-pdp .add-to-cart-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Trade note + assurances -------------------------------------------- */
+.ng-pdp-trade {
+  margin-top: 1.5rem;
+  padding: 1rem 1.15rem;
+  border-inline-start: 2px solid var(--ng-gold);
+  background: var(--ng-ground-panel);
+  border-radius: 0 4px 4px 0;
+}
+.ng-pdp-trade-title {
+  margin: 0 0 0.3rem;
+  font-family: var(--ng-font-heading);
+  font-size: 0.95rem;
+  color: var(--ng-green-deep);
+}
+.ng-pdp-trade small {
+  color: var(--ng-green-muted);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.ng-pdp-trade a {
+  color: var(--ng-green-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-pdp-trade a:hover {
+  border-bottom-color: var(--ng-green);
+}
+.ng-pdp-assurances {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1.5rem 0 0;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--ng-green-line);
+  list-style: none;
+}
+.ng-pdp-assurances li {
+  position: relative;
+  padding-inline-start: 1.2rem;
+  font-size: 0.85rem;
+  color: var(--ng-green-deep);
+}
+.ng-pdp-assurances li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.55em;
+  inset-inline-start: 0;
+  inline-size: 0.75rem;
+  block-size: 1px;
+  background: var(--ng-gold);
+}
+
+/* ---- Story + specification --------------------------------------------- */
+.ng-pdp-seam {
+  margin: clamp(2.5rem, 5vw, 4rem) 0 clamp(2rem, 4vw, 3rem);
+}
+.ng-pdp-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.ng-pdp-detail-label {
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-pdp-story-body {
+  max-width: 42rem;
+  color: var(--ng-green-deep);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.ng-pdp-story-body p {
+  margin: 0 0 1rem;
+}
+.ng-pdp-story-body p:last-child {
+  margin-bottom: 0;
+}
+.ng-pdp-spec {
+  display: grid;
+  gap: clamp(1.1rem, 2vw, 1.5rem);
+  margin: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  background: var(--ng-ground-panel);
+}
+.ng-pdp-spec > div {
+  display: grid;
+  gap: 0.3rem;
+}
+.ng-pdp-spec dt {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-pdp-spec dd {
+  margin: 0;
+  color: var(--ng-green-deep);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* ---- Related — an editorial recommendation gallery --------------------- */
+.ng-pdp-related {
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+.ng-pdp-related-head {
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+.ng-pdp-related-title {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.7rem, 1.2rem + 1.5vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-pdp-related-copy {
+  max-width: 46ch;
+  margin: 0.75rem 0 0;
+  color: var(--ng-green-muted);
+  line-height: 1.7;
+}
+.ng-pdp-related--curated {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+  padding: clamp(2rem, 4vw, 3rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  background: var(--ng-ground-warm);
+}
+.ng-pdp-related-cta {
+  display: inline-block;
+  padding: 0.85rem 1.6rem;
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  background: var(--ng-btn-primary-bg);
+  color: var(--ng-btn-primary-fg);
+  font-family: var(--ng-font-heading);
+  font-weight: var(--ng-btn-weight);
+  font-size: 0.82rem;
+  letter-spacing: var(--ng-btn-tracking);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-pdp-related-cta:hover {
+  background: var(--ng-btn-primary-bg-hover);
+  color: var(--ng-btn-primary-fg-hover);
+}
+
+/* ---- Responsive: image first, comfortable controls --------------------- */
+@media (max-width: 60em) {
+  .ng-pdp-hero,
+  .ng-pdp-detail {
+    grid-template-columns: 1fr;
+  }
+  .ng-pdp-strip {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 5.5rem), 1fr));
+  }
+}
+@media (max-width: 40em) {
+  .ng-pdp .product-options-item {
+    min-height: 2.9rem;
+  }
+  .ng-pdp .add-to-cart-button {
+    padding-block: 1.1rem;
+  }
+}

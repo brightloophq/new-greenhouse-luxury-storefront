@@ -1,6 +1,5 @@
 import {useEffect, useId, useRef, useState} from 'react';
 import {useSearchParams} from 'react-router';
-import {useExperience} from '~/components/ExperienceProvider';
 import {useTabTrap} from '~/lib/useTabTrap';
 import {
   Accordion,
@@ -13,9 +12,11 @@ import {
 } from '~/components/ui';
 import {
   FACETS,
+  facetsForContext,
   activeChips,
   countActiveFilters,
   type AppliedFilters,
+  type FilterContext,
 } from '~/lib/catalog';
 
 /* -------------------------------------------------------------------------- */
@@ -45,10 +46,11 @@ function useCatalogParams() {
     });
   }
 
-  /** Remove every facet/availability/price param; keep sort untouched. */
+  /** Remove search + every facet/availability/price param; keep sort untouched. */
   function clearAll() {
     commit((params) => {
       for (const facet of FACETS) params.delete(facet.key);
+      params.delete('q');
       params.delete('avail');
       params.delete('minp');
       params.delete('maxp');
@@ -65,6 +67,8 @@ function useCatalogParams() {
 export interface FilterPanelProps {
   /** Applied filter state, parsed from the URL by the route. */
   filters: AppliedFilters;
+  /** Experience+section filter context — determines which facets are shown. */
+  context: FilterContext;
   /** Layout context — full sidebar or inside the mobile drawer. */
   variant?: 'sidebar' | 'drawer';
 }
@@ -75,17 +79,19 @@ export interface FilterPanelProps {
  * resets pagination. Reads its checked/toggle state from `filters` (URL is the
  * single source of truth).
  */
-export function FilterPanel({filters, variant = 'sidebar'}: FilterPanelProps) {
+export function FilterPanel({
+  filters,
+  context,
+  variant = 'sidebar',
+}: FilterPanelProps) {
   const {setParam, commit, clearAll} = useCatalogParams();
   const activeCount = countActiveFilters(filters);
-  const {experience} = useExperience();
 
-  // Deluxe is gifting-only: hide the wholesale/retail "Buying Option" facet so
-  // the Deluxe catalogue never offers a wholesale filter. Classic keeps it.
-  const visibleFacets =
-    experience === 'deluxe'
-      ? FACETS.filter((facet) => facet.key !== 'channel')
-      : FACETS;
+  // Facets are driven entirely by the centralized per-context config (Phase
+  // 4/5) — never by shared component defaults. Classic wholesale = flower+color;
+  // Classic supplies = color; Deluxe = occasion+color. "By Occasion" therefore
+  // NEVER renders in Classic, and flower/occasion never render on supply pages.
+  const visibleFacets = facetsForContext(context);
 
   // Local, uncommitted price inputs — applied on the "Apply" action so we don't
   // fire a navigation on every keystroke. Re-sync when the URL changes.
@@ -266,6 +272,8 @@ export function FilterPanel({filters, variant = 'sidebar'}: FilterPanelProps) {
 
 export interface FilterDrawerProps {
   filters: AppliedFilters;
+  /** Experience+section filter context — determines which facets are shown. */
+  context: FilterContext;
   /** Whether the off-canvas drawer is open. */
   open: boolean;
   /** Requests the drawer be closed (scrim click, close button, or Esc). */
@@ -277,7 +285,12 @@ export interface FilterDrawerProps {
  * scroll lock, and initial focus — an accessible modal dialog. Renders a
  * `FilterPanel` in the "drawer" layout.
  */
-export function FilterDrawer({filters, open, onClose}: FilterDrawerProps) {
+export function FilterDrawer({
+  filters,
+  context,
+  open,
+  onClose,
+}: FilterDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
@@ -345,7 +358,7 @@ export function FilterDrawer({filters, open, onClose}: FilterDrawerProps) {
           </IconButton>
         </div>
         <div className="ng-catalog-filter-drawer-body">
-          <FilterPanel variant="drawer" filters={filters} />
+          <FilterPanel variant="drawer" filters={filters} context={context} />
         </div>
       </div>
     </div>

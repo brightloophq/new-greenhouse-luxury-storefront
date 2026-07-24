@@ -100,8 +100,74 @@ export interface HomeContent {
 
 const SLOGAN = 'Not just flowers, whatever it takes.';
 
+/**
+ * Homepage reviews carousel.
+ *
+ * These six are the brand-approved testimonials already used on the Deluxe and
+ * Classic homepages and the /reviews route — reused here, NOT newly written, so
+ * nothing on the carousel is a fabricated review. The unified homepage serves
+ * gifting and trade alike, so it draws three of each voice.
+ *
+ * The rating badge is a REAL aggregate: 4.5 from 44 Google reviews, linking to
+ * the live Google listing. Do not raise the score or the count without a
+ * matching change on Google — the badge links straight to the source.
+ */
+export interface HomeReview {
+  quote: string;
+  name: string;
+  context: string;
+}
+
+export const HOMEPAGE_REVIEW_RATING = {
+  score: '4.5',
+  count: 44,
+  href: 'https://maps.app.goo.gl/hdR7bXAwxgyLiZ1c7',
+} as const;
+
+export const HOMEPAGE_REVIEWS: HomeReview[] = [
+  {
+    quote:
+      'Every arrangement arrived with the polish of a luxury gift and the warmth of something personal.',
+    name: 'Marsha L.',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'The bouquet I sent for our anniversary was breathtaking — exactly the statement I hoped for.',
+    name: 'Danielle R.',
+    context: 'Anniversary gift',
+  },
+  {
+    quote:
+      'Consistent quality by the box — our studio orders every week and it has never let us down.',
+    name: 'Studio florist',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'Beautifully presented and delivered right on time. They are my go-to for every celebration.',
+    name: 'Repeat client',
+    context: 'Kingston',
+  },
+  {
+    quote:
+      'Bulk greenery and fillers always arrive fresh and graded. It saves my team hours on every event.',
+    name: 'Event planner',
+    context: 'St. Andrew',
+  },
+  {
+    quote:
+      'Our standing order for the lobby is effortless and always beautiful. Reordering is simple.',
+    name: 'Hospitality buyer',
+    context: 'Kingston',
+  },
+];
+
 /** Luxury arrangement photography (Deluxe only), served from /public. */
 const lux = (handle: string) => `/images/luxury/${handle}-800.webp`;
+
+/** Bespoke collection-card photography (unique per collection), from /public. */
+const col = (handle: string) => `/images/collections/${handle}-800.webp`;
 
 /** A representative portrait arrangement photo per collection, for image tiles. */
 const TILE_ARRANGEMENT: Record<string, string> = {
@@ -214,23 +280,25 @@ const DELUXE: HomeContent = {
     kicker: 'The Signature Collection',
     title: 'Hand-composed, gift-ready arrangements.',
     link: {label: 'View the collection', to: '/collections/luxury-bouquets'},
+    // Bespoke collection-card photography — each tile a distinct arrangement.
     tiles: [
-      heroTile('Luxury Bouquets', 'luxury-bouquets'),
-      heroTile('Roses Collection', 'roses'),
-      heroTile('Orchid Collection', 'orchids'),
-      heroTile('Seasonal Collection', 'seasonal-deluxe'),
+      {label: 'Luxury Bouquets', to: '/collections/luxury-bouquets', image: col('luxury-bouquets')},
+      {label: 'Roses Collection', to: '/collections/roses', image: col('roses')},
+      {label: 'Orchid Collection', to: '/collections/orchids', image: col('orchids')},
+      {label: 'Seasonal Collection', to: '/collections/seasonal-deluxe', image: col('seasonal-deluxe')},
     ],
   },
   browse: {
     kicker: 'More occasions',
     title: 'A gesture for every reason.',
+    // Sympathy already leads the "featured" row above — omitted here so no
+    // collection card repeats across the homepage.
     tiles: [
       heroTile('Congratulations', 'congratulations'),
       heroTile('Get Well Soon', 'get-well'),
       heroTile('New Baby', 'new-baby'),
       heroTile('Corporate Gifts', 'corporate-gifting'),
       heroTile('Thank You', 'thank-you'),
-      heroTile('Sympathy', 'sympathy-and-funeral'),
     ],
   },
   productRow: {
@@ -321,28 +389,32 @@ const CLASSIC: HomeContent = {
         eyebrow: 'Fresh stems by the box',
         to: '/classic/wholesale',
         image: 'occasion',
-        alt: 'Bulk wholesale flowers ready for florists and events',
+        imageSrc: col('wholesale-flowers'),
+        alt: 'Buckets of fresh wholesale flowers in mixed colours ready for florists',
       },
       {
         title: 'Greenery & Fillers',
         eyebrow: 'For every build',
         to: '/collections/greenery-and-fillers',
         image: 'botanical',
-        alt: 'Fresh greenery and foliage fillers for floral arrangements',
+        imageSrc: col('greenery-fillers'),
+        alt: 'Fresh bunches of eucalyptus and mixed greenery fillers',
       },
       {
         title: 'Floral Supplies',
         eyebrow: 'Tools, containers & packaging',
         to: '/classic/supplies',
         image: 'hero',
-        alt: 'Florist supplies including tools, ribbon and packaging',
+        imageSrc: '/images/supplies/essentials-800.webp',
+        alt: 'Florist essentials — tools, wire, tape and packaging',
       },
       {
         title: 'Vases & Containers',
         eyebrow: 'Finishing touches',
         to: '/collections/vases-and-containers',
         image: 'occasion',
-        alt: 'Vases and containers for floral arrangements',
+        imageSrc: '/images/supplies/vases-800.webp',
+        alt: 'A collection of glass and ceramic florist vases and containers',
       },
     ],
   },

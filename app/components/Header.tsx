@@ -8,10 +8,10 @@ import {
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {useScrolled} from '~/lib/useScrolled';
+
+import {useMastheadCompression} from '~/lib/useMastheadCompression';
 import {useCloseOnRouteChange} from '~/lib/useCloseOnRouteChange';
-import {DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 import {cx, Icon, IconButton} from '~/components/ui';
-import {ExperienceToggle} from '~/components/ExperienceToggle';
 import {useExperience} from '~/components/ExperienceProvider';
 import {navFor, type MegaColumn} from '~/lib/navigation';
 
@@ -22,55 +22,87 @@ interface HeaderProps {
   publicStoreDomain: string;
 }
 
+const SOCIAL = [
+  {name: 'instagram' as const, label: 'Instagram', href: 'https://www.instagram.com/newgreenhouse'},
+  {name: 'facebook' as const, label: 'Facebook', href: 'https://www.facebook.com/TheNewGreenhouse/'},
+  {name: 'whatsapp' as const, label: 'WhatsApp', href: 'https://wa.me/18768438964'},
+];
+
+/**
+ * Editorial masthead — two levels, not a navbar.
+ *
+ *   Row 1  socials · WORDMARK · search / account / cart
+ *   Row 2  centred primary navigation, hairline rule beneath
+ *
+ * The wordmark is the anchor: large and centred, the way an apothecary or
+ * magazine masthead works, rather than the small-logo-plus-menu bar every
+ * Shopify theme ships. On scroll the two rows compress into one (see
+ * `useMastheadCompression`) so the masthead earns its height only at the top
+ * of the page.
+ */
 export function Header({header, isLoggedIn, cart}: HeaderProps) {
   const {shop} = header;
-  const scrolled = useScrolled(24);
+  const scrolled = useScrolled(80);
   const {open} = useAside();
+  const ref = useRef<HTMLDivElement>(null);
+  useMastheadCompression(ref, scrolled);
 
   return (
-    <div className={cx('ng-shell-header', scrolled && 'is-solid')}>
-      <div className="ng-shell-announcement" role="status">
-        <span>Same-day delivery across Kingston &amp; St. Andrew — order before {DELIVERY_CUTOFF_SHORT}</span>
-        <span aria-hidden="true" className="ng-shell-announcement-sep">·</span>
-        <span>Luxury florals since 1984</span>
-      </div>
+    <div
+      ref={ref}
+      className={cx('ng-masthead', scrolled && 'is-compressed')}
+      data-compressed={scrolled ? 'true' : 'false'}
+    >
+      <header className="ng-masthead-top">
+        <ul className="ng-masthead-social" aria-label="Social media">
+          {SOCIAL.map((social) => (
+            <li key={social.name}>
+              <a
+                className="ng-masthead-social-link"
+                href={social.href}
+                aria-label={social.label}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <Icon name={social.name} size="sm" />
+              </a>
+            </li>
+          ))}
+        </ul>
 
-      <header className="ng-shell-nav">
-        <div className="ng-shell-nav-inner">
-          <div className="ng-shell-nav-left">
-            <IconButton
-              className="ng-shell-burger"
-              aria-label="Open menu"
-              onClick={() => open('mobile')}
-            >
-              <Icon name="menu" />
-            </IconButton>
-            <DesktopNav />
-          </div>
+        <IconButton
+          className="ng-masthead-burger"
+          aria-label="Open menu"
+          onClick={() => open('mobile')}
+        >
+          <Icon name="menu" />
+        </IconButton>
 
-          <NavLink className="ng-shell-logo" prefetch="intent" to="/" end>
-            <span className="ng-shell-logo-mark">{shop.name || 'The New Greenhouse'}</span>
+        <NavLink className="ng-masthead-wordmark" prefetch="intent" to="/" end>
+          {shop.name || 'The New Greenhouse'}
+        </NavLink>
+
+        <div className="ng-masthead-actions">
+          <IconButton aria-label="Search" onClick={() => open('search')}>
+            <Icon name="search" />
+          </IconButton>
+          <NavLink className="ng-masthead-account" prefetch="intent" to="/account">
+            <Icon name="user" />
+            <span className="ng-masthead-account-label">
+              <Suspense fallback="Sign in">
+                <Await resolve={isLoggedIn} errorElement="Sign in">
+                  {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
+                </Await>
+              </Suspense>
+            </span>
           </NavLink>
-
-          <div className="ng-shell-actions">
-            <ExperienceToggle className="ng-exp-toggle--header" />
-            <IconButton aria-label="Search" onClick={() => open('search')}>
-              <Icon name="search" />
-            </IconButton>
-            <NavLink className="ng-shell-action-account" prefetch="intent" to="/account">
-              <Icon name="user" />
-              <span className="ng-shell-action-label">
-                <Suspense fallback="Sign in">
-                  <Await resolve={isLoggedIn} errorElement="Sign in">
-                    {(loggedIn) => (loggedIn ? 'Account' : 'Sign in')}
-                  </Await>
-                </Suspense>
-              </span>
-            </NavLink>
-            <CartToggle cart={cart} />
-          </div>
+          <CartToggle cart={cart} />
         </div>
       </header>
+
+      <div className="ng-masthead-navrow">
+        <DesktopNav />
+      </div>
     </div>
   );
 }
@@ -103,6 +135,18 @@ function DesktopNav() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [openLabel]);
+
+  // Premium/Deluxe catalogue: no global tabs — just a clear way back to the
+  // green Arrangements page (the theme re-greens on navigation).
+  if (experience === 'deluxe') {
+    return (
+      <nav className="ng-shell-primary" aria-label="Primary">
+        <NavLink to="/arrangements" prefetch="intent" className="ng-shell-back">
+          <span aria-hidden="true">←</span> Arrangements
+        </NavLink>
+      </nav>
+    );
+  }
 
   return (
     <nav

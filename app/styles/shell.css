@@ -13,7 +13,199 @@
 }
 
 /* --------------------------------------------------------------------------
-   Header + announcement
+   Masthead — two-level editorial header (Concept A · The Glasshouse)
+
+   Row 1  socials · WORDMARK · search / account / cart      84px → 56px
+   Row 2  centred primary navigation                        48px (never hidden)
+
+   A cream ground with a deep-green wordmark, hairline rules and no container
+   box. On scroll the TOP row compresses (wordmark scales, socials leave) while
+   the nav row stays put, so navigation is reachable in both states.
+   -------------------------------------------------------------------------- */
+.ng-masthead {
+  position: sticky;
+  top: 0;
+  z-index: var(--ng-z-sticky);
+  background: var(--ng-ground-panel);
+  border-bottom: 1px solid var(--ng-green-line);
+  /* Height changes come from the rows; this eases the whole block. */
+  transition: box-shadow var(--ng-motion-nav) var(--ng-motion-ease);
+}
+/* Near-opaque, not translucent. At 0.92 the page scrolled visibly through the
+   bar — stray words and flower crops appeared behind the navigation. A sticky
+   masthead has to be a surface, not a filter. */
+.ng-masthead.is-compressed {
+  background: rgb(251 250 245 / 0.985);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 var(--ng-green-line);
+}
+
+/* ---- Row 1 --------------------------------------------------------------- */
+.ng-masthead-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--ng-space-4);
+  max-width: 88rem;
+  margin: 0 auto;
+  /* Row target ~66–68px: a considered masthead, not a dominant one. The block
+     padding (was space-4 / 1rem) is the height lever here. */
+  padding: var(--ng-space-3) var(--ng-space-6);
+  transition: padding var(--ng-motion-nav) var(--ng-motion-ease);
+}
+.ng-masthead.is-compressed .ng-masthead-top {
+  padding-block: var(--ng-space-2);
+}
+
+.ng-masthead-social {
+  display: flex;
+  align-items: center;
+  gap: var(--ng-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-masthead-social-link {
+  display: inline-flex;
+  color: var(--ng-green);
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-masthead-social-link:hover {
+  color: var(--ng-green-deep);
+}
+
+/* The wordmark is the anchor: large, centred, deep green. */
+.ng-masthead-wordmark {
+  justify-self: center;
+  font-family: var(--ng-font-heading);
+  /* Montserrat is a wider geometric face than the old serif — a touch smaller
+     and generously tracked reads as a considered masthead rather than a
+     stretched logo. */
+  font-size: clamp(1.35rem, 0.95rem + 1.6vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  color: var(--ng-green-deep);
+  /* GSAP animates scale; the origin keeps it centred as it shrinks. */
+  transform-origin: center center;
+}
+.ng-masthead-wordmark:hover {
+  color: var(--ng-green-pressed);
+}
+
+.ng-masthead-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ng-space-3);
+}
+.ng-masthead-account {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ng-space-2);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ng-green-deep);
+  transition: color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-masthead-account:hover {
+  color: var(--ng-green);
+}
+/* EVERY control in the masthead, not just .ng-icon-button. The cart is
+   .ng-shell-cart and was inheriting the dark-shell's near-white ink, which on
+   this cream ground left only the count badge visible. */
+.ng-masthead .ng-icon-button,
+.ng-masthead .ng-shell-cart,
+.ng-masthead button,
+.ng-masthead .ng-shell-cart svg {
+  color: var(--ng-green-deep);
+  stroke: currentColor;
+  background: none;
+  border: 0;
+}
+.ng-masthead .ng-icon-button:hover,
+.ng-masthead .ng-shell-cart:hover {
+  color: var(--ng-green);
+  background: none;
+}
+/* Burger is mobile-only; the desktop nav lives in row 2. */
+.ng-masthead-burger {
+  display: none;
+}
+
+/* ---- Row 2 — navigation -------------------------------------------------- */
+.ng-masthead-navrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Target ~40px — the correction's 38–46px band. The inner nav list carries its
+     own padding for the shell header, so it is zeroed here and the row owns the
+     height instead. */
+  min-height: 2.5rem;
+  border-top: 1px solid var(--ng-green-line);
+  padding: 0 var(--ng-space-6);
+  transition: min-height var(--ng-motion-nav) var(--ng-motion-ease);
+}
+.ng-masthead-navrow .ng-shell-primary,
+.ng-masthead-navrow .ng-shell-primary-list {
+  padding-block: 0;
+  margin-block: 0;
+}
+.ng-masthead.is-compressed .ng-masthead-navrow {
+  min-height: 2.25rem;
+}
+
+/* Editorial nav typography — wide tracking, small caps, green ink. */
+.ng-masthead-navrow .ng-shell-primary-list {
+  gap: clamp(1.5rem, 2.4vw, 3rem);
+}
+.ng-masthead-navrow a,
+.ng-masthead-navrow button {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green-deep);
+}
+
+/* ---- Responsive ---------------------------------------------------------- */
+@media (max-width: 68.75em) {
+  /* Below the desktop nav breakpoint the second row has nothing to show, so
+     the masthead becomes a single compact row with a burger. */
+  .ng-masthead-top {
+    grid-template-columns: auto 1fr auto;
+    padding: var(--ng-space-3) var(--ng-space-4);
+  }
+  .ng-masthead-social {
+    display: none;
+  }
+  .ng-masthead-burger {
+    display: inline-flex;
+  }
+  .ng-masthead-navrow {
+    display: none;
+  }
+  .ng-masthead-account-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-masthead,
+  .ng-masthead-top,
+  .ng-masthead-navrow,
+  .ng-masthead-social-link,
+  .ng-masthead-account {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Legacy header + announcement (retained for non-homepage shells)
    -------------------------------------------------------------------------- */
 .ng-shell-header {
   position: sticky;
@@ -196,6 +388,11 @@
 .ng-shell-primary-item {
   margin: 0;
 }
+/* Positioning context for the About popover, so it anchors to the trigger
+   rather than to the header (which is what made it span the full width). */
+.ng-shell-primary-item.has-mega {
+  position: relative;
+}
 
 .ng-shell-navlink {
   align-items: center;
@@ -205,10 +402,12 @@
   cursor: pointer;
   display: inline-flex;
   gap: var(--ng-space-1);
-  font-family: var(--ng-font-body);
-  font-size: var(--ng-font-size-nav);
-  font-weight: 700;
-  letter-spacing: var(--ng-letter-nav);
+  /* Montserrat, matching the wordmark — the masthead speaks in one architectural
+     voice. Medium weight + open tracking reads refined, not heavy. */
+  font-family: var(--ng-font-heading);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   line-height: 1;
   padding: var(--ng-space-3) 0;
   position: relative;
@@ -245,46 +444,45 @@
   transform: rotate(180deg);
 }
 
+/* About dropdown — a COMPACT ANCHORED POPOVER, not a mega-menu.
+   It previously spanned `left:0; right:0` across the whole header and painted
+   itself with the PREMIUM palette (#090909 ground, cream text, gold titles),
+   which is both the full-width bug and the contrast bug: dark-theme tokens on
+   the cream masthead. It now anchors under the About item at its own width and
+   uses the green brand only. */
 .ng-mega {
-  background: var(--ng-color-background);
-  border-top: 1px solid var(--ng-border-inverse);
-  box-shadow: var(--ng-shadow-lg);
-  color: var(--ng-text-inverse);
-  left: 0;
-  opacity: 0;
   position: absolute;
-  right: 0;
-  top: 100%;
-  transform: translateY(-8px);
+  top: calc(100% + var(--ng-space-2));
+  left: 50%;
+  /* Anchored to the trigger, sized by its content, never the viewport. */
+  width: max-content;
+  min-width: 13.75rem; /* 220px */
+  max-width: 20rem; /*    320px */
+  background: var(--ng-ground-panel);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 3px;
+  box-shadow: 0 12px 32px rgb(47 74 55 / 0.14);
+  color: var(--ng-green-deep);
+  opacity: 0;
+  transform: translate(-50%, -6px);
   transition:
-    opacity var(--ng-duration-standard) var(--ng-ease-standard),
-    transform var(--ng-duration-standard) var(--ng-ease-luxury);
+    opacity var(--ng-motion-nav) var(--ng-motion-ease),
+    transform var(--ng-motion-nav) var(--ng-motion-ease);
   visibility: hidden;
   z-index: var(--ng-z-dropdown);
 }
 .ng-mega.is-open {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   visibility: visible;
 }
 .ng-mega-inner {
-  margin-inline: auto;
-  max-width: var(--ng-container-xl);
-  padding: var(--ng-space-10) var(--ng-container-gutter);
+  padding: var(--ng-space-3);
 }
 .ng-mega-columns {
-  display: grid;
-  /* Four fixed sections. "Flower Varieties" gets a wider (≈double) track so its
-     dense list can flow in two readable sub-columns; the other three are single
-     columns. The minmax() floors guarantee columns never collapse to the
-     character-wrapping widths the old `1fr auto` (feature image) layout caused. */
-  grid-template-columns:
-    minmax(150px, 0.85fr)
-    minmax(300px, 1.7fr)
-    minmax(150px, 0.85fr)
-    minmax(150px, 0.85fr);
-  gap: clamp(1.5rem, 3vw, 3.5rem);
-  align-items: start;
+  /* One column: About Us · Contact Us · Reviews. The old four-track grid was
+     sized for a flower-variety mega-menu that no longer exists here. */
+  display: block;
 }
 .ng-mega-column {
   min-width: 0;
@@ -302,37 +500,49 @@
   grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: var(--ng-space-1) var(--ng-space-6);
 }
+/* The single column heading duplicates the "About" trigger directly above it,
+   so it is hidden rather than repeated. Kept in the DOM as the list's
+   accessible name. */
 .ng-mega-column-title {
-  color: var(--ng-color-luxury-gold);
-  font-family: var(--ng-font-body);
-  font-size: var(--ng-font-size-label);
-  font-weight: 800;
-  letter-spacing: var(--ng-letter-label);
-  margin: 0 0 var(--ng-space-4);
-  text-transform: uppercase;
-  /* Horizontal, word-safe wrapping. */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  writing-mode: horizontal-tb;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
+
 .ng-mega-link {
-  color: var(--ng-color-light-gray);
   display: block;
-  font-family: var(--ng-font-heading);
-  font-size: 1rem;
+  padding: var(--ng-space-2) var(--ng-space-3);
+  border-radius: 2px;
+  /* Deep botanical green on the cream panel — AA at this size. Previously
+     --ng-color-light-gray, a dark-theme token, which was near-invisible here. */
+  color: var(--ng-green-deep);
+  /* Dropdown destinations are a reading list — the secondary face (Raleway)
+     suits them better than the display face. */
+  font-family: var(--ng-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   line-height: 1.4;
-  min-width: 0;
-  transition: var(--ng-transition-color);
-  /* Labels wrap between words only — never character-by-character or vertically. */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  writing-mode: horizontal-tb;
-}
-.ng-mega-link:hover {
-  color: var(--ng-text-inverse);
   text-decoration: none;
+  transition:
+    color var(--ng-motion-hover) var(--ng-motion-ease),
+    background var(--ng-motion-hover) var(--ng-motion-ease);
+  white-space: nowrap;
+}
+.ng-mega-link:hover,
+.ng-mega-link:focus-visible {
+  color: var(--ng-green-pressed);
+  background: var(--ng-ground-sage);
+  text-decoration: none;
+}
+.ng-mega-link:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: -2px;
 }
 
 /* --------------------------------------------------------------------------
@@ -430,7 +640,9 @@
   padding: var(--ng-space-6);
 }
 .ng-drawer-loading {
-  color: var(--ng-text-muted);
+  color: var(--ng-green-soft);
+  padding-block: var(--ng-space-8);
+  text-align: center;
 }
 
 /* --------------------------------------------------------------------------
@@ -441,48 +653,86 @@
   max-width: var(--ng-container-md);
   width: 100%;
 }
+/* The field is the whole moment: a large editorial line with a champagne
+   underline that draws itself across as the field takes focus. */
 .ng-search-field {
   align-items: center;
   border-bottom: 1px solid var(--ng-border-strong);
   display: flex;
-  gap: var(--ng-space-3);
-  padding-bottom: var(--ng-space-3);
+  gap: var(--ng-space-4);
+  padding-bottom: var(--ng-space-4);
+  position: relative;
+}
+.ng-search-field::after {
+  background: var(--ng-gold);
+  bottom: -1px;
+  content: '';
+  height: 2px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-duration-slow) var(--ng-ease-luxury);
+}
+.ng-search-field:focus-within::after {
+  transform: scaleX(1);
 }
 .ng-search-icon {
-  color: var(--ng-text-muted);
+  color: var(--ng-green);
   flex: 0 0 auto;
+  transition: color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-search-field:focus-within .ng-search-icon {
+  color: var(--ng-green-deep);
 }
 .ng-search-field input {
   background: transparent;
   border: 0;
-  color: var(--ng-text-primary);
+  color: var(--ng-green-deep);
   flex: 1 1 auto;
   font-family: var(--ng-font-heading);
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   min-width: 0;
   outline: 0;
   padding: var(--ng-space-2) 0;
 }
 .ng-search-field input::placeholder {
-  color: var(--ng-text-muted);
+  color: var(--ng-green-faint);
 }
+/* The submit folds into the one store-wide button system (was a leftover
+   black 800-weight ecommerce button). */
 .ng-search-submit {
-  background: var(--ng-color-background);
-  border: 0;
-  border-radius: var(--ng-radius-sm);
-  color: var(--ng-text-inverse);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  color: var(--ng-btn-primary-fg);
   cursor: pointer;
   flex: 0 0 auto;
+  font-family: var(--ng-font-heading);
   font-size: var(--ng-font-size-button);
-  font-weight: 800;
-  letter-spacing: var(--ng-letter-nav);
+  font-weight: var(--ng-btn-weight);
+  letter-spacing: var(--ng-btn-tracking);
   min-height: var(--ng-button-height-sm);
   padding: 0 var(--ng-space-5);
   text-transform: uppercase;
+  transition: var(--ng-transition-color);
+}
+.ng-search-submit:hover {
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
+}
+.ng-search-seam {
+  margin: var(--ng-space-6) 0 0;
 }
 .ng-search-status {
-  color: var(--ng-text-muted);
-  padding: var(--ng-space-8) 0;
+  color: var(--ng-green-soft);
+  font-family: var(--ng-font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  padding: var(--ng-space-12) 0;
   text-align: center;
 }
 .ng-search-results {
@@ -492,11 +742,34 @@
   color: var(--ng-gold-text);
   display: inline-block;
   font-weight: 700;
+  letter-spacing: 0.04em;
   margin-top: var(--ng-space-4);
+  position: relative;
+}
+.ng-search-viewall::after {
+  background: currentcolor;
+  bottom: -2px;
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ng-duration-standard) var(--ng-ease-luxury);
+}
+.ng-search-viewall:hover::after {
+  transform: scaleX(1);
 }
 /* Style the predictive-search internals rendered by SearchResultsPredictive */
 .ng-search-results .predictive-search-result h5 {
-  color: var(--ng-color-luxury-gold);
+  color: var(--ng-gold-text);
+  font-family: var(--ng-font-heading);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin: 0 0 var(--ng-space-3);
+  text-transform: uppercase;
 }
 .ng-search-results ul {
   list-style: none;
@@ -504,7 +777,12 @@
   padding: 0;
 }
 .ng-search-results a {
-  color: var(--ng-text-primary);
+  color: var(--ng-green-deep);
+  transition: color var(--ng-duration-standard) var(--ng-ease-standard);
+}
+.ng-search-results a:hover {
+  color: var(--ng-gold-text);
+  text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -526,7 +804,9 @@
   color: var(--ng-text-primary);
   display: block;
   font-family: var(--ng-font-heading);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   padding: var(--ng-space-2) 0;
 }
 .ng-mobilenav-link:hover {
@@ -576,13 +856,10 @@
   font-size: var(--ng-font-size-caption);
 }
 
-/* --------------------------------------------------------------------------
-   Cart drawer presentation (chrome only; cart logic is M6)
-   The drawer already provides the heading, so suppress CartMain's own header.
-   -------------------------------------------------------------------------- */
-.ng-drawer .cart-luxury-header {
-  display: none;
-}
+/* Cart drawer presentation is owned by the class-scoped app/styles/cart.css
+   (Step 10). The drawer's own <header> supplies the dialog heading; cart.css
+   keeps only the editorial intent line inside the drawer and shows the full
+   CartMain header on the /cart page. */
 
 /* --------------------------------------------------------------------------
    Responsive

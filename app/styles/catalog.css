@@ -199,24 +199,25 @@
 }
 
 .ng-search-submit {
-  background: var(--ng-color-background);
-  border: 1px solid var(--ng-color-background);
-  border-radius: var(--ng-radius-sm);
-  color: var(--ng-color-warm-white);
+  background: var(--ng-btn-primary-bg);
+  border: 1px solid var(--ng-btn-primary-bg);
+  border-radius: var(--ng-btn-radius);
+  color: var(--ng-btn-primary-fg);
   cursor: pointer;
   flex: 0 0 auto;
-  font-family: var(--ng-font-body);
+  font-family: var(--ng-font-heading);
   font-size: var(--ng-font-size-button);
-  font-weight: 800;
-  letter-spacing: var(--ng-letter-nav);
+  font-weight: var(--ng-btn-weight);
+  letter-spacing: var(--ng-btn-tracking);
   min-height: var(--ng-button-height-md);
   padding: 0 var(--ng-space-6);
   text-transform: uppercase;
-  transition: var(--ng-transition-color), var(--ng-transition-transform);
+  transition: var(--ng-transition-color);
 }
 
 .ng-search-submit:hover {
-  transform: translateY(-1px);
+  background: var(--ng-btn-primary-bg-hover);
+  border-color: var(--ng-btn-primary-bg-hover);
 }
 
 .ng-search-error {

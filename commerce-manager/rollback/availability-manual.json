@@ -1,0 +1,732 @@
+{
+  "birthday-brights-bouquet": {
+    "id": "gid://shopify/Product/8553432842419",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679304147123",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304179891",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304212659",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "wet-floral-foam-bricks": {
+    "id": "gid://shopify/Product/8553432875187",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679304245427",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304278195",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304310963",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "peace-lily-plant": {
+    "id": "gid://shopify/Product/8553432907955",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679304343731",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304376499",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679304409267",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "standing-spray-classic-white": {
+    "id": "gid://shopify/Product/8553432973491",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679304474803",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "assorted-spray-roses": {
+    "id": "gid://shopify/Product/8553433399475",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679306277043",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679306309811",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679306342579",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "spray-mini-carnations": {
+    "id": "gid://shopify/Product/8553433890995",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679307784371",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679307817139",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679307849907",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "classic-birthday-blooms": {
+    "id": "gid://shopify/Product/8553434349747",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309127859",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309160627",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "anniversary-rose-bouquet": {
+    "id": "gid://shopify/Product/8553434382515",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309193395",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309226163",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309258931",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "anniversary-luxe-arrangement": {
+    "id": "gid://shopify/Product/8553434415283",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309291699",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309324467",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "red-rose-romance-bouquet": {
+    "id": "gid://shopify/Product/8553434448051",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309357235",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309390003",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309422771",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "blush-romance-bouquet": {
+    "id": "gid://shopify/Product/8553434480819",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309455539",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309488307",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "congratulations-bright-bouquet": {
+    "id": "gid://shopify/Product/8553434513587",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309521075",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309553843",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309586611",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "congratulations-elegant-arrangement": {
+    "id": "gid://shopify/Product/8553434546355",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309619379",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309652147",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "new-baby-soft-pink-bouquet": {
+    "id": "gid://shopify/Product/8553434579123",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309684915",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309717683",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "new-baby-neutral-bouquet": {
+    "id": "gid://shopify/Product/8553434611891",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309750451",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309783219",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "get-well-sunshine-bouquet": {
+    "id": "gid://shopify/Product/8553434644659",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309815987",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309848755",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "get-well-soft-pastels": {
+    "id": "gid://shopify/Product/8553434677427",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309881523",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309914291",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "designers-choice-bouquet": {
+    "id": "gid://shopify/Product/8553434710195",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679309947059",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679309979827",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310012595",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "seasonal-market-bunch": {
+    "id": "gid://shopify/Product/8553434742963",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310045363",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310078131",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "everyday-ivory-elegance": {
+    "id": "gid://shopify/Product/8553434775731",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310110899",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310143667",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310176435",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "modern-mixed-bouquet": {
+    "id": "gid://shopify/Product/8553434841267",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310241971",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310274739",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310307507",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "standing-spray-mixed-tribute": {
+    "id": "gid://shopify/Product/8553434874035",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310340275",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "sympathy-wreath-ivory-greenery": {
+    "id": "gid://shopify/Product/8553434906803",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310373043",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "casket-spray-full-ivory": {
+    "id": "gid://shopify/Product/8553434939571",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310405811",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "peaceful-whites-hand-tied-bouquet": {
+    "id": "gid://shopify/Product/8553434972339",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310438579",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310471347",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310504115",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "serene-sympathy-bouquet": {
+    "id": "gid://shopify/Product/8553435005107",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310536883",
+        "inventoryPolicy": "CONTINUE",
+        "tracked": false
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310569651",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310602419",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "tribute-basket-arrangement": {
+    "id": "gid://shopify/Product/8553435037875",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310635187",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310667955",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310700723",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "memorial-vase-arrangement": {
+    "id": "gid://shopify/Product/8553435070643",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679310733491",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310766259",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679310799027",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "ceremony-aisle-arch-arrangement": {
+    "id": "gid://shopify/Product/8553435267251",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311061171",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "sweetheart-table-arrangement": {
+    "id": "gid://shopify/Product/8553435300019",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311093939",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "intimate-wedding-flower-package": {
+    "id": "gid://shopify/Product/8553435332787",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311126707",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "glass-cylinder-vase": {
+    "id": "gid://shopify/Product/8553435398323",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311192243",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311225011",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311257779",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "bud-vase-set": {
+    "id": "gid://shopify/Product/8553435431091",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311290547",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311323315",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "satin-ribbon": {
+    "id": "gid://shopify/Product/8553435463859",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311356083",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311388851",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311421619",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "organza-ribbon": {
+    "id": "gid://shopify/Product/8553435496627",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311454387",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311487155",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311519923",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "kraft-cellophane-wrap": {
+    "id": "gid://shopify/Product/8553435529395",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311552691",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311585459",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "woven-arrangement-basket": {
+    "id": "gid://shopify/Product/8553435562163",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311618227",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311650995",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311683763",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "floral-stem-tape": {
+    "id": "gid://shopify/Product/8553435594931",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311716531",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311749299",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "florist-shears-snips": {
+    "id": "gid://shopify/Product/8553435627699",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311782067",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "bouquet-presentation-boxes": {
+    "id": "gid://shopify/Product/8553435660467",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311814835",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311847603",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "snake-plant-sansevieria": {
+    "id": "gid://shopify/Product/8553435693235",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311880371",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311913139",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679311945907",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "phalaenopsis-orchid-plant": {
+    "id": "gid://shopify/Product/8553435726003",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679311978675",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679312011443",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "fruit-flower-gift-basket": {
+    "id": "gid://shopify/Product/8553435758771",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679312044211",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679312076979",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "belgian-chocolates-add-on": {
+    "id": "gid://shopify/Product/8553435791539",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679312109747",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  },
+  "plush-teddy-bear-add-on": {
+    "id": "gid://shopify/Product/8553435824307",
+    "variants": [
+      {
+        "id": "gid://shopify/ProductVariant/45679312142515",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      },
+      {
+        "id": "gid://shopify/ProductVariant/45679312175283",
+        "inventoryPolicy": "DENY",
+        "tracked": true
+      }
+    ]
+  }
+}

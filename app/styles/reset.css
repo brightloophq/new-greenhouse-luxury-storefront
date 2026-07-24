@@ -32,6 +32,15 @@ video {
   height: auto;
 }
 
+/* Block display removes the inline-image baseline gap. Relocated here from a
+   global `img {…}` in app.css (a component file) so that all bare-element image
+   normalization lives in one base layer; that rule also carried a decorative
+   border-radius that the cascade already overrode to 0px everywhere, so it was
+   dropped. Components that round imagery do so on their own media containers. */
+img {
+  display: block;
+}
+
 /* Long product names, prices, breadcrumbs, and menu labels wrap safely
    instead of pushing their container past the viewport edge. */
 body {

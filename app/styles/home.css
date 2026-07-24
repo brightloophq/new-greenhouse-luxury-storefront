@@ -1,0 +1,2410 @@
+/* ==========================================================================
+   Homepage redesign (2026) — bright botanical brand hero + shopping chooser.
+   The general storefront reads fresh, natural and welcoming. The ONLY elevated
+   treatment (subtle gold) lives on the premium "Arrangements" card.
+   ========================================================================== */
+
+/* Smooth in-page scroll for the hero "Explore More" anchor. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ================================================= Hero · The Glasshouse == */
+/* Full-bleed media, oversized wordmark ON the glass, fine glazing bars.
+   Replaces the split copy-panel + photo layout. */
+.ng-hero {
+  position: relative;
+  display: grid;
+  /* Media and copy occupy the SAME cell — the type sits on the media rather
+     than beside it. */
+  grid-template-areas: 'stage';
+  align-items: end;
+  min-height: clamp(30rem, 82vh, 46rem);
+  overflow: hidden;
+  background: var(--ng-ground-sage);
+}
+.ng-hero-media,
+.ng-hero-copy {
+  grid-area: stage;
+}
+
+.ng-hero-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.ng-heromedia,
+.ng-heromedia-poster,
+.ng-heromedia-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* The video fades over the poster once it is actually playing, so a stalled or
+   blocked video simply never appears. */
+.ng-heromedia-video {
+  opacity: 0;
+  transition: opacity var(--ng-motion-reveal) var(--ng-motion-ease);
+}
+.ng-heromedia-video.is-playing {
+  opacity: 1;
+}
+
+/* Tonal scrim — guarantees the wordmark holds contrast on EVERY frame of the
+   loop, not just on the poster. Weighted to the bottom where the copy sits. */
+/* Two gradients, because the copy is bottom-LEFT, not bottom-centre. The
+   vertical pass alone left its thinnest point (6%) exactly where the eyebrow
+   and wordmark sit, over the brightest petals. The horizontal pass carries the
+   protection across the copy column so the type holds on every frame of the
+   loop, not just the calm ones. */
+.ng-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(24 36 27 / 0.58) 0%,
+      rgb(24 36 27 / 0.32) 42%,
+      rgb(24 36 27 / 0) 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(30 42 32 / 0.22) 0%,
+      rgb(30 42 32 / 0.12) 34%,
+      rgb(24 36 27 / 0.58) 100%
+    );
+}
+
+/* Glazing bars — the greenhouse motif. Pure gradients: no images, no WebGL,
+   and they cost nothing to paint. */
+.ng-hero-glazing {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgb(244 239 228 / 0.14) 0 1px,
+      transparent 1px calc(100% / 6)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgb(244 239 228 / 0.08) 0 1px,
+      transparent 1px 33.333%
+    );
+  mix-blend-mode: soft-light;
+}
+
+.ng-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+  max-width: 62rem;
+  color: var(--ng-on-green);
+}
+/* Eyebrows carry a short leading rule across every homepage section — hero,
+   bays and gallery — so the three read as one editorial system. */
+.ng-hero-eyebrow,
+.ng-bays-eyebrow,
+.ng-variety-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.ng-hero-eyebrow::before,
+.ng-bays-eyebrow::before,
+.ng-variety-eyebrow::before {
+  content: '';
+  inline-size: clamp(1.75rem, 3vw, 2.75rem);
+  block-size: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+.ng-hero-eyebrow {
+  margin: 0 0 clamp(0.75rem, 1.4vw, 1.2rem);
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-gold-pale);
+}
+/* The display moment the site did not have. */
+.ng-hero-wordmark {
+  margin: 0 0 clamp(0.6rem, 1.2vw, 1rem);
+  font-family: var(--ng-font-heading);
+  /* Montserrat is wider than the retired serif: a lighter weight and a pulled-in
+     max keep the two-line wordmark composed rather than shouting. */
+  font-weight: 400;
+  font-size: clamp(2.6rem, 1rem + 6vw, 6.25rem);
+  line-height: 0.98;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--ng-on-green);
+  text-shadow: 0 2px 24px rgb(24 36 27 / 0.4);
+}
+/* Line masks for the wordmark reveal. The clip must exist in CSS, not be
+   created by JS, so the type is never briefly visible outside its box on a
+   slow connection. `padding-bottom` + matching negative margin keeps
+   descenders and the italic overhang from being sheared by the clip. */
+.ng-hero-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.ng-hero-line-inner {
+  display: inline-block;
+  will-change: transform;
+}
+.ng-hero-tagline {
+  max-width: 30rem;
+  margin: 0 0 clamp(1.4rem, 2.6vw, 2rem);
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.15rem);
+  line-height: 1.5;
+  color: rgb(244 239 228 / 0.92);
+}
+
+/* Editorial CTA — a rule that draws, not a pill button. */
+.ng-hero-cta {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ng-on-green);
+}
+.ng-hero-cta-rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--ng-gold);
+  transform-origin: left center;
+  transition: transform var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-hero-cta:hover .ng-hero-cta-rule {
+  transform: scaleX(1.35);
+}
+.ng-hero-cta:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 6px;
+}
+
+@media (max-width: 45em) {
+  .ng-hero {
+    min-height: clamp(26rem, 76vh, 34rem);
+  }
+  .ng-hero-glazing {
+    /* Fewer, wider panes at small sizes so the lines stay legible. */
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgb(244 239 228 / 0.12) 0 1px,
+        transparent 1px 33.333%
+      );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-heromedia-video,
+  .ng-hero-cta-rule {
+    transition: none;
+  }
+}
+
+/* --- Pathway selector (PathwaySelector.tsx) -------------------------------
+   Still used by /retail, /wholesale, /arrangements, /supplies, /occasion and
+   /premium-deluxe. The HOMEPAGE no longer uses these classes — it uses the
+   editorial bays below. Deleting them outright broke six routes. --- */
+.ng-chooser {
+  padding: clamp(3rem, 6vw, 5.5rem) 1.5rem clamp(3.5rem, 7vw, 6rem);
+  /* Bright warm white — fresh and clean under the sage hero. */
+  background: var(--ng-ground-warm);
+  scroll-margin-top: 5rem;
+}
+.ng-chooser-head {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+.ng-chooser-eyebrow {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-chooser-head h2 {
+  margin: 0;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+  line-height: 1.05;
+  color: var(--ng-green-deep);
+}
+.ng-chooser-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ng-chooser-card {
+  /* Wholesale is a <button> (it opens the auth modal) while the other three are
+     <a>. Without this reset the button inherits the design system's uppercase
+     button styling and Wholesale alone renders in ALL CAPS, breaking the row. */
+  appearance: none;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: start;
+  text-transform: none;
+  letter-spacing: inherit;
+  cursor: pointer;
+
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  box-shadow: 0 6px 24px rgba(47, 74, 55, 0.1);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+}
+.ng-chooser-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(47, 74, 55, 0.2);
+}
+.ng-chooser-card-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: block;
+}
+.ng-chooser-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-chooser-card:hover .ng-chooser-card-media img {
+  transform: scale(1.05);
+}
+.ng-chooser-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 42, 32, 0) 30%,
+    rgba(25, 38, 28, 0.72) 100%
+  );
+}
+.ng-chooser-card-body {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding: 1.25rem 1.25rem 1.35rem;
+}
+.ng-chooser-card-title {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.ng-chooser-card-blurb {
+  display: block;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  opacity: 0.92;
+}
+.ng-chooser-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ng-chooser-card-arrow {
+  transition: transform 0.25s ease;
+}
+.ng-chooser-card:hover .ng-chooser-card-arrow {
+  transform: translateX(4px);
+}
+
+/* Premium (Arrangements) — the only card with the elevated gold treatment. */
+.ng-chooser-card--premium::after {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 18, 12, 0) 25%,
+    rgba(18, 15, 10, 0.82) 100%
+  );
+}
+.ng-chooser-card--premium .ng-chooser-card-body {
+  border-bottom: 2px solid var(--ng-gold);
+}
+.ng-chooser-card--premium .ng-chooser-card-title {
+  color: var(--ng-gold-pale);
+}
+.ng-chooser-card--premium .ng-chooser-card-cta {
+  color: var(--ng-gold);
+}
+
+/* Focus visibility */
+.ng-hero-cta:focus-visible,
+.ng-chooser-card:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- Motion -- */
+@keyframes ngh-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-chooser-card,
+  .ng-chooser-card-media img,
+
+  .ng-chooser-card-arrow {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------ Responsive -- */
+@media (max-width: 64em) {
+  .ng-chooser-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-chooser-grid {
+    grid-template-columns: 1fr;
+  }
+  .ng-chooser-card {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+
+/* ============================================= Pathways · Editorial bays == */
+/* Four full-width bays, image side alternating, oversized index numeral
+   bleeding past the image edge. No cards, no equal grid, no shadows — the
+   shapes that make a page read as a theme. */
+.ng-bays {
+  padding: clamp(4rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
+  /* Warm reflected light — a soft glasshouse glow rising through the cream
+     ground, so the section reads warm and floral rather than flat. Token
+     greens over the warm ground; no new hex. */
+  background:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      rgb(200 169 106 / 0.07),
+      transparent 60%
+    ),
+    var(--ng-ground-warm);
+  scroll-margin-top: 5rem;
+}
+
+.ng-bays-head {
+  max-width: 78rem;
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+  padding-inline: clamp(1.5rem, 5vw, 4rem);
+}
+.ng-bays-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+/* The glazing seam that opens each section head — the doorway into a new pane
+   of the greenhouse. Shared across every section masthead. */
+.ng-section-seam {
+  margin-bottom: clamp(1.5rem, 3vw, 2.4rem);
+}
+.ng-bays-title {
+  max-width: 22ch;
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.2rem, 1.1rem + 3.4vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-bays-lede {
+  max-width: 44ch;
+  margin: clamp(1.3rem, 2.4vw, 1.9rem) 0 0;
+  color: var(--ng-green-muted);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.ng-bays {
+  position: relative;
+}
+
+/* Botanical spine — a decorative stem drawn down the outer margin as the
+   reader scrolls the bays. It lives OUTSIDE the bays' 82rem measure, so it can
+   never overlap text or imagery, and it is removed entirely below the width
+   where that margin exists. */
+.ng-spine {
+  position: absolute;
+  inset-block: clamp(3rem, 6vw, 6rem) 0;
+  inline-size: clamp(48px, 5vw, 84px);
+  color: var(--ng-green);
+  /* Present enough to read as a drawn element rather than a smudge, quiet
+     enough that it never competes with the photography. */
+  opacity: 0.62;
+  pointer-events: none;
+}
+.ng-spine--start {
+  inset-inline-start: clamp(1rem, 3vw, 3rem);
+}
+/* Mirrored so the two stems lean away from the page centre rather than both
+   leaning the same way, which would read as a repeated asset. */
+.ng-spine--end {
+  inset-inline-end: clamp(1rem, 3vw, 3rem);
+  transform: scaleX(-1);
+}
+.ng-spine-svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* Petals drift behind the section's content, never over it. */
+.ng-petals {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Everything the reader actually uses sits above the drift. */
+.ng-bays-head,
+.ng-bays-list,
+.ng-variety-head,
+.ng-variety-grid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Below this width the page has no outer margin to spare — the bays run edge
+   to edge, so the stem would sit on top of the photographs. */
+@media (max-width: 78em) {
+  .ng-spine {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The stem is drawn by scroll; with motion off it would sit permanently
+     half-drawn, which reads as a rendering fault rather than a flourish. */
+  .ng-spine {
+    display: none;
+  }
+}
+
+/* Image-led destination panels in an ASYMMETRIC grid — one dominant tall panel
+   with three supporting it, never four equal cards. The photograph fills each
+   panel; the name sits over a soft gradient at the foot. */
+.ng-bays-list {
+  display: grid;
+  /* Dominant a touch less wide than before — hierarchy kept, weight eased. */
+  grid-template-columns: 1.24fr 1fr;
+  grid-template-rows: repeat(3, auto);
+  gap: clamp(0.9rem, 1.6vw, 1.5rem);
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  list-style: none;
+}
+.ng-bay {
+  min-width: 0;
+}
+/* Dominant panel: the left column, spanning all three rows so it reads tall. */
+.ng-bay--dominant {
+  grid-column: 1;
+  grid-row: 1 / 4;
+}
+/* The three supporting panels stack down the right column. */
+.ng-bay:not(.ng-bay--dominant) {
+  grid-column: 2;
+}
+
+.ng-bay-link {
+  /* Reset for the Wholesale <button> so it matches the three anchors exactly. */
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  text-decoration: none;
+  /* Light glazing frame — the greenhouse pane edge, legible over a photograph. */
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+}
+.ng-bay:not(.ng-bay--dominant) .ng-bay-link {
+  /* Shorter supporting panels lower the whole right column, which is what the
+     dominant spans — so the Wholesale panel eases ~17% without losing its
+     lead. The wider crop also reads as a deliberate cinematic slice. */
+  aspect-ratio: 2.15 / 1;
+}
+
+.ng-bay-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.ng-bay-media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: transform 1s var(--ng-motion-ease);
+}
+.ng-bay-link:hover .ng-bay-media img,
+.ng-bay-link:focus-visible .ng-bay-media img {
+  transform: scale(1.045);
+}
+
+/* A lighter gradient rising from the foot — enough to hold the name at AA, but
+   confined low so the photograph carries the panel rather than the overlay. A
+   soft text-shadow (on the text below) does the rest of the legibility work. */
+.ng-bay-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Confined low and cleared fast: the bottom band is dark enough for text on
+     even the brightest photograph (the wholesale flower wall), but the upper
+     ~half of every panel is unobscured, so the photography carries the panel.
+     The glyph-level legibility is finished by the text-shadow below. */
+  background: linear-gradient(
+    to top,
+    rgb(19 33 23 / 0.82) 0%,
+    rgb(19 33 23 / 0.5) 20%,
+    rgb(19 33 23 / 0.12) 42%,
+    transparent 58%
+  );
+}
+
+.ng-bay-text {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 1;
+  display: block;
+  padding: clamp(1.35rem, 2.6vw, 2.4rem);
+  color: var(--ng-on-green);
+  /* A tight halo plus a soft one keeps the name readable on a light patch of
+     photo without needing to darken the whole panel. */
+  text-shadow:
+    0 1px 3px rgb(9 14 10 / 0.66),
+    0 2px 20px rgb(9 14 10 / 0.5);
+}
+/* The index becomes a quiet overline over the image rather than a ghost
+   numeral, which only read on the cream ground. */
+.ng-bay-index {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: rgb(244 239 228 / 0.72);
+}
+.ng-bay-title {
+  display: block;
+  margin: 0 0 0.4rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+  /* The Wholesale panel is a <button>, which inherits an uppercase transform
+     the anchors don't — pin the title to the data's own casing so all four read
+     the same. */
+  text-transform: none;
+  color: var(--ng-on-green);
+}
+.ng-bay--dominant .ng-bay-title {
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 3rem);
+}
+.ng-bay-blurb {
+  display: block;
+  max-width: 34ch;
+  margin-bottom: clamp(1rem, 1.9vw, 1.45rem);
+  font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  line-height: 1.6;
+  color: rgb(244 239 228 / 0.9);
+}
+/* Supporting panels are shorter — trim the blurb so text never crowds. */
+.ng-bay:not(.ng-bay--dominant) .ng-bay-blurb {
+  display: none;
+}
+@media (min-width: 64em) {
+  .ng-bay:not(.ng-bay--dominant) .ng-bay-blurb {
+    display: block;
+    max-width: 30ch;
+  }
+}
+
+.ng-bay-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ng-on-green);
+}
+.ng-bay-cue-rule {
+  display: block;
+  inline-size: clamp(1.75rem, 3vw, 2.75rem);
+  block-size: 1px;
+  background: currentcolor;
+  transform-origin: left center;
+  transition: transform var(--ng-motion-card) var(--ng-motion-ease);
+}
+.ng-bay-link:hover .ng-bay-cue-rule,
+.ng-bay-link:focus-visible .ng-bay-cue-rule {
+  transform: scaleX(1.5);
+}
+.ng-bay-link:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+
+/* Tablet — a balanced two-column composition, dominant no longer spans. */
+@media (max-width: 64em) {
+  .ng-bays-list {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .ng-bay--dominant,
+  .ng-bay:not(.ng-bay--dominant) {
+    /* Reset the desktop placement so every panel auto-flows in the balanced
+       grid — otherwise the supporting panels keep grid-column:2 and force an
+       implicit column that collapses the dominant to 0px. */
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .ng-bay:not(.ng-bay--dominant) .ng-bay-link,
+  .ng-bay--dominant .ng-bay-link {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Mobile — full-width stacked panels; nothing hidden, large touch areas. */
+@media (max-width: 45em) {
+  .ng-bays-list {
+    grid-template-columns: 1fr;
+    gap: clamp(0.85rem, 3vw, 1.25rem);
+  }
+  .ng-bay:not(.ng-bay--dominant) .ng-bay-link,
+  .ng-bay--dominant .ng-bay-link {
+    aspect-ratio: 3 / 2;
+  }
+  .ng-bay:not(.ng-bay--dominant) .ng-bay-blurb {
+    display: block;
+    max-width: 40ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-bay-media img,
+  .ng-bay-cue-rule {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Wholesale entry — chooser button, auth modal, and the /classic/wholesale
+   gate page (direct visits by guests / unapproved accounts).
+   ========================================================================== */
+
+/* The Wholesale chooser card is a <button>; make it match the anchor cards. */
+button.ng-chooser-card {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+}
+
+/* ---- Auth modal ---- */
+.ng-wsmodal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(30, 42, 32, 0.5);
+  backdrop-filter: blur(3px);
+  animation: ngh-fade-up 200ms ease both;
+}
+.ng-wsmodal {
+  position: relative;
+  width: min(100%, 30rem);
+  padding: clamp(1.9rem, 4vw, 2.6rem);
+  border-radius: 18px;
+  background: var(--ng-ground-panel);
+  box-shadow: 0 30px 80px rgba(20, 30, 22, 0.35);
+  text-align: center;
+}
+.ng-wsmodal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ng-green-muted);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.ng-wsmodal-close:hover {
+  color: var(--ng-green-deep);
+}
+.ng-wsmodal-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-wsmodal-title {
+  margin: 0 0 0.7rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.9rem;
+  color: var(--ng-green-deep);
+}
+.ng-wsmodal-body {
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ng-green-muted);
+}
+.ng-wsmodal-actions {
+  display: grid;
+  gap: 0.6rem;
+}
+.ng-wsmodal-btn {
+  display: block;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsmodal-btn:hover {
+  background: var(--ng-green-pressed);
+  transform: translateY(-1px);
+}
+.ng-wsmodal-btn--ghost {
+  background: transparent;
+  color: var(--ng-green-deep);
+  box-shadow: inset 0 0 0 1.5px #cdd8c9;
+}
+.ng-wsmodal-btn--ghost:hover {
+  background: var(--ng-ground-sage);
+}
+.ng-wsmodal-foot {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  color: #7a857a;
+}
+.ng-wsmodal-foot a {
+  color: var(--ng-green-deep);
+}
+
+/* ---- Gate page (direct /classic/wholesale for guests / pending) ---- */
+.ng-wsgate {
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  background: var(--ng-ground-sage);
+}
+.ng-wsgate-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.ng-wsgate-eyebrow {
+  margin: 0 0 0.8rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-wsgate-title {
+  margin: 0 0 1rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3rem);
+  color: var(--ng-green-deep);
+}
+.ng-wsgate-body {
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ng-green-muted);
+}
+.ng-wsgate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+.ng-wsgate-btn {
+  display: inline-block;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsgate-btn:hover {
+  background: var(--ng-green-pressed);
+  transform: translateY(-2px);
+}
+.ng-wsgate-btn--ghost {
+  background: transparent;
+  color: var(--ng-green-deep);
+  box-shadow: inset 0 0 0 1.5px #cdd8c9;
+}
+.ng-wsgate-btn--ghost:hover {
+  background: var(--ng-ground-tint);
+}
+.ng-wsgate-perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: #6a786a;
+}
+.ng-wsgate-perks li::before {
+  content: "✿";
+  margin-right: 0.4rem;
+  color: var(--ng-green);
+}
+.ng-wholesale-welcome {
+  margin: 0;
+  padding: 0.9rem 1.5rem;
+  background: var(--ng-ground-sage);
+  color: var(--ng-green-deep);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+/* ---- Arrangements landing (still green) ---- */
+.ng-arr-hero {
+  padding: clamp(3rem, 7vw, 5rem) 1.5rem clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--ng-ground-sage);
+  text-align: center;
+}
+.ng-arr-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-arr-title {
+  margin: 0 0 0.6rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2.4rem, 1rem + 4vw, 4.2rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ng-green-deep);
+}
+.ng-arr-sub {
+  margin: 0 auto;
+  max-width: 34rem;
+  font-size: 1.05rem;
+  color: var(--ng-green-muted);
+}
+.ng-arr-hero + .ng-chooser {
+  background: var(--ng-ground-sage);
+  padding-top: clamp(1rem, 3vw, 2rem);
+}
+.ng-chooser-grid--three {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 66rem;
+}
+@media (max-width: 64em) {
+  .ng-chooser-grid--three {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-chooser-grid--three {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------- Shop by Flower Variety -- */
+/* An asymmetric editorial composition, deliberately NOT another four-up tile
+   row — the shopping chooser above already uses that rhythm. Labels sit on the
+   cream ground beneath each plate rather than in a white box over the image. */
+.ng-variety {
+  position: relative;
+  /* Clip so the mirrored spine can't widen the page. */
+  overflow-x: clip;
+  padding: clamp(4rem, 7vw, 6.5rem) 1.5rem clamp(4rem, 8vw, 6.5rem);
+  /* A whisper of sage over the warm ground rather than a full sage block, so the
+     step from the cream sections above and below is a gentle undulation, not a
+     hard colour edge — the page reads as one continuous greenhouse. */
+  background: color-mix(in srgb, var(--ng-ground-sage) 45%, var(--ng-ground-warm));
+}
+/* Gallery masthead — matches the bays above: eyebrow, then display serif, then
+   a hairline that runs the full measure like a plate caption rule. */
+.ng-variety-head {
+  max-width: 82rem;
+  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(1.2rem, 2.4vw, 2rem);
+  border-bottom: 1px solid var(--ng-green-line);
+}
+.ng-variety-eyebrow {
+  margin: 0 0 0.7rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-variety-title {
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.2rem, 1.1rem + 3.4vw, 3.9rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+
+/* 12-column editorial grid: tall plate | two stacked | wide plate. */
+.ng-variety-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  /* Gallery spacing: plates hang apart, they are not tiled. */
+  gap: clamp(2rem, 4vw, 4.5rem) clamp(1.25rem, 2.4vw, 2.5rem);
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ng-variety-cell--tall {
+  grid-column: span 5;
+  grid-row: span 2;
+}
+.ng-variety-cell--regular {
+  grid-column: span 7;
+}
+.ng-variety-cell--half {
+  grid-column: span 6;
+}
+.ng-variety-cell--wide {
+  grid-column: span 12;
+}
+.ng-variety-cell {
+  min-width: 0;
+}
+
+/* The hover/focus states are listed explicitly: a global `a:hover` rule in the
+   design system re-applies an underline that would otherwise paint through the
+   variety label and arrow. */
+.ng-variety .ng-variety-card,
+.ng-variety .ng-variety-card:hover,
+.ng-variety .ng-variety-card:focus,
+.ng-variety .ng-variety-card:focus-visible {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.ng-variety-card-media {
+  display: block;
+  flex: 1 1 auto;
+  overflow: hidden;
+  /* Square-ish corners read couture; heavy radii read Shopify. */
+  border-radius: 3px;
+  background: var(--ng-ground-tint);
+}
+/* The tall plate spans two rows, so its height is set by the stack beside it —
+   these landscape ratios are chosen so the resulting portrait lands near 2:3
+   rather than stretching into a sliver, and so the whole section stays close to
+   two viewports instead of three. */
+.ng-variety-cell--tall .ng-variety-card-media {
+  aspect-ratio: 4 / 5;
+}
+.ng-variety-cell--regular .ng-variety-card-media {
+  aspect-ratio: 2 / 1;
+}
+.ng-variety-cell--half .ng-variety-card-media {
+  aspect-ratio: 3 / 2;
+}
+.ng-variety-cell--wide .ng-variety-card-media {
+  aspect-ratio: 3 / 1;
+}
+/* Over-tall so the scroll parallax has headroom: the wrapper drifts ±7% within
+   the frame and must never expose a gap at the top or bottom edge. Sized 100%
+   when JS is absent (no drift), grown to 116% and re-centred only once the
+   parallax hook is active, so a no-JS render still fills the frame exactly. */
+.ng-variety-card-parallax {
+  display: block;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+.ng-variety:has([data-parallax-media][style]) .ng-variety-card-parallax {
+  height: 120%;
+  margin-top: -10%;
+}
+.ng-variety-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-variety-card:hover .ng-variety-card-media img {
+  transform: scale(1.04);
+}
+
+/* Label on the ground, not on the photograph. */
+/* Plate caption, museum-label idiom: catalogue number, title, quiet cue. */
+.ng-variety-card-foot {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.9rem 0.1rem 0;
+  border-top: 1px solid var(--ng-green-line);
+  margin-top: 0.9rem;
+}
+/* Catalogue number in the Glasshouse index register — italic serif, matching
+   the plate-label numerals, so the gallery labels and the section markers read
+   as one hand. */
+.ng-variety-card-no {
+  font-family: var(--ng-font-heading);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ng-green-faint);
+  font-variant-numeric: tabular-nums;
+}
+.ng-variety-card-label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.7rem;
+  min-width: 0;
+}
+.ng-variety-card-name {
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.6rem);
+  letter-spacing: 0.01em;
+  color: var(--ng-green-deep);
+}
+/* Bulk-pricing flag on tag-backed varieties — a quiet capsule, not a shout. */
+.ng-variety-card-note {
+  align-self: center;
+  padding: 0.18em 0.6em;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 999px;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  white-space: nowrap;
+}
+.ng-variety-card-arrow {
+  font-size: 0.95rem;
+  color: var(--ng-green);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-variety-card:hover .ng-variety-card-arrow {
+  transform: translateX(5px);
+}
+.ng-variety-card:hover .ng-variety-card-name {
+  color: var(--ng-green-pressed);
+}
+.ng-variety-card:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 4px;
+}
+
+@media (max-width: 64em) {
+  /* Tablet — the asymmetric composition flattens to two equal columns.
+     EVERY cell resets, `wide` included: leaving one 12-span card among 6-span
+     ones makes it wrap to its own row and strands the card before it with a
+     half-row hole. */
+  .ng-variety-cell {
+    grid-column: span 6;
+    grid-row: auto;
+  }
+  /* An odd trailing card fills the row instead of leaving a gap beside it.
+     Count-agnostic, so it holds for four cards today and eight later. */
+  .ng-variety-cell:last-child:nth-child(odd) {
+    grid-column: span 12;
+  }
+  .ng-variety-cell .ng-variety-card-media {
+    aspect-ratio: 4 / 5;
+  }
+  .ng-variety-cell:last-child:nth-child(odd) .ng-variety-card-media {
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (max-width: 45em) {
+  /* Mobile — one editorial card per row, uniform crop. */
+  .ng-variety-cell,
+  .ng-variety-cell:last-child:nth-child(odd) {
+    grid-column: span 12;
+  }
+  .ng-variety-cell .ng-variety-card-media,
+  .ng-variety-cell:last-child:nth-child(odd) .ng-variety-card-media {
+    aspect-ratio: 3 / 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-variety-card-media img,
+  .ng-variety-card-arrow {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Reviews · carousel
+   Native scroll-snap track — the browser owns the motion. JS layers prev/next,
+   dots, keyboard and a pausable auto-advance on top of markup that already
+   scrolls, so a non-hydrated render is still a usable slider.
+   ========================================================================== */
+.ng-reviews {
+  position: relative;
+  padding: clamp(3.5rem, 7vw, 6rem) 0 clamp(4rem, 8vw, 7rem);
+  background: var(--ng-ground-warm);
+  overflow-x: clip;
+}
+.ng-reviews-head {
+  max-width: 78rem;
+  margin: 0 auto clamp(2rem, 4vw, 3.25rem);
+  padding-inline: clamp(1.5rem, 5vw, 4rem);
+  text-align: center;
+}
+.ng-reviews-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-reviews-eyebrow::before {
+  content: '';
+  display: block;
+  width: 2.25rem;
+  height: 1px;
+  margin: 0 auto 0.85rem;
+  background: var(--ng-green-line);
+}
+.ng-reviews-title {
+  /* `auto` inline margins, not 0: the title carries a max-width (from the
+     shared editorial-title measure), so a zero inline margin left the
+     constrained block flush-left inside the wider centred masthead — the text
+     was centred within the block, but the block itself was not. Measured 263px
+     off-centre at 1440. The rest of the group (plate label, rating) was already
+     centred, so this is scoped to the title alone. */
+  margin: 0.9rem auto 1.1rem;
+  font-size: clamp(2rem, 1.1rem + 3vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+/* The plate label centres with the rest of the reviews masthead. */
+.ng-reviews-head .ng-plate-label {
+  justify-content: center;
+}
+.ng-reviews-rating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  color: var(--ng-green-muted);
+  text-decoration: none;
+}
+.ng-reviews-rating:hover {
+  color: var(--ng-green-deep);
+}
+.ng-reviews-stars {
+  color: var(--ng-gold);
+  letter-spacing: 0.1em;
+}
+.ng-reviews-rating strong {
+  color: var(--ng-green-deep);
+  font-weight: 600;
+}
+
+.ng-reviews-viewport {
+  position: relative;
+}
+.ng-reviews-track {
+  display: flex;
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+  margin: 0;
+  /* Side padding centres the first and last slide under center snap-align:
+     half the leftover width beside a full 44rem slide, floored so narrow
+     viewports keep a small gutter instead of a negative inset. */
+  padding-block: 0.5rem;
+  padding-inline: max(1.5rem, calc((100% - 44rem) / 2));
+  list-style: none;
+  overflow-x: auto;
+  /* proximity, NOT mandatory: mandatory snap re-targets every frame and freezes
+     a programmatic smooth scrollTo mid-animation, so the arrows and dots would
+     stick after the first press. proximity still snaps a free drag to the
+     nearest slide but leaves button-driven smooth scrolls alone. */
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ng-reviews-track::-webkit-scrollbar {
+  display: none;
+}
+.ng-reviews-slide {
+  flex: 0 0 min(44rem, 88vw);
+  scroll-snap-align: center;
+}
+.ng-review-card {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.75rem, 4vw, 3.5rem);
+  background: var(--ng-ground-panel, #fff);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  text-align: center;
+}
+.ng-review-mark {
+  display: block;
+  font-family: var(--ng-font-heading);
+  font-size: 3.5rem;
+  line-height: 0.6;
+  color: var(--ng-green-faint);
+}
+.ng-review-quote {
+  margin: 1rem 0 1.75rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.42;
+  color: var(--ng-green-deep);
+}
+.ng-review-by {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.ng-review-name {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ng-green-deep);
+}
+.ng-review-context {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+
+.ng-reviews-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+.ng-reviews-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ng-green-deep);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.ng-reviews-arrow:hover {
+  background: var(--ng-green);
+  border-color: var(--ng-green);
+  color: var(--ng-on-green, #fff);
+}
+.ng-reviews-arrow:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+.ng-reviews-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-reviews-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--ng-green-line);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.ng-reviews-dot.is-active {
+  background: var(--ng-green);
+  transform: scale(1.35);
+}
+.ng-reviews-dot:focus-visible {
+  outline: 2px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-reviews-track {
+    scroll-behavior: auto;
+  }
+  .ng-reviews-arrow,
+  .ng-reviews-dot {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   The Conservatory · closing invitation
+   The Glasshouse language at full volume: one mullion-framed panel, an
+   oversized flourish statement, one action. The page's final breath.
+   ========================================================================== */
+.ng-conservatory {
+  padding: clamp(4rem, 7vw, 6.5rem) 1.5rem clamp(4.5rem, 8vw, 7rem);
+  /* Matched to the variety ground so the closing band settles into the same
+     continuous surface rather than reintroducing a hard sage block. */
+  background: color-mix(in srgb, var(--ng-ground-sage) 45%, var(--ng-ground-warm));
+}
+.ng-conservatory-frame {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: clamp(2.75rem, 6vw, 5.5rem) clamp(1.75rem, 5vw, 4.5rem);
+  text-align: center;
+  /* The mullion frame breathes — the corner joints want air inside them. */
+}
+.ng-conservatory .ng-plate-label {
+  justify-content: center;
+}
+.ng-conservatory-title {
+  margin: 1rem 0 0;
+  font-size: clamp(2.4rem, 1.3rem + 4vw, 4.75rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+}
+.ng-conservatory-lede {
+  max-width: 46ch;
+  margin: clamp(1.4rem, 2.6vw, 2rem) auto 0;
+  color: var(--ng-green-muted);
+  font-size: 1.05rem;
+  line-height: 1.62;
+}
+.ng-conservatory-cta {
+  align-items: center;
+  color: var(--ng-green-deep);
+  display: inline-flex;
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  gap: 0.85rem;
+  letter-spacing: 0.2em;
+  margin-top: clamp(1.8rem, 3.4vw, 2.75rem);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.ng-conservatory-cta-rule {
+  background: var(--ng-green-deep);
+  block-size: 1px;
+  display: inline-block;
+  inline-size: 2.75rem;
+  transition: inline-size var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-conservatory-cta:hover .ng-conservatory-cta-rule {
+  inline-size: 4.25rem;
+}
+.ng-conservatory-cta:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 4px;
+}
+
+/* ============================================================================
+   Retail · landing (editorial department split)
+   Inherits the homepage panel language — image-led panels, foot scrim, glazing
+   frame, "Explore" cue — so the room reads continuous with the homepage.
+   ========================================================================== */
+.ng-retail {
+  position: relative;
+  /* Tighter top so the department panels reach the fold (was a 6vw / 80px cap). */
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgb(200 169 106 / 0.07), transparent 60%),
+    var(--ng-ground-warm);
+}
+.ng-retail-head {
+  max-width: 60rem;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+}
+.ng-retail-back {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-retail-back:hover {
+  color: var(--ng-green-deep);
+}
+.ng-retail-eyebrow {
+  align-items: center;
+  display: flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-retail-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+.ng-retail-title {
+  margin: 0;
+  /* Matches the listing titles — a confident lead that no longer dominates. */
+  font-size: clamp(2.7rem, 1.7rem + 2.6vw, 3.75rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-retail-lede {
+  max-width: 46ch;
+  margin: clamp(1.2rem, 2.2vw, 1.7rem) 0 0;
+  color: var(--ng-green-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.ng-retail-depts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.9rem, 1.8vw, 1.5rem);
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ng-retail-dept {
+  min-width: 0;
+}
+.ng-retail-panel {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 3px;
+  color: var(--ng-on-green);
+  text-decoration: none;
+  /* Light glazing frame — the greenhouse pane edge, legible over a photograph. */
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+}
+.ng-retail-panel-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.ng-retail-panel-media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: transform 1s var(--ng-motion-ease);
+}
+.ng-retail-panel:hover .ng-retail-panel-media img,
+.ng-retail-panel:focus-visible .ng-retail-panel-media img {
+  transform: scale(1.045);
+}
+.ng-retail-panel-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgb(19 33 23 / 0.82) 0%,
+    rgb(19 33 23 / 0.5) 20%,
+    rgb(19 33 23 / 0.12) 42%,
+    transparent 58%
+  );
+}
+.ng-retail-panel-text {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 1;
+  padding: clamp(1.35rem, 2.6vw, 2.4rem);
+  text-shadow:
+    0 1px 3px rgb(9 14 10 / 0.66),
+    0 2px 20px rgb(9 14 10 / 0.5);
+}
+.ng-retail-panel-kicker {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--ng-font-heading);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: rgb(244 239 228 / 0.82);
+}
+.ng-retail-panel-title {
+  display: block;
+  margin: 0 0 0.4rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.9rem, 1.2rem + 2vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+  color: var(--ng-on-green);
+}
+.ng-retail-panel-blurb {
+  display: block;
+  max-width: 34ch;
+  margin-bottom: clamp(1rem, 1.9vw, 1.45rem);
+  font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  line-height: 1.6;
+  color: rgb(244 239 228 / 0.9);
+}
+.ng-retail-panel-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ng-on-green);
+}
+.ng-retail-panel-cue-rule {
+  display: block;
+  inline-size: clamp(1.75rem, 3vw, 2.75rem);
+  block-size: 1px;
+  background: currentcolor;
+  transform-origin: left center;
+  transition: transform var(--ng-motion-card) var(--ng-motion-ease);
+}
+.ng-retail-panel:hover .ng-retail-panel-cue-rule,
+.ng-retail-panel:focus-visible .ng-retail-panel-cue-rule {
+  transform: scaleX(1.5);
+}
+.ng-retail-panel:focus-visible {
+  outline: 3px solid var(--ng-gold);
+  outline-offset: 3px;
+}
+
+/* Cross-sell to wholesale — a quiet editorial rail. */
+.ng-retail-xsell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 78rem;
+  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.35rem, 3vw, 2rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  background: var(--ng-ground-panel);
+}
+.ng-retail-xsell-text {
+  margin: 0;
+  color: var(--ng-green-muted);
+  font-size: 0.98rem;
+}
+.ng-retail-xsell-text b {
+  color: var(--ng-green-deep);
+  font-weight: 600;
+}
+.ng-retail-xsell-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-retail-xsell-link:hover {
+  color: var(--ng-green-deep);
+}
+
+@media (max-width: 45em) {
+  .ng-retail-depts {
+    grid-template-columns: 1fr;
+  }
+  .ng-retail-panel {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+/* ============================================================================
+   Retail · listing (editorial register, scoped by the retail-* context)
+   Wholesale / Supplies / Arrangements keep their own presentation — higher
+   specificity (two classes) means these win without reordering the base rules.
+   ========================================================================== */
+/* The shared <main> caps every route at 1440px, which left the gallery floating
+   in the middle of a wide viewport. Only when <main> actually holds the retail
+   listing (:has) do we release that cap and its inline padding, so the gallery
+   spans the width. Scrollbar-safe (no 100vw), and no other route's <main> is
+   touched — the selector only matches on the retail listing. */
+main:has(> .ng-shopcat--retail) {
+  max-width: none;
+  padding-inline: 0;
+}
+
+/* Compound selector: same specificity as the base `.ng-shopcat` ground but wins
+   regardless of source order, since it sits earlier in the file.
+   The surface also owns the fold: a much tighter top pulls the gallery up (was a
+   6vw / 72px cap), and wider side padding lets the imagery reach the edges. */
+.ng-shopcat.ng-shopcat--retail {
+  padding: clamp(1.75rem, 3vw, 2.75rem) clamp(1.25rem, 4vw, 3.5rem);
+  background:
+    radial-gradient(120% 70% at 50% -8%, rgb(200 169 106 / 0.06), transparent 60%),
+    var(--ng-ground-warm);
+}
+/* The gallery spans the viewport instead of floating in a narrow column (was
+   78rem / 1248px). The cap sits past common wide monitors so the island fills the
+   width up to ~1920px, with the section's side padding as the only breathing
+   room; a column tier below keeps the cards premium rather than oversized. */
+.ng-shopcat--retail .ng-shopcat-head,
+.ng-shopcat--retail .ng-shopcat-layout {
+  max-width: 120rem;
+  margin-inline: auto;
+}
+/* Compact editorial intro — measured rhythm so the controls and first product
+   row reach the fold sooner. */
+.ng-shopcat--retail .ng-shopcat-head {
+  margin-inline: auto;
+  margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  text-align: start;
+}
+.ng-shopcat--retail .ng-shopcat-back {
+  margin-bottom: 1.25rem; /* 20px — the correction's 18–24 band */
+}
+.ng-shopcat--retail .ng-shopcat-eyebrow {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.24em;
+}
+.ng-shopcat--retail .ng-shopcat-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+/* The title leads the page — it no longer overwhelms it. Reduced from a flat
+   4.4rem cap to a controlled clamp that scales cleanly across the breakpoints. */
+.ng-shopcat--retail .ng-shopcat-title {
+  font-size: clamp(2.7rem, 1.7rem + 2.6vw, 3.75rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 0.98;
+  text-transform: none;
+}
+.ng-shopcat--retail .ng-shopcat-sub {
+  margin: clamp(0.85rem, 1.5vw, 1.2rem) 0 0;
+}
+/* Search is a compact utility: capped width, a standard-height control, and a
+   measured gap below so the toolbar still reaches the fold. */
+.ng-shopcat--retail .ng-shopcat-search {
+  max-width: 24rem;
+  margin-bottom: 2.25rem; /* 36px — the correction's 36–52 band, low end */
+}
+.ng-shopcat--retail .ng-shopcat-search-input,
+.ng-shopcat--retail .ng-shopcat-search-submit {
+  padding-block: 0.62rem; /* → ~46px control height (the 44–50 band) */
+}
+/* The products carry the page: four generous columns where the viewport allows,
+   stepping down to three then two. Retail-scoped at every breakpoint so it wins
+   over the base grid's responsive rules (single-class, so it must be restated). */
+/* An intrinsic gallery: the grid fits as many ~14.5rem columns as the main area
+   holds and stretches them to fill, so it spans the width at every size without
+   fixed column-count breakpoints. Rough result — 1920:5–6 · 1440:4 · 1200:3 ·
+   768:2 · 390:1. min(100%, …) keeps a single column from overflowing on mobile. */
+.ng-shopcat--retail .ng-shopcat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.5rem), 1fr));
+  gap: clamp(1.5rem, 2.2vw, 2rem) clamp(1.25rem, 1.8vw, 1.6rem);
+  margin-top: 1.25rem;
+}
+/* Each card is an editorial plate: couture-tight frame, mullion joints (from the
+   shared primitive), a focal-favoured crop, and the label on the ground beneath
+   a hairline. */
+.ng-shopcat--retail .ng-shopcat-card-media {
+  border-radius: 3px;
+}
+.ng-shopcat--retail .ng-shopcat-card-media img {
+  object-position: 50% 40%;
+}
+.ng-shopcat--retail .ng-shopcat-card-body {
+  border-top: 1px solid var(--ng-green-line);
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+}
+.ng-shopcat--retail .ng-shopcat-card-title {
+  margin-top: 0;
+  font-size: 1.1rem;
+  letter-spacing: -0.005em;
+}
+.ng-shopcat--retail .ng-shopcat-card-price {
+  font-size: 0.95rem;
+}
+
+/* ---- Catalogue surface (green by default; elevated only on premium) -------- */
+.ng-shopcat {
+  min-height: 60vh;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+  background: var(--ng-ground-sage);
+}
+.ng-shopcat-head {
+  max-width: 78rem;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+.ng-shopcat-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-shopcat-back:hover {
+  color: var(--ng-green-deep);
+}
+.ng-shopcat-eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-shopcat-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.4rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ng-green-deep);
+}
+.ng-shopcat-sub {
+  max-width: 32rem;
+  margin: 0 auto;
+  color: var(--ng-green-muted);
+}
+
+/* Sidebar filters + results. The sidebar collapses into the drawer below 64em. */
+.ng-shopcat-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 2.5rem;
+  max-width: 78rem;
+  margin: 0 auto;
+  align-items: start;
+}
+.ng-shopcat-main {
+  min-width: 0;
+}
+/* The filter rail is a plain in-flow grid column (15rem track). It previously
+   needed a defensive reset here because the scaffold's global `aside {…}` forced
+   fixed positioning onto it; that rule has since been removed at the source
+   (app.css), so no reset is required. */
+
+/* Search */
+/* Search is a utility, not a focal point — restrained, and capped in width so
+   it never competes with the collection title above it. */
+.ng-shopcat-search {
+  display: flex;
+  gap: 0.4rem;
+  max-width: 22rem;
+  margin-bottom: 1.25rem;
+}
+.ng-shopcat-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.45rem 0.7rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ng-green-deep);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #cfdcc9;
+}
+.ng-shopcat-search-input::placeholder {
+  color: var(--ng-green-faint);
+}
+.ng-shopcat-search-input:focus {
+  outline: none;
+  border-bottom-color: var(--ng-green);
+}
+.ng-shopcat-search-submit {
+  padding: 0.45rem 0.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+.ng-shopcat-search-submit:hover {
+  color: var(--ng-green-deep);
+  border-bottom-color: var(--ng-green);
+}
+
+/* Results — dim (never blank) while a filter/sort navigation is in flight. */
+.ng-shopcat-results {
+  transition: opacity 0.2s ease;
+}
+.ng-shopcat-results[data-state='loading'] {
+  opacity: 0.55;
+}
+.ng-shopcat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-shopcat-notice {
+  padding: 3.5rem 1rem;
+  text-align: center;
+}
+.ng-shopcat-notice-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.3rem;
+  color: var(--ng-green-deep);
+}
+.ng-shopcat-notice-body {
+  margin: 0;
+  color: var(--ng-green-muted);
+}
+
+/* Cards */
+.ng-shopcat-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.ng-shopcat-card-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 12px;
+  background: var(--ng-ground-tint);
+}
+.ng-shopcat-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.ng-shopcat-card:hover .ng-shopcat-card-media img {
+  transform: scale(1.05);
+}
+/* Placeholder for a product with no image — holds the card's shape so the grid
+   never collapses around it. */
+.ng-shopcat-card-noimg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ng-ground-tint),
+    var(--ng-ground-tint) 10px,
+    #dbe6d5 10px,
+    #dbe6d5 20px
+  );
+}
+.ng-shopcat-card-body {
+  display: block;
+}
+.ng-shopcat-card-flag {
+  position: absolute;
+  inset: auto auto 0.6rem 0.6rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ng-green-deep);
+  background: rgb(255 255 255 / 0.92);
+  border-radius: 4px;
+}
+.ng-shopcat-card-flag--sale {
+  color: #fff;
+  background: var(--ng-green);
+}
+.ng-shopcat-card-title {
+  display: block;
+  margin: 0.7rem 0 0.15rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.05rem;
+  color: var(--ng-green-deep);
+}
+.ng-shopcat-card-spec {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ng-green-soft);
+}
+.ng-shopcat-card-price {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--ng-green-muted);
+}
+.ng-shopcat-card-was {
+  margin-left: 0.4rem;
+  color: var(--ng-green-faint);
+}
+.ng-shopcat-card-unit {
+  color: var(--ng-green-soft);
+}
+/* Wholesale buyers scan a lot of stems — denser grid, tighter imagery. */
+.ng-shopcat-card--wholesale .ng-shopcat-card-media,
+.ng-shopcat-card--supply .ng-shopcat-card-media {
+  aspect-ratio: 1 / 1;
+}
+.ng-shopcat-card--wholesale .ng-shopcat-card-title {
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.ng-shell-back {
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 64em) {
+  .ng-shopcat-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Filters live in the drawer at this width — the toolbar button opens it. */
+  .ng-shopcat-aside {
+    display: none;
+  }
+  .ng-shopcat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 34em) {
+  .ng-shopcat-grid {
+    gap: 1.2rem 0.85rem;
+  }
+}
+
+/* Elevated surface — ONLY on the premium-deluxe route (data-experience=deluxe). */
+[data-experience='deluxe'] .ng-shopcat {
+  background: var(--ng-premium-ground);
+}
+[data-experience='deluxe'] .ng-shopcat-eyebrow,
+[data-experience='deluxe'] .ng-shopcat-back {
+  color: var(--ng-gold);
+}
+[data-experience='deluxe'] .ng-shopcat-title,
+[data-experience='deluxe'] .ng-shopcat-notice-title {
+  color: var(--ng-gold-pale);
+}
+[data-experience='deluxe'] .ng-shopcat-sub,
+[data-experience='deluxe'] .ng-shopcat-notice-body,
+[data-experience='deluxe'] .ng-shopcat-card-price {
+  color: var(--ng-premium-text-muted);
+}
+[data-experience='deluxe'] .ng-shopcat-card-title {
+  color: var(--ng-premium-text);
+}
+[data-experience='deluxe'] .ng-shopcat-card-media {
+  background: var(--ng-premium-tint);
+}
+[data-experience='deluxe'] .ng-shopcat-search-input {
+  color: var(--ng-premium-text);
+  border-bottom-color: var(--ng-premium-line);
+}
+[data-experience='deluxe'] .ng-shopcat-search-submit {
+  color: var(--ng-gold);
+}
+/* Toolbar controls sit on the dark premium surface — keep text legible
+   (the default light-surface greys fall below contrast here). */
+[data-experience='deluxe'] .ng-catalog-toolbar-count,
+[data-experience='deluxe'] .ng-catalog-toolbar-sort-label {
+  color: var(--ng-premium-text-muted);
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-count-num {
+  color: var(--ng-gold-pale);
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-sort-select {
+  color: var(--ng-premium-text);
+  background: var(--ng-premium-surface);
+  border-color: var(--ng-premium-line);
+}
+[data-experience='deluxe'] .ng-catalog-toolbar-filters {
+  color: var(--ng-gold-pale);
+  border-color: var(--ng-premium-line);
+}
+
+/* The premium LANDING page (the category selector) must already read premium —
+   the theme begins the moment the shopper chooses Premium / Deluxe, not one
+   click later at the catalogue. Scoped to [data-experience='deluxe'], which
+   `themeForPath` sets only under /arrangements/premium-deluxe, so the homepage
+   chooser (always green) is untouched. */
+[data-experience='deluxe'] .ng-chooser {
+  background: var(--ng-premium-ground);
+}
+[data-experience='deluxe'] .ng-chooser-eyebrow {
+  color: var(--ng-gold);
+}
+[data-experience='deluxe'] .ng-chooser-head h1,
+[data-experience='deluxe'] .ng-chooser-head h2 {
+  color: var(--ng-gold-pale);
+}
+
+/* ---- 404 / error surface -------------------------------------------------- */
+.ng-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: clamp(3rem, 8vw, 6rem) 1.5rem;
+  text-align: center;
+  background: var(--ng-ground-sage);
+}
+.ng-404-code {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--ng-green-faint);
+}
+.ng-404-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem);
+  letter-spacing: 0.03em;
+  color: var(--ng-green-deep);
+}
+.ng-404-sub {
+  max-width: 34rem;
+  margin: 0 0 2.5rem;
+  color: var(--ng-green-muted);
+}
+.ng-404-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  max-width: 52rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ng-404-link {
+  display: block;
+  height: 100%;
+  padding: 1.1rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  background: #fff;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+.ng-404-link:hover {
+  transform: translateY(-2px);
+}
+.ng-404-link-label {
+  display: block;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.05rem;
+  color: var(--ng-green-deep);
+}
+.ng-404-link-blurb {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--ng-green-soft);
+}
+@media (max-width: 48em) {
+  .ng-404-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---- Wholesale business profile (account) ---- */
+.ng-wsprofile { max-width: 52rem; margin: 0 auto; }
+.ng-wsprofile-head { margin-bottom: 1.5rem; }
+.ng-wsprofile-eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-wsprofile-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--ng-font-display, "Cormorant Garamond", serif);
+  font-size: 1.9rem;
+  color: var(--ng-green-deep);
+}
+.ng-wsprofile-sub { margin: 0; color: var(--ng-green-muted); }
+.ng-wsprofile-success {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: var(--ng-ground-tint);
+  color: var(--ng-green-deep);
+}
+.ng-wsprofile-error {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  background: #f6e7e3;
+  color: #8a3b2b;
+}
+.ng-wsprofile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+.ng-wsprofile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ng-wsprofile-field.is-full { grid-column: 1 / -1; }
+.ng-wsprofile-field > span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #3f5a44;
+}
+.ng-wsprofile-field input,
+.ng-wsprofile-field select,
+.ng-wsprofile-field textarea {
+  padding: 0.7rem 0.8rem;
+  border: 1.5px solid #cdd8c9;
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  color: #222;
+}
+.ng-wsprofile-field input:focus,
+.ng-wsprofile-field select:focus,
+.ng-wsprofile-field textarea:focus {
+  outline: 2px solid var(--ng-green);
+  outline-offset: 1px;
+  border-color: var(--ng-green);
+}
+.ng-wsprofile-field input[readonly] { background: #f2f0ea; color: #6a786a; }
+.ng-wsprofile-submit {
+  margin-top: 1.5rem;
+  padding: 0.9rem 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ng-green-deep);
+  color: var(--ng-on-green);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ng-wsprofile-submit:hover:not(:disabled) {
+  background: var(--ng-green-pressed);
+  transform: translateY(-1px);
+}
+.ng-wsprofile-submit:disabled { opacity: 0.6; cursor: default; }
+@media (max-width: 40em) {
+  .ng-wsprofile-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Simple content pages (About / Contact / Reviews) ---- */
+.ng-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+}
+/* Interior-page masthead in the Glasshouse register: the eyebrow carries the
+   plate-label's leading joint, the title takes the architectural scale — so
+   About / Contact / Reviews read as rooms of the same building, not add-ons. */
+.ng-page-eyebrow {
+  align-items: center;
+  display: flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-page-eyebrow::before {
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  content: "";
+  inline-size: 2.25rem;
+}
+.ng-page-title {
+  margin: 0 0 0.9rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(2.4rem, 1.2rem + 4vw, 4.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: 0.005em;
+  color: var(--ng-green-deep);
+  text-wrap: balance;
+}
+.ng-page-lead { margin: 0 0 2rem; color: var(--ng-green-muted); line-height: 1.6; }
+.ng-page-facts { display: grid; gap: 1rem; margin: 0; }
+.ng-page-facts dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-page-facts dd { margin: 0.2rem 0 0; color: #3f4a3f; }
+.ng-page-facts a { color: var(--ng-green-deep); }
+.ng-chooser-grid--two { grid-template-columns: repeat(2, 1fr); max-width: 52rem; }
+@media (max-width: 34em) {
+  .ng-chooser-grid--two { grid-template-columns: 1fr; }
+}
+
+/* ==================================================== Service band ======== */
+/* Three facts on one rule. Not a benefits strip: no icons, no cards, no
+   headings. Sits between the gallery and the footer as a closing caption. */
+.ng-band {
+  /* `.home--general` sizes its children by content, so a plain block <aside>
+     collapsed to 420px and stretched to full viewport height. These make the
+     band span the row whichever layout mode the parent is using. */
+  /* Fill the row and size to content. Deliberately NO grid-column span: an
+     earlier attempt used `grid-column: 1 / -1`, which placed the band in the
+     parent's first grid row and painted it on top of the pathway bays. */
+  width: 100%;
+  align-self: start;
+  flex: 0 0 auto;
+  height: auto;
+
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem);
+  background: var(--ng-ground-warm);
+  border-top: 1px solid var(--ng-green-line);
+}
+.ng-band-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  max-width: 82rem;
+  margin: 0 auto;
+}
+.ng-band-item {
+  min-width: 0;
+}
+.ng-band-label {
+  margin: 0 0 0.4rem;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-band-value {
+  margin: 0;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.35rem);
+  line-height: 1.35;
+  color: var(--ng-green-deep);
+}
+.ng-band-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line-strong);
+  transition: border-color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-band-link:hover {
+  border-bottom-color: var(--ng-green-deep);
+}
+@media (max-width: 45em) {
+  .ng-band-list {
+    grid-template-columns: 1fr;
+    gap: clamp(1.1rem, 4vw, 1.6rem);
+  }
+}

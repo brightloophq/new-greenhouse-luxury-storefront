@@ -12,6 +12,8 @@ import {
   productInExperience,
   collectionBlockedIn,
 } from '~/lib/experienceClassify';
+import {primaryShopPath} from '~/lib/navigation';
+import {useExperience} from '~/components/ExperienceProvider';
 import {CatalogResults} from '~/components/catalog/CatalogResults';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {ButtonLink, Heading, Icon, Text} from '~/components/ui';
@@ -77,6 +79,8 @@ function toCatalogProduct(
  */
 export default function SearchPage() {
   const {type, term, result, error} = useLoaderData<typeof loader>();
+  const {experience} = useExperience();
+  const shopPath = primaryShopPath(experience);
   if (type === 'predictive') return null;
 
   const products = result?.items?.products;
@@ -147,7 +151,7 @@ export default function SearchPage() {
             explore our collections below.
           </Text>
           <ButtonLink
-            to="/collections"
+            to={shopPath}
             variant="primary"
             className="ng-catalog-empty-action"
           >
@@ -167,7 +171,7 @@ export default function SearchPage() {
             signature arrangements.
           </Text>
           <ButtonLink
-            to="/collections"
+            to={shopPath}
             variant="primary"
             className="ng-catalog-empty-action"
           >

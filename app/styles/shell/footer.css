@@ -1,197 +1,110 @@
 /**
- * Shell layer — luxury editorial footer.
- * Sits on the near-black page surface: ivory text, gold accents. Tokens only
- * (see design-system.css). Every class here is new (ng-shell-footer-*,
- * ng-shell-newsletter-*, ng-shell-contact-*). Base primitives it composes
- * (.ng-input, .ng-button-*, .ng-navlink, .ng-trust-*, .ng-field) are defined
- * elsewhere and only referenced / re-toned for the dark surface here.
+ * Shell layer — the greenhouse footer.
+ *
+ * The closing room of the building: a compact editorial footer on the forest
+ * ground (the experience layer sets --ng-color-background to #0f3d26). It speaks
+ * the same Glasshouse language as the rest of the site — a glazing seam at the
+ * top, plate-label column headings, the rationed gold used once as a warm hover
+ * rather than painted across every accent.
+ *
+ * Height discipline: NOTHING is removed — every phone, email, address, delivery
+ * line, shop link, company link, social and policy remains. The reduction comes
+ * entirely out of air. The previous build carried two stacked padding layers
+ * (the root AND an editorial 112px inner pad); the reduction below is mostly the
+ * removal of that duplicate.
+ *
+ * Class names are unchanged from the markup in Footer.tsx.
  */
 
 /* ------------------------------------------------------------------ *
- * Root
+ * Root — forest ground, ivory ink, a glazing seam at the join
  * ------------------------------------------------------------------ */
 .ng-shell-footer {
   background: var(--ng-color-background);
-  border-block-start: 1px solid
-    color-mix(in srgb, var(--ng-color-luxury-gold) 22%, transparent);
   color: var(--ng-text-inverse);
+  padding-block: clamp(1.75rem, 3vw, 2.25rem);
+  position: relative;
+}
+/* The seam where the footer meets the page above — a pane join, not a border. */
+.ng-shell-footer::before {
+  background: color-mix(in srgb, var(--ng-text-inverse) 18%, transparent);
+  block-size: 1px;
+  content: "";
+  inset-block-start: 0;
+  inset-inline: 0;
+  position: absolute;
 }
 
 .ng-shell-footer-inner {
-  padding-block: var(--ng-section-editorial);
-}
-
-.ng-shell-footer-stack {
-  gap: var(--ng-space-11);
+  /* The root owns the block padding now; the inner only insets horizontally. */
+  padding-block: 0;
 }
 
 /* ------------------------------------------------------------------ *
- * a. Newsletter band
+ * One compact editorial grid: brand · shop · company · contact
  * ------------------------------------------------------------------ */
-.ng-shell-newsletter {
-  align-items: center;
-  border: 1px solid
-    color-mix(in srgb, var(--ng-color-luxury-gold) 26%, transparent);
-  border-radius: var(--ng-radius-lg);
+.ng-shell-footer-grid {
   display: grid;
-  gap: var(--ng-space-8);
   grid-template-columns: 1fr;
-  padding: clamp(var(--ng-space-7), 5vw, var(--ng-space-10));
-}
-
-@media (min-width: 52em) {
-  .ng-shell-newsletter {
-    grid-template-columns: 1.2fr 1fr;
-    gap: var(--ng-space-10);
-  }
-}
-
-.ng-shell-newsletter-copy {
-  display: grid;
-  gap: var(--ng-space-3);
-}
-
-.ng-shell-newsletter-eyebrow {
-  color: var(--ng-color-luxury-gold);
-  font-family: var(--ng-font-body);
-  font-size: var(--ng-font-size-label);
-  font-weight: 700;
-  letter-spacing: var(--ng-letter-label);
-  text-transform: uppercase;
-}
-
-.ng-shell-newsletter-heading {
-  color: var(--ng-text-inverse);
-  margin: 0;
-}
-
-.ng-shell-newsletter-text {
-  color: var(--ng-text-inverse);
-  margin: 0;
-  max-inline-size: 42ch;
-  opacity: var(--ng-opacity-muted);
-}
-
-.ng-shell-newsletter-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ng-space-3);
-}
-
-.ng-shell-newsletter-field {
-  flex: 1 1 16rem;
-  min-inline-size: 0;
-}
-
-/* Re-tone the composed input for the dark surface. */
-.ng-shell-newsletter-form .ng-input {
-  background: color-mix(in srgb, var(--ng-color-warm-white) 6%, transparent);
-  border-color: color-mix(
-    in srgb,
-    var(--ng-color-luxury-gold) 40%,
-    transparent
-  );
-  color: var(--ng-text-inverse);
-}
-
-.ng-shell-newsletter-form .ng-input::placeholder {
-  color: var(--ng-text-inverse);
-  opacity: var(--ng-opacity-overlay);
-}
-
-.ng-shell-newsletter-form .ng-input:focus-visible {
-  border-color: var(--ng-color-luxury-gold);
-}
-
-.ng-shell-newsletter-form .ng-button-secondary {
-  flex: 0 0 auto;
-}
-
-/* ------------------------------------------------------------------ *
- * b. Contact strip
- * ------------------------------------------------------------------ */
-.ng-shell-contact {
-  border-block: 1px solid
-    color-mix(in srgb, var(--ng-color-luxury-gold) 18%, transparent);
-  display: grid;
-  gap: var(--ng-space-5);
-  grid-template-columns: 1fr;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  padding-block: var(--ng-space-7);
+  gap: clamp(1.5rem, 3vw, 2rem) var(--ng-space-8);
 }
 
 @media (min-width: 40em) {
-  .ng-shell-contact {
+  .ng-shell-footer-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 64em) {
-  .ng-shell-contact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--ng-space-6);
+  .ng-shell-footer-grid {
+    /* Brand and contact a touch wider than the two link columns. */
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: var(--ng-space-8);
   }
 }
 
-.ng-shell-contact-item {
-  align-items: center;
-  color: var(--ng-text-inverse);
-  display: flex;
-  gap: var(--ng-space-3);
+/* Contact column — a compact list in the same register as the link columns. */
+.ng-shell-footer-contactlist {
+  display: grid;
+  gap: var(--ng-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-
-.ng-shell-contact-item .ng-trust-icon {
-  color: var(--ng-color-luxury-gold);
-}
-
-.ng-shell-contact-item .ng-trust-label {
+.ng-shell-footer-contactitem {
+  color: color-mix(in srgb, var(--ng-text-inverse) 82%, transparent);
   font-size: var(--ng-font-size-small);
-  letter-spacing: 0.01em;
+  line-height: 1.45;
 }
-
-.ng-shell-contact-phones {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
-}
-
-.ng-shell-contact-link {
+.ng-shell-footer-contact a.ng-shell-footer-link {
   color: inherit;
+  margin-inline-end: var(--ng-space-3);
   text-decoration: none;
   transition: var(--ng-transition-color);
 }
-
-.ng-shell-contact-link:hover,
-.ng-shell-contact-link:focus-visible {
-  color: var(--ng-color-luxury-gold);
+.ng-shell-footer-contact a.ng-shell-footer-link:hover,
+.ng-shell-footer-contact a.ng-shell-footer-link:focus-visible {
+  color: var(--ng-gold-pale);
 }
-
-.ng-shell-contact-link:focus-visible {
+.ng-shell-footer-contact a.ng-shell-footer-link:focus-visible {
   border-radius: var(--ng-radius-xs);
-  outline: 2px solid var(--ng-focus-ring);
+  outline: 2px solid var(--ng-color-luxury-gold);
   outline-offset: 3px;
-}
-
-/* ------------------------------------------------------------------ *
- * c. Editorial columns
- * ------------------------------------------------------------------ */
-.ng-shell-footer-columns {
-  gap: var(--ng-space-9) var(--ng-space-8);
 }
 
 /* Brand column */
 .ng-shell-footer-brand {
   display: grid;
-  gap: var(--ng-space-4);
+  gap: var(--ng-space-3);
+  align-content: start;
 }
 
 .ng-shell-footer-wordmark {
   color: var(--ng-text-inverse);
   font-family: var(--ng-font-heading);
-  font-size: var(--ng-font-size-h3);
-  line-height: var(--ng-line-heading);
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  letter-spacing: 0.01em;
+  line-height: 1.05;
   margin: 0;
 }
 
@@ -206,73 +119,72 @@
   display: flex;
   gap: var(--ng-space-3);
   list-style: none;
-  margin: 0;
+  margin: var(--ng-space-1) 0 0;
   padding: 0;
 }
 
 .ng-shell-footer-social-link {
   align-items: center;
-  border: 1px solid
-    color-mix(in srgb, var(--ng-color-luxury-gold) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ng-text-inverse) 24%, transparent);
   border-radius: var(--ng-radius-pill);
   color: var(--ng-text-inverse);
   display: inline-flex;
-  block-size: var(--ng-space-9);
-  inline-size: var(--ng-space-9);
+  block-size: 2.25rem;
+  inline-size: 2.25rem;
   justify-content: center;
   transition: var(--ng-transition-color), var(--ng-transition-transform);
 }
 
 .ng-shell-footer-social-link:hover {
-  background: var(--ng-color-luxury-gold);
-  border-color: var(--ng-color-luxury-gold);
-  color: var(--ng-color-background);
+  background: color-mix(in srgb, var(--ng-text-inverse) 10%, transparent);
+  border-color: var(--ng-gold-pale);
+  color: var(--ng-gold-pale);
   transform: translateY(-1px);
 }
 
 .ng-shell-footer-social-link:focus-visible {
-  outline: 2px solid var(--ng-focus-ring);
+  outline: 2px solid var(--ng-color-luxury-gold);
   outline-offset: 3px;
 }
 
-/* Link columns */
+/* Link columns — headings in the plate-label register, not gold. */
 .ng-shell-footer-col {
   display: grid;
-  gap: var(--ng-space-4);
+  gap: var(--ng-space-3);
   align-content: start;
 }
 
 .ng-shell-footer-col-title {
-  color: var(--ng-color-luxury-gold);
+  color: color-mix(in srgb, var(--ng-text-inverse) 62%, transparent);
   font-family: var(--ng-font-body);
   font-size: var(--ng-font-size-label);
-  font-weight: 700;
-  letter-spacing: var(--ng-letter-label);
-  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  margin: 0 0 var(--ng-space-1);
   text-transform: uppercase;
 }
 
 .ng-shell-footer-nav-list {
   display: grid;
-  gap: var(--ng-space-3);
+  gap: var(--ng-space-2);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/* Re-tone the composed NavLinkStyled for the dark surface. */
 .ng-shell-footer-link.ng-navlink {
   color: var(--ng-text-inverse);
   font-size: var(--ng-font-size-small);
   font-weight: 500;
   letter-spacing: 0.01em;
   text-transform: none;
+  transition: var(--ng-transition-color);
 }
 
 .ng-shell-footer-link.ng-navlink:hover,
 .ng-shell-footer-link.ng-navlink:focus-visible,
 .ng-shell-footer-link.ng-navlink.is-active {
-  color: var(--ng-color-luxury-gold);
+  color: var(--ng-gold-pale);
 }
 
 /* ------------------------------------------------------------------ *
@@ -281,12 +193,12 @@
 .ng-shell-footer-bottom {
   align-items: center;
   border-block-start: 1px solid
-    color-mix(in srgb, var(--ng-color-luxury-gold) 18%, transparent);
+    color-mix(in srgb, var(--ng-text-inverse) 14%, transparent);
   column-gap: var(--ng-space-6);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-block-start: var(--ng-space-6);
+  padding-block-start: var(--ng-space-4);
   row-gap: var(--ng-space-3);
 }
 
@@ -318,12 +230,12 @@
 .ng-shell-footer-legal a:hover,
 .ng-shell-footer-legal a:focus-visible,
 .ng-shell-footer-legal a.is-active {
-  color: var(--ng-color-luxury-gold);
+  color: var(--ng-gold-pale);
   opacity: 1;
 }
 
 .ng-shell-footer-legal a:focus-visible {
   border-radius: var(--ng-radius-xs);
-  outline: 2px solid var(--ng-focus-ring);
+  outline: 2px solid var(--ng-color-luxury-gold);
   outline-offset: 3px;
 }

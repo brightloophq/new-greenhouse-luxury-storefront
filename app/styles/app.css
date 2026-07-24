@@ -1,8 +1,5 @@
 :root {
   color-scheme: light;
-  --aside-width: 420px;
-  --cart-aside-summary-height-with-discount: 330px;
-  --cart-aside-summary-height: 280px;
   --grid-item-width: 236px;
   --announcement-height: 28px;
   --header-height: 58px;
@@ -30,8 +27,10 @@
   --color-surface: #fffdf8;
   --color-dark: var(--color-black);
   --color-light: var(--color-ivory);
-  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  /* Brand typefaces (mockup UI migration): Montserrat primary, Raleway
+     secondary. Names kept for compatibility; neither is a serif now. */
+  --font-serif: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Raleway, ui-sans-serif, system-ui, sans-serif;
   --radius-control: 4px;
   --radius-card: 6px;
   --shadow-soft: 0 18px 50px rgb(21 21 17 / 8%);
@@ -40,10 +39,10 @@
   --transition-standard: 180ms ease;
 }
 
-img {
-  border-radius: var(--radius-card);
-  display: block;
-}
+/* Global image normalization (max-width, height:auto, display:block) lives in
+   the base layer, reset.css — not here. The scaffold's decorative
+   `img { border-radius }` was dead (overridden to 0px across the cascade) and
+   was removed; components round their own media containers. */
 
 /*
 * --------------------------------------------------
@@ -112,82 +111,17 @@ img {
 
 /*
 * --------------------------------------------------
-* components/Aside
+* components/Aside (cart / search / mobile drawer)
 * --------------------------------------------------
+* The drawer is a <div class="ng-drawer">, styled entirely by `.ng-drawer*` in
+* shell.css, with `.ng-scroll-locked` (shell.css) as its body-scroll lock. The
+* Hydrogen scaffold's original rules here targeted the BARE `aside` element and
+* the `.overlay` class — neither of which the current drawer uses — so they only
+* leaked cart-drawer positioning (position:fixed, 100vh, --aside-width, drawer
+* shadow) onto every semantic <aside> on the site: the catalogue filter rail,
+* the delivery band, and the product-detail sidebar. Removed at the source; the
+* real drawer is unaffected. See `.ng-drawer*` and `.ng-scroll-locked`.
 */
-@media (max-width: 45em) {
-  html:has(.overlay.expanded) {
-    overflow: hidden;
-  }
-}
-
-aside {
-  background: var(--color-ivory);
-  box-shadow: -24px 0 70px rgb(6 6 5 / 18%);
-  height: 100vh;
-  width: min(var(--aside-width), 100vw);
-  position: fixed;
-  right: calc(-1 * var(--aside-width));
-  top: 0;
-  transition: transform 260ms ease;
-}
-
-aside header {
-  align-items: center;
-  border-bottom: 1px solid var(--color-line);
-  display: flex;
-  height: var(--header-height);
-  justify-content: space-between;
-  padding: 0 clamp(1rem, 4vw, 1.5rem);
-}
-
-aside header h3 {
-  color: var(--color-botanical);
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-aside header .close {
-  background: transparent;
-  border: 0;
-  color: var(--color-ink);
-  font-weight: 400;
-  min-height: 2rem;
-  opacity: 0.8;
-  padding: 0;
-  text-decoration: none;
-  transition: all 200ms;
-  width: 20px;
-}
-
-aside header .close:hover {
-  opacity: 1;
-}
-
-aside header h2 {
-  margin-bottom: 0.6rem;
-  margin-top: 0;
-}
-
-aside main {
-  margin: clamp(1rem, 4vw, 1.5rem);
-}
-
-aside p {
-  margin: 0 0 0.25rem;
-}
-
-aside p:last-child {
-  margin: 0;
-}
-
-aside li {
-  margin-bottom: 0.125rem;
-}
 
 .sr-only {
   position: absolute;
@@ -201,52 +135,9 @@ aside li {
   border-width: 0;
 }
 
-.overlay {
-  background: rgb(6 6 5 / 36%);
-  bottom: 0;
-  left: 0;
-  opacity: 0;
-  pointer-events: none;
-  position: fixed;
-  right: 0;
-  top: 0;
-  backdrop-filter: blur(4px);
-  transition: opacity 320ms ease;
-  visibility: hidden;
-  z-index: 10;
-}
-
-.overlay .close-outside {
-  background: transparent;
-  border: none;
-  color: transparent;
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: calc(100% - var(--aside-width));
-}
-
-.overlay .light {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.overlay .cancel {
-  cursor: default;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
-
-.overlay.expanded {
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-}
-/* reveal aside */
-.overlay.expanded aside {
-  transform: translateX(calc(var(--aside-width) * -1));
-}
+/* NOTE: the legacy `.overlay*` scrim/reveal rules were removed with the bare
+   `aside` block above — the live drawer's scrim is `.ng-drawer-scrim` (shell.css)
+   and nothing in the app renders `class="overlay"`. */
 
 button.reset {
   border: 0;
@@ -506,73 +397,14 @@ button.reset:hover:not(:has(> *)) {
 * --------------------------------------------------
 * components/Cart
 * --------------------------------------------------
+* The cart (CartMain / CartLineItem / CartSummary) is styled entirely by the
+* editorial, class-scoped `app/styles/cart.css` (loaded last). The former rules
+* here were authored for Hydrogen's original fixed 420px `<aside>` — an
+* absolutely-positioned summary and `--aside-width` / `--cart-aside-summary-
+* height` magic numbers — which fought the current flex-column `.ng-drawer`
+* (torn-out, mis-sized summary + nested scrollers). Removed at the source; see
+* the root-cause note at the top of cart.css.
 */
-.cart-main {
-  height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
-  overflow-y: auto;
-  width: auto;
-}
-
-.cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
-}
-
-.cart-line {
-  border-bottom: 1px solid var(--color-line);
-  padding: 1rem 0;
-}
-
-.cart-line-inner {
-  display: flex;
-  gap: 0.9rem;
-}
-
-.cart-line img {
-  height: 100%;
-  display: block;
-  margin-right: 0;
-}
-
-.cart-summary-page {
-  position: relative;
-}
-
-.cart-summary-aside {
-  background: var(--color-ivory);
-  border-top: 1px solid var(--color-line);
-  bottom: 0;
-  padding-top: 1rem;
-  position: absolute;
-  width: calc(var(--aside-width) - 40px);
-}
-
-.cart-line-quantity {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-/* Child line components (warranties, gift wrapping, etc.) */
-.cart-line-children {
-  padding-left: 2rem;
-}
-
-.cart-discount {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.25rem;
-}
-
-.cart-subtotal {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
 /*
 * --------------------------------------------------
 * components/Search

@@ -1,49 +1,28 @@
-import {experienceCookie, type ExperienceMode} from '~/lib/experience';
-
 /**
- * Experience entry-URL policy for `/classic`, `/deluxe` and their deep links.
+ * Legacy entry-URL redirects, resolved in the Oxygen worker (server.ts) BEFORE
+ * React Router runs.
  *
- * Resolved in the Oxygen worker (server.ts) BEFORE React Router runs, for two
- * reasons:
- *   1. `/classic/collections/<h>` and `/classic/pages/<h>` otherwise match the
- *      optional `($locale)` segment (locale = "classic") and 404 in that layout.
- *      Handling them here avoids that collision deterministically.
- *   2. It keeps one entry mechanism instead of a worker intercept AND a set of
- *      redirecting route files fighting flat-route ranking.
- *
- * These entry URLs (a) set the `ng_experience` cookie so the shopper persists in
- * the chosen experience, and (b) 302 to the canonical, unprefixed store path so
- * marketing deep links never create duplicate-content URLs. The cart is never
- * touched; prices are never changed; only same-origin absolute paths are honoured.
- *
- * EXCEPTION — real content pages that live under `/classic/*` and must RENDER
- * (not redirect): `/classic/wholesale` and `/classic/supplies`. For those this
- * returns `null` so React Router serves the landing route, which sets the cookie
- * itself via its loader headers.
+ * The storefront is now ONE green brand — there is no Classic/Deluxe mode and no
+ * theme cookie. These handlers only:
+ *   - keep the real Classic content pages (`/classic/wholesale`, `/classic/
+ *     supplies`) rendering, and map friendly `/classic/*` deep links to their
+ *     live green collections/pages;
+ *   - redirect every obsolete `/deluxe*` link to the premium catalogue that now
+ *     lives inside Arrangements (`/arrangements/premium-deluxe`).
+ * Only same-origin absolute paths are honoured; the cart is never touched.
  */
 
-/**
- * Friendly Classic/Deluxe deep-link slugs → canonical store paths. Keeps
- * marketing URLs (`/classic/greenery`, `/deluxe/gifts`) stable and pointed at
- * live collections.
- */
+/** Friendly Classic deep-link slugs → canonical green store paths. */
 const CLASSIC_SLUGS: Record<string, string> = {
   greenery: '/collections/greenery-and-fillers',
   flowers: '/collections/bulk-flowers',
 };
 
-const DELUXE_SLUGS: Record<string, string> = {
-  signature: '/collections/all-flowers',
-  gifts: '/collections/add-ons',
-  premium: '/collections/roses',
-  occasions: '/collections/birthday',
-};
-
-/**
- * Content routes under `/classic/*` that must render in React Router rather than
- * redirect. They set the experience cookie in their own loaders.
- */
+/** Content routes under `/classic/*` that must render (not redirect). */
 const CLASSIC_LANDING = new Set(['wholesale', 'supplies']);
+
+/** The premium catalogue's canonical home (inside Arrangements). */
+const PREMIUM_CATALOGUE = '/arrangements/premium-deluxe';
 
 /** Sanitize an arbitrary target to a safe, same-origin absolute path. */
 function safePath(candidate: string | null | undefined): string | null {
@@ -52,36 +31,40 @@ function safePath(candidate: string | null | undefined): string | null {
   return candidate;
 }
 
+function redirectTo(location: string): Response {
+  return new Response(null, {status: 302, headers: {Location: location}});
+}
+
 /**
- * If `request` is an experience entry URL, return a 302 response that sets the
- * cookie and points at the canonical store path. Returns `null` when the path is
- * not an entry URL, or is a landing content route that should render instead.
+ * If `request` is a legacy entry URL, return a 302; otherwise `null`.
  */
 export function experienceEntryResponse(request: Request): Response | null {
   const url = new URL(request.url);
+
+  // Single-fetch data requests must never be answered with a bare 302 here.
+  if (url.pathname.endsWith('.data')) return null;
+
   const match = url.pathname.match(/^\/(classic|deluxe)(?:\/(.*))?$/);
   if (!match) return null;
 
-  const mode = match[1] as ExperienceMode;
+  const mode = match[1];
   const rest = (match[2] ?? '').replace(/^\/+|\/+$/g, '');
 
-  // Landing content pages render in React Router (they set the cookie).
-  if (mode === 'classic' && CLASSIC_LANDING.has(rest)) return null;
+  // Deluxe is no longer a storefront mode — it is the premium catalogue inside
+  // Arrangements. Every legacy /deluxe* link redirects there.
+  if (mode === 'deluxe') return redirectTo(PREMIUM_CATALOGUE);
+
+  // Real Classic content pages render (green).
+  if (CLASSIC_LANDING.has(rest)) return null;
 
   const override = safePath(url.searchParams.get('to'));
-  const slugs = mode === 'deluxe' ? DELUXE_SLUGS : CLASSIC_SLUGS;
-
   let to = override ?? '/';
   if (!override && rest) {
-    if (slugs[rest]) {
-      to = slugs[rest];
+    if (CLASSIC_SLUGS[rest]) {
+      to = CLASSIC_SLUGS[rest];
     } else if (rest.startsWith('collections/') || rest.startsWith('pages/')) {
       to = `/${rest}${url.search}`;
     }
   }
-
-  return new Response(null, {
-    status: 302,
-    headers: {Location: to, 'Set-Cookie': experienceCookie(mode)},
-  });
+  return redirectTo(to);
 }

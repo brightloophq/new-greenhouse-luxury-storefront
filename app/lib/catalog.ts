@@ -110,20 +110,67 @@ export const FACETS: FacetDef[] = [
     key: 'occasion',
     label: 'Occasion',
     tagPrefix: 'occasion',
+    // Mirrors the owner-approved occasion list (see OCCASIONS in catalogues.ts).
+    // Weddings and corporate services are not currently offered, so they are
+    // absent here as well as from the Arrangements pathway.
     options: [
       {value: 'birthday', label: 'Birthday'},
-      {value: 'anniversary', label: 'Anniversary'},
       {value: 'romance', label: 'Love & Romance'},
       {value: 'sympathy', label: 'Sympathy'},
-      {value: 'congratulations', label: 'Congratulations'},
-      {value: 'new-baby', label: 'New Baby'},
+      {value: 'thank-you', label: 'Thank You'},
       {value: 'get-well', label: 'Get Well'},
-      {value: 'corporate', label: 'Corporate'},
-      {value: 'wedding', label: 'Wedding'},
-      {value: 'everyday', label: 'Everyday'},
+      {value: 'new-baby', label: 'New Baby'},
     ],
   },
 ];
+
+/**
+ * Per-experience filter configuration (Phase 4/5) — the SINGLE source of truth
+ * for which facets each context exposes. Filters are NEVER derived from shared
+ * component defaults. `channel` ("Buying Option") is internal scoping and is
+ * exposed in NO context.
+ *
+ *   classic-wholesale → Flower Type + Color        (no occasion, no channel)
+ *   classic-supply    → Color only                 (no flower, no occasion)
+ *   deluxe            → Occasion + Color            (no flower-family, no channel)
+ *
+ * (Availability toggle + Price range are always available; they are not facets.)
+ */
+export type FilterContext =
+  | 'classic-wholesale'
+  | 'classic-supply'
+  | 'deluxe'
+  // Approved pathway contexts (four-pathway architecture).
+  | 'wholesale-flowers'
+  | 'wholesale-supplies'
+  | 'retail-flowers'
+  | 'retail-supplies'
+  | 'supplies'
+  | 'arrangements'
+  | 'premium';
+
+export const CONTEXT_FACETS: Record<FilterContext, FacetKey[]> = {
+  'classic-wholesale': ['flower', 'color'],
+  'classic-supply': ['color'],
+  deluxe: ['occasion', 'color'],
+  // Trade buyers shop by stem and colour; occasion is a gifting concept and is
+  // deliberately absent from every wholesale/supply surface.
+  'wholesale-flowers': ['flower', 'color'],
+  'wholesale-supplies': ['color'],
+  // Retail shoppers buy for a reason, so occasion is exposed alongside stem.
+  'retail-flowers': ['flower', 'color', 'occasion'],
+  'retail-supplies': ['color'],
+  supplies: ['color'],
+  // Arrangements and Premium are sold as finished designs — never by stem.
+  arrangements: ['occasion', 'color'],
+  premium: ['occasion', 'color'],
+};
+
+/** Facet defs visible in a given context, in canonical order. */
+export function facetsForContext(context: FilterContext): FacetDef[] {
+  const allowed = new Set<FacetKey>(CONTEXT_FACETS[context]);
+  return FACETS.filter((f) => allowed.has(f.key));
+}
 
 export interface SortOption {
   value: string;
@@ -141,6 +188,8 @@ export const SORT_OPTIONS: SortOption[] = [
 export const DEFAULT_SORT = 'featured';
 
 export interface AppliedFilters {
+  /** Free-text keyword search within the current catalogue. */
+  q?: string;
   flower?: string;
   color?: string;
   occasion?: string;
@@ -150,20 +199,37 @@ export interface AppliedFilters {
   maxPrice?: number;
 }
 
-/** Read applied catalog state from URL search params. */
-export function parseCatalogSearchParams(searchParams: URLSearchParams): {
+/**
+ * Read applied catalog state from URL search params. When `context` is given,
+ * facets NOT allowed in that context are IGNORED (not parsed, not applied) — so
+ * a stale/foreign param such as `occasion=romance` in a Classic URL never leaks
+ * into the query, the chips, or the count (Phase 5: no hidden active filters,
+ * no carrying filters across experiences).
+ */
+export function parseCatalogSearchParams(
+  searchParams: URLSearchParams,
+  context?: FilterContext,
+): {
   filters: AppliedFilters;
   sort: string;
 } {
-  const validFor = (key: FacetKey, v: string | null) =>
-    v && FACETS.find((f) => f.key === key)?.options.some((o) => o.value === v) ? v : undefined;
+  const allowed = context ? new Set<FacetKey>(CONTEXT_FACETS[context]) : null;
+  const validFor = (key: FacetKey, v: string | null) => {
+    if (allowed && !allowed.has(key)) return undefined;
+    return v && FACETS.find((f) => f.key === key)?.options.some((o) => o.value === v)
+      ? v
+      : undefined;
+  };
 
   const minP = Number(searchParams.get('minp'));
   const maxP = Number(searchParams.get('maxp'));
   const sort = searchParams.get('sort') || DEFAULT_SORT;
 
+  const q = (searchParams.get('q') ?? '').trim().slice(0, 80);
+
   return {
     filters: {
+      q: q || undefined,
       flower: validFor('flower', searchParams.get('flower')),
       color: validFor('color', searchParams.get('color')),
       occasion: validFor('occasion', searchParams.get('occasion')),
@@ -174,6 +240,50 @@ export function parseCatalogSearchParams(searchParams: URLSearchParams): {
     },
     sort: SORT_OPTIONS.some((s) => s.value === sort) ? sort : DEFAULT_SORT,
   };
+}
+
+/**
+ * Keyword match for a product inside an ALREADY-LOADED collection page. The
+ * Storefront `collection.products` connection accepts structured `filters` but
+ * no free-text argument, so keyword narrowing is applied to the one collection
+ * the shopper is already looking at. This never fans out across the catalogue.
+ */
+export function matchesQuery(
+  product: {title?: string | null; productType?: string | null; vendor?: string | null},
+  q: string | undefined,
+): boolean {
+  if (!q) return true;
+  const needle = q.toLowerCase();
+  return [product.title, product.productType, product.vendor]
+    .filter(Boolean)
+    .some((field) => field!.toLowerCase().includes(needle));
+}
+
+/**
+ * Does a product carry every tag the shopper selected?
+ *
+ * Shopify only honours a `tag` ProductFilter when that filter has been ENABLED
+ * as a storefront filter in the shop's Search & Discovery settings; otherwise it
+ * silently ignores it and returns the unfiltered collection. We therefore verify
+ * the tags ourselves on the page we already loaded, so the grid always agrees
+ * with the chips the shopper can see. Once the merchant enables the filters,
+ * Shopify narrows first and this simply confirms the result.
+ */
+export function matchesFacetTags(
+  product: {tags?: readonly string[] | null},
+  f: AppliedFilters,
+): boolean {
+  const tags = product.tags;
+  // Products with no tag data cannot be verified — trust the server result.
+  if (!tags?.length) return true;
+  const has = (tag: string) =>
+    tags.some((t) => t.toLowerCase() === tag.toLowerCase());
+
+  if (f.channel && !has(`channel:${f.channel}`)) return false;
+  if (f.flower && !has(`flower:${f.flower}`)) return false;
+  if (f.color && !has(`color:${f.color}`)) return false;
+  if (f.occasion && !has(`occasion:${f.occasion}`)) return false;
+  return true;
 }
 
 /** Build Storefront `ProductFilter[]` from applied filters. */
@@ -240,6 +350,7 @@ export function toCatalogSort(sort: string): {sortKey: string; reverse: boolean}
 
 export function countActiveFilters(f: AppliedFilters): number {
   let n = 0;
+  if (f.q) n++;
   if (f.channel) n++;
   if (f.flower) n++;
   if (f.color) n++;
@@ -259,6 +370,7 @@ export function activeChips(f: AppliedFilters): ActiveChip[] {
   const chips: ActiveChip[] = [];
   const labelFor = (key: FacetKey, v: string) =>
     FACETS.find((fa) => fa.key === key)?.options.find((o) => o.value === v)?.label ?? v;
+  if (f.q) chips.push({key: 'q', label: `“${f.q}”`});
   if (f.channel) chips.push({key: 'channel', label: labelFor('channel', f.channel)});
   if (f.flower) chips.push({key: 'flower', label: labelFor('flower', f.flower)});
   if (f.color) chips.push({key: 'color', label: labelFor('color', f.color)});

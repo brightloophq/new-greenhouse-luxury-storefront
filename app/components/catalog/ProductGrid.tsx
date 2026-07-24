@@ -1,6 +1,8 @@
 import {ButtonLink, Button, Heading, Icon, Skeleton, Text} from '~/components/ui';
 import type {CatalogProduct} from '~/components/catalog/types';
 import {CatalogProductCard} from './CatalogProductCard';
+import {useExperience} from '~/components/ExperienceProvider';
+import {primaryShopPath} from '~/lib/navigation';
 
 /** Number of leading cards whose images load eagerly (above the fold). */
 const EAGER_COUNT = 8;
@@ -65,6 +67,7 @@ export function CatalogEmptyState({
   hasFilters,
   onClearFilters,
 }: CatalogEmptyStateProps) {
+  const {experience} = useExperience();
   return (
     <div className="ng-catalog-empty" role="status">
       <span className="ng-catalog-empty-icon" aria-hidden="true">
@@ -98,11 +101,11 @@ export function CatalogEmptyState({
             explore the rest of our collections.
           </Text>
           <ButtonLink
-            to="/collections"
+            to={primaryShopPath(experience)}
             variant="primary"
             className="ng-catalog-empty-action"
           >
-            Browse collections
+            {experience === 'deluxe' ? 'Browse collections' : 'Browse the shop'}
           </ButtonLink>
         </>
       )}

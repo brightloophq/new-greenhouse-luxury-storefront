@@ -96,6 +96,49 @@
   display: block;
 }
 
+/* Botanical focal default: flower shots sit blooms-above-stems, so a covering
+   crop should favour the upper frame rather than the geometric centre. Matches
+   the focal-point system's default; product images have no per-image entry. */
+.ng-catalog-card-img {
+  object-position: 50% 40%;
+}
+
+/* --------------------------------------------------------------------------
+   The Glasshouse catalogue plate (classic register only — the deluxe/premium
+   card treatment is approved and left untouched via the html scope).
+
+   The product card stops being a bordered, shadow-lifting tile and becomes an
+   editorial plate: image framed in mullion corner joints (from the shared
+   primitive), the label on the cream ground beneath a hairline. Same idiom as
+   the homepage variety gallery, so a collection page reads as another room.
+   -------------------------------------------------------------------------- */
+html:not([data-experience='deluxe']) .ng-catalog-card.ng-product-card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+html:not([data-experience='deluxe']) .ng-catalog-card.ng-product-card:hover,
+html:not([data-experience='deluxe']) .ng-catalog-card.ng-product-card:focus-within {
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+/* The image keeps a couture-tight frame; the joints ride its ::after. */
+html:not([data-experience='deluxe']) .ng-catalog-card .ng-product-card-media {
+  border-radius: 3px;
+}
+/* Label on the ground, under a plate-caption hairline. */
+html:not([data-experience='deluxe']) .ng-catalog-card .ng-product-card-body {
+  border-top: 1px solid var(--ng-green-line);
+  margin-block-start: var(--ng-space-3);
+  padding: var(--ng-space-3) 0.1rem 0;
+}
+html:not([data-experience='deluxe']) .ng-catalog-card .ng-product-card-title {
+  color: var(--ng-green-deep);
+}
+
 .ng-catalog-price-from {
   color: var(--ng-text-muted);
   font-family: var(--ng-font-body);

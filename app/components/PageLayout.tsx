@@ -17,7 +17,7 @@ import {
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 import {Accordion, AccordionItem, Icon} from '~/components/ui';
-import {ExperienceToggle} from '~/components/ExperienceToggle';
+import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {CONTACT, DELIVERY_CUTOFF_SHORT} from '~/lib/companyContent';
 
 interface PageLayoutProps {
@@ -63,7 +63,14 @@ export function PageLayout({
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
     <Aside type="cart" heading="Your cart" position="right">
-      <Suspense fallback={<p className="ng-drawer-loading">Loading cart …</p>}>
+      <Suspense
+        fallback={
+          <div className="ng-drawer-loading" role="status">
+            <span className="ng-loading-glaze" aria-hidden="true" />
+            <p className="ng-loading-note">Gathering your selections…</p>
+          </div>
+        }
+      >
         <Await resolve={cart}>
           {(resolved) => <CartMain cart={resolved} layout="aside" />}
         </Await>
@@ -99,12 +106,22 @@ function SearchAside() {
           )}
         </SearchFormPredictive>
 
+        {/* The glazing seam that frames the search field — the same structural
+            join used between sections everywhere else, so the overlay reads as
+            another pane of the greenhouse rather than a search box. */}
+        <GlasshouseDivider className="ng-search-seam" />
+
         <SearchResultsPredictive>
           {({items, total, term, state, closeSearch}) => {
             const {articles, collections, pages, products, queries} = items;
 
             if (state === 'loading' && term.current) {
-              return <div className="ng-search-status">Searching…</div>;
+              return (
+                <div className="ng-search-status" role="status">
+                  <span className="ng-loading-glaze" aria-hidden="true" />
+                  <p className="ng-loading-note">Searching…</p>
+                </div>
+              );
             }
             if (!total) {
               return (
@@ -164,7 +181,6 @@ function MobileNavAside({isLoggedIn}: {isLoggedIn: PageLayoutProps['isLoggedIn']
   return (
     <Aside type="mobile" heading="Menu" position="left">
       <nav className="ng-mobilenav" aria-label="Mobile">
-        <ExperienceToggle className="ng-exp-toggle--drawer" />
         <ul className="ng-mobilenav-primary">
           <li>
             <Link to="/" prefetch="intent" onClick={close} className="ng-mobilenav-link">

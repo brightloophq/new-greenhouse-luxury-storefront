@@ -11,6 +11,9 @@ export interface CatalogToolbarProps {
   onOpenFilters: () => void;
   /** Number of active filters — drives the mobile "Filters" badge. */
   activeCount: number;
+  /** Singular result noun (plural adds "s"). Supplies use "item", not
+   *  "arrangement" — supply grids must not inherit flower/gift wording. */
+  noun?: string;
 }
 
 /**
@@ -23,6 +26,7 @@ export function CatalogToolbar({
   sort,
   onOpenFilters,
   activeCount,
+  noun: nounSingular = 'product',
 }: CatalogToolbarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -35,7 +39,7 @@ export function CatalogToolbar({
     setSearchParams(next, {preventScrollReset: true});
   }
 
-  const noun = count === 1 ? 'arrangement' : 'arrangements';
+  const noun = count === 1 ? nounSingular : `${nounSingular}s`;
 
   return (
     <div className="ng-catalog-toolbar">

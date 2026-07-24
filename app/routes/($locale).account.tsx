@@ -71,12 +71,20 @@ function AccountMenu() {
 
   return (
     <nav role="navigation">
+      <NavLink to="/classic/wholesale" style={isActiveStyle}>
+        Wholesale dashboard &nbsp;
+      </NavLink>
+      &nbsp;|&nbsp;
       <NavLink to="/account/orders" style={isActiveStyle}>
-        Orders &nbsp;
+        &nbsp; Orders &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
       <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Profile &nbsp;
+        &nbsp; Account details &nbsp;
+      </NavLink>
+      &nbsp;|&nbsp;
+      <NavLink to="/account/wholesale-profile" style={isActiveStyle}>
+        &nbsp; Business profile &nbsp;
       </NavLink>
       &nbsp;|&nbsp;
       <NavLink to="/account/addresses" style={isActiveStyle}>

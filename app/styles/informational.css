@@ -1,0 +1,367 @@
+/* ============================================================================
+   Informational rooms — About · Contact · Reviews (Step 7).
+
+   Three quieter rooms of the same greenhouse. They SHARE a page language
+   (`.ng-info*`: warm cream ground, editorial header, glazing seam, content
+   width, Montserrat/Raleway hierarchy) and each has its own body:
+     .ng-about*   — the brand story
+     .ng-contact* — the contact essentials
+     .ng-reviews* — the trust archive
+   Self-contained and scoped; loaded after arrangements.css. No broad selectors,
+   no premium tokens (these routes are never deluxe).
+   ========================================================================== */
+
+/* ---- Shared page language ----------------------------------------------- */
+.ng-info {
+  position: relative;
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  background:
+    radial-gradient(115% 70% at 50% -8%, rgb(200 169 106 / 0.05), transparent 60%),
+    var(--ng-ground-warm);
+}
+.ng-info-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.ng-info-head {
+  max-width: 60rem;
+}
+.ng-info-eyebrow {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.85rem;
+  margin: 0 0 0.9rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-info-eyebrow::before {
+  content: "";
+  background: var(--ng-glass-line-strong);
+  block-size: 1px;
+  inline-size: 2.25rem;
+}
+.ng-info-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 1.7rem + 2.4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--ng-green-deep);
+}
+.ng-info-lede {
+  max-width: 44rem;
+  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  color: var(--ng-green-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+/* The glazing seam that opens the body of each room. */
+.ng-info-seam {
+  margin: clamp(1.75rem, 3.5vw, 2.75rem) 0 clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+/* Shared CTA rail (an EditorialCrossSell keyed to `.ng-info-cta`). */
+.ng-info-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.35rem, 3vw, 2rem);
+  border: 1px solid var(--ng-green-line);
+  border-radius: 4px;
+  background: var(--ng-ground-panel);
+}
+.ng-info-cta-text {
+  margin: 0;
+  color: var(--ng-green-muted);
+  font-size: 0.98rem;
+}
+.ng-info-cta-text b {
+  color: var(--ng-green-deep);
+  font-weight: 600;
+}
+.ng-info-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-info-cta-link:hover {
+  color: var(--ng-green-deep);
+}
+
+/* ---- About — the brand story -------------------------------------------- */
+/* Magazine two-up: the story reads in a comfortable measure beside a single
+   asymmetric photograph. */
+.ng-about-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.ng-about-story {
+  max-width: 40rem; /* ≈ 62–68 characters per line in Raleway */
+}
+.ng-about-story p {
+  margin: 0 0 1.1rem;
+  color: var(--ng-green-deep);
+  font-size: 1.12rem;
+  line-height: 1.8;
+}
+.ng-about-story p:last-child {
+  margin-bottom: 0;
+}
+/* The approved experience line, set as a quiet lead-in above the story. */
+.ng-about-experience {
+  margin: 0 0 1.4rem;
+  font-family: var(--ng-font-heading);
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ng-green);
+}
+.ng-about-media {
+  margin: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  box-shadow: inset 0 0 0 1px var(--ng-glass-line);
+}
+.ng-about-media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+/* Selected business facts — an editorial index, not stat tiles. */
+.ng-about-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  padding: clamp(1.5rem, 3vw, 2rem) 0 0;
+  border-top: 1px solid var(--ng-green-line);
+}
+.ng-about-facts > div {
+  min-width: 0;
+}
+.ng-about-facts dt {
+  margin: 0 0 0.4rem;
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-about-facts dd {
+  margin: 0;
+  color: var(--ng-green-deep);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ---- Contact — action & accessibility ----------------------------------- */
+/* Essentials lead (and come first in the source, so they reach the fold and the
+   screen reader before the supporting image). */
+.ng-contact-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+}
+.ng-contact-list {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 1.9rem);
+  margin: 0;
+}
+.ng-contact-list > div {
+  display: grid;
+  gap: 0.35rem;
+}
+.ng-contact-list dt {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+}
+.ng-contact-list dd {
+  margin: 0;
+  color: var(--ng-green-deep);
+  font-size: 1.08rem;
+  line-height: 1.55;
+}
+.ng-contact-list a {
+  color: var(--ng-green-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ng-green-line);
+  transition: border-color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-contact-list a:hover {
+  border-bottom-color: var(--ng-green);
+}
+.ng-contact-phones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+}
+.ng-contact-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.ng-contact-media {
+  margin: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  box-shadow: inset 0 0 0 1px var(--ng-glass-line);
+}
+.ng-contact-media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* ---- Reviews — the trust archive ---------------------------------------- */
+.ng-reviews-rating {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: clamp(1.1rem, 2vw, 1.6rem);
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: 999px;
+  color: var(--ng-green-deep);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: border-color var(--ng-motion-hover) var(--ng-motion-ease);
+}
+.ng-reviews-rating:hover {
+  border-color: var(--ng-green);
+}
+.ng-reviews-rating-star {
+  color: var(--ng-gold);
+}
+.ng-reviews-rating strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.ng-reviews-rating span {
+  color: var(--ng-green-muted);
+}
+/* A quote wall: one feature quote at scale, the rest as a supporting column. */
+.ng-reviews-wall {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3rem);
+}
+.ng-reviews-feature {
+  margin: 0;
+  max-width: 46rem;
+}
+.ng-reviews-feature blockquote {
+  margin: 0 0 1rem;
+  font-family: var(--ng-font-heading);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.5rem);
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--ng-green-deep);
+  text-wrap: balance;
+}
+.ng-reviews-support {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.ng-reviews-support figure {
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ng-green-line);
+}
+.ng-reviews-support blockquote {
+  margin: 0 0 0.9rem;
+  color: var(--ng-green-deep);
+  font-size: 1.12rem;
+  line-height: 1.65;
+}
+.ng-reviews-cite {
+  display: block;
+  font-style: normal;
+}
+.ng-reviews-cite strong {
+  display: block;
+  font-family: var(--ng-font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ng-green-deep);
+}
+.ng-reviews-cite span {
+  font-size: var(--ng-font-size-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ng-green-soft);
+}
+.ng-reviews-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ng-green);
+  text-decoration: none;
+}
+.ng-reviews-more:hover {
+  color: var(--ng-green-deep);
+}
+
+/* ---- Responsive --------------------------------------------------------- */
+@media (max-width: 60em) {
+  .ng-about-body,
+  .ng-contact-body {
+    grid-template-columns: 1fr;
+  }
+  /* The photograph follows the words on narrow screens. */
+  .ng-about-media,
+  .ng-contact-media {
+    aspect-ratio: 3 / 2;
+    max-width: 34rem;
+  }
+  .ng-about-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 40em) {
+  .ng-about-facts {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .ng-reviews-support {
+    grid-template-columns: 1fr;
+  }
+  .ng-about-media,
+  .ng-contact-media {
+    aspect-ratio: 4 / 3;
+    max-width: none;
+  }
+  /* Comfortable tap targets for the contact channels on touch devices. */
+  .ng-contact-list a {
+    display: inline-block;
+    padding-block: 0.5rem;
+  }
+  .ng-contact-phones,
+  .ng-contact-socials {
+    gap: 0.25rem 1.5rem;
+  }
+}
