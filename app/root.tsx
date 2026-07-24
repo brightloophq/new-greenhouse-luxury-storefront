@@ -8,7 +8,6 @@ import {
   Meta,
   Scripts,
   ScrollRestoration,
-  useLocation,
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
@@ -273,16 +272,8 @@ export function Layout({children}: {children?: React.ReactNode}) {
 
 export default function App() {
   const data = useRouteLoaderData<RootLoader>('root');
-  const location = useLocation();
 
   if (!data) {
-    return <Outlet />;
-  }
-
-  // The private-preview launch page is a standalone full-screen gate — it must
-  // NOT render the storefront chrome (nav, cart, search, footer). It provides
-  // its own complete markup.
-  if (location.pathname === '/preview') {
     return <Outlet />;
   }
 
