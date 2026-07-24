@@ -95,6 +95,11 @@
 .ng-masthead-wordmark:hover {
   color: var(--ng-green-pressed);
 }
+/* The compact leaf mark is hidden from tablet up — the wordmark is the brand
+   here. On mobile (<768px) the swap is reversed in the responsive block. */
+.ng-masthead-mark {
+  display: none;
+}
 
 .ng-masthead-actions {
   display: flex;
@@ -184,17 +189,13 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     padding: var(--ng-space-3) var(--ng-space-4);
   }
-  /* Let the wordmark shrink to its column and wrap rather than overflow. The
-     full brand name is preserved (it wraps to two lines on narrow phones — no
-     cropping); reduced size + tracking keep it composed on one line where it
-     fits (≈430px+). */
+  /* Tablet (768–1100px) keeps the wordmark; cap it to its column and allow a
+     wrap as a safety — it fits on one line at these widths. Below 768px the
+     wordmark is swapped for the compact leaf mark (see the mobile block), so it
+     can never pressure the icon group on a phone. */
   .ng-masthead-wordmark {
     max-width: 100%;
     white-space: normal;
-    text-align: center;
-    font-size: clamp(0.9rem, 3vw, 1.3rem);
-    letter-spacing: 0.06em;
-    line-height: 1.1;
   }
   .ng-masthead-social {
     display: none;
@@ -207,6 +208,20 @@
   }
   .ng-masthead-account-label {
     display: none;
+  }
+}
+
+/* Mobile (<768px): the compact leaf mark replaces the wordmark. The full name
+   cannot fit one line beside the burger + three icons at phone widths, so the
+   text is hidden (display:none, no reserved space) and the ~44×40 leaf shows. */
+@media (max-width: 47.9375em) {
+  .ng-masthead-word {
+    display: none;
+  }
+  .ng-masthead-mark {
+    display: block;
+    block-size: 40px;
+    inline-size: auto;
   }
 }
 

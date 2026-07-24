@@ -78,8 +78,29 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
           <Icon name="menu" />
         </IconButton>
 
-        <NavLink className="ng-masthead-wordmark" prefetch="intent" to="/" end>
-          {shop.name || 'The New Greenhouse'}
+        <NavLink
+          className="ng-masthead-wordmark"
+          aria-label="The New Greenhouse home"
+          prefetch="intent"
+          to="/"
+          end
+        >
+          {/* Responsive brand: the full wordmark from tablet up, the compact
+              leaf mark on mobile (swapped in CSS at <768px). Both are decorative
+              — the link's aria-label carries the single accessible name. */}
+          <img
+            className="ng-masthead-mark"
+            src="/images/brand/new-greenhouse-leaf.png"
+            alt=""
+            aria-hidden="true"
+            width="194"
+            height="176"
+            loading="eager"
+            decoding="async"
+          />
+          <span className="ng-masthead-word" aria-hidden="true">
+            {shop.name || 'The New Greenhouse'}
+          </span>
         </NavLink>
 
         <div className="ng-masthead-actions">
