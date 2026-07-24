@@ -159,7 +159,12 @@ pre {
 body {
   display: flex;
   flex-direction: column;
+  /* `dvh` tracks the current mobile viewport so the page is never taller than
+     what's visible — plain `100vh` uses the largest (address-bar-hidden)
+     viewport on iOS Safari, adding a strip of blank scroll at the bottom. `vh`
+     kept as the fallback; desktop is unaffected (dvh == vh there). */
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 main {

@@ -21,7 +21,13 @@
      than beside it. */
   grid-template-areas: 'stage';
   align-items: end;
+  /* `svh` (small viewport height) so the hero fits the visible area even while
+     the mobile browser's address bar is shown. Plain `vh` resolves against the
+     LARGEST viewport on iOS Safari, which made the hero taller than the screen
+     and left a strip of phantom scroll below it. `vh` is kept as the fallback
+     for engines without `svh`. Desktop is unaffected (svh == vh there). */
   min-height: clamp(30rem, 82vh, 46rem);
+  min-height: clamp(30rem, 82svh, 46rem);
   overflow: hidden;
   background: var(--ng-ground-sage);
 }
