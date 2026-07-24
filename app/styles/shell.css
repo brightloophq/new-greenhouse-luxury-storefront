@@ -177,8 +177,24 @@
   /* Below the desktop nav breakpoint the second row has nothing to show, so
      the masthead becomes a single compact row with a burger. */
   .ng-masthead-top {
-    grid-template-columns: auto 1fr auto;
+    /* minmax(0, 1fr), not 1fr: a plain 1fr track keeps its implicit
+       min-width:auto (= the wordmark's min-content), so the nowrap wordmark
+       (~351px) could not shrink and forced the header — and the whole
+       document — wider than a phone, making mobile browsers zoom out. */
+    grid-template-columns: auto minmax(0, 1fr) auto;
     padding: var(--ng-space-3) var(--ng-space-4);
+  }
+  /* Let the wordmark shrink to its column and wrap rather than overflow. The
+     full brand name is preserved (it wraps to two lines on narrow phones — no
+     cropping); reduced size + tracking keep it composed on one line where it
+     fits (≈430px+). */
+  .ng-masthead-wordmark {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(0.9rem, 3vw, 1.3rem);
+    letter-spacing: 0.06em;
+    line-height: 1.1;
   }
   .ng-masthead-social {
     display: none;
