@@ -472,7 +472,16 @@ button.reset:hover:not(:has(> *)) {
 .home {
   background: var(--ng-color-background);
   color: var(--ng-color-warm-white);
+  /* Full-bleed: pull out by one gutter so the homepage spans edge-to-edge, then
+     `.home > *` re-adds the gutter to inset content. `overflow-x: clip` contains
+     the outward pull so the wrapper's box can never extend the document past the
+     viewport — without it, any width where main's inline padding differs from
+     the gutter leaves the box a gutter too wide, and that horizontal overflow
+     makes mobile browsers zoom OUT to fit, collapsing the whole page into the
+     "desktop layout at half width" state. `clip` (not `hidden`) keeps sticky
+     children working and never creates a scroll container. */
   margin: 0 calc(var(--page-gutter) * -1);
+  overflow-x: clip;
 }
 
 .home > * {
