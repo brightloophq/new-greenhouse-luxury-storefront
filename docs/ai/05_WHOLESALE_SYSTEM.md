@@ -1,5 +1,10 @@
 # 05 — Wholesale System
 
+> **This document describes the CURRENT production implementation only.**
+> The proposed replacement architecture is documented in
+> [`docs/ai/13_WHOLESALE_VERIFICATION_ARCHITECTURE.md`](./13_WHOLESALE_VERIFICATION_ARCHITECTURE.md).
+> Production behaviour below stays in effect until that architecture is researched, validated, implemented, tested and approved. Do not merge future behaviour into this file.
+
 ## Positioning
 
 The "private trade conservatory" — wholesale for florists, designers, event professionals, hotels and trade partners. Distinct trade voice; do not leak consumer-only messaging into wholesale, and do not leak wholesale pricing/messaging into retail.

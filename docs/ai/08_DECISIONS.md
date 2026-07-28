@@ -2,6 +2,9 @@
 
 Chronological record of notable decisions + rationale. Newest at top.
 
+## Wholesale verification — current model stays in production until replaced **[Planned]**
+The current wholesale implementation (immediate access on auth, no approval — see `05`) **remains unchanged in production** until a new verification architecture has been **researched → validated → implemented → tested → approved**. No behavioural change occurs before that point. The proposed replacement is `13_WHOLESALE_VERIFICATION_ARCHITECTURE.md`. Evidence from the validation phase (2026-07): B2B *is* available on Shopify **Basic** (≤3 active catalogs) but **direct per-company catalog assignment is Plus-only**, and headless (Hydrogen) B2B pricing on Basic is **unverified** — both are gating risks captured in `13`.
+
 ## Soft corners are the identity
 The classic experience previously **zeroed** the radius tokens; the flagship editorial rooms all hard-coded `3–4px`. Resolved in favour of **soft** (removed the zero override) so all token-driven corners match. Reversible in a few lines if the owner ever wants the sharp main-site look back.
 

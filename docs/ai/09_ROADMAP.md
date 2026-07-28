@@ -12,6 +12,8 @@ Priority order is a suggestion; the owner sets direction.
 - [ ] Responsive QA sweep of the locked homepage fixes at 1920/1200/768/390 (1440 already verified).
 
 ## P2 — approved-but-unbuilt
+- [ ] **[Planned] Wholesale Verification Automation** — replace immediate wholesale access with an application → verification → approval → B2B pricing flow (Hydrogen + backend/DB system-of-record + n8n orchestration + Shopify **Basic** B2B via Markets catalogs, ≤3). AI acts as a non-deciding "Wholesale Officer"; a deterministic rules engine makes the call. **Blocked on a mandatory capability-validation phase** (headless B2B pricing on Basic is unverified) + owner decisions. Full spec + evidence: [`13_WHOLESALE_VERIFICATION_ARCHITECTURE.md`](./13_WHOLESALE_VERIFICATION_ARCHITECTURE.md).
+
 - [ ] **Catalogue editorial pacing (Option B)** — presentation-only pause in `CatalogueView`, CSS row placement, ≥12 products, page-one, grounded/visual-only content, premium + wholesale excluded, supplies never get flower copy. Needs the 22-item test suite + live verification across flower/supplies/arrangements at 5 widths.
 - [ ] **Authentication experience** — branded shared auth modal (contexts: account/wholesale/checkout/protected), account surfaces, session/logout polish. Underlying Shopify OAuth already works; this is presentation + wiring. `/account/login` stays a 302 to Shopify.
 
