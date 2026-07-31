@@ -1,11 +1,12 @@
 /**
  * Wholesale application — internal team notification (manual workflow).
  *
- * Server-side only. After the customer's wholesale profile metafields are saved
- * to Shopify (incl. custom.wholesale_status = "pending"), an internal email is
- * sent via Resend so the team can manually review the CRA/TRN and approve in
- * Shopify admin. No AI, no automated verification, no CRA/TRN API, no automatic
- * approval. ALL notification config (key, from, reply-to, recipient) is read
+ * Server-side only. After the customer's wholesale profile metafields save to
+ * Shopify, an internal email is sent via Resend so the team can manually review
+ * the CRA/TRN and set custom.wholesale_status in Shopify admin. The customer
+ * mutation NEVER writes wholesale_status — it is a staff-controlled field with
+ * no Customer Account API write access. No AI, no automated verification, no
+ * CRA/TRN API, no automatic approval. ALL notification config is read
  * from server env — no email address or secret is hardcoded — and never reaches
  * the client. Every piece here is pure/injectable so the flow is unit-testable.
  */
@@ -71,6 +72,12 @@ export interface WholesaleNotificationPayload {
   customerId: string;
   /** ISO submission timestamp. */
   submittedAt: string;
+  /**
+   * Resolved review status for display only (see resolveWholesaleStatus). This
+   * is NEVER written back to Shopify by the customer mutation — a first/unknown
+   * submission resolves to "pending" so the email reads "Pending Manual Review".
+   */
+  status: WholesaleStatus;
 }
 
 export interface BuiltEmail {
@@ -95,9 +102,9 @@ export function buildWholesaleNotificationEmail(
     `CRA/TRN (masked): ${maskCraNumber(payload.craNumber)}`,
     `Shopify Customer ID: ${payload.customerId}`,
     `Submission Date: ${payload.submittedAt}`,
-    'Status: Pending Manual Review',
+    `Status: ${wholesaleStatusLabel(payload.status)}`,
     '',
-    'Review the CRA/TRN manually and approve or reject wholesale access in Shopify admin.',
+    'Review the CRA/TRN manually and set custom.wholesale_status in Shopify admin.',
   ].join('\n');
   return {
     from: config.from,
@@ -173,22 +180,50 @@ export function resolveWholesaleStatus(
     : 'pending';
 }
 
-/** The custom.wholesale_status metafield, preserving any staff-set decision. */
-export function wholesaleStatusMetafield(
-  ownerId: string,
-  status: WholesaleStatus,
-) {
-  return {
-    ownerId,
-    namespace: 'custom',
-    key: 'wholesale_status',
-    type: 'single_line_text_field',
-    value: status,
-  };
+/** Human-readable status for the internal email. A first submission → pending. */
+export function wholesaleStatusLabel(status: WholesaleStatus): string {
+  switch (status) {
+    case 'approved':
+      return 'Approved (existing wholesale account)';
+    case 'rejected':
+      return 'Rejected (existing decision)';
+    case 'more_information_required':
+      return 'More Information Required (existing)';
+    case 'pending':
+    default:
+      return 'Pending Manual Review';
+  }
+}
+
+/**
+ * A Shopify metafieldsSet userError, as returned by the mutation. `field` is the
+ * GraphQL path, e.g. ["metafields", "2", "key"] — index 2 pinpoints the entry.
+ */
+export interface MetafieldUserError {
+  field?: (string | number | null)[] | null;
+  message: string;
+}
+
+/**
+ * Format metafieldsSet userErrors for SERVER-SIDE logs in dev/tests: surface the
+ * failing array index / field path so a rejected metafield is identifiable. Uses
+ * only the path + Shopify's own message — never a submitted value (no `value` is
+ * read here), so a CRA/TRN can never leak. NOT shown to customers.
+ */
+export function describeMetafieldUserErrors(
+  userErrors: MetafieldUserError[],
+): string {
+  if (!userErrors.length) return 'no userErrors';
+  return userErrors
+    .map((e) => {
+      const path = Array.isArray(e.field) ? e.field.join('.') : '(no path)';
+      return `${path}: ${e.message}`;
+    })
+    .join(' | ');
 }
 
 export interface SubmissionDeps {
-  /** Save all metafields (incl. wholesale_status=pending). */
+  /** Save the customer-writable profile metafields (never wholesale_status). */
   saveMetafields: () => Promise<{ok: boolean; error?: string}>;
   /** Send the internal notification (after a successful save). */
   sendNotification: () => Promise<SendResult>;

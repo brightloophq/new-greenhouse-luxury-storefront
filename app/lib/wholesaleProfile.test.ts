@@ -3,6 +3,7 @@ import {isRouteErrorResponse} from 'react-router';
 import {
   REQUIRED_PROFILE_KEYS,
   WHOLESALE_PROFILE_FIELDS,
+  buildProfileMetafields,
   isProfileComplete,
   missingProfileFields,
   requireWholesaleProfile,
@@ -44,6 +45,37 @@ describe('wholesale profile schema', () => {
       'city_parish',
       'delivery_area',
     ]);
+  });
+});
+
+describe('buildProfileMetafields (customer-written mutation payload)', () => {
+  const OWNER = 'gid://shopify/Customer/42';
+  const rows = buildProfileMetafields(OWNER, COMPLETE);
+
+  it('includes cra_number as a customer-written metafield', () => {
+    const cra = rows.find((r) => r.key === 'cra_number');
+    expect(cra).toEqual({
+      ownerId: OWNER,
+      namespace: 'custom',
+      key: 'cra_number',
+      type: 'single_line_text_field',
+      value: '123456789',
+    });
+  });
+
+  it('NEVER includes wholesale_status — that is staff-controlled, set in admin', () => {
+    // compared as string: the key type provably cannot be "wholesale_status"
+    expect(rows.map((r) => String(r.key)).includes('wholesale_status')).toBe(
+      false,
+    );
+  });
+
+  it('writes only the profile fields, all under the custom namespace', () => {
+    expect(rows.map((r) => r.key)).toEqual(
+      WHOLESALE_PROFILE_FIELDS.map((f) => f.key),
+    );
+    expect(rows.every((r) => r.namespace === 'custom')).toBe(true);
+    expect(rows.every((r) => r.ownerId === OWNER)).toBe(true);
   });
 });
 

@@ -129,6 +129,34 @@ export const REQUIRED_PROFILE_KEYS = WHOLESALE_PROFILE_FIELDS.filter(
 
 export type WholesaleProfile = Partial<Record<WholesaleProfileFieldKey, string>>;
 
+/** A single MetafieldsSetInput entry for a customer-owned profile metafield. */
+export interface ProfileMetafieldInput {
+  ownerId: string;
+  namespace: 'custom';
+  key: WholesaleProfileFieldKey;
+  type: WholesaleProfileField['type'];
+  value: string;
+}
+
+/**
+ * Build the metafieldsSet payload the CUSTOMER writes via the Customer Account
+ * API — exactly the profile fields (including cra_number). It deliberately does
+ * NOT include wholesale_status: that is a staff-controlled field with no
+ * Customer Account API write access, set only by staff in Shopify admin.
+ */
+export function buildProfileMetafields(
+  ownerId: string,
+  profile: WholesaleProfile,
+): ProfileMetafieldInput[] {
+  return WHOLESALE_PROFILE_FIELDS.map((field) => ({
+    ownerId,
+    namespace: 'custom' as const,
+    key: field.key,
+    type: field.type,
+    value: profile[field.key] ?? '',
+  }));
+}
+
 /** Metafield rows → a flat {key: value} profile. */
 export function toProfile(
   metafields: ({key?: string | null; value?: string | null} | null)[] | null | undefined,

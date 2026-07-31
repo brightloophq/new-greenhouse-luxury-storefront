@@ -16,6 +16,7 @@ import {
 } from '~/graphql/customer-account/WholesaleProfile';
 import {
   WHOLESALE_PROFILE_FIELDS,
+  buildProfileMetafields,
   missingProfileFields,
   toProfile,
   type WholesaleProfile as Profile,
@@ -25,7 +26,7 @@ import {
   readNotifyConfig,
   sendWholesaleNotificationEmail,
   resolveWholesaleStatus,
-  wholesaleStatusMetafield,
+  describeMetafieldUserErrors,
   processWholesaleSubmission,
 } from '~/lib/wholesaleNotify';
 
@@ -101,20 +102,14 @@ export async function action({context, request}: ActionFunctionArgs) {
   }
   const oid = ownerId;
 
-  // Save all profile metafields + the review status. Approval is staff-owned:
-  // an existing status is preserved; only an unset/unknown one initialises to
-  // "pending". A customer re-saving their profile can never lose approval.
-  const metafields = [
-    ...WHOLESALE_PROFILE_FIELDS.map((field) => ({
-      ownerId: oid,
-      namespace: 'custom',
-      key: field.key,
-      type: field.type,
-      value: profile[field.key] ?? '',
-    })),
-    wholesaleStatusMetafield(oid, resolveWholesaleStatus(currentStatus)),
-  ];
+  // The customer writes ONLY their own profile fields (including cra_number).
+  // wholesale_status is a staff-controlled field with no Customer Account API
+  // write access — it is set by staff in Shopify admin, never here.
+  const metafields = buildProfileMetafields(oid, profile);
 
+  // Resolve the status for the email only (display, never written): a first or
+  // unknown submission → "pending"; an existing staff decision is reflected.
+  const status = resolveWholesaleStatus(currentStatus);
   const notifyConfig = readNotifyConfig(context.env);
 
   // Save → then notify. Email failure never fails the submission (see wholesaleNotify).
@@ -126,11 +121,19 @@ export async function action({context, request}: ActionFunctionArgs) {
       );
       const userErrors = res?.metafieldsSet?.userErrors ?? [];
       if (errors?.length || userErrors.length) {
+        // Server-side diagnostic: pinpoint the failing metafield index/path.
+        // Never contains submitted values, so no CRA/TRN can leak.
+        if (userErrors.length) {
+          console.error(
+            `[wholesale] metafieldsSet userErrors: ${describeMetafieldUserErrors(
+              userErrors,
+            )}`,
+          );
+        }
+        // Customer-facing message stays generic — no field paths or values.
         return {
           ok: false,
-          error:
-            userErrors[0]?.message ??
-            'We could not save your profile — please try again.',
+          error: 'We could not save your profile — please try again.',
         };
       }
       return {ok: true};
@@ -145,6 +148,7 @@ export async function action({context, request}: ActionFunctionArgs) {
           craNumber: profile.cra_number ?? '',
           customerId: oid,
           submittedAt: new Date().toISOString(),
+          status,
         },
         notifyConfig,
       ),

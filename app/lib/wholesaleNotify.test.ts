@@ -6,7 +6,8 @@ import {
   buildWholesaleNotificationEmail,
   sendWholesaleNotificationEmail,
   resolveWholesaleStatus,
-  wholesaleStatusMetafield,
+  wholesaleStatusLabel,
+  describeMetafieldUserErrors,
   processWholesaleSubmission,
   type WholesaleNotificationPayload,
   type WholesaleNotifyConfig,
@@ -27,6 +28,7 @@ const PAYLOAD: WholesaleNotificationPayload = {
   craNumber: '123-456-789',
   customerId: 'gid://shopify/Customer/42',
   submittedAt: '2026-07-28T12:00:00.000Z',
+  status: 'pending',
 };
 
 describe('CRA/TRN masking', () => {
@@ -60,6 +62,35 @@ describe('email builder', () => {
     // the full TRN must never appear
     expect(email.text).not.toContain('123456789');
     expect(email.text).not.toContain('123-456-789');
+  });
+
+  it('reflects an existing staff status without ever writing it', () => {
+    const approved = buildWholesaleNotificationEmail(
+      {...PAYLOAD, status: 'approved'},
+      CONFIG,
+    );
+    expect(approved.text).toContain('Status: Approved (existing wholesale account)');
+    const rejected = buildWholesaleNotificationEmail(
+      {...PAYLOAD, status: 'rejected'},
+      CONFIG,
+    );
+    expect(rejected.text).toContain('Status: Rejected (existing decision)');
+  });
+});
+
+describe('wholesaleStatusLabel', () => {
+  it('labels a first/pending submission as Pending Manual Review', () => {
+    expect(wholesaleStatusLabel('pending')).toBe('Pending Manual Review');
+  });
+
+  it('labels each staff-set status distinctly', () => {
+    expect(wholesaleStatusLabel('approved')).toBe(
+      'Approved (existing wholesale account)',
+    );
+    expect(wholesaleStatusLabel('rejected')).toBe('Rejected (existing decision)');
+    expect(wholesaleStatusLabel('more_information_required')).toBe(
+      'More Information Required (existing)',
+    );
   });
 });
 
@@ -119,23 +150,40 @@ describe('wholesale_status preservation (staff-controlled approval)', () => {
     );
   });
 
-  it('builds the metafield with the resolved status', () => {
-    expect(
-      wholesaleStatusMetafield('gid://shopify/Customer/42', 'approved'),
-    ).toEqual({
-      ownerId: 'gid://shopify/Customer/42',
-      namespace: 'custom',
-      key: 'wholesale_status',
-      type: 'single_line_text_field',
-      value: 'approved',
-    });
-    // first submission → pending
-    expect(
-      wholesaleStatusMetafield(
-        'gid://shopify/Customer/42',
-        resolveWholesaleStatus(''),
-      ).value,
-    ).toBe('pending');
+  it('resolves a first submission to pending for display without writing it', () => {
+    // The status is used only to label the email; it is never persisted by the
+    // customer mutation (see buildProfileMetafields — no wholesale_status entry).
+    expect(resolveWholesaleStatus('')).toBe('pending');
+    expect(wholesaleStatusLabel(resolveWholesaleStatus(''))).toBe(
+      'Pending Manual Review',
+    );
+  });
+});
+
+describe('describeMetafieldUserErrors (dev/test diagnostics)', () => {
+  it('surfaces the failing array index / field path and message', () => {
+    const out = describeMetafieldUserErrors([
+      {field: ['metafields', '2', 'key'], message: 'not allowed'},
+      {field: ['metafields', 10, 'value'], message: 'bad value'},
+    ]);
+    expect(out).toContain('metafields.2.key: not allowed');
+    expect(out).toContain('metafields.10.value: bad value');
+  });
+
+  it('handles a missing path and an empty list without throwing', () => {
+    expect(describeMetafieldUserErrors([{field: null, message: 'x'}])).toContain(
+      '(no path): x',
+    );
+    expect(describeMetafieldUserErrors([])).toBe('no userErrors');
+  });
+
+  it('never contains submitted values — it only reads path + message', () => {
+    // Even if a caller mistakenly passed a value-like message, the function has
+    // no access to the payload; here we prove no CRA digits appear from path.
+    const out = describeMetafieldUserErrors([
+      {field: ['metafields', '2', 'key'], message: 'Access to this namespace and key is not allowed'},
+    ]);
+    expect(out).not.toContain('123456789');
   });
 });
 
