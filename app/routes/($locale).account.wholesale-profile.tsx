@@ -21,6 +21,13 @@ import {
   type WholesaleProfile as Profile,
   type WholesaleProfileField,
 } from '~/lib/wholesaleProfile';
+import {
+  readNotifyConfig,
+  sendWholesaleNotificationEmail,
+  resolveWholesaleStatus,
+  wholesaleStatusMetafield,
+  processWholesaleSubmission,
+} from '~/lib/wholesaleNotify';
 
 /**
  * Wholesale business profile. The customer is authenticated (the account layout
@@ -62,13 +69,23 @@ export async function action({context, request}: ActionFunctionArgs) {
     return data({ok: false, missing, error: null}, {status: 400});
   }
 
-  // metafieldsSet requires the owner id — read it from the authenticated session.
+  // metafieldsSet requires the owner id — read it (plus the contact email and
+  // the current review status) from the authenticated session.
   let ownerId: string | undefined;
+  let contactEmail = '';
+  let currentStatus = '';
   try {
     const {data: who} = await context.customerAccount.query(
       WHOLESALE_PROFILE_QUERY,
     );
     ownerId = who?.customer?.id;
+    contactEmail = who?.customer?.emailAddress?.emailAddress ?? '';
+    const statusField = (
+      who?.customer?.metafields as
+        | ({key?: string | null; value?: string | null} | null)[]
+        | undefined
+    )?.find((m) => m?.key === 'wholesale_status');
+    currentStatus = statusField?.value ?? '';
   } catch {
     ownerId = undefined;
   }
@@ -82,31 +99,65 @@ export async function action({context, request}: ActionFunctionArgs) {
       {status: 401},
     );
   }
+  const oid = ownerId;
 
-  const {data: res, errors} = await context.customerAccount.mutate(
-    WHOLESALE_PROFILE_MUTATION,
-    {
-      variables: {
-        metafields: WHOLESALE_PROFILE_FIELDS.map((field) => ({
-          ownerId,
-          namespace: 'custom',
-          key: field.key,
-          type: field.type,
-          value: profile[field.key] ?? '',
-        })),
-      },
+  // Save all profile metafields + the review status. Approval is staff-owned:
+  // an existing status is preserved; only an unset/unknown one initialises to
+  // "pending". A customer re-saving their profile can never lose approval.
+  const metafields = [
+    ...WHOLESALE_PROFILE_FIELDS.map((field) => ({
+      ownerId: oid,
+      namespace: 'custom',
+      key: field.key,
+      type: field.type,
+      value: profile[field.key] ?? '',
+    })),
+    wholesaleStatusMetafield(oid, resolveWholesaleStatus(currentStatus)),
+  ];
+
+  const notifyConfig = readNotifyConfig(context.env);
+
+  // Save → then notify. Email failure never fails the submission (see wholesaleNotify).
+  const result = await processWholesaleSubmission({
+    saveMetafields: async () => {
+      const {data: res, errors} = await context.customerAccount.mutate(
+        WHOLESALE_PROFILE_MUTATION,
+        {variables: {metafields}},
+      );
+      const userErrors = res?.metafieldsSet?.userErrors ?? [];
+      if (errors?.length || userErrors.length) {
+        return {
+          ok: false,
+          error:
+            userErrors[0]?.message ??
+            'We could not save your profile — please try again.',
+        };
+      }
+      return {ok: true};
     },
-  );
+    sendNotification: () =>
+      sendWholesaleNotificationEmail(
+        {
+          businessName: profile.business_name ?? '',
+          businessType: profile.business_type ?? '',
+          businessPhone: profile.business_phone ?? '',
+          contactEmail,
+          craNumber: profile.cra_number ?? '',
+          customerId: oid,
+          submittedAt: new Date().toISOString(),
+        },
+        notifyConfig,
+      ),
+    logError: (message) => console.error(message),
+  });
 
-  const userErrors = res?.metafieldsSet?.userErrors ?? [];
-  if (errors?.length || userErrors.length) {
+  if (!result.ok) {
     return data(
       {
         ok: false,
         missing: [],
         error:
-          userErrors[0]?.message ??
-          'We could not save your profile — please try again.',
+          result.error ?? 'We could not save your profile — please try again.',
       },
       {status: 400},
     );
@@ -224,6 +275,9 @@ function ProfileField({
       ) : (
         <input {...shared} type={field.inputType ?? 'text'} />
       )}
+      {field.helper ? (
+        <span className="ng-wsprofile-helper">{field.helper}</span>
+      ) : null}
     </label>
   );
 }

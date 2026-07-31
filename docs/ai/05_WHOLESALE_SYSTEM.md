@@ -1,9 +1,12 @@
 # 05 — Wholesale System
 
-> **This document describes the CURRENT production implementation only.**
-> The proposed replacement architecture is documented in
-> [`docs/ai/13_WHOLESALE_VERIFICATION_ARCHITECTURE.md`](./13_WHOLESALE_VERIFICATION_ARCHITECTURE.md).
-> Production behaviour below stays in effect until that architecture is researched, validated, implemented, tested and approved. Do not merge future behaviour into this file.
+> **Wholesale onboarding is a simple MANUAL review process** (2026-07 decision).
+> The automated-verification architecture (AI wholesale officer, TRN/registry
+> providers, rules engine, orchestration, payload recorder, n8n workflows) was
+> **removed**. An applicant submits the wholesale business profile (incl. a
+> CRA/TRN number, not auto-validated); the team is notified, reviews it, checks
+> the CRA/TRN manually, and grants wholesale access by hand in Shopify admin.
+> No automated verification and no automated Shopify writes occur.
 
 ## Positioning
 

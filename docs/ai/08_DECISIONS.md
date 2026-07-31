@@ -2,8 +2,8 @@
 
 Chronological record of notable decisions + rationale. Newest at top.
 
-## Wholesale verification — current model stays in production until replaced **[Planned]**
-The current wholesale implementation (immediate access on auth, no approval — see `05`) **remains unchanged in production** until a new verification architecture has been **researched → validated → implemented → tested → approved**. No behavioural change occurs before that point. The proposed replacement is `13_WHOLESALE_VERIFICATION_ARCHITECTURE.md`. Evidence from the validation phase (2026-07): B2B *is* available on Shopify **Basic** (≤3 active catalogs) but **direct per-company catalog assignment is Plus-only**, and headless (Hydrogen) B2B pricing on Basic is **unverified** — both are gating risks captured in `13`.
+## Automated wholesale verification REMOVED — simple manual review instead (2026-07)
+The automated wholesale-verification programme was **removed** in favour of a simple manual process that matches the client's actual business workflow. Deleted: the Sprint A1 domain state machine + A2 orchestration (`app/lib/wholesale/`), the TRN/business verification providers, the payload recorder, all n8n workflow JSON (`n8n/`), and the architecture/plan/sandbox docs (`13`, `14`, `15`). **Kept:** the wholesale auth gate (`app/lib/wholesale.ts`), the wholesale business profile (`app/lib/wholesaleProfile.ts`), and the public `/wholesale/apply` page. **New flow:** application submitted → team notified → manual review + manual CRA/TRN check → approve/reject and grant access **by hand in Shopify admin**. No AI, no automation, no automated Shopify writes.
 
 ## Soft corners are the identity
 The classic experience previously **zeroed** the radius tokens; the flagship editorial rooms all hard-coded `3–4px`. Resolved in favour of **soft** (removed the zero override) so all token-driven corners match. Reversible in a few lines if the owner ever wants the sharp main-site look back.

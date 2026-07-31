@@ -13,6 +13,7 @@ import {WHOLESALE_PROFILE_KEYS} from '~/graphql/customer-account/WholesaleProfil
 const COMPLETE = {
   business_name: 'Petal & Stem',
   business_type: 'Florist',
+  cra_number: '123456789',
   business_phone: '876-555-0100',
   business_address: '12 Hope Road',
   city_parish: 'Kingston',
@@ -33,10 +34,11 @@ describe('wholesale profile schema', () => {
     }
   });
 
-  it('requires exactly the six trade-critical fields', () => {
+  it('requires the trade-critical fields, including the CRA/TRN number', () => {
     expect(REQUIRED_PROFILE_KEYS).toEqual([
       'business_name',
       'business_type',
+      'cra_number',
       'business_phone',
       'business_address',
       'city_parish',

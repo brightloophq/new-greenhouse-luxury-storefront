@@ -27,6 +27,8 @@ export interface WholesaleProfileField {
   full?: boolean;
   textarea?: boolean;
   inputType?: string;
+  /** Optional helper text shown under the field. */
+  helper?: string;
 }
 
 export const BUSINESS_TYPES = [
@@ -63,6 +65,13 @@ export const WHOLESALE_PROFILE_FIELDS: WholesaleProfileField[] = [
     type: 'single_line_text_field',
     required: true,
     options: BUSINESS_TYPES,
+  },
+  {
+    key: 'cra_number',
+    label: 'CRA / TRN Number',
+    type: 'single_line_text_field',
+    required: true,
+    helper: 'Enter your Business CRA/TRN Number.',
   },
   {
     key: 'business_phone',
