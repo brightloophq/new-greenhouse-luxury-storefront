@@ -14,7 +14,7 @@ import {WHOLESALE_PROFILE_KEYS} from '~/graphql/customer-account/WholesaleProfil
 const COMPLETE = {
   business_name: 'Petal & Stem',
   business_type: 'Florist',
-  cra_number: '123456789',
+  cra_trn_number: '123456789',
   business_phone: '876-555-0100',
   business_address: '12 Hope Road',
   city_parish: 'Kingston',
@@ -39,7 +39,7 @@ describe('wholesale profile schema', () => {
     expect(REQUIRED_PROFILE_KEYS).toEqual([
       'business_name',
       'business_type',
-      'cra_number',
+      'cra_trn_number',
       'business_phone',
       'business_address',
       'city_parish',
@@ -52,12 +52,12 @@ describe('buildProfileMetafields (customer-written mutation payload)', () => {
   const OWNER = 'gid://shopify/Customer/42';
   const rows = buildProfileMetafields(OWNER, COMPLETE);
 
-  it('includes cra_number as a customer-written metafield', () => {
-    const cra = rows.find((r) => r.key === 'cra_number');
+  it('includes cra_trn_number as a customer-written metafield', () => {
+    const cra = rows.find((r) => r.key === 'cra_trn_number');
     expect(cra).toEqual({
       ownerId: OWNER,
       namespace: 'custom',
-      key: 'cra_number',
+      key: 'cra_trn_number',
       type: 'single_line_text_field',
       value: '123456789',
     });

@@ -67,7 +67,7 @@ export const WHOLESALE_PROFILE_FIELDS: WholesaleProfileField[] = [
     options: BUSINESS_TYPES,
   },
   {
-    key: 'cra_number',
+    key: 'cra_trn_number',
     label: 'CRA / TRN Number',
     type: 'single_line_text_field',
     required: true,
@@ -140,7 +140,7 @@ export interface ProfileMetafieldInput {
 
 /**
  * Build the metafieldsSet payload the CUSTOMER writes via the Customer Account
- * API — exactly the profile fields (including cra_number). It deliberately does
+ * API — exactly the profile fields (including cra_trn_number). It deliberately does
  * NOT include wholesale_status: that is a staff-controlled field with no
  * Customer Account API write access, set only by staff in Shopify admin.
  */

@@ -102,7 +102,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   }
   const oid = ownerId;
 
-  // The customer writes ONLY their own profile fields (including cra_number).
+  // The customer writes ONLY their own profile fields (including cra_trn_number).
   // wholesale_status is a staff-controlled field with no Customer Account API
   // write access — it is set by staff in Shopify admin, never here.
   const metafields = buildProfileMetafields(oid, profile);
@@ -145,7 +145,7 @@ export async function action({context, request}: ActionFunctionArgs) {
           businessType: profile.business_type ?? '',
           businessPhone: profile.business_phone ?? '',
           contactEmail,
-          craNumber: profile.cra_number ?? '',
+          craNumber: profile.cra_trn_number ?? '',
           customerId: oid,
           submittedAt: new Date().toISOString(),
           status,

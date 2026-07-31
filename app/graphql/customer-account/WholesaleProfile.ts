@@ -11,7 +11,7 @@
 export const WHOLESALE_PROFILE_KEYS = [
   'business_name',
   'business_type',
-  'cra_number',
+  'cra_trn_number',
   'business_phone',
   'business_address',
   'city_parish',
@@ -39,7 +39,7 @@ export const WHOLESALE_PROFILE_QUERY = `#graphql
         identifiers: [
           {namespace: "custom", key: "business_name"}
           {namespace: "custom", key: "business_type"}
-          {namespace: "custom", key: "cra_number"}
+          {namespace: "custom", key: "cra_trn_number"}
           {namespace: "custom", key: "business_phone"}
           {namespace: "custom", key: "business_address"}
           {namespace: "custom", key: "city_parish"}
