@@ -27,6 +27,7 @@ import {
   sendWholesaleNotificationEmail,
   resolveWholesaleStatus,
   describeMetafieldUserErrors,
+  buildReviewUrl,
   processWholesaleSubmission,
 } from '~/lib/wholesaleNotify';
 
@@ -111,6 +112,14 @@ export async function action({context, request}: ActionFunctionArgs) {
   // unknown submission → "pending"; an existing staff decision is reflected.
   const status = resolveWholesaleStatus(currentStatus);
   const notifyConfig = readNotifyConfig(context.env);
+
+  // The email carries a "Review in Shopify" deep link when the customer id and
+  // store handle are both valid. If it cannot be built, the email still sends
+  // (button omitted, plain customer reference kept). Log a fixed, redacted
+  // message only — never customer data, CRA/TRN, env values, URLs or keys.
+  if (!buildReviewUrl(oid, notifyConfig.adminStoreHandle)) {
+    console.warn('[wholesale] review link unavailable');
+  }
 
   // Save → then notify. Email failure never fails the submission (see wholesaleNotify).
   const result = await processWholesaleSubmission({

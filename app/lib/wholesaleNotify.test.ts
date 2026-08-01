@@ -8,6 +8,8 @@ import {
   resolveWholesaleStatus,
   wholesaleStatusLabel,
   describeMetafieldUserErrors,
+  extractCustomerNumericId,
+  buildReviewUrl,
   processWholesaleSubmission,
   type WholesaleNotificationPayload,
   type WholesaleNotifyConfig,
@@ -18,6 +20,7 @@ const CONFIG: WholesaleNotifyConfig = {
   from: 'The New Greenhouse <notifications@notifications.thenewgreenhouseja.com>',
   replyTo: 'wholesale@thenewgreenhouseja.com',
   recipient: 'wholesale@thenewgreenhouseja.com',
+  adminStoreHandle: 'the-new-greenhouse',
 };
 
 const PAYLOAD: WholesaleNotificationPayload = {
@@ -78,6 +81,140 @@ describe('email builder', () => {
   });
 });
 
+describe('extractCustomerNumericId', () => {
+  it('extracts the numeric id from a valid Customer GID', () => {
+    expect(extractCustomerNumericId('gid://shopify/Customer/42')).toBe('42');
+    expect(extractCustomerNumericId(' gid://shopify/Customer/7350012 ')).toBe(
+      '7350012',
+    );
+  });
+
+  it('rejects anything that is not exactly a Customer GID', () => {
+    expect(extractCustomerNumericId('gid://shopify/Order/42')).toBeNull();
+    expect(extractCustomerNumericId('gid://shopify/Customer/')).toBeNull();
+    expect(extractCustomerNumericId('gid://shopify/Customer/abc')).toBeNull();
+    expect(extractCustomerNumericId('42')).toBeNull();
+    expect(extractCustomerNumericId('')).toBeNull();
+    expect(
+      extractCustomerNumericId('gid://shopify/Customer/42/extra'),
+    ).toBeNull();
+  });
+});
+
+describe('buildReviewUrl', () => {
+  it('builds the Shopify Admin customer URL from a valid GID + handle', () => {
+    expect(
+      buildReviewUrl('gid://shopify/Customer/42', 'the-new-greenhouse'),
+    ).toBe('https://admin.shopify.com/store/the-new-greenhouse/customers/42');
+  });
+
+  it('matches the exact production URL shape (handle ax41k1-k5)', () => {
+    expect(buildReviewUrl('gid://shopify/Customer/1234567890', 'ax41k1-k5')).toBe(
+      'https://admin.shopify.com/store/ax41k1-k5/customers/1234567890',
+    );
+  });
+
+  it('accepts a handle that mistakenly includes .myshopify.com', () => {
+    expect(
+      buildReviewUrl('gid://shopify/Customer/42', 'the-new-greenhouse.myshopify.com'),
+    ).toBe('https://admin.shopify.com/store/the-new-greenhouse/customers/42');
+  });
+
+  it('returns null for an invalid customer GID', () => {
+    expect(buildReviewUrl('gid://shopify/Order/42', 'the-new-greenhouse')).toBeNull();
+    expect(buildReviewUrl('not-a-gid', 'the-new-greenhouse')).toBeNull();
+  });
+
+  it('returns null when the store handle is missing or invalid', () => {
+    expect(buildReviewUrl('gid://shopify/Customer/42', '')).toBeNull();
+    expect(buildReviewUrl('gid://shopify/Customer/42', '   ')).toBeNull();
+    expect(buildReviewUrl('gid://shopify/Customer/42', undefined)).toBeNull();
+    expect(buildReviewUrl('gid://shopify/Customer/42', 'bad handle!')).toBeNull();
+  });
+});
+
+describe('Review in Shopify button (HTML + text)', () => {
+  it('HTML includes the Review in Shopify button linking only to the customer record', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(email.html).toContain('Review in Shopify');
+    expect(email.html).toContain(
+      'href="https://admin.shopify.com/store/the-new-greenhouse/customers/42"',
+    );
+  });
+
+  it('plain text includes the review URL when available', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(email.text).toContain(
+      'Review in Shopify: https://admin.shopify.com/store/the-new-greenhouse/customers/42',
+    );
+  });
+
+  it('omits the button (and URL) when the store handle is missing', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, {
+      ...CONFIG,
+      adminStoreHandle: '',
+    });
+    expect(email.html).not.toContain('href="https://admin.shopify.com');
+    expect(email.text).not.toContain('Review in Shopify: https://');
+    // plain customer reference is kept
+    expect(email.text).toContain('Shopify Customer ID: gid://shopify/Customer/42');
+    expect(email.html).toContain('gid://shopify/Customer/42');
+  });
+
+  it('omits the button when the customer GID is invalid', () => {
+    const email = buildWholesaleNotificationEmail(
+      {...PAYLOAD, customerId: 'gid://shopify/Order/42'},
+      CONFIG,
+    );
+    expect(email.html).not.toContain('href="https://admin.shopify.com');
+    expect(email.text).not.toContain('Review in Shopify: https://');
+  });
+
+  it('contains no approval / rejection / status-mutation link', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    const both = `${email.html}\n${email.text}`.toLowerCase();
+    expect(both).not.toContain('approve');
+    expect(both).not.toContain('reject');
+    expect(both).not.toContain('metafieldsset');
+    expect(both).not.toContain('wholesale_status=');
+    // the only link present is the read-only customer record
+    const hrefs = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    expect(hrefs).toEqual([
+      'https://admin.shopify.com/store/the-new-greenhouse/customers/42',
+    ]);
+  });
+
+  it('never leaks the full CRA/TRN in either HTML or text', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(email.html).toContain('*****6789');
+    expect(email.html).not.toContain('123456789');
+    expect(email.html).not.toContain('123-456-789');
+    expect(email.text).not.toContain('123456789');
+  });
+
+  it('HTML-escapes profile values (no injection)', () => {
+    const email = buildWholesaleNotificationEmail(
+      {...PAYLOAD, businessName: 'A & B <script>'},
+      CONFIG,
+    );
+    expect(email.html).toContain('A &amp; B &lt;script&gt;');
+    expect(email.html).not.toContain('<script>');
+  });
+});
+
+describe('sending still works when the review URL cannot be built', () => {
+  it('sends the email even with no store handle (button omitted)', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({ok: true, status: 200} as Response);
+    const result = await sendWholesaleNotificationEmail(
+      PAYLOAD,
+      {...CONFIG, adminStoreHandle: ''},
+      fetchImpl,
+    );
+    expect(result).toEqual({sent: true});
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+});
+
 describe('wholesaleStatusLabel', () => {
   it('labels a first/pending submission as Pending Manual Review', () => {
     expect(wholesaleStatusLabel('pending')).toBe('Pending Manual Review');
@@ -107,12 +244,24 @@ describe('readNotifyConfig', () => {
       from: 'From <from@env.example>',
       replyTo: 'reply@env.example',
       recipient: 'inbox@env.example',
+      adminStoreHandle: '',
     });
+  });
+
+  it('reads the admin store handle from env', () => {
+    const cfg = readNotifyConfig({SHOPIFY_ADMIN_STORE_HANDLE: 'the-new-greenhouse'});
+    expect(cfg.adminStoreHandle).toBe('the-new-greenhouse');
   });
 
   it('never invents a default — a fully empty env yields blank config', () => {
     const cfg = readNotifyConfig({});
-    expect(cfg).toEqual({resendApiKey: '', from: '', replyTo: '', recipient: ''});
+    expect(cfg).toEqual({
+      resendApiKey: '',
+      from: '',
+      replyTo: '',
+      recipient: '',
+      adminStoreHandle: '',
+    });
     // the previously hardcoded production addresses must NOT reappear
     expect(JSON.stringify(cfg)).not.toContain('thenewgreenhouseja');
     expect(isNotifyConfigured(cfg)).toBe(false);

@@ -17,6 +17,12 @@ export interface WholesaleNotifyConfig {
   from: string;
   replyTo: string;
   recipient: string;
+  /**
+   * The store's myshopify handle (without ".myshopify.com"), used only to build
+   * the "Review in Shopify" deep link. Not a secret. Blank → the button is
+   * omitted and the plain customer reference is kept.
+   */
+  adminStoreHandle: string;
 }
 
 /**
@@ -28,6 +34,7 @@ export interface WholesaleNotifyEnv {
   WHOLESALE_NOTIFY_FROM?: string;
   WHOLESALE_NOTIFY_REPLY_TO?: string;
   WHOLESALE_INTERNAL_EMAIL?: string;
+  SHOPIFY_ADMIN_STORE_HANDLE?: string;
 }
 
 /**
@@ -43,7 +50,36 @@ export function readNotifyConfig(
     from: env.WHOLESALE_NOTIFY_FROM ?? '',
     replyTo: env.WHOLESALE_NOTIFY_REPLY_TO ?? '',
     recipient: env.WHOLESALE_INTERNAL_EMAIL ?? '',
+    adminStoreHandle: env.SHOPIFY_ADMIN_STORE_HANDLE ?? '',
   };
+}
+
+/**
+ * Extract the numeric id from a Shopify Customer GID. Returns null unless the
+ * value is EXACTLY `gid://shopify/Customer/<digits>` — anything else (wrong
+ * resource, missing id, junk) is rejected rather than guessed.
+ */
+export function extractCustomerNumericId(gid: string): string | null {
+  const match = /^gid:\/\/shopify\/Customer\/(\d+)$/.exec((gid ?? '').trim());
+  return match ? match[1] : null;
+}
+
+/**
+ * Build the Shopify Admin customer deep link, or null when it cannot be safely
+ * built (invalid GID or missing/invalid store handle). Contains only the numeric
+ * customer id and the store handle — never the CRA/TRN or any secret/token.
+ */
+export function buildReviewUrl(
+  customerId: string,
+  storeHandle: string | null | undefined,
+): string | null {
+  const numericId = extractCustomerNumericId(customerId);
+  // Accept the handle with or without a trailing ".myshopify.com".
+  const handle = (storeHandle ?? '').trim().replace(/\.myshopify\.com$/i, '');
+  if (!numericId || !handle || !/^[a-z0-9][a-z0-9-]*$/i.test(handle)) {
+    return null;
+  }
+  return `https://admin.shopify.com/store/${handle}/customers/${numericId}`;
 }
 
 /** True only when every required notification variable is present and non-blank. */
@@ -86,32 +122,108 @@ export interface BuiltEmail {
   reply_to: string;
   subject: string;
   text: string;
+  html: string;
+}
+
+/** Escape the five HTML-significant characters so profile values render as text. */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 export function buildWholesaleNotificationEmail(
   payload: WholesaleNotificationPayload,
   config: WholesaleNotifyConfig,
 ): BuiltEmail {
-  const text = [
+  const maskedCra = maskCraNumber(payload.craNumber);
+  const statusLabel = wholesaleStatusLabel(payload.status);
+  // Deep link to the customer record only — never a status-changing link, never
+  // a secret/token, never the CRA/TRN. Null when it cannot be safely built.
+  const reviewUrl = buildReviewUrl(payload.customerId, config.adminStoreHandle);
+
+  // ── Plain-text fallback ───────────────────────────────────────────────────
+  const textLines = [
     'A new wholesale application has been submitted for manual review.',
     '',
     `Business Name: ${payload.businessName}`,
     `Business Type: ${payload.businessType}`,
     `Business Phone: ${payload.businessPhone}`,
     `Contact Email: ${payload.contactEmail}`,
-    `CRA/TRN (masked): ${maskCraNumber(payload.craNumber)}`,
+    `CRA/TRN (masked): ${maskedCra}`,
     `Shopify Customer ID: ${payload.customerId}`,
     `Submission Date: ${payload.submittedAt}`,
-    `Status: ${wholesaleStatusLabel(payload.status)}`,
+    `Status: ${statusLabel}`,
+  ];
+  if (reviewUrl) textLines.push(`Review in Shopify: ${reviewUrl}`);
+  textLines.push(
     '',
     'Review the CRA/TRN manually and set custom.wholesale_status in Shopify admin.',
-  ].join('\n');
+  );
+  const text = textLines.join('\n');
+
+  // ── HTML version ──────────────────────────────────────────────────────────
+  const row = (label: string, value: string) =>
+    `<tr>
+      <td style="padding:6px 16px 6px 0;color:#6b6b6b;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(
+        label,
+      )}</td>
+      <td style="padding:6px 0;color:#222222;font-size:14px;font-weight:500;">${escapeHtml(
+        value,
+      )}</td>
+    </tr>`;
+
+  const button = reviewUrl
+    ? `<tr><td colspan="2" style="padding:24px 0 4px;">
+        <a href="${escapeHtml(reviewUrl)}"
+           style="display:inline-block;background:#090909;color:#ffffff;text-decoration:none;
+                  font-size:14px;font-weight:600;letter-spacing:.02em;padding:12px 28px;border-radius:2px;">
+          Review in Shopify
+        </a>
+        <div style="margin-top:8px;color:#6b6b6b;font-size:12px;">
+          Opens the customer record in Shopify Admin. Update
+          <code style="font-size:12px;">custom.wholesale_status</code> manually after review.
+        </div>
+      </td></tr>`
+    : `<tr><td colspan="2" style="padding:20px 0 4px;color:#6b6b6b;font-size:12px;">
+        Open the customer record in Shopify Admin (Customer: ${escapeHtml(
+          payload.customerId,
+        )}) and update <code style="font-size:12px;">custom.wholesale_status</code> manually.
+      </td></tr>`;
+
+  const html = `<!-- New Wholesale Application -->
+<div style="background:#faf8f4;padding:32px 0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #ece7de;border-radius:4px;">
+    <tr><td style="padding:28px 32px 8px;">
+      <div style="color:#c8a96a;font-size:11px;letter-spacing:.16em;text-transform:uppercase;">The New Greenhouse — Wholesale</div>
+      <h1 style="margin:8px 0 0;color:#090909;font-size:20px;font-weight:600;">New wholesale application</h1>
+      <p style="margin:6px 0 0;color:#6b6b6b;font-size:13px;">Submitted for manual review.</p>
+    </td></tr>
+    <tr><td style="padding:8px 32px 28px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${row('Business Name', payload.businessName)}
+        ${row('Business Type', payload.businessType)}
+        ${row('Business Phone', payload.businessPhone)}
+        ${row('Contact Email', payload.contactEmail)}
+        ${row('CRA/TRN (masked)', maskedCra)}
+        ${row('Submission Date', payload.submittedAt)}
+        ${row('Status', statusLabel)}
+        ${button}
+      </table>
+    </td></tr>
+  </table>
+</div>`;
+
   return {
     from: config.from,
     to: config.recipient,
     reply_to: config.replyTo,
     subject: 'New Wholesale Application',
     text,
+    html,
   };
 }
 

@@ -17,6 +17,8 @@ declare global {
     WHOLESALE_NOTIFY_FROM?: string;
     WHOLESALE_NOTIFY_REPLY_TO?: string;
     WHOLESALE_INTERNAL_EMAIL?: string;
+    /** Store's myshopify handle (no ".myshopify.com") for the Admin deep link. */
+    SHOPIFY_ADMIN_STORE_HANDLE?: string;
   }
 }
 
