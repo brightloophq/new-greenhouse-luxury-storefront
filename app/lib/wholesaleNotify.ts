@@ -273,31 +273,92 @@ export function buildWholesaleNotificationEmail(
 }
 
 /**
- * Generate the signed Approve/Reject links for this application. Returns
- * undefined when review signing is not configured or the customer id is invalid
- * — the email still sends, just without the decision buttons. The tokens carry
- * ONLY {cid, act, exp, nonce, ver}; never the CRA/TRN or any secret.
+ * Fixed diagnostic reason codes for review-link generation. Safe to log
+ * server-side — a code never reveals any value (secret, URL, token, CRA/TRN,
+ * email, or customer id), only WHICH precondition failed.
+ */
+export type ReviewLinkReason =
+  | 'ok'
+  | 'review_config_missing'
+  | 'review_signing_secret_invalid'
+  | 'review_base_url_invalid'
+  | 'review_ttl_invalid'
+  | 'customer_gid_invalid'
+  | 'token_generation_failed';
+
+export interface ReviewActionLinksResult {
+  links?: ReviewActionLinks;
+  reason: ReviewLinkReason;
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const u = new URL(value);
+    return u.protocol === 'https:' || u.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Determine whether review action links can be built, returning a FIXED reason
+ * code — never a value. Whitespace-only secret/URL counts as missing; a
+ * non-URL base counts as invalid. TTL is defaulted upstream, so it is only
+ * invalid defensively.
+ */
+export function diagnoseReviewLinks(
+  payload: WholesaleNotificationPayload,
+  config: WholesaleNotifyConfig,
+): ReviewLinkReason {
+  const secret = (config.reviewSigningSecret ?? '').trim();
+  const baseUrl = (config.reviewBaseUrl ?? '').trim();
+  if (!secret && !baseUrl) return 'review_config_missing';
+  if (!secret) return 'review_signing_secret_invalid';
+  if (!baseUrl) return 'review_base_url_invalid';
+  if (!isHttpUrl(baseUrl)) return 'review_base_url_invalid';
+  if (!Number.isFinite(config.reviewTtlSeconds) || config.reviewTtlSeconds <= 0) {
+    return 'review_ttl_invalid';
+  }
+  if (!extractCustomerNumericId(payload.customerId)) return 'customer_gid_invalid';
+  return 'ok';
+}
+
+/**
+ * Generate the signed Approve/Reject links for this application. Returns a
+ * `{links?, reason}` result — `reason` is a fixed diagnostic code and is 'ok'
+ * only when `links` is present. Token signing is wrapped so a crypto failure
+ * degrades to `token_generation_failed` (buttons omitted) and NEVER aborts the
+ * email send. The tokens carry ONLY {cid, act, exp, nonce, ver}; never the
+ * CRA/TRN or any secret. `signImpl` is injectable for tests.
  */
 export async function buildReviewActionLinks(
   payload: WholesaleNotificationPayload,
   config: WholesaleNotifyConfig,
-): Promise<ReviewActionLinks | undefined> {
-  if (!config.reviewSigningSecret || !config.reviewBaseUrl) return undefined;
-  if (!extractCustomerNumericId(payload.customerId)) return undefined;
+  signImpl: typeof signReviewToken = signReviewToken,
+): Promise<ReviewActionLinksResult> {
+  const reason = diagnoseReviewLinks(payload, config);
+  if (reason !== 'ok') return {reason};
   const exp = nowSeconds() + config.reviewTtlSeconds;
   const sign = (act: ReviewAction) =>
-    signReviewToken(
+    signImpl(
       {cid: payload.customerId, act, exp, nonce: reviewNonce(), ver: payload.submittedAt},
       config.reviewSigningSecret,
     );
-  const [approveToken, rejectToken] = await Promise.all([
-    sign('approved'),
-    sign('rejected'),
-  ]);
-  return {
-    approveUrl: decisionUrl(config.reviewBaseUrl, approveToken),
-    rejectUrl: decisionUrl(config.reviewBaseUrl, rejectToken),
-  };
+  try {
+    const [approveToken, rejectToken] = await Promise.all([
+      sign('approved'),
+      sign('rejected'),
+    ]);
+    return {
+      links: {
+        approveUrl: decisionUrl(config.reviewBaseUrl, approveToken),
+        rejectUrl: decisionUrl(config.reviewBaseUrl, rejectToken),
+      },
+      reason: 'ok',
+    };
+  } catch {
+    return {reason: 'token_generation_failed'};
+  }
 }
 
 export interface SendResult {
@@ -321,8 +382,14 @@ export async function sendWholesaleNotificationEmail(
   if (!isNotifyConfigured(config)) {
     return {sent: false, skippedReason: 'not_configured'};
   }
-  const actions = await buildReviewActionLinks(payload, config);
-  const email = buildWholesaleNotificationEmail(payload, config, actions);
+  const {links, reason} = await buildReviewActionLinks(payload, config);
+  if (reason !== 'ok') {
+    // Diagnostic ONLY — a fixed reason code, never a value (no secret, URL,
+    // token, CRA/TRN, email, or customer id). The email still sends without the
+    // Approve/Reject buttons (customer-facing behaviour unchanged).
+    console.warn(`[wholesale] review action links unavailable: ${reason}`);
+  }
+  const email = buildWholesaleNotificationEmail(payload, config, links);
   const res = await fetchImpl('https://api.resend.com/emails', {
     method: 'POST',
     headers: {

@@ -11,6 +11,7 @@ import {
   extractCustomerNumericId,
   buildReviewUrl,
   buildReviewActionLinks,
+  diagnoseReviewLinks,
   processWholesaleSubmission,
   type WholesaleNotificationPayload,
   type WholesaleNotifyConfig,
@@ -418,29 +419,87 @@ describe('sendWholesaleNotificationEmail', () => {
 
 describe('buildReviewActionLinks', () => {
   it('builds signed Approve/Reject URLs with NO CRA/TRN in the URL or token', async () => {
-    const links = await buildReviewActionLinks(PAYLOAD, CONFIG);
+    const {links, reason} = await buildReviewActionLinks(PAYLOAD, CONFIG);
+    expect(reason).toBe('ok');
     expect(links).toBeDefined();
     for (const url of [links!.approveUrl, links!.rejectUrl]) {
       expect(url.startsWith('https://shop.example.com/internal/wholesale/review?token=')).toBe(true);
       expect(url).not.toContain('123-456-789');
       expect(url).not.toContain('123456789');
-      // no business data / email in the URL either
       expect(url).not.toContain('Petal');
       expect(url).not.toContain('owner@petalvine.com');
     }
-    // the two links are distinct actions
     expect(links!.approveUrl).not.toBe(links!.rejectUrl);
   });
 
-  it('returns undefined when review signing is not configured', async () => {
-    expect(await buildReviewActionLinks(PAYLOAD, {...CONFIG, reviewSigningSecret: ''})).toBeUndefined();
-    expect(await buildReviewActionLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: ''})).toBeUndefined();
+  it('reports token_generation_failed WITHOUT throwing when signing fails', async () => {
+    const throwingSigner = async () => {
+      throw new Error('crypto boom');
+    };
+    const {links, reason} = await buildReviewActionLinks(PAYLOAD, CONFIG, throwingSigner);
+    expect(reason).toBe('token_generation_failed');
+    expect(links).toBeUndefined();
+  });
+});
+
+describe('diagnoseReviewLinks — fixed reason codes (no values)', () => {
+  it('ok when secret + base URL + valid GID are present', () => {
+    expect(diagnoseReviewLinks(PAYLOAD, CONFIG)).toBe('ok');
   });
 
-  it('returns undefined for an invalid customer GID', async () => {
+  it('review_config_missing when BOTH secret and base URL are blank/whitespace', () => {
     expect(
-      await buildReviewActionLinks({...PAYLOAD, customerId: 'gid://shopify/Order/1'}, CONFIG),
-    ).toBeUndefined();
+      diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewSigningSecret: '  ', reviewBaseUrl: ''}),
+    ).toBe('review_config_missing');
+  });
+
+  it('review_signing_secret_invalid when the secret is blank/whitespace only', () => {
+    expect(
+      diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewSigningSecret: '   '}),
+    ).toBe('review_signing_secret_invalid');
+  });
+
+  it('review_base_url_invalid when the base URL is blank or not a URL', () => {
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: ''})).toBe(
+      'review_base_url_invalid',
+    );
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: 'not-a-url'})).toBe(
+      'review_base_url_invalid',
+    );
+  });
+
+  it('review_ttl_invalid when the TTL is non-positive or NaN', () => {
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewTtlSeconds: 0})).toBe('review_ttl_invalid');
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewTtlSeconds: -1})).toBe('review_ttl_invalid');
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewTtlSeconds: Number.NaN})).toBe(
+      'review_ttl_invalid',
+    );
+  });
+
+  it('customer_gid_invalid for a non-Customer GID', () => {
+    expect(
+      diagnoseReviewLinks({...PAYLOAD, customerId: 'gid://shopify/Order/1'}, CONFIG),
+    ).toBe('customer_gid_invalid');
+  });
+
+  it('a trailing slash on the base URL is tolerated (still ok)', () => {
+    expect(diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: 'https://shop.example.com/'})).toBe(
+      'ok',
+    );
+  });
+
+  it('a reason code never contains a secret, URL, token, or CRA/TRN', () => {
+    const codes: string[] = [
+      diagnoseReviewLinks(PAYLOAD, CONFIG),
+      diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewSigningSecret: ''}),
+      diagnoseReviewLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: ''}),
+    ];
+    for (const c of codes) {
+      expect(c).not.toContain('test-signing-secret');
+      expect(c).not.toContain('shop.example.com');
+      expect(c).not.toContain('123-456-789');
+      expect(c).toMatch(/^[a-z_]+$/);
+    }
   });
 });
 
