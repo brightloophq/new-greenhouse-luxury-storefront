@@ -52,6 +52,9 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const cfg = readReviewConfig(context.env);
   const verified = await verifyReviewToken(token, cfg.signingSecret);
   if (!verified.valid || !verified.payload) {
+    // Diagnostic ONLY: a fixed reason code — never the token, payload, secret,
+    // CRA/TRN, or customer id.
+    console.warn(`[wholesale] review token invalid: ${verified.reason ?? 'unknown'}`);
     return data({view: 'invalid'} as const);
   }
 
@@ -76,6 +79,9 @@ export async function loader({context, request}: LoaderFunctionArgs) {
       details: publicDetails(d),
     });
   } catch {
+    // The token verified — the same "invalid" page here means the Admin API
+    // customer read failed (distinct cause). Fixed code, no PII/secret.
+    console.warn('[wholesale] review customer read failed: customer_read_failed');
     return data({view: 'invalid'} as const);
   }
 }
@@ -90,11 +96,13 @@ export async function action({context, request}: ActionFunctionArgs) {
   const cfg = readReviewConfig(context.env);
   const verified = await verifyReviewToken(token, cfg.signingSecret);
   if (!verified.valid || !verified.payload) {
+    console.warn(`[wholesale] review token invalid: ${verified.reason ?? 'unknown'}`);
     return data({view: 'invalid'} as const, {status: 400});
   }
   const {cid, act} = verified.payload;
   // A token authorises exactly one action — an approve token cannot reject.
   if (formAction !== act) {
+    console.warn('[wholesale] review action mismatch: action_mismatch');
     return data({view: 'invalid'} as const, {status: 400});
   }
 
@@ -103,6 +111,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   try {
     d = await readWholesaleReview(admin, cid);
   } catch {
+    console.warn('[wholesale] review customer read failed: customer_read_failed');
     return data({view: 'invalid'} as const, {status: 400});
   }
   const adminUrl = buildReviewUrl(d.customerId, context.env.SHOPIFY_ADMIN_STORE_HANDLE);

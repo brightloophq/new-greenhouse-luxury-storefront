@@ -28,12 +28,15 @@ export interface ReviewTokenPayload {
 }
 
 export type VerifyFailure =
-  | 'not_configured'
-  | 'malformed'
-  | 'bad_signature'
+  | 'secret_missing'
+  | 'payload_invalid'
+  | 'decode_failed'
+  | 'json_invalid'
+  | 'missing_fields'
+  | 'signature_invalid'
   | 'expired'
-  | 'bad_action'
-  | 'bad_customer';
+  | 'action_invalid'
+  | 'gid_invalid';
 
 export interface VerifyResult {
   valid: boolean;
@@ -108,11 +111,11 @@ export async function verifyReviewToken(
   secret: string,
   now: number = nowSeconds(),
 ): Promise<VerifyResult> {
-  if (!secret) return {valid: false, reason: 'not_configured'};
+  if (!secret) return {valid: false, reason: 'secret_missing'};
 
   const parts = (token ?? '').split('.');
   if (parts.length !== 2 || !parts[0] || !parts[1]) {
-    return {valid: false, reason: 'malformed'};
+    return {valid: false, reason: 'payload_invalid'};
   }
   const [body, sig] = parts;
 
@@ -120,28 +123,42 @@ export async function verifyReviewToken(
   try {
     expectedSig = bytesToB64url(await hmac(secret, body));
   } catch {
-    return {valid: false, reason: 'malformed'};
+    return {valid: false, reason: 'decode_failed'};
   }
   if (!timingSafeEqual(sig, expectedSig)) {
-    return {valid: false, reason: 'bad_signature'};
+    return {valid: false, reason: 'signature_invalid'};
+  }
+
+  // Signature is valid → the body is exactly what we signed. Decode then parse,
+  // reporting each failure mode distinctly for diagnostics.
+  let decoded: string;
+  try {
+    decoded = new TextDecoder().decode(b64urlToBytes(body));
+  } catch {
+    return {valid: false, reason: 'decode_failed'};
   }
 
   let payload: ReviewTokenPayload;
   try {
-    payload = JSON.parse(
-      new TextDecoder().decode(b64urlToBytes(body)),
-    ) as ReviewTokenPayload;
+    payload = JSON.parse(decoded) as ReviewTokenPayload;
   } catch {
-    return {valid: false, reason: 'malformed'};
+    return {valid: false, reason: 'json_invalid'};
   }
 
+  if (
+    typeof payload.exp !== 'number' ||
+    typeof payload.cid !== 'string' ||
+    typeof payload.act !== 'string'
+  ) {
+    return {valid: false, reason: 'missing_fields'};
+  }
   if (payload.act !== 'approved' && payload.act !== 'rejected') {
-    return {valid: false, reason: 'bad_action'};
+    return {valid: false, reason: 'action_invalid'};
   }
   if (!isCustomerGid(payload.cid)) {
-    return {valid: false, reason: 'bad_customer'};
+    return {valid: false, reason: 'gid_invalid'};
   }
-  if (typeof payload.exp !== 'number' || now >= payload.exp) {
+  if (now >= payload.exp) {
     return {valid: false, reason: 'expired'};
   }
   return {valid: true, payload};

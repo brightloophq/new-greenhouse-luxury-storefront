@@ -15,6 +15,28 @@ const base: ReviewTokenPayload = {
   nonce: 'abc123def456',
 };
 
+// Helpers to craft a token with a VALID signature over an arbitrary body — used
+// to exercise the post-signature failure paths (decode_failed, json_invalid).
+function b64url(bytes: Uint8Array): string {
+  let bin = '';
+  for (const byte of bytes) bin += String.fromCharCode(byte);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function hmacB64url(secret: string, data: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    {name: 'HMAC', hash: 'SHA-256'},
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
+  return b64url(new Uint8Array(sig));
+}
+async function signRawBody(body: string, secret: string): Promise<string> {
+  return `${body}.${await hmacB64url(secret, body)}`;
+}
+
 describe('signReviewToken / verifyReviewToken', () => {
   it('a freshly signed token verifies and round-trips the payload', async () => {
     const token = await signReviewToken(base, SECRET);
@@ -29,14 +51,14 @@ describe('signReviewToken / verifyReviewToken', () => {
     const flipped = body.slice(0, -1) + (body.slice(-1) === 'A' ? 'B' : 'A');
     const res = await verifyReviewToken(`${flipped}.${sig}`, SECRET);
     expect(res.valid).toBe(false);
-    expect(res.reason).toBe('bad_signature');
+    expect(res.reason).toBe('signature_invalid');
   });
 
   it('a token signed with a different secret fails', async () => {
     const token = await signReviewToken(base, SECRET);
     const res = await verifyReviewToken(token, 'a-different-secret');
     expect(res.valid).toBe(false);
-    expect(res.reason).toBe('bad_signature');
+    expect(res.reason).toBe('signature_invalid');
   });
 
   it('an expired token fails', async () => {
@@ -46,10 +68,10 @@ describe('signReviewToken / verifyReviewToken', () => {
     expect(res.reason).toBe('expired');
   });
 
-  it('rejects malformed tokens', async () => {
-    expect((await verifyReviewToken('', SECRET)).reason).toBe('malformed');
-    expect((await verifyReviewToken('only-one-part', SECRET)).reason).toBe('malformed');
-    expect((await verifyReviewToken('a.b.c', SECRET)).reason).toBe('malformed');
+  it('rejects structurally malformed tokens as payload_invalid', async () => {
+    expect((await verifyReviewToken('', SECRET)).reason).toBe('payload_invalid');
+    expect((await verifyReviewToken('only-one-part', SECRET)).reason).toBe('payload_invalid');
+    expect((await verifyReviewToken('a.b.c', SECRET)).reason).toBe('payload_invalid');
   });
 
   it('rejects an unsupported action', async () => {
@@ -59,19 +81,39 @@ describe('signReviewToken / verifyReviewToken', () => {
     );
     const res = await verifyReviewToken(token, SECRET);
     expect(res.valid).toBe(false);
-    expect(res.reason).toBe('bad_action');
+    expect(res.reason).toBe('action_invalid');
   });
 
   it('rejects an invalid customer GID', async () => {
     const token = await signReviewToken({...base, cid: 'gid://shopify/Order/42'}, SECRET);
     const res = await verifyReviewToken(token, SECRET);
     expect(res.valid).toBe(false);
-    expect(res.reason).toBe('bad_customer');
+    expect(res.reason).toBe('gid_invalid');
   });
 
-  it('reports not_configured when there is no signing secret', async () => {
+  it('reports secret_missing when there is no signing secret', async () => {
     const token = await signReviewToken(base, SECRET);
-    expect((await verifyReviewToken(token, '')).reason).toBe('not_configured');
+    expect((await verifyReviewToken(token, '')).reason).toBe('secret_missing');
+  });
+
+  it('reports missing_fields when a required field is absent', async () => {
+    // exp omitted
+    const token = await signReviewToken(
+      {cid: base.cid, act: 'approved', nonce: 'n'} as unknown as ReviewTokenPayload,
+      SECRET,
+    );
+    expect((await verifyReviewToken(token, SECRET)).reason).toBe('missing_fields');
+  });
+
+  it('reports json_invalid for a validly-signed body that is not JSON', async () => {
+    const body = b64url(new TextEncoder().encode('not json {'));
+    const token = await signRawBody(body, SECRET);
+    expect((await verifyReviewToken(token, SECRET)).reason).toBe('json_invalid');
+  });
+
+  it('reports decode_failed for a validly-signed body that is not base64url', async () => {
+    const token = await signRawBody('@@@not-base64@@@', SECRET);
+    expect((await verifyReviewToken(token, SECRET)).reason).toBe('decode_failed');
   });
 
   it('the token payload contains ONLY the whitelisted keys — no CRA/TRN or PII', async () => {
