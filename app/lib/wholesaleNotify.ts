@@ -10,6 +10,13 @@
  * from server env — no email address or secret is hardcoded — and never reaches
  * the client. Every piece here is pure/injectable so the flow is unit-testable.
  */
+import {
+  signReviewToken,
+  reviewNonce,
+  nowSeconds,
+  type ReviewAction,
+} from './wholesaleReviewToken';
+import {readReviewConfig, decisionUrl} from './wholesaleReview';
 
 /** Resolved notification config (from server env; secrets stay server-side). */
 export interface WholesaleNotifyConfig {
@@ -23,6 +30,12 @@ export interface WholesaleNotifyConfig {
    * omitted and the plain customer reference is kept.
    */
   adminStoreHandle: string;
+  /** HMAC secret for signing Approve/Reject review links (server-side only). */
+  reviewSigningSecret: string;
+  /** Review-link lifetime in seconds. */
+  reviewTtlSeconds: number;
+  /** Absolute base URL for the internal review route. */
+  reviewBaseUrl: string;
 }
 
 /**
@@ -35,6 +48,9 @@ export interface WholesaleNotifyEnv {
   WHOLESALE_NOTIFY_REPLY_TO?: string;
   WHOLESALE_INTERNAL_EMAIL?: string;
   SHOPIFY_ADMIN_STORE_HANDLE?: string;
+  WHOLESALE_REVIEW_SIGNING_SECRET?: string;
+  WHOLESALE_REVIEW_LINK_TTL_SECONDS?: string;
+  WHOLESALE_REVIEW_BASE_URL?: string;
 }
 
 /**
@@ -45,12 +61,16 @@ export interface WholesaleNotifyEnv {
 export function readNotifyConfig(
   env: WholesaleNotifyEnv,
 ): WholesaleNotifyConfig {
+  const review = readReviewConfig(env);
   return {
     resendApiKey: env.RESEND_API_KEY ?? '',
     from: env.WHOLESALE_NOTIFY_FROM ?? '',
     replyTo: env.WHOLESALE_NOTIFY_REPLY_TO ?? '',
     recipient: env.WHOLESALE_INTERNAL_EMAIL ?? '',
     adminStoreHandle: env.SHOPIFY_ADMIN_STORE_HANDLE ?? '',
+    reviewSigningSecret: review.signingSecret,
+    reviewTtlSeconds: review.ttlSeconds,
+    reviewBaseUrl: review.baseUrl,
   };
 }
 
@@ -135,17 +155,26 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
+/** Signed Approve/Reject links for the internal decision route (no CRA/TRN). */
+export interface ReviewActionLinks {
+  approveUrl: string;
+  rejectUrl: string;
+}
+
 export function buildWholesaleNotificationEmail(
   payload: WholesaleNotificationPayload,
   config: WholesaleNotifyConfig,
+  actions?: ReviewActionLinks,
 ): BuiltEmail {
-  const maskedCra = maskCraNumber(payload.craNumber);
   const statusLabel = wholesaleStatusLabel(payload.status);
   // Deep link to the customer record only — never a status-changing link, never
   // a secret/token, never the CRA/TRN. Null when it cannot be safely built.
   const reviewUrl = buildReviewUrl(payload.customerId, config.adminStoreHandle);
 
   // ── Plain-text fallback ───────────────────────────────────────────────────
+  // This is the internal, single-recipient staff notification, so it carries the
+  // FULL CRA/TRN (plain + copyable). It is never masked here; it must never
+  // appear in the subject, any URL, logs, or errors.
   const textLines = [
     'A new wholesale application has been submitted for manual review.',
     '',
@@ -153,15 +182,23 @@ export function buildWholesaleNotificationEmail(
     `Business Type: ${payload.businessType}`,
     `Business Phone: ${payload.businessPhone}`,
     `Contact Email: ${payload.contactEmail}`,
-    `CRA/TRN (masked): ${maskedCra}`,
+    `CRA/TRN: ${payload.craNumber}`,
     `Shopify Customer ID: ${payload.customerId}`,
     `Submission Date: ${payload.submittedAt}`,
     `Status: ${statusLabel}`,
   ];
+  if (actions) {
+    textLines.push(
+      `Approve Application: ${actions.approveUrl}`,
+      `Reject Application: ${actions.rejectUrl}`,
+    );
+  }
   if (reviewUrl) textLines.push(`Review in Shopify: ${reviewUrl}`);
   textLines.push(
     '',
-    'Review the CRA/TRN manually and set custom.wholesale_status in Shopify admin.',
+    actions
+      ? 'Approve/Reject open a confirmation page — no status changes until you confirm.'
+      : 'Review the CRA/TRN in Shopify Admin and set custom.wholesale_status manually.',
   );
   const text = textLines.join('\n');
 
@@ -176,22 +213,29 @@ export function buildWholesaleNotificationEmail(
       )}</td>
     </tr>`;
 
-  const button = reviewUrl
-    ? `<tr><td colspan="2" style="padding:24px 0 4px;">
-        <a href="${escapeHtml(reviewUrl)}"
-           style="display:inline-block;background:#090909;color:#ffffff;text-decoration:none;
-                  font-size:14px;font-weight:600;letter-spacing:.02em;padding:12px 28px;border-radius:2px;">
-          Review in Shopify
-        </a>
-        <div style="margin-top:8px;color:#6b6b6b;font-size:12px;">
-          Opens the customer record in Shopify Admin. Update
-          <code style="font-size:12px;">custom.wholesale_status</code> manually after review.
+  const linkButton = (href: string, label: string, bg: string) =>
+    `<a href="${escapeHtml(href)}" style="display:inline-block;background:${bg};color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.02em;padding:11px 22px;border-radius:2px;margin:0 8px 8px 0;">${escapeHtml(
+      label,
+    )}</a>`;
+
+  const actionButtons = actions
+    ? `<tr><td colspan="2" style="padding:20px 0 0;">
+        ${linkButton(actions.approveUrl, 'Approve Application', '#4d6a50')}
+        ${linkButton(actions.rejectUrl, 'Reject Application', '#8a1f1f')}
+        <div style="margin-top:6px;color:#6b6b6b;font-size:12px;">
+          Each opens a confirmation page — nothing changes until you confirm there.
         </div>
       </td></tr>`
-    : `<tr><td colspan="2" style="padding:20px 0 4px;color:#6b6b6b;font-size:12px;">
+    : '';
+
+  const reviewButton = reviewUrl
+    ? `<tr><td colspan="2" style="padding:12px 0 4px;">
+        ${linkButton(reviewUrl, 'Review in Shopify', '#090909')}
+      </td></tr>`
+    : `<tr><td colspan="2" style="padding:12px 0 4px;color:#6b6b6b;font-size:12px;">
         Open the customer record in Shopify Admin (Customer: ${escapeHtml(
           payload.customerId,
-        )}) and update <code style="font-size:12px;">custom.wholesale_status</code> manually.
+        )}).
       </td></tr>`;
 
   const html = `<!-- New Wholesale Application -->
@@ -208,10 +252,11 @@ export function buildWholesaleNotificationEmail(
         ${row('Business Type', payload.businessType)}
         ${row('Business Phone', payload.businessPhone)}
         ${row('Contact Email', payload.contactEmail)}
-        ${row('CRA/TRN (masked)', maskedCra)}
+        ${row('CRA/TRN', payload.craNumber)}
         ${row('Submission Date', payload.submittedAt)}
         ${row('Status', statusLabel)}
-        ${button}
+        ${actionButtons}
+        ${reviewButton}
       </table>
     </td></tr>
   </table>
@@ -224,6 +269,34 @@ export function buildWholesaleNotificationEmail(
     subject: 'New Wholesale Application',
     text,
     html,
+  };
+}
+
+/**
+ * Generate the signed Approve/Reject links for this application. Returns
+ * undefined when review signing is not configured or the customer id is invalid
+ * — the email still sends, just without the decision buttons. The tokens carry
+ * ONLY {cid, act, exp, nonce, ver}; never the CRA/TRN or any secret.
+ */
+export async function buildReviewActionLinks(
+  payload: WholesaleNotificationPayload,
+  config: WholesaleNotifyConfig,
+): Promise<ReviewActionLinks | undefined> {
+  if (!config.reviewSigningSecret || !config.reviewBaseUrl) return undefined;
+  if (!extractCustomerNumericId(payload.customerId)) return undefined;
+  const exp = nowSeconds() + config.reviewTtlSeconds;
+  const sign = (act: ReviewAction) =>
+    signReviewToken(
+      {cid: payload.customerId, act, exp, nonce: reviewNonce(), ver: payload.submittedAt},
+      config.reviewSigningSecret,
+    );
+  const [approveToken, rejectToken] = await Promise.all([
+    sign('approved'),
+    sign('rejected'),
+  ]);
+  return {
+    approveUrl: decisionUrl(config.reviewBaseUrl, approveToken),
+    rejectUrl: decisionUrl(config.reviewBaseUrl, rejectToken),
   };
 }
 
@@ -248,7 +321,8 @@ export async function sendWholesaleNotificationEmail(
   if (!isNotifyConfigured(config)) {
     return {sent: false, skippedReason: 'not_configured'};
   }
-  const email = buildWholesaleNotificationEmail(payload, config);
+  const actions = await buildReviewActionLinks(payload, config);
+  const email = buildWholesaleNotificationEmail(payload, config, actions);
   const res = await fetchImpl('https://api.resend.com/emails', {
     method: 'POST',
     headers: {

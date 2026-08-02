@@ -10,6 +10,7 @@ import {
   describeMetafieldUserErrors,
   extractCustomerNumericId,
   buildReviewUrl,
+  buildReviewActionLinks,
   processWholesaleSubmission,
   type WholesaleNotificationPayload,
   type WholesaleNotifyConfig,
@@ -21,6 +22,14 @@ const CONFIG: WholesaleNotifyConfig = {
   replyTo: 'wholesale@thenewgreenhouseja.com',
   recipient: 'wholesale@thenewgreenhouseja.com',
   adminStoreHandle: 'the-new-greenhouse',
+  reviewSigningSecret: 'test-signing-secret',
+  reviewTtlSeconds: 172800,
+  reviewBaseUrl: 'https://shop.example.com',
+};
+
+const ACTIONS = {
+  approveUrl: 'https://shop.example.com/internal/wholesale/review?token=APPROVE',
+  rejectUrl: 'https://shop.example.com/internal/wholesale/review?token=REJECT',
 };
 
 const PAYLOAD: WholesaleNotificationPayload = {
@@ -53,18 +62,23 @@ describe('email builder', () => {
     expect(email.subject).toBe('New Wholesale Application');
   });
 
-  it('includes every required field, masks the TRN and marks pending', () => {
+  it('includes every required field with the FULL CRA/TRN in the body', () => {
     expect(email.text).toContain('Business Name: Petal & Vine');
     expect(email.text).toContain('Business Type: Florist');
     expect(email.text).toContain('Business Phone: (876) 555-0100');
     expect(email.text).toContain('Contact Email: owner@petalvine.com');
-    expect(email.text).toContain('CRA/TRN (masked): *****6789');
+    // Internal staff notification → full CRA/TRN, plain + copyable, never masked.
+    expect(email.text).toContain('CRA/TRN: 123-456-789');
+    expect(email.html).toContain('123-456-789');
     expect(email.text).toContain('Shopify Customer ID: gid://shopify/Customer/42');
     expect(email.text).toContain('Submission Date: 2026-07-28T12:00:00.000Z');
     expect(email.text).toContain('Status: Pending Manual Review');
-    // the full TRN must never appear
-    expect(email.text).not.toContain('123456789');
-    expect(email.text).not.toContain('123-456-789');
+  });
+
+  it('never puts the CRA/TRN in the subject', () => {
+    expect(email.subject).toBe('New Wholesale Application');
+    expect(email.subject).not.toContain('123-456-789');
+    expect(email.subject).not.toContain('123456789');
   });
 
   it('reflects an existing staff status without ever writing it', () => {
@@ -170,26 +184,32 @@ describe('Review in Shopify button (HTML + text)', () => {
     expect(email.text).not.toContain('Review in Shopify: https://');
   });
 
-  it('contains no approval / rejection / status-mutation link', () => {
+  it('without action links, the only link is the read-only customer record', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
-    const both = `${email.html}\n${email.text}`.toLowerCase();
-    expect(both).not.toContain('approve');
-    expect(both).not.toContain('reject');
-    expect(both).not.toContain('metafieldsset');
-    expect(both).not.toContain('wholesale_status=');
-    // the only link present is the read-only customer record
     const hrefs = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
     expect(hrefs).toEqual([
       'https://admin.shopify.com/store/the-new-greenhouse/customers/42',
     ]);
   });
 
-  it('never leaks the full CRA/TRN in either HTML or text', () => {
-    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
-    expect(email.html).toContain('*****6789');
-    expect(email.html).not.toContain('123456789');
-    expect(email.html).not.toContain('123-456-789');
-    expect(email.text).not.toContain('123456789');
+  it('with action links, adds Approve + Reject buttons and keeps Review in Shopify', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG, ACTIONS);
+    expect(email.html).toContain('Approve Application');
+    expect(email.html).toContain('Reject Application');
+    expect(email.html).toContain(`href="${ACTIONS.approveUrl}"`);
+    expect(email.html).toContain(`href="${ACTIONS.rejectUrl}"`);
+    expect(email.text).toContain(`Approve Application: ${ACTIONS.approveUrl}`);
+    expect(email.text).toContain(`Reject Application: ${ACTIONS.rejectUrl}`);
+    expect(email.html).toContain('Review in Shopify');
+  });
+
+  it('the CRA/TRN never appears in any link (href) in the email', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG, ACTIONS);
+    const hrefs = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    for (const href of hrefs) {
+      expect(href).not.toContain('123-456-789');
+      expect(href).not.toContain('123456789');
+    }
   });
 
   it('HTML-escapes profile values (no injection)', () => {
@@ -245,7 +265,22 @@ describe('readNotifyConfig', () => {
       replyTo: 'reply@env.example',
       recipient: 'inbox@env.example',
       adminStoreHandle: '',
+      reviewSigningSecret: '',
+      reviewTtlSeconds: 172800,
+      reviewBaseUrl: '',
     });
+  });
+
+  it('reads the review signing secret, TTL and base URL from env', () => {
+    const cfg = readNotifyConfig({
+      WHOLESALE_REVIEW_SIGNING_SECRET: 's3cret',
+      WHOLESALE_REVIEW_LINK_TTL_SECONDS: '3600',
+      WHOLESALE_REVIEW_BASE_URL: 'https://shop.example.com/',
+    });
+    expect(cfg.reviewSigningSecret).toBe('s3cret');
+    expect(cfg.reviewTtlSeconds).toBe(3600);
+    // trailing slash trimmed
+    expect(cfg.reviewBaseUrl).toBe('https://shop.example.com');
   });
 
   it('reads the admin store handle from env', () => {
@@ -261,6 +296,9 @@ describe('readNotifyConfig', () => {
       replyTo: '',
       recipient: '',
       adminStoreHandle: '',
+      reviewSigningSecret: '',
+      reviewTtlSeconds: 172800,
+      reviewBaseUrl: '',
     });
     // the previously hardcoded production addresses must NOT reappear
     expect(JSON.stringify(cfg)).not.toContain('thenewgreenhouseja');
@@ -337,15 +375,15 @@ describe('describeMetafieldUserErrors (dev/test diagnostics)', () => {
 });
 
 describe('sendWholesaleNotificationEmail', () => {
-  it('POSTs to Resend with the bearer key when configured', async () => {
+  it('POSTs to Resend with the bearer key and the full CRA/TRN in the body', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ok: true, status: 200} as Response);
     const result = await sendWholesaleNotificationEmail(PAYLOAD, CONFIG, fetchImpl);
     expect(result.sent).toBe(true);
     const [url, init] = fetchImpl.mock.calls[0];
     expect(url).toBe('https://api.resend.com/emails');
     expect((init.headers as Record<string, string>).Authorization).toBe('Bearer re_test_key');
-    expect(init.body).toContain('*****6789');
-    expect(init.body).not.toContain('123456789');
+    // Full CRA/TRN present in the email body (internal, single recipient).
+    expect(init.body).toContain('123-456-789');
   });
 
   it('skips (does not pretend to send) when the key is missing', async () => {
@@ -375,6 +413,34 @@ describe('sendWholesaleNotificationEmail', () => {
   it('throws on a non-OK Resend response', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ok: false, status: 422} as Response);
     await expect(sendWholesaleNotificationEmail(PAYLOAD, CONFIG, fetchImpl)).rejects.toThrow(/422/);
+  });
+});
+
+describe('buildReviewActionLinks', () => {
+  it('builds signed Approve/Reject URLs with NO CRA/TRN in the URL or token', async () => {
+    const links = await buildReviewActionLinks(PAYLOAD, CONFIG);
+    expect(links).toBeDefined();
+    for (const url of [links!.approveUrl, links!.rejectUrl]) {
+      expect(url.startsWith('https://shop.example.com/internal/wholesale/review?token=')).toBe(true);
+      expect(url).not.toContain('123-456-789');
+      expect(url).not.toContain('123456789');
+      // no business data / email in the URL either
+      expect(url).not.toContain('Petal');
+      expect(url).not.toContain('owner@petalvine.com');
+    }
+    // the two links are distinct actions
+    expect(links!.approveUrl).not.toBe(links!.rejectUrl);
+  });
+
+  it('returns undefined when review signing is not configured', async () => {
+    expect(await buildReviewActionLinks(PAYLOAD, {...CONFIG, reviewSigningSecret: ''})).toBeUndefined();
+    expect(await buildReviewActionLinks(PAYLOAD, {...CONFIG, reviewBaseUrl: ''})).toBeUndefined();
+  });
+
+  it('returns undefined for an invalid customer GID', async () => {
+    expect(
+      await buildReviewActionLinks({...PAYLOAD, customerId: 'gid://shopify/Order/1'}, CONFIG),
+    ).toBeUndefined();
   });
 });
 

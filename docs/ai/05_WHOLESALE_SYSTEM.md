@@ -42,6 +42,47 @@ The modal is a **branded entry point**, never a replacement for Shopify's secure
 - Validate any return URL (no open redirects).
 - Editorial pacing / marketing interstitials: exclude wholesale unless explicitly requested.
 
+## Manual review decisions — email → confirmation → Admin write
+
+The internal notification email lets the owner decide **from the email**, safely:
+
+```
+Profile saved → Resend internal email (FULL CRA/TRN, single recipient)
+  → Approve / Reject buttons (signed, expiring tokens)
+  → GET /internal/wholesale/review  (read-only confirmation page)
+  → explicit POST confirmation
+  → Shopify ADMIN API writes custom.wholesale_status (+ custom.wholesale_review_note on reject)
+  → result page
+```
+
+- **Tokens** (`app/lib/wholesaleReviewToken.ts`): HMAC-SHA256 via Web Crypto
+  (Oxygen/Workers-compatible). Payload is ONLY `{cid, act, exp, nonce, ver}` — never
+  the CRA/TRN, email, business data, or any secret. Verified for signature, expiry,
+  action, and a valid Customer GID.
+- **HTTP safety**: GET is read-only (safe for scanners/previews/forwards); only an
+  explicit POST mutates. An approve token cannot reject (action must match).
+- **Decision guard** (`app/lib/wholesaleReview.ts` `commitReviewDecision`): only a
+  **missing or pending** application may be decided; `approved`/`rejected`/
+  `more_information_required` are never overwritten. Idempotent; a Shopify write
+  failure never shows success. Reject requires a non-empty reason, stored in the
+  staff-only `custom.wholesale_review_note` (never `business_notes`).
+- **Admin write** (`app/lib/shopifyAdmin.ts`): server-only Shopify Admin GraphQL
+  (`SHOPIFY_ADMIN_API_TOKEN`, `read_customers` + `write_customers`). The token is
+  header-only and redacted from errors; the Customer Account API still cannot write
+  `wholesale_status`. Tree-shaken out of the client bundle.
+- **CRA/TRN**: full value appears ONLY in the internal email body and on the
+  authenticated confirmation page — never in the subject, URLs, tokens, logs, errors,
+  or the client bundle.
+
+**Oxygen env:** `SHOPIFY_ADMIN_API_TOKEN`, `WHOLESALE_REVIEW_SIGNING_SECRET`,
+`WHOLESALE_REVIEW_LINK_TTL_SECONDS`, `WHOLESALE_REVIEW_BASE_URL` (+ existing
+`SHOPIFY_ADMIN_STORE_HANDLE`, Resend vars). Missing review config → the email still
+sends, just without the Approve/Reject buttons.
+
+> Note: this writes `wholesale_status` but does **not** change the storefront access
+> gate, which remains authentication-only (see "Access model"). Making
+> `approved` the access requirement is a separate, deferred decision.
+
 ## Status
 
 The authentication **experience** (branded modal, account surfaces, session/logout polish) is specified but **not yet fully implemented** — see `09_ROADMAP.md`. The underlying Shopify auth flow already works.
