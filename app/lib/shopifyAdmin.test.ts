@@ -3,69 +3,147 @@ import {
   createAdminClient,
   readWholesaleReview,
   writeWholesaleDecision,
+  adminReadReason,
+  AdminReadError,
   type AdminClient,
 } from './shopifyAdmin';
 
-const okResponse = (json: unknown) =>
-  ({ok: true, status: 200, json: async () => json}) as unknown as Response;
+const ADMIN = {
+  SHOPIFY_ADMIN_API_TOKEN: 'shpat_secret',
+  PUBLIC_STORE_DOMAIN: 'ax41k1-k5.myshopify.com',
+};
 
-describe('createAdminClient', () => {
+const http = (status: number, json: unknown = {}) =>
+  ({ok: status >= 200 && status < 300, status, json: async () => json}) as unknown as Response;
+
+/** Return the AdminReadError reason (or a marker) for a rejected promise. */
+async function reasonOf(promise: Promise<unknown>): Promise<string> {
+  try {
+    await promise;
+    return 'NO_THROW';
+  } catch (e) {
+    return e instanceof AdminReadError ? e.reason : `OTHER:${String(e)}`;
+  }
+}
+
+describe('createAdminClient — configuration', () => {
   it('is configured only with both token and domain', () => {
     expect(createAdminClient({}).configured).toBe(false);
     expect(createAdminClient({SHOPIFY_ADMIN_API_TOKEN: 'shpat_x'}).configured).toBe(false);
-    expect(
-      createAdminClient({
-        SHOPIFY_ADMIN_API_TOKEN: 'shpat_x',
-        PUBLIC_STORE_DOMAIN: 'd.myshopify.com',
-      }).configured,
-    ).toBe(true);
+    expect(createAdminClient(ADMIN).configured).toBe(true);
   });
 
-  it('throws WITHOUT calling fetch when not configured', async () => {
-    const fetchImpl = vi.fn();
-    const client = createAdminClient({}, fetchImpl);
-    await expect(client.graphql('query {}')).rejects.toThrow(/not configured/);
-    expect(fetchImpl).not.toHaveBeenCalled();
-  });
-
-  it('POSTs to the Admin GraphQL endpoint with the token header', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(okResponse({data: {ok: 1}}));
-    const client = createAdminClient(
-      {SHOPIFY_ADMIN_API_TOKEN: 'shpat_secret', PUBLIC_STORE_DOMAIN: 'd.myshopify.com'},
-      fetchImpl,
-    );
-    const data = await client.graphql<{ok: number}>('query {}', {a: 1});
+  it('POSTs to the exact Admin endpoint with the token header only', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(http(200, {data: {ok: 1}}));
+    const data = await createAdminClient(ADMIN, fetchImpl).graphql<{ok: number}>('q', {a: 1});
     expect(data).toEqual({ok: 1});
     const [url, init] = fetchImpl.mock.calls[0];
-    expect(url).toBe('https://d.myshopify.com/admin/api/2025-01/graphql.json');
+    expect(url).toBe('https://ax41k1-k5.myshopify.com/admin/api/2025-01/graphql.json');
     expect((init.headers as Record<string, string>)['X-Shopify-Access-Token']).toBe('shpat_secret');
     expect(init.method).toBe('POST');
   });
+});
 
-  it('redacts the token from HTTP errors and never echoes the response body', async () => {
-    const fetchImpl = vi
-      .fn()
-      .mockResolvedValue({ok: false, status: 401, json: async () => ({})} as unknown as Response);
-    const client = createAdminClient(
-      {SHOPIFY_ADMIN_API_TOKEN: 'shpat_secret', PUBLIC_STORE_DOMAIN: 'd.myshopify.com'},
-      fetchImpl,
+describe('Admin read failure reason codes', () => {
+  it('admin_config_missing — no token/domain, and fetch is never called', async () => {
+    const fetchImpl = vi.fn();
+    expect(await reasonOf(createAdminClient({}, fetchImpl).graphql('q'))).toBe(
+      'admin_config_missing',
     );
-    await expect(client.graphql('q')).rejects.toThrow(/Admin API HTTP 401/);
-    const err = await client.graphql('q').catch((e: unknown) => String(e));
-    expect(err).not.toContain('shpat_secret');
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it('throws on GraphQL errors without echoing the body (no CRA/TRN leak)', async () => {
+  it('admin_shop_domain_invalid — domain is not a hostname', async () => {
+    const fetchImpl = vi.fn();
+    const bad = {SHOPIFY_ADMIN_API_TOKEN: 'shpat_x', PUBLIC_STORE_DOMAIN: 'no-dot'};
+    expect(await reasonOf(createAdminClient(bad, fetchImpl).graphql('q'))).toBe(
+      'admin_shop_domain_invalid',
+    );
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('admin_network_failed — fetch throws', async () => {
+    const fetchImpl = vi.fn().mockRejectedValue(new Error('ECONNREFUSED'));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_network_failed',
+    );
+  });
+
+  it('admin_token_invalid — HTTP 401', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(http(401));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_token_invalid',
+    );
+  });
+
+  it('admin_scope_denied — HTTP 403', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(http(403));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_scope_denied',
+    );
+  });
+
+  it('admin_scope_denied — GraphQL ACCESS_DENIED at HTTP 200', async () => {
     const fetchImpl = vi
       .fn()
-      .mockResolvedValue(okResponse({errors: [{message: 'contains 123-456-789'}]}));
-    const client = createAdminClient(
-      {SHOPIFY_ADMIN_API_TOKEN: 'shpat_secret', PUBLIC_STORE_DOMAIN: 'd.myshopify.com'},
-      fetchImpl,
+      .mockResolvedValue(http(200, {errors: [{extensions: {code: 'ACCESS_DENIED'}}]}));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_scope_denied',
     );
-    const err = await client.graphql('q').catch((e: unknown) => String(e));
-    expect(err).toContain('Admin API returned errors');
-    expect(err).not.toContain('123-456-789');
+  });
+
+  it('admin_http_not_found — HTTP 404', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(http(404));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_http_not_found',
+    );
+  });
+
+  it('admin_http_error — other non-2xx (500)', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(http(500));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'admin_http_error',
+    );
+  });
+
+  it('admin_graphql_error — top-level errors without a known category', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(http(200, {errors: [{message: 'contains 123-456-789'}]}));
+    const reason = await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'));
+    expect(reason).toBe('admin_graphql_error');
+  });
+
+  it('customer_query_invalid — GraphQL validation error', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(http(200, {errors: [{extensions: {code: 'GRAPHQL_VALIDATION_FAILED'}}]}));
+    expect(await reasonOf(createAdminClient(ADMIN, fetchImpl).graphql('q'))).toBe(
+      'customer_query_invalid',
+    );
+  });
+
+  it('the thrown error carries ONLY the code — no token or CRA/TRN', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(http(200, {errors: [{message: 'leak 123-456-789'}]}));
+    let caught: unknown;
+    try {
+      await createAdminClient(ADMIN, fetchImpl).graphql('q');
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught).toBeInstanceOf(AdminReadError);
+    expect(String(caught)).not.toContain('shpat_secret');
+    expect(String(caught)).not.toContain('123-456-789');
+  });
+});
+
+describe('adminReadReason', () => {
+  it('returns the code for an AdminReadError and a fallback otherwise', () => {
+    expect(adminReadReason(new AdminReadError('admin_scope_denied'))).toBe('admin_scope_denied');
+    expect(adminReadReason(new Error('boom'))).toBe('admin_http_error');
+    expect(adminReadReason('nope')).toBe('admin_http_error');
   });
 });
 
@@ -115,8 +193,10 @@ describe('readWholesaleReview', () => {
     });
   });
 
-  it('throws when the customer is missing', async () => {
+  it('customer_not_found when the customer is null', async () => {
     const admin = fakeAdmin({customer: null});
-    await expect(readWholesaleReview(admin, 'gid://shopify/Customer/1')).rejects.toThrow();
+    expect(await reasonOf(readWholesaleReview(admin, 'gid://shopify/Customer/1'))).toBe(
+      'customer_not_found',
+    );
   });
 });

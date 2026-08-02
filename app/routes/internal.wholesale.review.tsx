@@ -20,6 +20,7 @@ import {
   readWholesaleReview,
   readWholesaleStatus,
   writeWholesaleDecision,
+  adminReadReason,
 } from '~/lib/shopifyAdmin';
 import {buildReviewUrl} from '~/lib/wholesaleNotify';
 
@@ -78,10 +79,10 @@ export async function loader({context, request}: LoaderFunctionArgs) {
       adminUrl,
       details: publicDetails(d),
     });
-  } catch {
+  } catch (error) {
     // The token verified — the same "invalid" page here means the Admin API
-    // customer read failed (distinct cause). Fixed code, no PII/secret.
-    console.warn('[wholesale] review customer read failed: customer_read_failed');
+    // customer read failed. Log the specific fixed reason code (no PII/secret).
+    console.warn(`[wholesale] review customer read failed: ${adminReadReason(error)}`);
     return data({view: 'invalid'} as const);
   }
 }
@@ -110,8 +111,8 @@ export async function action({context, request}: ActionFunctionArgs) {
   let d;
   try {
     d = await readWholesaleReview(admin, cid);
-  } catch {
-    console.warn('[wholesale] review customer read failed: customer_read_failed');
+  } catch (error) {
+    console.warn(`[wholesale] review customer read failed: ${adminReadReason(error)}`);
     return data({view: 'invalid'} as const, {status: 400});
   }
   const adminUrl = buildReviewUrl(d.customerId, context.env.SHOPIFY_ADMIN_STORE_HANDLE);
