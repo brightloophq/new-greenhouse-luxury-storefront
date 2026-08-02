@@ -5,10 +5,11 @@ import {useReveal} from '~/lib/useReveal';
 
 /**
  * The signed-out /wholesale gate — the same trade invitation as the modal, given
- * a full room. Signed-in customers get immediate access (no approval, so no
- * "pending" state); this is only what a signed-out shopper sees on a direct
- * visit. The body, perks and actions are the approved wholesale copy; the auth
- * actions still hand off to /account/login.
+ * a full room. This is only what a signed-out shopper sees on a direct visit;
+ * once signed in, access depends on the owner's manual approval (see
+ * WholesaleStatusNotice for the pending/rejected states). The body, perks and
+ * actions are the approved wholesale copy; the auth actions hand off to
+ * /account/login.
  */
 const GATE_IMG = '/images/collections/wholesale-flowers';
 const PERKS = [
@@ -38,8 +39,8 @@ export function WholesaleGate() {
           </h1>
           <p className="ng-trade-gate-lead">
             Wholesale pricing is for florists, event planners, hotels and venues.
-            Sign in or create a business account to shop wholesale flowers and
-            supplies — access is immediate.
+            Sign in or create a business account to apply — we’ll confirm your
+            trade access after a quick review of your business details.
           </p>
           <div className="ng-trade-gate-actions">
             {/* Full navigation — /account/login redirects to Shopify sign-in. */}

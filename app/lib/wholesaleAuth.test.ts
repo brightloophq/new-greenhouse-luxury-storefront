@@ -66,19 +66,33 @@ describe('wholesale gate (signed-out /wholesale)', () => {
     expect(gate).toMatch(/useReveal/); // existing reveal, no new system
   });
 
-  it('is still gated by the existing access check (guest vs authenticated)', () => {
+  it('gates the signed-out room and the not-yet-approved states', () => {
     expect(route).toMatch(/getWholesaleAccess/);
-    expect(route).toMatch(/access !== 'authenticated'/);
+    // Signed-out shoppers see the gate; approved shoppers see the selector;
+    // every other state renders the status notice.
+    expect(route).toMatch(/access === 'guest'/);
+    expect(route).toMatch(/access !== 'approved'/);
     expect(route).toMatch(/WholesaleGate/);
+    expect(route).toMatch(/WholesaleStatusNotice/);
   });
 });
 
-describe('approval logic is untouched — no fabricated pending state', () => {
+describe('approval is gated on the manual wholesale_status decision', () => {
   const wholesale = read('app/lib/wholesale.ts');
 
-  it('resolves only guest or authenticated (immediate access), no pending gate', () => {
-    expect(wholesale).toMatch(/'guest' \| 'authenticated'/);
-    expect(wholesale).not.toMatch(/pending|approvalPending|wholesale_approved/i);
+  it('resolves guest + the four manual decision states (no sign-in-only access)', () => {
+    expect(wholesale).toMatch(/'guest' \| WholesaleDecision/);
+    expect(wholesale).toMatch(/'approved'/);
+    expect(wholesale).toMatch(/'pending'/);
+    expect(wholesale).toMatch(/'rejected'/);
+    expect(wholesale).toMatch(/'more_information_required'/);
+    // Sign-in alone must NOT grant access any more.
+    expect(wholesale).not.toMatch(/immediate access/i);
+  });
+
+  it('fails closed — an unknown/blank/failed status is treated as pending', () => {
+    expect(wholesale).toMatch(/normalizeWholesaleStatus/);
+    expect(wholesale).toMatch(/treating as pending/);
   });
 });
 

@@ -44,8 +44,8 @@ The visual identity is **route-based**, set via `<html data-experience>` from th
 
 - **[Assumption]** Preview/staging Oxygen URLs (`*.myshopify.dev`) sit behind Shopify's own OAuth wall — unauthenticated `curl` cannot reach the app (observed this session).
 - **[Verified]** `/account/login` route (`($locale).account_.login.tsx`) initiates the Shopify Customer Account login (handles `login_hint`). There is no storefront-owned credential form.
-- **[Verified]** Wholesale has **no** pending-approval state — enforced by `storefrontRegression.test.ts` (asserts the wholesale route never matches `wholesale_approved|approvalPending|pending_approval`). Do not invent one.
-- **[Verified]** Test baseline: **329 tests**, typecheck + lint + production build green.
+- **[Verified]** Wholesale access is gated on the owner's manual `custom.wholesale_status` decision (the single source of truth), resolved only in `app/lib/wholesale.ts`. Only `approved` opens the trade catalogue; `pending`/`rejected`/`more_information_required`/blank deny with a status notice. The legacy `custom.wholesale_approved` key is retired — `storefrontRegression.test.ts` asserts the gate never references it again.
+- **[Verified]** Test baseline: typecheck + lint + production build green (see `app/lib/*.test.ts`).
 
 ## Where to look next
 

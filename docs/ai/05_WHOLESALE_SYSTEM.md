@@ -15,8 +15,21 @@ The "private trade conservatory" — wholesale for florists, designers, event pr
 ## Access model — READ THIS
 
 - Wholesale routes require **Shopify Customer Account authentication**.
-- On successful authentication, access is granted **immediately**.
-- **[Verified]** There is **NO pending-approval state** and **no separate wholesale password system** — enforced by `app/lib/storefrontRegression.test.ts` (the wholesale route must not match `wholesale_approved|approvalPending|pending_approval`). Do not invent an "approval pending" screen or gate.
+- Authentication is **necessary but not sufficient**. Access is gated on the
+  owner's **manual review decision**, the SINGLE source of truth:
+  the `custom.wholesale_status` customer metafield.
+- **[Verified]** `app/lib/wholesale.ts` (`getWholesaleAccess` +
+  `normalizeWholesaleStatus`) is the only place this is resolved; there is **no
+  separate wholesale password system** and **no other approval mechanism**. The
+  legacy `custom.wholesale_approved` key is retired — `storefrontRegression.test.ts`
+  asserts the wholesale gate never references `wholesale_approved` again.
+- Status → access:
+  - `approved` → wholesale catalogue + pricing + checkout
+  - `pending` (or blank / unknown / a failed read) → "under review" notice
+  - `rejected` → rejection notice + Contact us
+  - `more_information_required` → "one more step" notice + Contact us
+- **Fails closed**: anything other than an explicit `approved` denies access —
+  a customer is never granted wholesale by default.
 
 ## Flow
 
@@ -26,7 +39,8 @@ Guest
 → branded modal (entry point only)
 → real Shopify Customer Account OAuth
 → callback → secure server session
-→ wholesale destination (immediate access)
+→ wholesale destination — only if custom.wholesale_status = approved
+  (otherwise the matching status notice; owner sets the status in Shopify Admin)
 ```
 
 The modal is a **branded entry point**, never a replacement for Shopify's secure hosted auth. Sign-in and account-creation both hand off to the same Shopify Customer Account flow (there is no separate storefront sign-up form).

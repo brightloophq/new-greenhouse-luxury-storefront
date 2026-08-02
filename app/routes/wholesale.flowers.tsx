@@ -10,9 +10,11 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({context, request}: LoaderFunctionArgs) {
-  // Wholesale is authentication-required.
+  // Wholesale is approval-gated: sign-in is required, and the owner must have
+  // set the customer's status to "approved". Every other state is sent back to
+  // /wholesale, which shows the matching gate or status notice.
   const {access} = await getWholesaleAccess(context.customerAccount);
-  if (access !== 'authenticated') throw redirect('/wholesale');
+  if (access !== 'approved') throw redirect('/wholesale');
   // …and trade buyers must have completed their business profile.
   await requireWholesaleProfile(context.customerAccount, request);
 

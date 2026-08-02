@@ -207,8 +207,12 @@ describe('wholesale entry', () => {
     expect(rule).toMatch(/text-align: start/);
   });
 
-  it('has no manual approval gate', () => {
+  it('gates wholesale on the manual approval status (not sign-in alone)', () => {
     const wholesale = read('app/lib/wholesale.ts');
+    // Access is derived from the owner-set custom.wholesale_status metafield.
+    expect(wholesale).toMatch(/getWholesaleAccess/);
+    expect(wholesale).toMatch(/normalizeWholesaleStatus/);
+    // The stale metafield key (wholesale_approved) must not linger here.
     expect(wholesale).not.toMatch(/wholesale_approved|approvalPending|pending_approval/);
   });
 });

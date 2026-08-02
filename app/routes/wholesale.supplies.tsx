@@ -10,8 +10,9 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({context, request}: LoaderFunctionArgs) {
+  // Approval-gated: only "approved" customers reach the wholesale catalogue.
   const {access} = await getWholesaleAccess(context.customerAccount);
-  if (access !== 'authenticated') throw redirect('/wholesale');
+  if (access !== 'approved') throw redirect('/wholesale');
   await requireWholesaleProfile(context.customerAccount, request);
 
   return loadCatalogue<CatalogueProduct>(

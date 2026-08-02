@@ -393,6 +393,15 @@
   object-position: 50% 42%;
 }
 
+/* ---- Not-yet-approved status notice (single column, no media) ----------- */
+.ng-trade-gate-inner--notice {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 52rem;
+}
+.ng-trade-gate--notice .ng-trade-gate-body {
+  max-width: none;
+}
+
 /* ---- Signed-in welcome line --------------------------------------------- */
 .ng-wholesale-welcome {
   max-width: 78rem;

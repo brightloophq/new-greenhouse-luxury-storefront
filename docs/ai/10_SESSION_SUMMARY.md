@@ -24,7 +24,7 @@
 - **[Assumption]** Oxygen previews are behind Shopify OAuth → no external `curl` verification (observed).
 - **[Assumption]** Deploys are manual (`shopify hydrogen deploy`); no Oxygen GitHub integration (only Netlify/Supabase/Vercel check-suites appear) — observed.
 - **[Assumption]** In-app preview pane applies mobile CSS correctly but scales absolute pixel rects — use ratio/offset/computed-style measurements.
-- **[Verified]** `ProductGrid` ≠ catalogue (it's PDP recs, capped 4). Wholesale has no pending-approval state (test-enforced). `/account/login` route initiates Shopify Customer Account login.
+- **[Verified]** `ProductGrid` ≠ catalogue (it's PDP recs, capped 4). Wholesale access is gated on the owner-set `custom.wholesale_status` metafield (single source of truth in `app/lib/wholesale.ts`; only `approved` opens the catalogue). `/account/login` route initiates Shopify Customer Account login.
 
 ---
 

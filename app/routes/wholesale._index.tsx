@@ -1,6 +1,7 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {PathwaySelector} from '~/components/nav/PathwaySelector';
 import {WholesaleGate} from '~/components/wholesale/WholesaleGate';
+import {WholesaleStatusNotice} from '~/components/wholesale/WholesaleStatusNotice';
 import {getWholesaleAccess} from '~/lib/wholesale';
 
 export const meta: MetaFunction = () => [
@@ -13,15 +14,20 @@ export async function loader({context}: LoaderFunctionArgs) {
 }
 
 /**
- * Wholesale entry. Signed-out shoppers see the sign-in / create-account gate
- * (the homepage card opens the modal directly). Signed-in customers get
- * immediate access — no approval — and choose Flowers or Supplies.
+ * Wholesale entry. Signed-out shoppers see the sign-in / create-account gate.
+ * Signed-in customers see the catalogue selector only once the owner has set
+ * their `custom.wholesale_status` to "approved"; every other state (pending,
+ * rejected, more_information_required, or blank) shows the matching notice.
  */
 export default function WholesaleIndex() {
   const {access, firstName} = useLoaderData<typeof loader>();
 
-  if (access !== 'authenticated') {
+  if (access === 'guest') {
     return <WholesaleGate />;
+  }
+
+  if (access !== 'approved') {
+    return <WholesaleStatusNotice status={access} />;
   }
 
   return (
