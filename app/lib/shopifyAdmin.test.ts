@@ -177,7 +177,6 @@ describe('readWholesaleReview', () => {
     const admin = fakeAdmin({
       customer: {
         id: 'gid://shopify/Customer/1',
-        email: 'a@b.com',
         businessName: {value: 'Biz'},
         businessType: {value: 'Florist'},
         craTrn: {value: '123-456-789'},
@@ -187,7 +186,8 @@ describe('readWholesaleReview', () => {
     });
     expect(await readWholesaleReview(admin, 'gid://shopify/Customer/1')).toEqual({
       customerId: 'gid://shopify/Customer/1',
-      contactEmail: 'a@b.com',
+      // email is a Level-2 protected field, no longer read → always empty
+      contactEmail: '',
       businessName: 'Biz',
       businessType: 'Florist',
       businessPhone: '876-555',

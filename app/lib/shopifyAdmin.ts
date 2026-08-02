@@ -145,7 +145,6 @@ export interface WholesaleReviewDetails {
 type ReviewCustomerResponse = {
   customer: {
     id: string;
-    email: string | null;
     businessName: {value: string | null} | null;
     businessType: {value: string | null} | null;
     craTrn: {value: string | null} | null;
@@ -167,7 +166,9 @@ export async function readWholesaleReview(
   if (!c) throw new AdminReadError('customer_not_found');
   return {
     customerId: c.id,
-    contactEmail: c.email ?? '',
+    // Contact email is a Level-2 protected customer-data field; it is NOT read
+    // here (avoids a PCD-gated field). The internal email already carries it.
+    contactEmail: '',
     businessName: c.businessName?.value ?? '',
     businessType: c.businessType?.value ?? '',
     businessPhone: c.businessPhone?.value ?? '',

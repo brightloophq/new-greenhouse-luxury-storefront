@@ -6,7 +6,6 @@ export const REVIEW_CUSTOMER_QUERY = `#graphql
   query ReviewCustomer($id: ID!) {
     customer(id: $id) {
       id
-      email
       businessName: metafield(namespace: "custom", key: "business_name") { value }
       businessType: metafield(namespace: "custom", key: "business_type") { value }
       craTrn: metafield(namespace: "custom", key: "cra_trn_number") { value }

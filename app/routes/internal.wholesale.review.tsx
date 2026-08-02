@@ -290,7 +290,9 @@ function Confirm({state}: {state: ViewState}) {
           <Row label="Business name" value={d.businessName} />
           <Row label="Business type" value={d.businessType} />
           <Row label="Full CRA/TRN" value={d.craTrn} />
-          <Row label="Contact email" value={d.contactEmail} />
+          {d.contactEmail ? (
+            <Row label="Contact email" value={d.contactEmail} />
+          ) : null}
           <Row label="Current status" value="Pending review" />
         </tbody>
       </table>
