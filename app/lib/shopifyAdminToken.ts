@@ -27,7 +27,6 @@ export type AdminReadReason =
   | 'admin_client_credentials_missing'
   | 'admin_token_exchange_rejected'
   | 'admin_token_response_invalid'
-  | 'admin_required_scope_missing'
   | 'admin_token_exchange_network_failed'
   | 'admin_retry_failed';
 
@@ -74,7 +73,6 @@ export function resolveAdminDomain(env: AdminEnv): string {
 }
 
 const REFRESH_SKEW_MS = 5 * 60 * 1000; // reuse while >5 min remains
-const REQUIRED_SCOPES = ['read_customers', 'write_customers'];
 
 interface CachedToken {
   token: string;
@@ -94,15 +92,6 @@ export interface GetTokenOptions {
   now?: number;
   /** Force a fresh exchange (bypass + invalidate cache) — used on a 401. */
   force?: boolean;
-}
-
-function parseScopes(scope: string): Set<string> {
-  return new Set(
-    scope
-      .split(/[\s,]+/)
-      .map((s) => s.trim())
-      .filter(Boolean),
-  );
 }
 
 /**
@@ -176,7 +165,7 @@ async function exchangeClientCredentials(
     throw new AdminReadError('admin_token_exchange_rejected');
   }
 
-  let data: {access_token?: unknown; scope?: unknown; expires_in?: unknown};
+  let data: {access_token?: unknown; expires_in?: unknown};
   try {
     data = (await res.json()) as typeof data;
   } catch {
@@ -186,10 +175,11 @@ async function exchangeClientCredentials(
   const token = typeof data.access_token === 'string' ? data.access_token : '';
   if (!token) throw new AdminReadError('admin_token_response_invalid');
 
-  const scopes = parseScopes(typeof data.scope === 'string' ? data.scope : '');
-  for (const required of REQUIRED_SCOPES) {
-    if (!scopes.has(required)) throw new AdminReadError('admin_required_scope_missing');
-  }
+  // Scope enforcement is delegated to Shopify. The client-credentials response's
+  // `scope` field is unreliable (frequently empty), so a required-scope pre-check
+  // here produced false failures even when the app grants the scopes. A genuinely
+  // missing scope surfaces at the Admin GraphQL call as 403 / ACCESS_DENIED →
+  // admin_scope_denied (see shopifyAdmin.ts) — the authoritative enforcement point.
 
   const expiresInSec =
     typeof data.expires_in === 'number' && data.expires_in > 0 ? data.expires_in : 0;

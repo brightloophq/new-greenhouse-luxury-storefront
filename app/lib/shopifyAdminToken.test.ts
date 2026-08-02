@@ -114,9 +114,19 @@ describe('getAdminToken — client-credentials exchange', () => {
     );
   });
 
-  it('admin_required_scope_missing when a required scope is absent', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(tokenOk({scope: 'read_customers'}));
-    expect(await reasonOf(getAdminToken(CREDS, {fetchImpl}))).toBe('admin_required_scope_missing');
+  it('does NOT pre-check the scope field — enforcement is delegated to Shopify', async () => {
+    // The client-credentials `scope` field is unreliable (often empty); a valid
+    // token must still be issued. A genuinely missing scope surfaces later as
+    // admin_scope_denied at the Admin GraphQL call (see shopifyAdmin.test.ts).
+    const noScope = vi.fn().mockResolvedValue(tokenOk({scope: ''}));
+    expect(await getAdminToken(CREDS, {fetchImpl: noScope, now: 1000})).toBe('shpat_auto_token');
+    __resetAdminTokenCache();
+    const missingScopeField = vi.fn().mockResolvedValue(
+      http(200, {access_token: 'shpat_auto_token', expires_in: 86399}),
+    );
+    expect(await getAdminToken(CREDS, {fetchImpl: missingScopeField, now: 1000})).toBe(
+      'shpat_auto_token',
+    );
   });
 
   it('admin_token_exchange_network_failed when the token fetch throws', async () => {
