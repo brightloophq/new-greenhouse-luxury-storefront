@@ -26,6 +26,7 @@ const CONFIG: WholesaleNotifyConfig = {
   reviewSigningSecret: 'test-signing-secret',
   reviewTtlSeconds: 172800,
   reviewBaseUrl: 'https://shop.example.com',
+  emailDecisionsEnabled: false,
 };
 
 const ACTIONS = {
@@ -148,10 +149,10 @@ describe('buildReviewUrl', () => {
   });
 });
 
-describe('Review in Shopify button (HTML + text)', () => {
-  it('HTML includes the Review in Shopify button linking only to the customer record', () => {
+describe('Review & Decide in Shopify button (HTML + text)', () => {
+  it('HTML includes the Review & Decide in Shopify button linking only to the customer record', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
-    expect(email.html).toContain('Review in Shopify');
+    expect(email.html).toContain('Review &amp; Decide in Shopify');
     expect(email.html).toContain(
       'href="https://admin.shopify.com/store/the-new-greenhouse/customers/42"',
     );
@@ -160,8 +161,28 @@ describe('Review in Shopify button (HTML + text)', () => {
   it('plain text includes the review URL when available', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
     expect(email.text).toContain(
-      'Review in Shopify: https://admin.shopify.com/store/the-new-greenhouse/customers/42',
+      'Review & Decide in Shopify: https://admin.shopify.com/store/the-new-greenhouse/customers/42',
     );
+  });
+
+  it('gives concise manual-review instructions (no Admin/metafield/token jargon)', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    const manual =
+      'Review the submitted CRA/TRN, then choose the appropriate Wholesale Status on the customer record and save.';
+    expect(email.text).toContain(manual);
+    // The instruction has no HTML-special characters, so it survives escaping verbatim.
+    expect(email.html).toContain(manual);
+    // No technical footer / configuration language leaks into the staff email.
+    for (const forbidden of [
+      'metafield',
+      'Admin API',
+      'custom.wholesale_status',
+      'token',
+      'access_token',
+    ]) {
+      expect(email.text).not.toContain(forbidden);
+      expect(email.html).not.toContain(forbidden);
+    }
   });
 
   it('omits the button (and URL) when the store handle is missing', () => {
@@ -170,7 +191,7 @@ describe('Review in Shopify button (HTML + text)', () => {
       adminStoreHandle: '',
     });
     expect(email.html).not.toContain('href="https://admin.shopify.com');
-    expect(email.text).not.toContain('Review in Shopify: https://');
+    expect(email.text).not.toContain('Review & Decide in Shopify: https://');
     // plain customer reference is kept
     expect(email.text).toContain('Shopify Customer ID: gid://shopify/Customer/42');
     expect(email.html).toContain('gid://shopify/Customer/42');
@@ -182,7 +203,7 @@ describe('Review in Shopify button (HTML + text)', () => {
       CONFIG,
     );
     expect(email.html).not.toContain('href="https://admin.shopify.com');
-    expect(email.text).not.toContain('Review in Shopify: https://');
+    expect(email.text).not.toContain('Review & Decide in Shopify: https://');
   });
 
   it('without action links, the only link is the read-only customer record', () => {
@@ -193,7 +214,18 @@ describe('Review in Shopify button (HTML + text)', () => {
     ]);
   });
 
-  it('with action links, adds Approve + Reject buttons and keeps Review in Shopify', () => {
+  it('without action links, renders NO Approve/Reject controls (Phase-1 default)', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(email.html).not.toContain('Approve Application');
+    expect(email.html).not.toContain('Reject Application');
+    expect(email.text).not.toContain('Approve Application:');
+    expect(email.text).not.toContain('Reject Application:');
+    // no signed decision URLs (token=) anywhere in the email
+    expect(email.html).not.toContain('token=');
+    expect(email.text).not.toContain('token=');
+  });
+
+  it('with action links, adds Approve + Reject buttons and keeps Review & Decide in Shopify', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG, ACTIONS);
     expect(email.html).toContain('Approve Application');
     expect(email.html).toContain('Reject Application');
@@ -201,7 +233,7 @@ describe('Review in Shopify button (HTML + text)', () => {
     expect(email.html).toContain(`href="${ACTIONS.rejectUrl}"`);
     expect(email.text).toContain(`Approve Application: ${ACTIONS.approveUrl}`);
     expect(email.text).toContain(`Reject Application: ${ACTIONS.rejectUrl}`);
-    expect(email.html).toContain('Review in Shopify');
+    expect(email.html).toContain('Review &amp; Decide in Shopify');
   });
 
   it('the CRA/TRN never appears in any link (href) in the email', () => {
@@ -233,6 +265,64 @@ describe('sending still works when the review URL cannot be built', () => {
     );
     expect(result).toEqual({sent: true});
     expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+});
+
+/** Capture the email JSON posted to the Resend API from a fetch mock. */
+function sentEmail(fetchImpl: ReturnType<typeof vi.fn>) {
+  const call = fetchImpl.mock.calls.at(-1);
+  const init = call?.[1] as RequestInit;
+  return JSON.parse(String(init.body)) as {
+    subject: string;
+    html: string;
+    text: string;
+  };
+}
+
+describe('Phase-1 email decisions flag (send path)', () => {
+  it('DISABLED (default): sends only the Review & Decide button — no signed decision URLs', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({ok: true, status: 200} as Response);
+    // CONFIG has emailDecisionsEnabled:false but a full review signing config —
+    // the flag alone must suppress Approve/Reject.
+    const result = await sendWholesaleNotificationEmail(PAYLOAD, CONFIG, fetchImpl);
+    expect(result).toEqual({sent: true});
+
+    const email = sentEmail(fetchImpl);
+    expect(email.html).toContain('Review &amp; Decide in Shopify');
+    expect(email.html).not.toContain('Approve Application');
+    expect(email.html).not.toContain('Reject Application');
+    // no signed decision links are generated when the flag is off
+    expect(email.html).not.toContain('token=');
+    expect(email.text).not.toContain('token=');
+    expect(email.html).not.toContain('/internal/wholesale/review');
+    expect(email.text).not.toContain('/internal/wholesale/review');
+    // full CRA/TRN still present in the internal email; never in the subject
+    expect(email.text).toContain('CRA/TRN: 123-456-789');
+    expect(email.subject).toBe('New Wholesale Application');
+    expect(email.subject).not.toContain('123-456-789');
+  });
+
+  it('ENABLED (Phase 2): generates signed Approve/Reject decision links', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({ok: true, status: 200} as Response);
+    const result = await sendWholesaleNotificationEmail(
+      PAYLOAD,
+      {...CONFIG, emailDecisionsEnabled: true},
+      fetchImpl,
+    );
+    expect(result).toEqual({sent: true});
+
+    const email = sentEmail(fetchImpl);
+    expect(email.html).toContain('Approve Application');
+    expect(email.html).toContain('Reject Application');
+    expect(email.html).toContain('/internal/wholesale/review?token=');
+    // the review-record button remains alongside the decision links
+    expect(email.html).toContain('Review &amp; Decide in Shopify');
+    // signed token URLs still never carry the CRA/TRN
+    const hrefs = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    for (const href of hrefs) {
+      expect(href).not.toContain('123-456-789');
+      expect(href).not.toContain('123456789');
+    }
   });
 });
 
@@ -269,6 +359,7 @@ describe('readNotifyConfig', () => {
       reviewSigningSecret: '',
       reviewTtlSeconds: 172800,
       reviewBaseUrl: '',
+      emailDecisionsEnabled: false,
     });
   });
 
@@ -289,6 +380,24 @@ describe('readNotifyConfig', () => {
     expect(cfg.adminStoreHandle).toBe('the-new-greenhouse');
   });
 
+  it('emailDecisionsEnabled defaults to false and is true only for the literal "true"', () => {
+    // Default OFF: unset, blank, or any non-"true" value → Phase-2 decisions disabled.
+    expect(readNotifyConfig({}).emailDecisionsEnabled).toBe(false);
+    expect(
+      readNotifyConfig({WHOLESALE_EMAIL_DECISIONS_ENABLED: ''}).emailDecisionsEnabled,
+    ).toBe(false);
+    expect(
+      readNotifyConfig({WHOLESALE_EMAIL_DECISIONS_ENABLED: 'false'}).emailDecisionsEnabled,
+    ).toBe(false);
+    expect(
+      readNotifyConfig({WHOLESALE_EMAIL_DECISIONS_ENABLED: 'TRUE'}).emailDecisionsEnabled,
+    ).toBe(false);
+    // Only the exact string "true" enables the future secure decision flow.
+    expect(
+      readNotifyConfig({WHOLESALE_EMAIL_DECISIONS_ENABLED: 'true'}).emailDecisionsEnabled,
+    ).toBe(true);
+  });
+
   it('never invents a default — a fully empty env yields blank config', () => {
     const cfg = readNotifyConfig({});
     expect(cfg).toEqual({
@@ -300,6 +409,7 @@ describe('readNotifyConfig', () => {
       reviewSigningSecret: '',
       reviewTtlSeconds: 172800,
       reviewBaseUrl: '',
+      emailDecisionsEnabled: false,
     });
     // the previously hardcoded production addresses must NOT reappear
     expect(JSON.stringify(cfg)).not.toContain('thenewgreenhouseja');

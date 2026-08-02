@@ -36,6 +36,13 @@ export interface WholesaleNotifyConfig {
   reviewTtlSeconds: number;
   /** Absolute base URL for the internal review route. */
   reviewBaseUrl: string;
+  /**
+   * Phase 2 feature flag. When FALSE (default) the email shows only the primary
+   * "Review & Decide in Shopify" button — no Approve/Reject buttons, no signed
+   * decision URLs are generated, and the internal decision routes are never used.
+   * Enabled only by an explicit approved rollout (WHOLESALE_EMAIL_DECISIONS_ENABLED=true).
+   */
+  emailDecisionsEnabled: boolean;
 }
 
 /**
@@ -51,6 +58,7 @@ export interface WholesaleNotifyEnv {
   WHOLESALE_REVIEW_SIGNING_SECRET?: string;
   WHOLESALE_REVIEW_LINK_TTL_SECONDS?: string;
   WHOLESALE_REVIEW_BASE_URL?: string;
+  WHOLESALE_EMAIL_DECISIONS_ENABLED?: string;
 }
 
 /**
@@ -71,6 +79,8 @@ export function readNotifyConfig(
     reviewSigningSecret: review.signingSecret,
     reviewTtlSeconds: review.ttlSeconds,
     reviewBaseUrl: review.baseUrl,
+    // Default OFF — decision buttons only render on an explicit "true".
+    emailDecisionsEnabled: env.WHOLESALE_EMAIL_DECISIONS_ENABLED === 'true',
   };
 }
 
@@ -193,13 +203,11 @@ export function buildWholesaleNotificationEmail(
       `Reject Application: ${actions.rejectUrl}`,
     );
   }
-  if (reviewUrl) textLines.push(`Review in Shopify: ${reviewUrl}`);
-  textLines.push(
-    '',
-    actions
-      ? 'Approve/Reject open a confirmation page — no status changes until you confirm.'
-      : 'Review the CRA/TRN in Shopify Admin and set custom.wholesale_status manually.',
-  );
+  if (reviewUrl) textLines.push(`Review & Decide in Shopify: ${reviewUrl}`);
+  const instruction = actions
+    ? 'Approve or Reject above each open a confirmation page — nothing changes until you confirm.'
+    : 'Review the submitted CRA/TRN, then choose the appropriate Wholesale Status on the customer record and save.';
+  textLines.push('', instruction);
   const text = textLines.join('\n');
 
   // ── HTML version ──────────────────────────────────────────────────────────
@@ -229,14 +237,18 @@ export function buildWholesaleNotificationEmail(
     : '';
 
   const reviewButton = reviewUrl
-    ? `<tr><td colspan="2" style="padding:12px 0 4px;">
-        ${linkButton(reviewUrl, 'Review in Shopify', '#090909')}
+    ? `<tr><td colspan="2" style="padding:20px 0 4px;">
+        ${linkButton(reviewUrl, 'Review & Decide in Shopify', '#090909')}
       </td></tr>`
-    : `<tr><td colspan="2" style="padding:12px 0 4px;color:#6b6b6b;font-size:12px;">
+    : `<tr><td colspan="2" style="padding:20px 0 4px;color:#6b6b6b;font-size:12px;">
         Open the customer record in Shopify Admin (Customer: ${escapeHtml(
           payload.customerId,
         )}).
       </td></tr>`;
+
+  const instructionRow = `<tr><td colspan="2" style="padding:10px 0 0;color:#6b6b6b;font-size:13px;line-height:1.5;">${escapeHtml(
+    instruction,
+  )}</td></tr>`;
 
   const html = `<!-- New Wholesale Application -->
 <div style="background:#faf8f4;padding:32px 0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
@@ -257,6 +269,7 @@ export function buildWholesaleNotificationEmail(
         ${row('Status', statusLabel)}
         ${actionButtons}
         ${reviewButton}
+        ${instructionRow}
       </table>
     </td></tr>
   </table>
@@ -382,12 +395,18 @@ export async function sendWholesaleNotificationEmail(
   if (!isNotifyConfigured(config)) {
     return {sent: false, skippedReason: 'not_configured'};
   }
-  const {links, reason} = await buildReviewActionLinks(payload, config);
-  if (reason !== 'ok') {
-    // Diagnostic ONLY — a fixed reason code, never a value (no secret, URL,
-    // token, CRA/TRN, email, or customer id). The email still sends without the
-    // Approve/Reject buttons (customer-facing behaviour unchanged).
-    console.warn(`[wholesale] review action links unavailable: ${reason}`);
+  // Phase 1 default: decision buttons OFF → no signed decision URLs are generated
+  // and the internal review routes are never referenced. Only the primary
+  // "Review & Decide in Shopify" link is rendered. The secure decision flow stays
+  // in source and re-enables when WHOLESALE_EMAIL_DECISIONS_ENABLED=true.
+  let links: ReviewActionLinks | undefined;
+  if (config.emailDecisionsEnabled) {
+    const result = await buildReviewActionLinks(payload, config);
+    links = result.links;
+    if (result.reason !== 'ok') {
+      // Diagnostic ONLY — a fixed reason code, never a value.
+      console.warn(`[wholesale] review action links unavailable: ${result.reason}`);
+    }
   }
   const email = buildWholesaleNotificationEmail(payload, config, links);
   const res = await fetchImpl('https://api.resend.com/emails', {

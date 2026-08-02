@@ -38,6 +38,12 @@ declare global {
     WHOLESALE_REVIEW_LINK_TTL_SECONDS?: string;
     /** Absolute base URL for the internal review route (no trailing slash). */
     WHOLESALE_REVIEW_BASE_URL?: string;
+    /**
+     * Phase 2 feature flag for in-email Approve/Reject decisions. Default OFF.
+     * Only "true" renders the signed decision buttons; any other value (or unset)
+     * shows only the "Review & Decide in Shopify" link.
+     */
+    WHOLESALE_EMAIL_DECISIONS_ENABLED?: string;
   }
 }
 
