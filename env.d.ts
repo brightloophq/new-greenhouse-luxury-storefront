@@ -20,10 +20,16 @@ declare global {
     /** Store's myshopify handle (no ".myshopify.com") for the Admin deep link. */
     SHOPIFY_ADMIN_STORE_HANDLE?: string;
     /**
-     * Server-side Shopify Admin API access token (shpat_…) with read_customers +
-     * write_customers. Used ONLY by the internal review route to read applicant
-     * details and write custom.wholesale_status / custom.wholesale_review_note.
-     * Never sent to the browser.
+     * TNG Commerce Manager app credentials (Dev Dashboard). The server exchanges
+     * these for a short-lived Admin API token via the client-credentials grant.
+     * Server-only — never sent to the browser.
+     */
+    SHOPIFY_API_KEY?: string;
+    SHOPIFY_API_SECRET?: string;
+    /**
+     * TEMPORARY fallback Admin API access token (shpat_…). Used only when the
+     * client credentials above are absent; can be removed from Oxygen once the
+     * automatic client-credentials exchange is verified in production.
      */
     SHOPIFY_ADMIN_API_TOKEN?: string;
     /** HMAC-SHA256 secret for signing email review links. Server-side only. */

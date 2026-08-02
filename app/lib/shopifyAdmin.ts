@@ -1,10 +1,10 @@
 /**
- * Minimal server-only Shopify Admin GraphQL client for the internal wholesale
- * review route. The Admin token is read from server env and sent only in the
- * `X-Shopify-Access-Token` header — never in the URL, body, a thrown value, or
- * the client bundle. Failures surface as an `AdminReadError` carrying ONLY a
- * fixed reason code (no token, response body, customer id, CRA/TRN, or email),
- * so the route can log the exact cause safely. Modeled on scripts/shopify/admin.mjs.
+ * Server-only Shopify Admin GraphQL client for the internal wholesale review
+ * route. The access token is obtained automatically from the token provider
+ * (client-credentials, cached — see shopifyAdminToken.ts) and sent only in the
+ * `X-Shopify-Access-Token` header. On a 401 the token is refreshed once and the
+ * request retried exactly once. Failures surface as an AdminReadError carrying
+ * ONLY a fixed reason code; the token/credentials never reach the browser.
  */
 import {
   REVIEW_CUSTOMER_QUERY,
@@ -15,50 +15,25 @@ import {
   type DecisionMetafieldInput,
 } from '~/lib/wholesaleReview';
 import type {ReviewAction} from '~/lib/wholesaleReviewToken';
+import {
+  AdminReadError,
+  adminReadReason,
+  getAdminToken,
+  isValidShopDomain,
+  resolveAdminDomain,
+  type AdminEnv,
+  type AdminReadReason,
+} from '~/lib/shopifyAdminToken';
+
+// Re-export so existing importers (route, tests) keep importing from shopifyAdmin.
+export {AdminReadError, adminReadReason};
+export type {AdminEnv, AdminReadReason};
 
 const ADMIN_API_VERSION = '2025-01';
-
-export interface AdminEnv {
-  SHOPIFY_ADMIN_API_TOKEN?: string;
-  PUBLIC_STORE_DOMAIN?: string;
-}
 
 export interface AdminClient {
   configured: boolean;
   graphql: <T>(query: string, variables?: Record<string, unknown>) => Promise<T>;
-}
-
-/** Fixed diagnostic codes for an Admin read failure — never a value. */
-export type AdminReadReason =
-  | 'admin_config_missing'
-  | 'admin_shop_domain_invalid'
-  | 'admin_network_failed'
-  | 'admin_token_invalid'
-  | 'admin_scope_denied'
-  | 'admin_http_not_found'
-  | 'admin_http_error'
-  | 'admin_graphql_error'
-  | 'customer_query_invalid'
-  | 'customer_not_found';
-
-/** Carries only a fixed reason code — its message IS the code (no PII/secret). */
-export class AdminReadError extends Error {
-  reason: AdminReadReason;
-  constructor(reason: AdminReadReason) {
-    super(reason);
-    this.name = 'AdminReadError';
-    this.reason = reason;
-  }
-}
-
-/** Map any thrown value to a fixed code (unexpected throws → admin_http_error). */
-export function adminReadReason(error: unknown): AdminReadReason {
-  return error instanceof AdminReadError ? error.reason : 'admin_http_error';
-}
-
-/** A bare hostname (no scheme/space/path) with a dot — e.g. ax41k1-k5.myshopify.com. */
-function isValidShopDomain(domain: string): boolean {
-  return /^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/i.test(domain);
 }
 
 /** Classify top-level GraphQL errors by their category code ONLY (never the message). */
@@ -78,26 +53,28 @@ function classifyGraphqlErrors(errors: unknown[]): AdminReadReason {
   return 'admin_graphql_error';
 }
 
+/** Usable when a domain resolves AND some credential (client creds or static) exists. */
+function hasCredentials(env: AdminEnv): boolean {
+  return Boolean(
+    ((env.SHOPIFY_API_KEY ?? '').trim() && (env.SHOPIFY_API_SECRET ?? '').trim()) ||
+      (env.SHOPIFY_ADMIN_API_TOKEN ?? '').trim(),
+  );
+}
+
 export function createAdminClient(
   env: AdminEnv,
   fetchImpl: typeof fetch = fetch,
 ): AdminClient {
-  const token = env.SHOPIFY_ADMIN_API_TOKEN ?? '';
-  const domain = env.PUBLIC_STORE_DOMAIN ?? '';
-  const configured = Boolean(token && domain);
+  const domain = resolveAdminDomain(env);
+  const configured = Boolean(domain && hasCredentials(env));
 
-  async function graphql<T>(
+  async function send(
+    token: string,
     query: string,
-    variables: Record<string, unknown> = {},
-  ): Promise<T> {
-    if (!configured) throw new AdminReadError('admin_config_missing');
-    if (!isValidShopDomain(domain)) {
-      throw new AdminReadError('admin_shop_domain_invalid');
-    }
-
-    let res: Response;
+    variables: Record<string, unknown>,
+  ): Promise<Response> {
     try {
-      res = await fetchImpl(
+      return await fetchImpl(
         `https://${domain}/admin/api/${ADMIN_API_VERSION}/graphql.json`,
         {
           method: 'POST',
@@ -111,10 +88,28 @@ export function createAdminClient(
     } catch {
       throw new AdminReadError('admin_network_failed');
     }
+  }
 
-    // Map HTTP status to a fixed code. Never echo the response body.
+  async function graphql<T>(
+    query: string,
+    variables: Record<string, unknown> = {},
+  ): Promise<T> {
+    if (!isValidShopDomain(domain)) {
+      throw new AdminReadError('admin_shop_domain_invalid');
+    }
+
+    // Obtain a token (client-credentials, cached) and send. On 401, refresh the
+    // token once and retry EXACTLY once — never an unbounded loop.
+    let token = await getAdminToken(env, {fetchImpl});
+    let res = await send(token, query, variables);
+    if (res.status === 401) {
+      token = await getAdminToken(env, {fetchImpl, force: true});
+      res = await send(token, query, variables);
+      if (res.status === 401) throw new AdminReadError('admin_retry_failed');
+    }
+
+    // Map remaining HTTP status to a fixed code. Never echo the response body.
     if (!res.ok) {
-      if (res.status === 401) throw new AdminReadError('admin_token_invalid');
       if (res.status === 403) throw new AdminReadError('admin_scope_denied');
       if (res.status === 404) throw new AdminReadError('admin_http_not_found');
       throw new AdminReadError('admin_http_error');
