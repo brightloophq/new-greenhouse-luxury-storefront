@@ -135,6 +135,13 @@ export interface WholesaleNotificationPayload {
   contactEmail: string;
   /** Raw CRA/TRN — masked before it enters the email body. */
   craNumber: string;
+  /**
+   * Applicant's name (contact person). Optional — the card is omitted when
+   * absent so the email never shows an empty field.
+   */
+  contactPerson?: string;
+  /** Business address (street + parish). Optional — card omitted when absent. */
+  businessAddress?: string;
   customerId: string;
   /** ISO submission timestamp. */
   submittedAt: string;
@@ -186,17 +193,25 @@ export function buildWholesaleNotificationEmail(
   // FULL CRA/TRN (plain + copyable). It is never masked here; it must never
   // appear in the subject, any URL, logs, or errors.
   const textLines = [
-    'A new wholesale application has been submitted for manual review.',
+    'A new wholesale account application has been submitted and is ready for review.',
     '',
     `Business Name: ${payload.businessName}`,
     `Business Type: ${payload.businessType}`,
-    `Business Phone: ${payload.businessPhone}`,
-    `Contact Email: ${payload.contactEmail}`,
     `CRA/TRN: ${payload.craNumber}`,
+  ];
+  if (payload.contactPerson) {
+    textLines.push(`Contact Person: ${payload.contactPerson}`);
+  }
+  textLines.push(`Contact Email: ${payload.contactEmail}`);
+  textLines.push(`Business Phone: ${payload.businessPhone}`);
+  if (payload.businessAddress) {
+    textLines.push(`Business Address: ${payload.businessAddress}`);
+  }
+  textLines.push(
     `Shopify Customer ID: ${payload.customerId}`,
     `Submission Date: ${payload.submittedAt}`,
     `Status: ${statusLabel}`,
-  ];
+  );
   if (actions) {
     textLines.push(
       `Approve Application: ${actions.approveUrl}`,
@@ -208,68 +223,122 @@ export function buildWholesaleNotificationEmail(
     ? 'Approve or Reject above each open a confirmation page — nothing changes until you confirm.'
     : 'Review the submitted CRA/TRN, then choose the appropriate Wholesale Status on the customer record and save.';
   textLines.push('', instruction);
+  textLines.push(
+    '',
+    'You are receiving this email because you manage wholesale approvals for The New Greenhouse.',
+  );
   const text = textLines.join('\n');
 
   // ── HTML version ──────────────────────────────────────────────────────────
-  const row = (label: string, value: string) =>
-    `<tr>
-      <td style="padding:6px 16px 6px 0;color:#6b6b6b;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(
-        label,
-      )}</td>
-      <td style="padding:6px 0;color:#222222;font-size:14px;font-weight:500;">${escapeHtml(
-        value,
-      )}</td>
-    </tr>`;
+  // Hardcoded hex is intentional and required: email clients cannot resolve CSS
+  // custom properties, so the storefront design tokens are inlined by value.
+  // Palette (from app/styles/design-system.css):
+  //   #2f4a37 green-deep · #4d6a50 green · #5a6b58 green-muted · #8a6a2a gold-text
+  //   #c8a96a gold · #222222 charcoal · #565049 text-secondary · #f4efe4 on-green
+  //   #fffdf8 surface · #fbfaf5 panel · #f6f4ee ground-warm · #f1ece2 surface-muted
+  //   #e2d8c8 border-subtle · radius 6px (card) / 4px (button).
+  const headFont = "Montserrat,'Helvetica Neue',Helvetica,Arial,sans-serif";
+  const bodyFont = "Raleway,'Helvetica Neue',Helvetica,Arial,sans-serif";
 
-  const linkButton = (href: string, label: string, bg: string) =>
-    `<a href="${escapeHtml(href)}" style="display:inline-block;background:${bg};color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.02em;padding:11px 22px;border-radius:2px;margin:0 8px 8px 0;">${escapeHtml(
+  // One elegant information card per field (soft panel, subtle border; the
+  // CRA/TRN carries a rationed gold accent). Never a raw data table.
+  const card = (label: string, value: string, emphasis = false) =>
+    `<tr><td style="padding:0 0 10px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${
+        emphasis ? '#f6f4ee' : '#fbfaf5'
+      };border:1px solid #e2d8c8;${
+        emphasis ? 'border-left:3px solid #c8a96a;' : ''
+      }border-radius:6px;">
+        <tr><td style="padding:12px 16px;">
+          <div style="font-family:${bodyFont};font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a6b58;">${escapeHtml(
+            label,
+          )}</div>
+          <div style="font-family:${bodyFont};font-size:15px;font-weight:600;line-height:1.4;color:${
+            emphasis ? '#2f4a37' : '#222222'
+          };margin-top:4px;word-break:break-word;">${escapeHtml(value || '—')}</div>
+        </td></tr>
+      </table>
+    </td></tr>`;
+
+  let cards = card('Business Name', payload.businessName);
+  cards += card('Business Type', payload.businessType);
+  cards += card('CRA / TRN', payload.craNumber, true);
+  if (payload.contactPerson) cards += card('Contact Person', payload.contactPerson);
+  cards += card('Email', payload.contactEmail);
+  cards += card('Phone', payload.businessPhone);
+  if (payload.businessAddress) cards += card('Address', payload.businessAddress);
+  cards += card('Submission Date', payload.submittedAt);
+  cards += card('Current Status', statusLabel);
+
+  // Bulletproof CTA — a table-wrapped anchor so Outlook keeps the fill + tap
+  // target (>=44px). One prominent action only.
+  const button = (href: string, label: string, bg: string) =>
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+      <tr><td style="background:${bg};border-radius:4px;">
+        <a href="${escapeHtml(
+          href,
+        )}" style="display:inline-block;padding:15px 32px;line-height:1;font-family:${headFont};font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#f4efe4;text-decoration:none;">${escapeHtml(
       label,
-    )}</a>`;
+    )}</a>
+      </td></tr>
+    </table>`;
 
+  // Phase-2 decision buttons — only rendered when the flag passes signed links.
   const actionButtons = actions
-    ? `<tr><td colspan="2" style="padding:20px 0 0;">
-        ${linkButton(actions.approveUrl, 'Approve Application', '#4d6a50')}
-        ${linkButton(actions.rejectUrl, 'Reject Application', '#8a1f1f')}
-        <div style="margin-top:6px;color:#6b6b6b;font-size:12px;">
-          Each opens a confirmation page — nothing changes until you confirm there.
-        </div>
+    ? `<tr><td style="padding:22px 32px 0;text-align:center;">
+        <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;"><tr>
+          <td style="padding:0 5px;">${button(actions.approveUrl, 'Approve Application', '#2f4a37')}</td>
+          <td style="padding:0 5px;">${button(actions.rejectUrl, 'Reject Application', '#7a3b32')}</td>
+        </tr></table>
       </td></tr>`
     : '';
 
-  const reviewButton = reviewUrl
-    ? `<tr><td colspan="2" style="padding:20px 0 4px;">
-        ${linkButton(reviewUrl, 'Review & Decide in Shopify', '#090909')}
-      </td></tr>`
-    : `<tr><td colspan="2" style="padding:20px 0 4px;color:#6b6b6b;font-size:12px;">
-        Open the customer record in Shopify Admin (Customer: ${escapeHtml(
-          payload.customerId,
-        )}).
-      </td></tr>`;
+  const ctaRow = reviewUrl
+    ? `<tr><td style="padding:${
+        actions ? '14px' : '24px'
+      } 32px 0;text-align:center;">${button(
+        reviewUrl,
+        'Review & Decide in Shopify',
+        '#2f4a37',
+      )}</td></tr>`
+    : `<tr><td style="padding:24px 32px 0;text-align:center;font-family:${bodyFont};font-size:13px;line-height:1.5;color:#5a6b58;">Open the customer record in Shopify Admin (Customer: ${escapeHtml(
+        payload.customerId,
+      )}).</td></tr>`;
 
-  const instructionRow = `<tr><td colspan="2" style="padding:10px 0 0;color:#6b6b6b;font-size:13px;line-height:1.5;">${escapeHtml(
-    instruction,
-  )}</td></tr>`;
+  const instructionRow = `<tr><td style="padding:14px 32px 0;text-align:center;">
+    <p style="margin:0 auto;max-width:420px;font-family:${bodyFont};font-size:13px;line-height:1.55;color:#5a6b58;">${escapeHtml(
+      instruction,
+    )}</p>
+  </td></tr>`;
+
+  const divider = (space: string) =>
+    `<tr><td style="padding:${space} 32px 0;"><div style="height:1px;line-height:1px;font-size:0;background:#e2d8c8;">&nbsp;</div></td></tr>`;
 
   const html = `<!-- New Wholesale Application -->
-<div style="background:#faf8f4;padding:32px 0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #ece7de;border-radius:4px;">
-    <tr><td style="padding:28px 32px 8px;">
-      <div style="color:#c8a96a;font-size:11px;letter-spacing:.16em;text-transform:uppercase;">The New Greenhouse — Wholesale</div>
-      <h1 style="margin:8px 0 0;color:#090909;font-size:20px;font-weight:600;">New wholesale application</h1>
-      <p style="margin:6px 0 0;color:#6b6b6b;font-size:13px;">Submitted for manual review.</p>
-    </td></tr>
-    <tr><td style="padding:8px 32px 28px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        ${row('Business Name', payload.businessName)}
-        ${row('Business Type', payload.businessType)}
-        ${row('Business Phone', payload.businessPhone)}
-        ${row('Contact Email', payload.contactEmail)}
-        ${row('CRA/TRN', payload.craNumber)}
-        ${row('Submission Date', payload.submittedAt)}
-        ${row('Status', statusLabel)}
+<div style="margin:0;padding:0;background:#f1ece2;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1ece2;">
+    <tr><td align="center" style="padding:28px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#fffdf8;border:1px solid #e2d8c8;border-radius:6px;">
+        <tr><td style="padding:34px 32px 0;text-align:center;">
+          <div style="font-family:${headFont};font-size:15px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#2f4a37;">The New Greenhouse</div>
+          <div style="width:38px;height:2px;line-height:2px;font-size:0;background:#c8a96a;margin:12px auto 0;">&nbsp;</div>
+        </td></tr>
+        <tr><td style="padding:22px 32px 0;text-align:center;">
+          <div style="font-family:${bodyFont};font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a6a2a;">Wholesale Application</div>
+          <h1 style="margin:10px 0 0;font-family:${headFont};font-size:27px;font-weight:600;line-height:1.15;color:#2f4a37;">New Wholesale Application</h1>
+          <p style="margin:12px auto 0;max-width:400px;font-family:${bodyFont};font-size:15px;line-height:1.6;color:#565049;">A new wholesale account application has been submitted and is ready for review.</p>
+        </td></tr>
+        ${divider('24px')}
+        <tr><td style="padding:22px 32px 0;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${cards}</table>
+        </td></tr>
         ${actionButtons}
-        ${reviewButton}
+        ${ctaRow}
         ${instructionRow}
+        ${divider('26px')}
+        <tr><td style="padding:16px 32px 34px;text-align:center;">
+          <p style="margin:0;font-family:${bodyFont};font-size:12px;line-height:1.55;color:#5a6b58;">You are receiving this email because you manage wholesale approvals for The New Greenhouse.</p>
+        </td></tr>
       </table>
     </td></tr>
   </table>

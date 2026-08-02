@@ -393,13 +393,67 @@
   object-position: 50% 42%;
 }
 
-/* ---- Not-yet-approved status notice (single column, no media) ----------- */
+/* ---- Not-yet-approved status notice -------------------------------------
+   Same room as the signed-out gate, presented as a single centred glass panel
+   (a card) so an unapproved buyer lands somewhere considered, not a bare page.
+   Reuses the gate's eyebrow / title / lead / button; adds a status pill. */
 .ng-trade-gate-inner--notice {
   grid-template-columns: minmax(0, 1fr);
-  max-width: 52rem;
+  justify-items: start;
+  max-width: 42rem;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  background: var(--ng-ground-panel);
+  border: 1px solid var(--ng-glass-line);
+  border-radius: var(--ng-radius-md);
+  box-shadow: var(--ng-shadow-sm);
 }
 .ng-trade-gate--notice .ng-trade-gate-body {
   max-width: none;
+}
+
+/* Status pill — a restrained botanical chip; the dot carries the state. */
+.ng-trade-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--ng-green-line);
+  border-radius: var(--ng-radius-pill);
+  background: var(--ng-ground-warm);
+  color: var(--ng-green-deep);
+  font-family: var(--ng-font-body);
+  font-size: var(--ng-font-size-caption);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ng-trade-status-dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--ng-radius-pill);
+  background: var(--ng-gold);
+}
+.ng-trade-status-pill--info .ng-trade-status-dot {
+  background: var(--ng-green);
+}
+.ng-trade-status-pill--closed .ng-trade-status-dot {
+  background: var(--ng-btn-danger-bg);
+}
+
+/* Supporting reassurance line under the lead. */
+.ng-trade-gate-note {
+  max-width: 46ch;
+  margin: clamp(0.75rem, 1.5vw, 1rem) 0 0;
+  color: var(--ng-green-soft);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* Visible keyboard focus for the trade buttons (WCAG 2.4.7). */
+.ng-trade-btn:focus-visible {
+  outline: 2px solid var(--ng-focus-ring);
+  outline-offset: 3px;
 }
 
 /* ---- Signed-in welcome line --------------------------------------------- */

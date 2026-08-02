@@ -111,6 +111,49 @@ migrated into the nine fields above, or the definition deleted.
 
 ---
 
+## 3a. Wholesale approval status metafield (controls trade access)
+
+This is the **single source of truth** for wholesale access. The storefront
+(`app/lib/wholesale.ts`) reads it on every wholesale visit: only **`approved`**
+opens the trade catalogue and pricing. Every other value shows the matching
+customer status page (Under review / Not approved / Action needed).
+
+Create it under **Settings → Custom data → Customers → Add definition**:
+
+| Setting | Value |
+|---|---|
+| Namespace + key | `custom.wholesale_status` |
+| Name | Wholesale Status |
+| Type | **Single line text** |
+| Validation | **List of allowed values** (a "choice" list) — see below |
+| Customer Account API access | **Read** (write is **not** granted — staff-only) |
+
+### Preset values (do not allow arbitrary text)
+
+Add exactly these four values to the definition's **list of allowed values** so
+the admin field becomes a dropdown and free-typed values are rejected:
+
+| Value | Meaning | Customer sees |
+|---|---|---|
+| `pending` | Awaiting review (also the default for a blank field) | "Your application is under review" |
+| `approved` | Trade account granted | Full wholesale catalogue, pricing & checkout |
+| `rejected` | Application declined | Empathetic "not approved" page + Contact us |
+| `more_information_required` | More detail needed before a decision | "One more step" page + Contact us |
+
+**Values must be lowercase and match exactly** — the storefront normalises case
+and whitespace, but an unrecognised value is treated as `pending` (fails closed;
+a customer is never auto-approved).
+
+### How to approve a customer
+
+Open the customer in Shopify admin → **Metafields → Wholesale Status** → choose
+`approved` → **Save**. Access applies on the customer's next wholesale visit.
+The internal notification email's **Review & Decide in Shopify** button links
+straight to this record. Leaving the field blank keeps the customer in the
+"under review" state (never granted by default).
+
+---
+
 ## 4. Shopify-managed menus
 
 The footer menu is pulled from Shopify. Any item pointing at wedding or event

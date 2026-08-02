@@ -75,6 +75,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   // the current review status) from the authenticated session.
   let ownerId: string | undefined;
   let contactEmail = '';
+  let contactPerson = '';
   let currentStatus = '';
   try {
     const {data: who} = await context.customerAccount.query(
@@ -82,6 +83,10 @@ export async function action({context, request}: ActionFunctionArgs) {
     );
     ownerId = who?.customer?.id;
     contactEmail = who?.customer?.emailAddress?.emailAddress ?? '';
+    contactPerson = [who?.customer?.firstName, who?.customer?.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
     const statusField = (
       who?.customer?.metafields as
         | ({key?: string | null; value?: string | null} | null)[]
@@ -154,6 +159,10 @@ export async function action({context, request}: ActionFunctionArgs) {
           businessType: profile.business_type ?? '',
           businessPhone: profile.business_phone ?? '',
           contactEmail,
+          contactPerson,
+          businessAddress: [profile.business_address, profile.city_parish]
+            .filter(Boolean)
+            .join(', '),
           craNumber: profile.cra_trn_number ?? '',
           customerId: oid,
           submittedAt: new Date().toISOString(),

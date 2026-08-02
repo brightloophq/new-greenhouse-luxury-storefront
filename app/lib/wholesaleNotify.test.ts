@@ -255,6 +255,65 @@ describe('Review & Decide in Shopify button (HTML + text)', () => {
   });
 });
 
+describe('premium email redesign (reuses storefront design tokens)', () => {
+  it('renders in the storefront palette — no legacy non-brand colours or fonts', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    // Hardcoded token VALUES from app/styles/design-system.css (email clients
+    // cannot resolve CSS custom properties).
+    expect(email.html).toContain('#2f4a37'); // --ng-green-deep (heading + CTA)
+    expect(email.html).toContain('#c8a96a'); // --ng-gold (accent)
+    expect(email.html).toContain('#e2d8c8'); // --ng-border-subtle (card border)
+    expect(email.html).toContain('Montserrat'); // --ng-font-heading
+    // Legacy scaffold colours / fonts are gone.
+    expect(email.html).not.toContain('#ece7de');
+    expect(email.html).not.toContain('#6b6b6b');
+    expect(email.html).not.toContain("'Inter'");
+  });
+
+  it('shows the brand lockup, eyebrow, heading and description', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(email.html).toContain('The New Greenhouse');
+    expect(email.html).toContain('Wholesale Application');
+    expect(email.html).toContain('New Wholesale Application');
+    expect(email.html).toContain('ready for review');
+  });
+
+  it('carries the required footer in both HTML and text', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    const footer =
+      'You are receiving this email because you manage wholesale approvals for The New Greenhouse.';
+    expect(email.html).toContain(footer);
+    expect(email.text).toContain(footer);
+  });
+
+  it('renders Contact Person and Address cards ONLY when provided', () => {
+    const without = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    expect(without.html).not.toContain('Contact Person');
+    expect(without.html).not.toContain('>Address</div>');
+
+    const withExtra = buildWholesaleNotificationEmail(
+      {...PAYLOAD, contactPerson: 'Jordan Blake', businessAddress: '3 Hope Rd, Kingston'},
+      CONFIG,
+    );
+    expect(withExtra.html).toContain('Contact Person');
+    expect(withExtra.html).toContain('Jordan Blake');
+    expect(withExtra.html).toContain('>Address</div>');
+    expect(withExtra.html).toContain('3 Hope Rd, Kingston');
+    expect(withExtra.text).toContain('Contact Person: Jordan Blake');
+    expect(withExtra.text).toContain('Business Address: 3 Hope Rd, Kingston');
+  });
+
+  it('CTA is a single ≥44px link to the customer record only', () => {
+    const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
+    const hrefs = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    expect(hrefs).toEqual([
+      'https://admin.shopify.com/store/the-new-greenhouse/customers/42',
+    ]);
+    // Generous, accessible tap target (padding gives >=44px height).
+    expect(email.html).toContain('padding:15px 32px');
+  });
+});
+
 describe('sending still works when the review URL cannot be built', () => {
   it('sends the email even with no store handle (button omitted)', async () => {
     const fetchImpl = vi.fn().mockResolvedValue({ok: true, status: 200} as Response);
