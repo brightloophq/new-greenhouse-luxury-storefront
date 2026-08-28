@@ -1,13 +1,68 @@
 name: Storefront 1000155967
-on: [push]
+
+# Oxygen production deploys ONLY from the `production` release branch, plus a
+# controlled manual run. Feature branches and `claude/*` branches never deploy.
+on:
+  push:
+    branches:
+      - production
+  workflow_dispatch:
+
+# Serialize production deploys so two runs cannot race. A new run waits for the
+# in-flight one to finish rather than cancelling it — never interrupt a live
+# Oxygen deployment mid-publish.
+concurrency:
+  group: oxygen-production-deploy
+  cancel-in-progress: false
 
 permissions:
   contents: read
   deployments: write
 
 jobs:
+  # Validation gate: the deploy job runs only if every check here passes.
+  validate:
+    name: Validate (typecheck / tests / build)
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npx vitest run
+
+      - name: Production build
+        run: npm run build
+
   deploy:
     name: Deploy to Oxygen
+    needs: validate
+    environment: production
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:

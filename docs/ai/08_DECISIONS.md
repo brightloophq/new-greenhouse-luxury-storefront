@@ -2,8 +2,16 @@
 
 Chronological record of notable decisions + rationale. Newest at top.
 
+## Generated Customer-Account types committed stale (2026-08-26) — engineering note
+`customer-accountapi.generated.d.ts` is checked in **out-of-sync with source**: it still declares the old `WholesaleApproval` query against the retired `wholesale_approved` key, while the source query (`app/graphql/customer-account/WholesaleApprovalQuery.ts`) now selects `WholesaleStatus` / `custom.wholesale_status`. The canonical build/codegen (`npm run build`, `--codegen`) **regenerates it correctly**, so it appears as a modified file after every build. This is harmless at runtime (the file is derived and regenerated on build; `npm run typecheck` runs its own typegen) but the committed artifact lags source. Fix is a one-line regeneration commit — deferred; not done during the docs-only reconciliation pass. Do not hand-edit the generated file.
+
 ## Automated wholesale verification REMOVED — simple manual review instead (2026-07)
-The automated wholesale-verification programme was **removed** in favour of a simple manual process that matches the client's actual business workflow. Deleted: the Sprint A1 domain state machine + A2 orchestration (`app/lib/wholesale/`), the TRN/business verification providers, the payload recorder, all n8n workflow JSON (`n8n/`), and the architecture/plan/sandbox docs (`13`, `14`, `15`). **Kept:** the wholesale auth gate (`app/lib/wholesale.ts`), the wholesale business profile (`app/lib/wholesaleProfile.ts`), and the public `/wholesale/apply` page. **New flow:** application submitted → team notified → manual review + manual CRA/TRN check → approve/reject and grant access **by hand in Shopify admin**. No AI, no automation, no automated Shopify writes.
+The automated wholesale-verification programme was **abandoned** in favour of a simple manual process that matches the client's actual business workflow. **New flow:** application submitted → team notified → manual review + manual CRA/TRN check → approve/reject and grant access **by hand in Shopify admin**. No AI, no automation, no automated Shopify writes.
+
+> **[Verified 2026-08-26] Correction to the original decision record.** The removal was only *partially* executed in the repo:
+> - **Actually deleted:** the TRN/business verification providers, the payload recorder, and all n8n workflow JSON (`n8n/` — confirmed absent).
+> - **Still present (dormant):** the Sprint A1 domain state machine + A2 orchestration + in-memory sandbox under `app/lib/wholesale/`, and the docs `13`/`14`/`15`. This code is imported by no route or component — it is **not** on the active route-level authorization path (that path is `app/lib/wholesale.ts`) — but it still ships in the tree and its own unit tests still run. Do **not** delete it as part of unrelated work; its removal (or intentional retention) is a separate owner decision.
+> - **Application entry point:** there is **no** `/wholesale/apply` route. The application is the authenticated wholesale **business profile** at `app/routes/($locale).account.wholesale-profile.tsx` (logic in `app/lib/wholesaleProfile.ts`). The auth gate is `app/lib/wholesale.ts`.
 
 ## Soft corners are the identity
 The classic experience previously **zeroed** the radius tokens; the flagship editorial rooms all hard-coded `3–4px`. Resolved in favour of **soft** (removed the zero override) so all token-driven corners match. Reversible in a few lines if the owner ever wants the sharp main-site look back.

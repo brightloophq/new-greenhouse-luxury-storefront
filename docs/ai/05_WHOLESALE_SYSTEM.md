@@ -7,6 +7,16 @@
 > CRA/TRN number, not auto-validated); the team is notified, reviews it, checks
 > the CRA/TRN manually, and grants wholesale access by hand in Shopify admin.
 > No automated verification and no automated Shopify writes occur.
+>
+> **[Verified 2026-08-26]** "Removed" is accurate for the AI officer, the
+> TRN/registry providers, the payload recorder, and the n8n workflows (the `n8n/`
+> directory is gone). It is **not** accurate for the Sprint A1/A2 code: the
+> `app/lib/wholesale/` domain (state machine, orchestration, in-memory sandbox)
+> and docs `13`/`14`/`15` **still exist in the repo**. They are **dormant** —
+> imported by no route or component, not part of the active route-level
+> authorization path (that path is the separate file `app/lib/wholesale.ts`),
+> though their own unit tests still run. Do not delete them as part of unrelated
+> work; treat them as an inactive foundation pending an owner decision. See `08`.
 
 ## Positioning
 
@@ -93,9 +103,13 @@ Profile saved → Resend internal email (FULL CRA/TRN, single recipient)
 `SHOPIFY_ADMIN_STORE_HANDLE`, Resend vars). Missing review config → the email still
 sends, just without the Approve/Reject buttons.
 
-> Note: this writes `wholesale_status` but does **not** change the storefront access
-> gate, which remains authentication-only (see "Access model"). Making
-> `approved` the access requirement is a separate, deferred decision.
+> **[Verified] (commit `72b18e5`)** The storefront access gate now enforces the
+> manual decision: `custom.wholesale_status` is the source of truth, and only an
+> explicit `approved` grants the wholesale catalogue / pricing / checkout.
+> `blank` / `pending` / `rejected` / `more_information_required` / unknown / a
+> failed read all **fail closed** (denied). This supersedes the earlier
+> "authentication-only, `approved` deferred" note. The Admin write here sets that
+> same `wholesale_status` value the gate reads.
 
 ## Status
 
