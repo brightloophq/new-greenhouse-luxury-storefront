@@ -253,6 +253,134 @@ for (const h of liveHandles) {
     driftExamples.push({handle: h, seoTitleDrift: tChanged, seoDescDrift: dChanged});
 }
 
+// ---- Phase 1 data extension (publication, counts, imageless, targets) -----
+// Publication helpers. A Hydrogen (headless) storefront publishes to its own
+// sales channel, which may NOT be named "Online Store" — so we tally EVERY
+// channel and never treat "not on Online Store" as "hidden" on its own.
+function publishedChannels(node) {
+  const pubs = node.resourcePublications?.nodes;
+  if (!Array.isArray(pubs)) return null; // scope unavailable
+  return pubs.filter((x) => x.isPublished).map((x) => x.publication?.name || '(unnamed)');
+}
+function onOnlineStore(node) {
+  const ch = publishedChannels(node);
+  if (ch === null) return null;
+  return ch.some((n) => /online store/i.test(n));
+}
+const isImageless = (p) => !p.featuredImage && (p.images?.nodes?.length || 0) === 0;
+
+// Catalogue-wide channel tally (the key to interpreting "unpublished").
+const channelTally = {};
+for (const p of liveProducts) {
+  for (const name of publishedChannels(p) || []) channelTally[name] = (channelTally[name] || 0) + 1;
+}
+const collectionChannelTally = {};
+for (const c of liveCollections) {
+  for (const name of publishedChannels(c) || []) collectionChannelTally[name] = (collectionChannelTally[name] || 0) + 1;
+}
+
+// Segment classifier (handle + membership + type), priority-ordered.
+const weddingHandles = new Set(weddingProducts.map((p) => p.handle));
+const legacyDupHandles = new Set(dupProdTitle.flatMap(([, v]) => v.map((p) => p.handle)));
+const WHOLESALE_HANDLE =
+  /^(alstroemeria|asters|calla-lilies|carnations|chrysanthemums|delphinium|eucalyptus|fillers|gerbera-daisies|greenery|hydrangea|hypericum|lilies|lisianthus|novelties|orchids|ranunculus|roses-in-stock|snapdragon|spray-roses|stock|tropicals|tulips|gift-bouquets|babys-breath)-/;
+const PREMIUM_HANDLE = /(arrangement|vase|bouquet|heart-box|luxe|dome|bunch|centerpiece)/;
+const wholesaleMember = (p) => (p.collections?.nodes || []).some((c) => /^(bulk-flowers|wholesale-)/.test(c.handle));
+function segmentOf(p) {
+  if (weddingHandles.has(p.handle)) return 'wedding';
+  if (legacyDupHandles.has(p.handle)) return 'legacy-duplicate';
+  if (WHOLESALE_HANDLE.test(p.handle) || wholesaleMember(p)) return 'wholesale';
+  if (PREMIUM_HANDLE.test(p.handle) || /arrangement/i.test(p.productType || '')) return 'premium-retail';
+  return 'other';
+}
+
+// Every collection: exact count + Online-Store publication + coverage booleans.
+const collectionDetail = liveCollections
+  .map((c) => ({
+    handle: c.handle,
+    title: c.title,
+    products: c.productsCount?.count ?? null,
+    channels: publishedChannels(c),
+    onlineStorePublished: onOnlineStore(c),
+    seoTitle: !!c.seo?.title,
+    seoDescription: !!c.seo?.description,
+    body: stripHtml(c.descriptionHtml).length > 0,
+    image: !!c.image,
+  }))
+  .sort((a, b) => (b.products || 0) - (a.products || 0));
+
+// Products NOT on the "Online Store" channel — categorized (not dumped).
+const notOnOnlineStore = liveProducts.filter((p) => onOnlineStore(p) === false);
+const unpublishedBreakdown = {
+  total: notOnOnlineStore.length,
+  byStatus: {},
+  bySegment: {},
+  // ACTIVE but not on Online Store AND not on any channel at all = truly hidden.
+  activeOnNoChannel: [],
+  // ACTIVE, not on Online Store, but published somewhere (e.g. Hydrogen) = expected headless.
+  activeHeadlessOnly: 0,
+};
+for (const p of notOnOnlineStore) {
+  unpublishedBreakdown.byStatus[p.status] = (unpublishedBreakdown.byStatus[p.status] || 0) + 1;
+  const seg = segmentOf(p);
+  unpublishedBreakdown.bySegment[seg] = (unpublishedBreakdown.bySegment[seg] || 0) + 1;
+  const ch = publishedChannels(p) || [];
+  if (p.status === 'ACTIVE') {
+    if (ch.length === 0) unpublishedBreakdown.activeOnNoChannel.push({handle: p.handle, segment: seg});
+    else unpublishedBreakdown.activeHeadlessOnly++;
+  }
+}
+
+// Imageless products, grouped by segment, with status + Online-Store state.
+const imageless = liveProducts.filter(isImageless);
+const imagelessGrouped = {wholesale: [], 'premium-retail': [], 'legacy-duplicate': [], wedding: [], other: []};
+for (const p of imageless) {
+  const seg = segmentOf(p);
+  (imagelessGrouped[seg] ||= []).push({handle: p.handle, status: p.status, onlineStore: onOnlineStore(p)});
+}
+const imagelessSummary = {total: imageless.length, groups: imagelessGrouped};
+
+// Target + Batch-1 verification (exact current values).
+const collByHandle = new Map(liveCollections.map((c) => [c.handle, c]));
+const TARGETS = [
+  'same-day-delivery', 'plants', 'thank-you', 'luxury-bouquets',
+  'premium-handcrafted', 'premium-vase', 'premium-heart-box',
+];
+const targetVerification = TARGETS.map((h) => {
+  const c = collByHandle.get(h);
+  if (!c) return {handle: h, found: false};
+  return {
+    handle: h,
+    found: true,
+    title: c.title,
+    products: c.productsCount?.count ?? null,
+    channels: publishedChannels(c),
+    onlineStorePublished: onOnlineStore(c),
+    seoTitle: c.seo?.title ?? null,
+    seoDescription: c.seo?.description ?? null,
+    bodyExists: stripHtml(c.descriptionHtml).length > 0,
+    bodyChars: stripHtml(c.descriptionHtml).length,
+    image: !!c.image,
+    imageAlt: !!c.image?.altText,
+  };
+});
+const BATCH1 = ['premium-handcrafted', 'premium-vase', 'premium-heart-box'];
+const batch1Safety = BATCH1.map((h) => {
+  const c = collByHandle.get(h) || {};
+  return {
+    handle: h,
+    found: collByHandle.has(h),
+    currentSeoTitle: c.seo?.title ?? null,
+    currentSeoDescription: c.seo?.description ?? null,
+    bodyChars: stripHtml(c.descriptionHtml || '').length,
+    products: c.productsCount?.count ?? null,
+    image: !!c.image,
+    onlineStorePublished: onOnlineStore(c),
+    // Fields a seo-only update MUST NOT alter (snapshot for post-write diff).
+    preserve: ['descriptionHtml', 'products', 'image', 'resourcePublications', 'status', 'ruleSet', 'sortOrder'],
+  };
+});
+
 // ---- assemble analysis ----------------------------------------------------
 const analysis = {
   generatedAt: new Date().toISOString(),
@@ -280,6 +408,15 @@ const analysis = {
     missingFromLive: confirmMissingLive,
   },
   priorityCollections: priority,
+  phase1Extension: {
+    channelTally,
+    collectionChannelTally,
+    collectionDetail,
+    unpublishedBreakdown,
+    imageless: imagelessSummary,
+    targetVerification,
+    batch1Safety,
+  },
   drift: {
     liveOnlyProducts: liveOnly,
     sourceOnlyProducts: sourceOnly,
@@ -446,8 +583,68 @@ _All figures above are computed from the authoritative live export; nothing was 
 `;
 }
 
+function extensionMd() {
+  const tv = targetVerification
+    .map((t) =>
+      t.found
+        ? `| \`${t.handle}\` | ${t.title} | ${t.products ?? '?'} | ${t.onlineStorePublished === null ? 'n/a' : t.onlineStorePublished ? 'yes' : 'no'} | ${t.seoTitle ? '✓' : '✗'} | ${t.seoDescription ? '✓' : '✗'} | ${t.bodyExists ? `✓ (${t.bodyChars})` : '✗'} | ${t.image ? '✓' : '✗'} |`
+        : `| \`${t.handle}\` | — NOT FOUND LIVE | — | — | — | — | — | — |`,
+    )
+    .join('\n');
+  const chan = Object.entries(channelTally).sort((a, b) => b[1] - a[1]).map(([n, v]) => `${n}: ${v}`).join(' · ') || '(no publication data)';
+  const cchan = Object.entries(collectionChannelTally).sort((a, b) => b[1] - a[1]).map(([n, v]) => `${n}: ${v}`).join(' · ') || '(no publication data)';
+  const seg = (o) => Object.entries(o).map(([k, v]) => `${k} ${v}`).join(' · ');
+  const grp = (arr) => (arr.length ? arr.map((x) => `\`${x.handle}\`${x.status === 'DRAFT' ? ' (DRAFT)' : ''}`).join(', ') : '—');
+  return `# Phase 1 — Live Data Extension
+
+> Generated ${analysis.generatedAt} from the authoritative LIVE export. Read-only; nothing modified.
+> Interpreting publication: this is a **Hydrogen (headless)** storefront, so the "Online Store"
+> channel is NOT necessarily the storefront's channel — read the channel tally first.
+
+## Publication channels (products published, by channel)
+${chan}
+
+## Publication channels (collections published, by channel)
+${cchan}
+
+## Target collection verification
+
+| Handle | Title | Products | On Online Store | SEO title | SEO desc | Body (chars) | Image |
+|---|---|---|---|---|---|---|---|
+${tv}
+
+## "Not on Online Store" breakdown (${unpublishedBreakdown.total} products)
+
+- By status: ${seg(unpublishedBreakdown.byStatus)}
+- By segment: ${seg(unpublishedBreakdown.bySegment)}
+- ACTIVE, published on another channel only (expected for headless): **${unpublishedBreakdown.activeHeadlessOnly}**
+- ACTIVE, on NO channel at all (truly hidden — REVIEW): **${unpublishedBreakdown.activeOnNoChannel.length}**
+${grp(unpublishedBreakdown.activeOnNoChannel)}
+
+## Imageless products (${imagelessSummary.total})
+
+- Wholesale (${imagelessGrouped.wholesale.length}): ${grp(imagelessGrouped.wholesale)}
+- Premium/retail (${imagelessGrouped['premium-retail'].length}): ${grp(imagelessGrouped['premium-retail'])}
+- Legacy/duplicate (${imagelessGrouped['legacy-duplicate'].length}): ${grp(imagelessGrouped['legacy-duplicate'])}
+- Wedding (${imagelessGrouped.wedding.length}): ${grp(imagelessGrouped.wedding)}
+- Other (${imagelessGrouped.other.length}): ${grp(imagelessGrouped.other)}
+
+## Batch-1 field safety (seo-only update leaves everything else intact)
+
+${batch1Safety
+  .map(
+    (b) =>
+      `- \`${b.handle}\`: found=${b.found}, products=${b.products}, body chars=${b.bodyChars} (PRESERVED), image=${b.image}, on Online Store=${b.onlineStorePublished}. Current SEO title=${b.currentSeoTitle ? JSON.stringify(b.currentSeoTitle) : 'null'}, desc=${b.currentSeoDescription ? 'set' : 'null'}. Fields NOT touched: ${b.preserve.join(', ')}.`,
+  )
+  .join('\n')}
+
+_Read-only. No Shopify operation performed._
+`;
+}
+
 writeFileSync(join(OUT_DIR, 'live-vs-source-summary.md'), summaryMd());
 writeFileSync(join(DOCS_DIR, 'shopify-live-content-audit.md'), auditMd());
+writeFileSync(join(OUT_DIR, 'phase1-data-extension.md'), extensionMd());
 
 // ---- console summary ------------------------------------------------------
 console.log('─────────────────────────────────────────────');
@@ -460,8 +657,12 @@ console.log(`  wedding products live ${weddingProducts.length} (visible ${weddin
 console.log(`  confirmationRequired live ${confirmLiveMatched.length}/${srcConfirm.length}`);
 console.log(`  dup SEO title(prod) ${dupProdSeoTitle.length} · dup SEO desc(prod) ${dupProdSeoDesc.length}`);
 console.log(`  drift: live-only ${liveOnly.length} · source-only ${sourceOnly.length} · title ${seoTitleDrift} · desc ${seoDescDrift}`);
+console.log(`  channels(products): ${Object.entries(channelTally).map(([n, v]) => `${n}=${v}`).join(' · ') || '(none)'}`);
+console.log(`  not-on-Online-Store ${unpublishedBreakdown.total}: headless-only ${unpublishedBreakdown.activeHeadlessOnly} · truly-hidden ${unpublishedBreakdown.activeOnNoChannel.length} · drafts ${unpublishedBreakdown.byStatus.DRAFT || 0}`);
+console.log(`  imageless ${imagelessSummary.total}: wholesale ${imagelessGrouped.wholesale.length} · premium ${imagelessGrouped['premium-retail'].length} · legacy ${imagelessGrouped['legacy-duplicate'].length} · other ${imagelessGrouped.other.length}`);
 console.log('\n  wrote:');
 console.log('    catalog/live-audit/analysis.json');
 console.log('    catalog/live-audit/live-vs-source-summary.md');
 console.log('    docs/seo/shopify-live-content-audit.md');
+console.log('    catalog/live-audit/phase1-data-extension.md');
 console.log('\n✓ No network calls. No Shopify operations. Nothing modified.');
