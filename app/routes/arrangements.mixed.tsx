@@ -11,6 +11,11 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
     title: 'Mixed Flower Arrangements | The New Greenhouse',
     description:
       'Seasonal hand-tied mixed flower arrangements from The New Greenhouse — expressive everyday bouquets, delivered across Kingston and St. Andrew, Jamaica.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Arrangements', path: '/arrangements'},
+      {name: 'Mixed', path: '/arrangements/mixed'},
+    ],
   });
 
 export async function loader({context, request}: LoaderFunctionArgs) {

@@ -12,6 +12,15 @@ export const meta: MetaFunction<typeof loader> = ({data: d}) =>
     description: `${
       d?.label ?? 'Occasion'
     } flowers and hand-crafted arrangements from The New Greenhouse — chosen for the moment and delivered across Kingston and St. Andrew, Jamaica.`,
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Arrangements', path: '/arrangements'},
+      {name: 'Occasion', path: '/arrangements/occasion'},
+      {
+        name: d?.label ?? 'Occasion',
+        path: `/arrangements/occasion/${d?.slug ?? ''}`,
+      },
+    ],
   });
 
 export async function loader({context, params, request}: LoaderFunctionArgs) {

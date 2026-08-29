@@ -12,6 +12,11 @@ export const meta: MetaFunction<typeof loader> = ({data: d}) =>
     description: `${
       d?.label ?? 'Florist supplies'
     } from The New Greenhouse in Kingston, Jamaica — quality florist supplies for arranging and presenting fresh flowers.`,
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Supplies', path: '/supplies'},
+      {name: d?.label ?? 'Supplies', path: `/supplies/${d?.slug ?? ''}`},
+    ],
   });
 
 export async function loader({context, params, request}: LoaderFunctionArgs) {

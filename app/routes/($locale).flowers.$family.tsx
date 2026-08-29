@@ -3,8 +3,9 @@ import {Link, useLoaderData} from 'react-router';
 import {FlowerCard} from '~/components/FlowerCard';
 import {flowersByFamily, flowersForFamily} from '~/data/flowers';
 import {FLOWER_CATEGORIES, flowerCategoryPath} from '~/lib/flowerCategories';
+import {canonicalTag} from '~/lib/seo';
 
-export async function loader({params}: Route.LoaderArgs) {
+export async function loader({params, request}: Route.LoaderArgs) {
   const handle = params.family ?? '';
   const group = flowersByFamily().find((g) => g.handle === handle);
   const approved = FLOWER_CATEGORIES.find((c) => c.handle === handle);
@@ -16,6 +17,7 @@ export async function loader({params}: Route.LoaderArgs) {
     handle,
     familyName: group?.family ?? approved!.name,
     hasImages: Boolean(group),
+    origin: new URL(request.url).origin,
   };
 }
 
@@ -27,7 +29,7 @@ export const meta: Route.MetaFunction = ({data}) => {
       name: 'description',
       content: `Browse ${name} colourways from The New Greenhouse — luxury and wholesale fresh-cut flowers in Kingston, Jamaica.`,
     },
-    {tagName: 'link', rel: 'canonical', href: `/flowers/${data?.handle ?? ''}`},
+    canonicalTag(data?.origin, `/flowers/${data?.handle ?? ''}`),
   ];
 };
 

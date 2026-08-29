@@ -3,14 +3,28 @@ import {PathwaySelector} from '~/components/nav/PathwaySelector';
 import {WholesaleGate} from '~/components/wholesale/WholesaleGate';
 import {WholesaleStatusNotice} from '~/components/wholesale/WholesaleStatusNotice';
 import {getWholesaleAccess} from '~/lib/wholesale';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Wholesale | The New Greenhouse'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/wholesale',
+    title: 'Wholesale Flowers for Florists & Trade | The New Greenhouse',
+    description:
+      'Wholesale flowers and florist supplies from The New Greenhouse in Kingston, Jamaica, for florists, event professionals and trade partners. Approved trade accounts sign in for pricing.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Wholesale', path: '/wholesale'},
+    ],
+  });
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   const {access, firstName} = await getWholesaleAccess(context.customerAccount);
-  return {access, firstName: firstName ?? null};
+  return {
+    access,
+    firstName: firstName ?? null,
+    origin: new URL(request.url).origin,
+  };
 }
 
 /**

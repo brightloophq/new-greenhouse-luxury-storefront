@@ -1,8 +1,9 @@
 import type {Route} from './+types/($locale).flowers._index';
 import {FlowerCard} from '~/components/FlowerCard';
 import {FLOWERS, flowersByFamily} from '~/data/flowers';
+import {canonicalTag} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({data}) => {
   return [
     {title: 'Flower Guide | Shop Flowers by Variety | The New Greenhouse'},
     {
@@ -10,9 +11,14 @@ export const meta: Route.MetaFunction = () => {
       content:
         'Browse fresh-cut flower varieties and colourways from The New Greenhouse — Alstroemeria, roses, tulips, orchids and more, for luxury and wholesale floristry in Kingston, Jamaica.',
     },
-    {tagName: 'link', rel: 'canonical', href: '/flowers'},
+    canonicalTag(data?.origin, '/flowers'),
   ];
 };
+
+/** Origin only — powers the absolute self-canonical. */
+export function loader({request}: Route.LoaderArgs) {
+  return {origin: new URL(request.url).origin};
+}
 
 // Number of above-the-fold cards to load eagerly (first grid row on desktop).
 const PRIORITY_COUNT = 4;
