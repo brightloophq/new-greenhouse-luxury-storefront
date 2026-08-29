@@ -2,10 +2,17 @@ import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'r
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {PREMIUM_CATEGORIES, findBySlug, loadCatalogue} from '~/lib/catalogues';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction<typeof loader> = ({data: d}) => [
-  {title: `${d?.label ?? 'Premium'} | The New Greenhouse`},
-];
+export const meta: MetaFunction<typeof loader> = ({data: d}) =>
+  catalogueMeta({
+    origin: d?.origin,
+    path: `/arrangements/premium-deluxe/${d?.slug ?? ''}`,
+    title: `${d?.label ?? 'Premium / Deluxe'} | The New Greenhouse`,
+    description: `${
+      d?.label ?? 'Premium and deluxe'
+    } floral arrangements from The New Greenhouse — our most considered work, hand-crafted in Kingston, Jamaica.`,
+  });
 
 export async function loader({context, params, request}: LoaderFunctionArgs) {
   const category = findBySlug(PREMIUM_CATEGORIES, params.category);
@@ -17,7 +24,7 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
     request,
     'premium',
   );
-  return {...result, label: category.label};
+  return {...result, label: category.label, slug: category.slug};
 }
 
 export default function PremiumCategory() {

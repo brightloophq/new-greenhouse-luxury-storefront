@@ -19,14 +19,15 @@ import {loadFlowerVarieties} from '~/lib/flowerVarieties';
  * /reviews.
  */
 export const meta: Route.MetaFunction = ({data}) => {
-  const title = 'The New Greenhouse | Not just a flower, whatever it takes.';
-  const description =
-    'Fresh flowers, hand-crafted arrangements and professional florist supplies in Kingston, Jamaica.';
   const origin = data?.origin ?? '';
+  const title = 'The New Greenhouse | Florist in Kingston, Jamaica';
+  const description =
+    'The New Greenhouse is a family florist in Kingston, Jamaica — fresh flowers, hand-crafted arrangements and florist supplies, for retail and wholesale.';
   const image = `${origin}/images/homepage/hero-split-1200.webp`;
   return [
     {title},
     {name: 'description', content: description},
+    {tagName: 'link', rel: 'canonical', href: `${origin}/`},
     {property: 'og:type', content: 'website'},
     {property: 'og:title', content: title},
     {property: 'og:description', content: description},

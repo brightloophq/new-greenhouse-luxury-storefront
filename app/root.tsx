@@ -12,6 +12,7 @@ import {
 } from 'react-router';
 import type {Route} from './+types/root';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {organizationSchema, websiteSchema} from '~/lib/seo';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import designSystemStyles from '~/styles/design-system.css?url';
@@ -159,6 +160,8 @@ export async function loader(args: Route.LoaderArgs) {
     // Visual theme is route-based (green everywhere; elevated only on the
     // premium catalogue) — not cookie- or product-driven.
     experience: themeForPath(new URL(args.request.url).pathname),
+    // Request origin for absolute canonicals + site-wide structured data.
+    origin: new URL(args.request.url).origin,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
     shop: getShopAnalytics({
       storefront,
@@ -227,6 +230,11 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
   const experience = data?.experience ?? DEFAULT_EXPERIENCE;
+  // Site-wide structured data (Organization/Florist + WebSite/SearchAction),
+  // rendered in the document so it appears on every route regardless of which
+  // leaf `meta()` runs. Absolute URLs derive from the request origin.
+  const orgLd = JSON.stringify(organizationSchema(data?.origin));
+  const siteLd = JSON.stringify(websiteSchema(data?.origin));
 
   return (
     <html lang="en" data-experience={experience}>
@@ -258,6 +266,16 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={wholesaleStyles}></link>
         <link rel="stylesheet" href={productStyles}></link>
         <link rel="stylesheet" href={cartStyles}></link>
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{__html: orgLd}}
+        />
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{__html: siteLd}}
+        />
         <Meta />
         <Links />
       </head>

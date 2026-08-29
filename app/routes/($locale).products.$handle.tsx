@@ -43,7 +43,7 @@ export const meta: Route.MetaFunction = ({data}) => {
   const tags: MetaDescriptor[] = [
     {title: pageTitle},
     {name: 'description', content: description},
-    {tagName: 'link', rel: 'canonical', href: path},
+    {tagName: 'link', rel: 'canonical', href: url},
     // Open Graph + Twitter for premium link previews.
     {property: 'og:type', content: 'product'},
     {property: 'og:title', content: pageTitle},
@@ -65,6 +65,7 @@ export const meta: Route.MetaFunction = ({data}) => {
       'script:ld+json': {
         '@context': 'https://schema.org',
         '@type': 'Product',
+        '@id': `${url}#product`,
         name: product.title,
         description,
         image: image ? [image] : undefined,
