@@ -3,7 +3,7 @@ import {Link, useLoaderData} from 'react-router';
 import {FlowerCard} from '~/components/FlowerCard';
 import {flowersByFamily, flowersForFamily} from '~/data/flowers';
 import {FLOWER_CATEGORIES, flowerCategoryPath} from '~/lib/flowerCategories';
-import {canonicalTag} from '~/lib/seo';
+import {breadcrumbSchema, canonicalTag} from '~/lib/seo';
 
 export async function loader({params, request}: Route.LoaderArgs) {
   const handle = params.family ?? '';
@@ -30,6 +30,13 @@ export const meta: Route.MetaFunction = ({data}) => {
       content: `Browse ${name} colourways from The New Greenhouse — luxury and wholesale fresh-cut flowers in Kingston, Jamaica.`,
     },
     canonicalTag(data?.origin, `/flowers/${data?.handle ?? ''}`),
+    {
+      'script:ld+json': breadcrumbSchema(data?.origin, [
+        {name: 'Home', path: '/'},
+        {name: 'Flowers', path: '/flowers'},
+        {name, path: `/flowers/${data?.handle ?? ''}`},
+      ]),
+    },
   ];
 };
 

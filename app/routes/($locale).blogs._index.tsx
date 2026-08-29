@@ -3,19 +3,22 @@ import type {Route} from './+types/blogs._index';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import type {BlogsQuery} from 'storefrontapi.generated';
+import {catalogueMeta} from '~/lib/seo';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Journal | The New Greenhouse`},
-    {
-      name: 'description',
-      content:
-        'The New Greenhouse Journal — floral inspiration, gifting guides and seasonal notes from our Kingston, Jamaica studio.',
-    },
-  ];
-};
+export const meta: Route.MetaFunction = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/blogs',
+    title: 'Journal | The New Greenhouse',
+    description:
+      'The New Greenhouse Journal — floral inspiration, gifting guides and seasonal notes from our Kingston, Jamaica studio.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Journal', path: '/blogs'},
+    ],
+  });
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -45,7 +48,7 @@ async function loadCriticalData({context, request}: Route.LoaderArgs) {
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {blogs};
+  return {blogs, origin: new URL(request.url).origin};
 }
 
 /**

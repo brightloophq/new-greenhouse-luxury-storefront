@@ -1,7 +1,7 @@
 import type {Route} from './+types/($locale).flowers._index';
 import {FlowerCard} from '~/components/FlowerCard';
 import {FLOWERS, flowersByFamily} from '~/data/flowers';
-import {canonicalTag} from '~/lib/seo';
+import {breadcrumbSchema, canonicalTag} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -12,6 +12,12 @@ export const meta: Route.MetaFunction = ({data}) => {
         'Browse fresh-cut flower varieties and colourways from The New Greenhouse — Alstroemeria, roses, tulips, orchids and more, for luxury and wholesale floristry in Kingston, Jamaica.',
     },
     canonicalTag(data?.origin, '/flowers'),
+    {
+      'script:ld+json': breadcrumbSchema(data?.origin, [
+        {name: 'Home', path: '/'},
+        {name: 'Flowers', path: '/flowers'},
+      ]),
+    },
   ];
 };
 

@@ -1,17 +1,55 @@
 import {useLoaderData} from 'react-router';
+import type {MetaDescriptor} from 'react-router';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 import {Image} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {absoluteUrl, articleSchema, pageMeta, breadcrumbSchema} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.article.title ?? 'Article';
-  return [
-    {title: `${title} | The New Greenhouse`},
+  const article = data?.article;
+  const title = article?.title ?? 'Article';
+  const blogTitle = data?.blogTitle ?? 'Journal';
+  const path = `/blogs/${data?.blogHandle ?? ''}/${data?.articleHandle ?? ''}`;
+  const url = absoluteUrl(data?.origin, path);
+  const description =
+    article?.seo?.description ||
+    `${title} — from The New Greenhouse Journal, luxury and wholesale florist in Kingston, Jamaica.`;
+  const image = article?.image?.url;
+
+  const tags: MetaDescriptor[] = [
+    ...pageMeta({
+      origin: data?.origin,
+      path,
+      title: `${title} | The New Greenhouse`,
+      description,
+      image,
+      ogType: 'article',
+    }),
     {
-      name: 'description',
-      content: `${title} — from The New Greenhouse Journal, luxury and wholesale florist in Kingston, Jamaica.`,
+      'script:ld+json': breadcrumbSchema(data?.origin, [
+        {name: 'Home', path: '/'},
+        {name: 'Journal', path: '/blogs'},
+        {name: blogTitle, path: `/blogs/${data?.blogHandle ?? ''}`},
+        {name: title, path},
+      ]),
     },
   ];
+
+  if (article) {
+    tags.push({
+      'script:ld+json': articleSchema({
+        origin: data?.origin,
+        url,
+        headline: title,
+        description: article.seo?.description || undefined,
+        image,
+        datePublished: article.publishedAt,
+        authorName: article.author?.name || undefined,
+      }),
+    });
+  }
+
+  return tags;
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -60,7 +98,13 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
 
   const article = blog.articleByHandle;
 
-  return {article};
+  return {
+    article,
+    blogHandle,
+    blogTitle: blog.title,
+    articleHandle,
+    origin: new URL(request.url).origin,
+  };
 }
 
 /**
@@ -111,6 +155,7 @@ const ARTICLE_QUERY = `#graphql
   ) @inContext(language: $language, country: $country) {
     blog(handle: $blogHandle) {
       handle
+      title
       articleByHandle(handle: $articleHandle) {
         handle
         title

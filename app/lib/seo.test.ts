@@ -15,6 +15,7 @@ import {join} from 'node:path';
 import {describe, expect, it} from 'vitest';
 import {
   absoluteUrl,
+  articleSchema,
   breadcrumbSchema,
   canonicalTag,
   catalogueMeta,
@@ -181,6 +182,69 @@ describe('catalogueMeta with breadcrumbs', () => {
   });
 });
 
+describe('pageMeta ogType', () => {
+  it('defaults og:type to website and can override to article', () => {
+    const site = pageMeta({origin: ORIGIN, path: '/x', title: 't', description: 'd'});
+    expect(
+      site.find((t) => (t as {property?: string}).property === 'og:type'),
+    ).toMatchObject({content: 'website'});
+    const art = pageMeta({
+      origin: ORIGIN,
+      path: '/x',
+      title: 't',
+      description: 'd',
+      ogType: 'article',
+    });
+    expect(
+      art.find((t) => (t as {property?: string}).property === 'og:type'),
+    ).toMatchObject({content: 'article'});
+  });
+});
+
+describe('articleSchema', () => {
+  const full = articleSchema({
+    origin: ORIGIN,
+    url: `${ORIGIN}/blogs/journal/spring-roses`,
+    headline: 'Spring Roses',
+    description: 'A guide to spring roses.',
+    image: `${ORIGIN}/img.jpg`,
+    datePublished: '2026-03-01T00:00:00Z',
+    authorName: 'Jane Bloom',
+  }) as Record<string, unknown>;
+
+  it('is a BlogPosting with a stable @id and org publisher reference', () => {
+    expect(full['@type']).toBe('BlogPosting');
+    expect(full['@id']).toBe(`${ORIGIN}/blogs/journal/spring-roses#article`);
+    expect((full.publisher as Record<string, unknown>)['@id']).toBe(
+      `${ORIGIN}/#organization`,
+    );
+  });
+
+  it('emits only the truthful fields it is given', () => {
+    expect(full.headline).toBe('Spring Roses');
+    expect(full.datePublished).toBe('2026-03-01T00:00:00Z');
+    expect((full.author as Record<string, unknown>).name).toBe('Jane Bloom');
+    expect(full.image).toEqual([`${ORIGIN}/img.jpg`]);
+  });
+
+  it('NEVER fabricates dateModified, and omits absent author/date/image', () => {
+    expect(full).not.toHaveProperty('dateModified');
+    const sparse = articleSchema({
+      origin: ORIGIN,
+      url: `${ORIGIN}/blogs/journal/x`,
+      headline: 'X',
+    }) as Record<string, unknown>;
+    expect(sparse).not.toHaveProperty('author');
+    expect(sparse).not.toHaveProperty('datePublished');
+    expect(sparse).not.toHaveProperty('image');
+    expect(sparse).not.toHaveProperty('dateModified');
+    // publisher relationship is always present.
+    expect((sparse.publisher as Record<string, unknown>)['@id']).toBe(
+      `${ORIGIN}/#organization`,
+    );
+  });
+});
+
 describe('organizationSchema', () => {
   const org = organizationSchema(ORIGIN) as Record<string, unknown>;
 
@@ -330,5 +394,76 @@ describe('Sprint 2 — commercial on-page wiring (source guards)', () => {
     const src = stripComments(read('app/components/Footer.tsx'));
     expect(src).toContain("to: '/pages/delivery-information'");
     expect(src).toContain("to: '/blogs'");
+  });
+});
+
+describe('Sprint 3 — local + editorial wiring (source guards)', () => {
+  it('About and Contact carry an absolute canonical + BreadcrumbList', () => {
+    for (const r of ['about.tsx', 'contact.tsx']) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} should use catalogueMeta`).toContain('catalogueMeta(');
+      expect(src, `${r} should pass breadcrumbs`).toContain('breadcrumbs:');
+      expect(src, `${r} should provide origin`).toContain(
+        'new URL(request.url).origin',
+      );
+    }
+  });
+
+  it('Contact metadata references delivery relevance (source-backed)', () => {
+    const src = stripComments(read('app/routes/contact.tsx'));
+    expect(src).toMatch(/Kingston and St\. Andrew/);
+  });
+
+  it('the legacy /pages/delivery-information route 301-redirects to /contact', () => {
+    const src = stripComments(
+      read('app/routes/($locale).pages.delivery-information.tsx'),
+    );
+    expect(src).toContain("redirect('/contact', 301)");
+  });
+
+  it('blog index + blog handle carry canonical + breadcrumbs', () => {
+    for (const r of [
+      '($locale).blogs._index.tsx',
+      '($locale).blogs.$blogHandle._index.tsx',
+    ]) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} catalogueMeta`).toContain('catalogueMeta(');
+      expect(src, `${r} breadcrumbs`).toContain('breadcrumbs:');
+      expect(src, `${r} origin`).toContain('new URL(request.url).origin');
+    }
+  });
+
+  it('articles emit BlogPosting + breadcrumb from live loader data', () => {
+    const src = stripComments(
+      read('app/routes/($locale).blogs.$blogHandle.$articleHandle.tsx'),
+    );
+    expect(src).toContain('articleSchema(');
+    expect(src).toContain('breadcrumbSchema(');
+    // Truthful fields wired from the loader — no fabricated dateModified.
+    expect(src).toContain('datePublished: article.publishedAt');
+    expect(src).toContain('authorName: article.author?.name');
+    expect(src).not.toContain('dateModified');
+  });
+
+  it('collections + flower guide carry BreadcrumbList', () => {
+    for (const r of [
+      '($locale).collections.$handle.tsx',
+      '($locale).flowers._index.tsx',
+      '($locale).flowers.$family.tsx',
+    ]) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} breadcrumbSchema`).toContain('breadcrumbSchema(');
+    }
+  });
+
+  it('indexation safety unchanged: search / cart / design-system stay noindex', () => {
+    for (const r of [
+      '($locale).search.tsx',
+      '($locale).cart.tsx',
+      '($locale).design-system.tsx',
+    ]) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} noindex`).toMatch(/robots.*noindex/);
+    }
   });
 });

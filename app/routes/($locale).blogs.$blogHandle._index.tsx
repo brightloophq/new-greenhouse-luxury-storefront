@@ -4,16 +4,22 @@ import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import type {ArticleItemFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {catalogueMeta} from '~/lib/seo';
 
 export const meta: Route.MetaFunction = ({data}) => {
   const title = data?.blog.title ?? 'Journal';
-  return [
-    {title: `${title} | The New Greenhouse`},
-    {
-      name: 'description',
-      content: `${title} — stories, gifting guides and floral inspiration from The New Greenhouse, Kingston, Jamaica.`,
-    },
-  ];
+  const handle = data?.blogHandle ?? '';
+  return catalogueMeta({
+    origin: data?.origin,
+    path: `/blogs/${handle}`,
+    title: `${title} | The New Greenhouse`,
+    description: `${title} — stories, gifting guides and floral inspiration from The New Greenhouse, Kingston, Jamaica.`,
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Journal', path: '/blogs'},
+      {name: title, path: `/blogs/${handle}`},
+    ],
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -55,7 +61,11 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
 
   redirectIfHandleIsLocalized(request, {handle: params.blogHandle, data: blog});
 
-  return {blog};
+  return {
+    blog,
+    blogHandle: params.blogHandle,
+    origin: new URL(request.url).origin,
+  };
 }
 
 /**

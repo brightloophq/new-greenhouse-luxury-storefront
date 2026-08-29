@@ -1,15 +1,29 @@
 import {useRef} from 'react';
-import type {MetaFunction} from 'react-router';
+import {type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CONTACT, DELIVERY_CUTOFF} from '~/lib/companyContent';
 import {cardImage} from '~/lib/catalogues';
 import {focalStyle} from '~/lib/focalPoint';
 import {useReveal} from '~/lib/useReveal';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Contact Us | The New Greenhouse'},
-  {name: 'description', content: 'Contact The New Greenhouse — Kingston, Jamaica.'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/contact',
+    title: 'Contact & Flower Delivery | The New Greenhouse',
+    description:
+      'Contact The New Greenhouse in Kingston, Jamaica — phone, WhatsApp, email and our Kingston 5 address, plus flower delivery across Kingston and St. Andrew.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Contact Us', path: '/contact'},
+    ],
+  });
+
+/** Origin only — powers the absolute self-canonical + breadcrumb URLs. */
+export async function loader({request}: LoaderFunctionArgs) {
+  return {origin: new URL(request.url).origin};
+}
 
 const CONTACT_IMG = '/images/homepage/retail';
 

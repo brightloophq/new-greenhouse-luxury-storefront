@@ -8,6 +8,7 @@ import type {
   ProductSortKeys,
 } from '@shopify/hydrogen/storefront-api-types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {breadcrumbSchema} from '~/lib/seo';
 import {
   parseCatalogSearchParams,
   buildProductFilters,
@@ -174,6 +175,18 @@ export const meta: Route.MetaFunction = ({data}) => {
     // per-variety /flowers/$family routes carry the indexable variety SEO.
     ...(path
       ? [{tagName: 'link' as const, rel: 'canonical', href: path}]
+      : []),
+    // BreadcrumbList (Home → collection). No `/collections` index exists (it
+    // 301s to /retail), so the trail is two levels, pointing at the base path.
+    ...(path
+      ? [
+          {
+            'script:ld+json': breadcrumbSchema(origin, [
+              {name: 'Home', path: '/'},
+              {name: title, path},
+            ]),
+          },
+        ]
       : []),
   ];
 };

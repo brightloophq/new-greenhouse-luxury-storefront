@@ -1,20 +1,30 @@
 import {useRef} from 'react';
-import type {MetaFunction} from 'react-router';
+import {type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {COMPANY, CONTACT} from '~/lib/companyContent';
 import {cardImage} from '~/lib/catalogues';
 import {focalStyle} from '~/lib/focalPoint';
 import {useReveal} from '~/lib/useReveal';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {EditorialCrossSell} from '~/components/editorial/EditorialCrossSell';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'About Us | The New Greenhouse'},
-  {
-    name: 'description',
-    content:
-      'The New Greenhouse — a Kingston florist supplying fresh flowers, arrangements and florist supplies.',
-  },
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/about',
+    title: 'About Us | The New Greenhouse',
+    description:
+      'The New Greenhouse is a family florist in Kingston, Jamaica, with more than four decades of floral experience — fresh flowers, arrangements and florist supplies, for retail and wholesale.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'About Us', path: '/about'},
+    ],
+  });
+
+/** Origin only — powers the absolute self-canonical + breadcrumb URLs. */
+export async function loader({request}: LoaderFunctionArgs) {
+  return {origin: new URL(request.url).origin};
+}
 
 const STORY_IMG = '/images/homepage/arrangements';
 
