@@ -134,6 +134,8 @@ export interface CatalogueLoadResult<T> {
   filters: AppliedFilters;
   /** Applied sort value (one of SORT_OPTIONS). */
   sort: string;
+  /** Request origin, for building absolute self-canonicals in route meta. */
+  origin: string;
 }
 
 interface StorefrontLike {
@@ -174,7 +176,7 @@ export async function loadCatalogue<
   const url = new URL(request.url);
   const {filters, sort} = parseCatalogSearchParams(url.searchParams, context);
   const {sortKey, reverse} = toCollectionSort(sort);
-  const base = {filters, sort};
+  const base = {filters, sort, origin: url.origin};
 
   try {
     const {collection} = await storefront.query(CATALOGUE_QUERY, {

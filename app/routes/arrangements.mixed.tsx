@@ -2,10 +2,16 @@ import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-r
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {ARRANGEMENT_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Mixed Arrangements | The New Greenhouse'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/arrangements/mixed',
+    title: 'Mixed Flower Arrangements | The New Greenhouse',
+    description:
+      'Seasonal hand-tied mixed flower arrangements from The New Greenhouse — expressive everyday bouquets, delivered across Kingston and St. Andrew, Jamaica.',
+  });
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   return loadCatalogue<CatalogueProduct>(

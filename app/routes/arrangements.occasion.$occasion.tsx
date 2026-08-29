@@ -2,10 +2,17 @@ import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'r
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {OCCASIONS, findBySlug, loadCatalogue} from '~/lib/catalogues';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction<typeof loader> = ({data: d}) => [
-  {title: `${d?.label ?? 'Occasion'} Arrangements | The New Greenhouse`},
-];
+export const meta: MetaFunction<typeof loader> = ({data: d}) =>
+  catalogueMeta({
+    origin: d?.origin,
+    path: `/arrangements/occasion/${d?.slug ?? ''}`,
+    title: `${d?.label ?? 'Occasion'} Flowers & Arrangements | The New Greenhouse`,
+    description: `${
+      d?.label ?? 'Occasion'
+    } flowers and hand-crafted arrangements from The New Greenhouse — chosen for the moment and delivered across Kingston and St. Andrew, Jamaica.`,
+  });
 
 export async function loader({context, params, request}: LoaderFunctionArgs) {
   const occasion = findBySlug(OCCASIONS, params.occasion);
@@ -17,7 +24,7 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
     request,
     'arrangements',
   );
-  return {...result, label: occasion.label};
+  return {...result, label: occasion.label, slug: occasion.slug};
 }
 
 /** Occasion catalogue — stays GREEN (never premium). */

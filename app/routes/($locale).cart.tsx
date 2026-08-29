@@ -5,7 +5,12 @@ import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Your Cart | The New Greenhouse`}];
+  // The cart is a transient, per-session page with no standalone search value —
+  // keep it out of the index (robots.txt also disallows /cart).
+  return [
+    {title: `Your Cart | The New Greenhouse`},
+    {name: 'robots', content: 'noindex, follow'},
+  ];
 };
 
 export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;

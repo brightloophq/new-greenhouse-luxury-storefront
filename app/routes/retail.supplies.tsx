@@ -2,10 +2,16 @@ import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-r
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Retail Supplies | The New Greenhouse'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/retail/supplies',
+    title: 'Retail Florist Supplies | The New Greenhouse',
+    description:
+      'Florist supplies for retail customers from The New Greenhouse in Kingston, Jamaica — vases, tools and materials for arranging fresh flowers at home.',
+  });
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   return loadCatalogue<CatalogueProduct>(

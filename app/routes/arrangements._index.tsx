@@ -1,14 +1,20 @@
-import type {MetaFunction} from 'react-router';
+import {type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {ArrangementsGallery} from '~/components/arrangements/ArrangementsGallery';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Arrangements | The New Greenhouse'},
-  {
-    name: 'description',
-    content:
-      'Hand-crafted floral arrangements — premium/deluxe, mixed bouquets and by occasion.',
-  },
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/arrangements',
+    title: 'Flower Arrangements | The New Greenhouse',
+    description:
+      'Hand-crafted floral arrangements from The New Greenhouse in Kingston, Jamaica — premium and deluxe, mixed bouquets and arrangements by occasion.',
+  });
+
+/** Origin only — powers the absolute self-canonical for this landing page. */
+export async function loader({request}: LoaderFunctionArgs) {
+  return {origin: new URL(request.url).origin};
+}
 
 /**
  * Arrangements hub — the signature gallery. STAYS GREEN; the premium theme only
