@@ -143,6 +143,85 @@ These require the merchant and are out of scope for code:
 - Provide **verified review provenance** before any rating/review schema.
 - Confirm **GBP NAP** matches `companyContent.ts`.
 
+## Local + editorial (Sprint 3)
+
+### Local SEO entity
+The site-wide `Florist`/`Organization` + `WebSite` JSON-LD (Sprint 1) is unchanged
+and remains built solely from `companyContent.ts`. Audited this sprint — no
+fabricated hours/priceRange/ratings/reviews; `@id` relationships intact. No defect.
+
+### About / Contact / Delivery
+- **`/about`** and **`/contact`** (dedicated editorial routes) now carry an absolute
+  self-canonical, OG/Twitter, and a `BreadcrumbList`. About copy uses the
+  source-backed "family florist in Kingston, Jamaica, four decades" heritage.
+- **Delivery:** there is **no** standalone delivery page. `/pages/delivery-information`
+  is a legacy **301 → `/contact`**; delivery terms (areas: Kingston & St. Andrew;
+  same-day cutoff) live on `/contact`. So Contact's metadata carries the flower-delivery
+  local relevance. The Sprint-2 footer "Delivery" link resolves to `/contact` via that
+  301. A dedicated delivery landing page is a deferred landing/content decision (below).
+- **`/pages/:handle`** (generic Shopify pages) now emits an absolute canonical + OG and
+  prefers Shopify `page.seo.*`.
+
+### Editorial structured data (Journal)
+- `/blogs`, `/blogs/:blogHandle`, `/blogs/:blogHandle/:articleHandle` now carry
+  absolute canonicals, OG (articles use `og:type=article`), and `BreadcrumbList`.
+- Articles emit **`BlogPosting`** (`articleSchema`) from live loader fields only:
+  `headline`, `description` (Shopify `seo.description`), `image`, `datePublished`
+  (`publishedAt`), `author` (`authorV2.name`) — each omitted when absent.
+  **`dateModified` is intentionally never emitted** (Shopify's article query exposes no
+  update timestamp). `publisher` references the site-wide Organization node by `@id`.
+  (`ARTICLE_QUERY` gained `blog.title` for the breadcrumb — regenerated
+  `storefrontapi.generated.d.ts` accordingly.)
+
+### Breadcrumb coverage
+`BreadcrumbList` now covers: catalogue routes (Sprint 2) + About, Contact, Journal
+index/blog/article, collection pages, and the flower guide/family. All absolute URLs,
+1-based positions, canonical destinations, one node per page (no duplicates).
+
+### Internal linking
+Header + footer nav, footer Delivery/Journal links (Sprint 2), and the new breadcrumb
+trails give every priority page a crawl path from the homepage. Determination: no
+additional contextual links were warranted — a link farm would not help customers, and
+the breadcrumbs already strengthen the Journal → blog → article and Home → section paths.
+
+### Local search-intent gap analysis
+A = existing page serves it · B = existing page needs Shopify content · C = dedicated
+landing justified · D = insufficient/unsupported (do not fabricate).
+
+| Search intent | Existing target | Class | Recommendation |
+|---|---|---|---|
+| florist Kingston Jamaica | `/` (title + Florist schema) | **A** | Serves it; monitor in GSC |
+| flower delivery Kingston Jamaica | `/contact` (owns delivery terms) | **B** | Enhance Shopify delivery content on Contact; a dedicated delivery page is a later option (C) |
+| wholesale flowers Jamaica | `/wholesale` landing | **A** | Serves it |
+| wedding flowers Jamaica | — (service not offered) | **D** | Do not create — weddings/event floristry are explicitly not offered |
+| funeral / sympathy flowers Jamaica | `/arrangements/occasion/sympathy` (`sympathy-and-funeral`) | **A** | Serves it (verify the live Shopify collection is populated) |
+| corporate flowers Jamaica | `/collections/corporate-gifting` | **B** | Existing target; enrich Shopify collection SEO/body content |
+| event flowers Jamaica | — (service not offered) | **D** | Do not create |
+
+No doorway/location-spam pages. No new landing pages created this sprint.
+
+### Future editorial content clusters (planning only — do not publish)
+Each cluster must support a real commercial page:
+
+| Cluster | Supports |
+|---|---|
+| Flower care & longevity | product/collection pages, `/flowers/:family` |
+| Flowers by occasion (birthday, romance, sympathy) | `/arrangements/occasion/*` |
+| Sympathy & funeral etiquette | `/arrangements/occasion/sympathy` |
+| Seasonal flower availability in Jamaica | `/flowers`, seasonal collections |
+| Choosing an arrangement | `/arrangements`, `/arrangements/premium-deluxe` |
+| Wholesale buying guidance for florists/trade | `/wholesale` |
+| Corporate gifting | `/collections/corporate-gifting` |
+
+(No wedding/event cluster — the service is not offered.)
+
+### Shopify content actions (owner/admin — NOT code)
+- Enrich **`/contact`** (or a future dedicated delivery page) with fuller verified
+  delivery content for the delivery-Kingston intent.
+- Populate **corporate-gifting** collection SEO title/description + body.
+- Ensure the **sympathy** occasion collection is populated in Shopify.
+- (Carried over) product/collection SEO fields, media alt text, GBP NAP check.
+
 ## Deferred (intentionally NOT implemented — do not fabricate)
 
 - **GTM / GA4** — no `GTM-*`/`gtag`/`dataLayer` in code yet. Planned: consent-gated,

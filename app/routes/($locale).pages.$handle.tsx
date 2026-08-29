@@ -1,6 +1,7 @@
 import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {pageMeta} from '~/lib/seo';
 
 /**
  * Pages that describe services the business does not currently offer (weddings /
@@ -17,14 +18,16 @@ const REMOVED_PAGE_REDIRECTS: Record<string, string> = {
 };
 
 export const meta: Route.MetaFunction = ({data}) => {
-  const title = data?.page.title ?? 'Page';
-  return [
-    {title: `${title} | The New Greenhouse`},
-    {
-      name: 'description',
-      content: `${title} — The New Greenhouse, luxury and wholesale florist in Kingston, Jamaica.`,
-    },
-  ];
+  const page = data?.page;
+  const title = page?.title ?? 'Page';
+  return pageMeta({
+    origin: data?.origin,
+    path: `/pages/${page?.handle ?? ''}`,
+    title: page?.seo?.title || `${title} | The New Greenhouse`,
+    description:
+      page?.seo?.description ||
+      `${title} — The New Greenhouse, luxury and wholesale florist in Kingston, Jamaica.`,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -68,6 +71,7 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
 
   return {
     page,
+    origin: new URL(request.url).origin,
   };
 }
 

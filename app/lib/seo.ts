@@ -66,6 +66,8 @@ export interface PageSeoInput {
   description: string;
   /** Optional absolute-or-relative OG image; defaults to the site OG image. */
   image?: string;
+  /** Open Graph type; defaults to `website` (use `article` for Journal posts). */
+  ogType?: string;
 }
 
 export interface CatalogueSeoInput extends PageSeoInput {
@@ -93,7 +95,7 @@ export function pageMeta(input: PageSeoInput): MetaDescriptor[] {
     {title},
     {name: 'description', content: description},
     canonicalTag(origin, path),
-    {property: 'og:type', content: 'website'},
+    {property: 'og:type', content: input.ogType ?? 'website'},
     {property: 'og:title', content: title},
     {property: 'og:description', content: description},
     {property: 'og:url', content: url},
@@ -139,6 +141,46 @@ export function catalogueMeta(input: CatalogueSeoInput): MetaDescriptor[] {
     } as MetaDescriptor);
   }
   return tags;
+}
+
+export interface ArticleSeoInput {
+  origin: string | undefined;
+  /** Absolute canonical URL of the article. */
+  url: string;
+  /** Article title. */
+  headline: string;
+  /** Optional excerpt/description. */
+  description?: string;
+  /** Optional absolute image URL. */
+  image?: string;
+  /** ISO publish date (Shopify `publishedAt`). */
+  datePublished?: string;
+  /** Optional author name (Shopify `authorV2.name`). */
+  authorName?: string;
+}
+
+/**
+ * `BlogPosting` structured data for a Journal article. Emits ONLY fields the live
+ * Shopify loader provides — no fabricated author, date or image. `dateModified`
+ * is intentionally absent (Shopify's article query exposes no update timestamp).
+ * `publisher` references the site-wide Organization/Florist node by `@id`.
+ */
+export function articleSchema(input: ArticleSeoInput): object {
+  const org = `${input.origin ?? ''}/${SITE.organizationId}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${input.url}#article`,
+    headline: input.headline,
+    ...(input.description ? {description: input.description} : {}),
+    ...(input.image ? {image: [input.image]} : {}),
+    ...(input.datePublished ? {datePublished: input.datePublished} : {}),
+    ...(input.authorName
+      ? {author: {'@type': 'Person', name: input.authorName}}
+      : {}),
+    ...(input.url ? {url: input.url, mainEntityOfPage: input.url} : {}),
+    publisher: {'@id': org},
+  };
 }
 
 /**
