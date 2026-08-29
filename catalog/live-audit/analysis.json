@@ -1,0 +1,872 @@
+{
+  "generatedAt": "2026-08-29T22:03:03.583Z",
+  "source": "LIVE Shopify export (authoritative). catalog/ used for comparison only.",
+  "meta": {
+    "exportedAt": "2026-08-29T22:00:41.894Z",
+    "store": "ax41k1-k5.myshopify.com",
+    "apiVersion": "2026-07",
+    "counts": {
+      "products": 274,
+      "collections": 52,
+      "variants": 427,
+      "expectedProducts": 274,
+      "expectedCollections": 52
+    },
+    "pagination": {
+      "productPages": 6,
+      "collectionPages": 2,
+      "productCountMatches": true,
+      "collectionCountMatches": true
+    },
+    "publicationsIncluded": {
+      "products": true,
+      "collections": true
+    },
+    "note": "Authoritative LIVE Shopify export. Catalogue data only — no credentials. raw/ is gitignored."
+  },
+  "products": {
+    "total": 274,
+    "variants": 427,
+    "byStatus": {
+      "DRAFT": 19,
+      "ACTIVE": 255
+    },
+    "seoTitle": 274,
+    "seoDesc": 274,
+    "seoTitleOver60": 17,
+    "seoDescShort": 7,
+    "seoDescOver160": 0,
+    "thinDescription": [
+      "grand-red-rose-arrangement",
+      "white-orchid-elegance",
+      "blush-romance-luxe",
+      "golden-celebration-bouquet",
+      "luxury-mixed-garden-bouquet",
+      "royal-hydrangea-arrangement",
+      "classic-white-sympathy-arrangement",
+      "sunshine-birthday-bouquet",
+      "luxury-tropical-arrangement",
+      "premium-mothers-day-bouquet",
+      "signature-ivory-blush-bouquet",
+      "red-rose-romance-luxe",
+      "congratulations-brights-bouquet",
+      "get-well-luxe",
+      "new-baby-soft-pastels-bouquet",
+      "corporate-elegance-arrangement",
+      "bridal-white-bouquet",
+      "thank-you-peach-bouquet",
+      "seasonal-luxe-bouquet"
+    ],
+    "missingSeoTitle": [],
+    "missingSeoDesc": [],
+    "featuredImage": 241,
+    "featuredAlt": 241,
+    "imagesTotal": 241,
+    "imagesWithAlt": 241,
+    "notPublishedOnlineStore": [
+      "long-stem-red-roses",
+      "birthday-brights-bouquet",
+      "wet-floral-foam-bricks",
+      "peace-lily-plant",
+      "standing-spray-classic-white",
+      "long-stem-pink-roses",
+      "long-stem-yellow-roses",
+      "assorted-spray-roses",
+      "oriental-lilies-white",
+      "white-hydrangeas",
+      "antique-blue-hydrangeas",
+      "pink-hydrangeas",
+      "spray-mini-carnations",
+      "heliconia",
+      "bird-of-paradise",
+      "seeded-eucalyptus",
+      "silver-dollar-eucalyptus",
+      "wax-flower",
+      "statice",
+      "solidago",
+      "classic-birthday-blooms",
+      "anniversary-rose-bouquet",
+      "anniversary-luxe-arrangement",
+      "red-rose-romance-bouquet",
+      "blush-romance-bouquet",
+      "congratulations-bright-bouquet",
+      "congratulations-elegant-arrangement",
+      "new-baby-soft-pink-bouquet",
+      "new-baby-neutral-bouquet",
+      "get-well-sunshine-bouquet",
+      "get-well-soft-pastels",
+      "designers-choice-bouquet",
+      "seasonal-market-bunch",
+      "everyday-ivory-elegance",
+      "modern-mixed-bouquet",
+      "standing-spray-mixed-tribute",
+      "sympathy-wreath-ivory-greenery",
+      "casket-spray-full-ivory",
+      "peaceful-whites-hand-tied-bouquet",
+      "serene-sympathy-bouquet",
+      "tribute-basket-arrangement",
+      "memorial-vase-arrangement",
+      "bridal-bouquet-ivory-garden",
+      "bridal-bouquet-cascading-blush",
+      "bridesmaid-bouquet",
+      "low-reception-centerpiece",
+      "elevated-reception-centerpiece",
+      "ceremony-aisle-arch-arrangement",
+      "sweetheart-table-arrangement",
+      "intimate-wedding-flower-package",
+      "glass-cylinder-vase",
+      "bud-vase-set",
+      "satin-ribbon",
+      "organza-ribbon",
+      "kraft-cellophane-wrap",
+      "woven-arrangement-basket",
+      "floral-stem-tape",
+      "florist-shears-snips",
+      "bouquet-presentation-boxes",
+      "snake-plant-sansevieria",
+      "phalaenopsis-orchid-plant",
+      "fruit-flower-gift-basket",
+      "belgian-chocolates-add-on",
+      "plush-teddy-bear-add-on",
+      "rouge-amour-rose-heart-box",
+      "ivory-elegance-rose-bouquet",
+      "grand-crimson-rose-vase",
+      "blue-hour-hydrangea-vase",
+      "amsterdam-ivory-tulip-vase",
+      "white-orchid-serenity-vase",
+      "white-cathedral-lily-vase",
+      "rosette-ranunculus-bouquet",
+      "ruffled-ivory-lisianthus-bouquet",
+      "sculptural-calla-vase",
+      "island-modern-tropical-vase",
+      "ivory-cloud-hydrangea-bouquet",
+      "golden-hour-tulip-bouquet",
+      "sunlit-asiatic-lily-bouquet",
+      "everyday-bloom-alstroemeria-bouquet",
+      "velvet-cloud-carnation-dome",
+      "autumn-ember-chrysanthemum-bouquet",
+      "sunshine-gerbera-bouquet",
+      "cottage-spire-snapdragon-bouquet",
+      "garden-perfume-stock-bouquet",
+      "azure-spire-delphinium-bouquet",
+      "sweetheart-spray-rose-bouquet",
+      "cloud-nine-babys-breath-bouquet",
+      "paradise-tropical-bouquet",
+      "silver-grove-eucalyptus-bunch",
+      "natural-babys-breath-bunch",
+      "blush-tinted-babys-breath-bunch",
+      "ivory-cloud-babys-breath-dome",
+      "babys-breath-gift-bouquet-wrapped",
+      "dried-babys-breath-bunch",
+      "white-lisianthus-stem-bunch",
+      "purple-lisianthus-bouquet",
+      "blush-lisianthus-vase",
+      "lisianthus-garden-bouquet",
+      "ranunculus-stem-bunch",
+      "coral-ranunculus-bouquet",
+      "ivory-ranunculus-vase",
+      "mini-calla-lily-stem-bunch",
+      "mango-calla-lily-bouquet",
+      "plum-calla-lily-vase",
+      "white-spray-rose-bunch",
+      "peach-spray-rose-bouquet",
+      "crimson-spray-rose-vase",
+      "gerbera-daisy-stem-bunch",
+      "pink-gerbera-daisy-bouquet",
+      "green-hydrangea-stem-bunch",
+      "blush-hydrangea-bouquet",
+      "red-tulip-stem-bunch",
+      "blush-tulip-vase"
+    ]
+  },
+  "productDuplicates": {
+    "seoTitle": [
+      {
+        "value": "red rose romance bouquet | the new greenhouse",
+        "handles": [
+          "red-rose-romance-bouquet",
+          "red-rose-romance-luxe"
+        ]
+      },
+      {
+        "value": "blush romance bouquet | the new greenhouse",
+        "handles": [
+          "blush-romance-bouquet",
+          "blush-romance-luxe"
+        ]
+      },
+      {
+        "value": "get well sunshine bouquet | the new greenhouse",
+        "handles": [
+          "get-well-sunshine-bouquet",
+          "get-well-luxe"
+        ]
+      },
+      {
+        "value": "mixed | the new greenhouse",
+        "handles": [
+          "gift-bouquets-mixed",
+          "greenery-mixed",
+          "novelties-mixed",
+          "tropicals-mixed"
+        ]
+      }
+    ],
+    "seoDescription": [],
+    "title": [
+      {
+        "value": "heliconia",
+        "handles": [
+          "heliconia",
+          "tropicals-heliconia"
+        ]
+      },
+      {
+        "value": "bird of paradise",
+        "handles": [
+          "bird-of-paradise",
+          "tropicals-bird-of-paradise"
+        ]
+      },
+      {
+        "value": "seeded eucalyptus",
+        "handles": [
+          "seeded-eucalyptus",
+          "eucalyptus-seeded"
+        ]
+      },
+      {
+        "value": "silver dollar eucalyptus",
+        "handles": [
+          "silver-dollar-eucalyptus",
+          "eucalyptus-silver-dollar"
+        ]
+      },
+      {
+        "value": "wax flower",
+        "handles": [
+          "wax-flower",
+          "fillers-wax-flower-pink"
+        ]
+      },
+      {
+        "value": "statice",
+        "handles": [
+          "statice",
+          "fillers-statice-purple"
+        ]
+      },
+      {
+        "value": "solidago",
+        "handles": [
+          "solidago",
+          "fillers-solidago"
+        ]
+      },
+      {
+        "value": "red rose romance bouquet",
+        "handles": [
+          "red-rose-romance-bouquet",
+          "red-rose-romance-luxe"
+        ]
+      },
+      {
+        "value": "blush romance bouquet",
+        "handles": [
+          "blush-romance-bouquet",
+          "blush-romance-luxe"
+        ]
+      },
+      {
+        "value": "get well sunshine bouquet",
+        "handles": [
+          "get-well-sunshine-bouquet",
+          "get-well-luxe"
+        ]
+      }
+    ]
+  },
+  "collections": {
+    "total": 52,
+    "seoTitle": 33,
+    "seoDesc": 33,
+    "body": 36,
+    "image": 4,
+    "imageAlt": 0,
+    "empty": [
+      "birthday-flowers",
+      "anniversary-flowers",
+      "love-romance",
+      "sympathy",
+      "wedding-flowers",
+      "corporate-flowers",
+      "gift-baskets",
+      "tropical-flowers",
+      "orchids"
+    ],
+    "missingSeoTitle": [
+      "frontpage",
+      "luxury-bouquets",
+      "birthday-flowers",
+      "anniversary-flowers",
+      "love-romance",
+      "sympathy",
+      "wedding-flowers",
+      "corporate-flowers",
+      "gift-baskets",
+      "plants",
+      "same-day-delivery",
+      "tropical-flowers",
+      "best-sellers",
+      "signature-collection",
+      "seasonal-deluxe",
+      "thank-you",
+      "premium-handcrafted",
+      "premium-vase",
+      "premium-heart-box"
+    ],
+    "missingSeoDesc": [
+      "frontpage",
+      "luxury-bouquets",
+      "birthday-flowers",
+      "anniversary-flowers",
+      "love-romance",
+      "sympathy",
+      "wedding-flowers",
+      "corporate-flowers",
+      "gift-baskets",
+      "plants",
+      "same-day-delivery",
+      "tropical-flowers",
+      "best-sellers",
+      "signature-collection",
+      "seasonal-deluxe",
+      "thank-you",
+      "premium-handcrafted",
+      "premium-vase",
+      "premium-heart-box"
+    ],
+    "missingBody": [
+      "frontpage",
+      "luxury-bouquets",
+      "birthday-flowers",
+      "anniversary-flowers",
+      "love-romance",
+      "sympathy",
+      "wedding-flowers",
+      "corporate-flowers",
+      "gift-baskets",
+      "plants",
+      "same-day-delivery",
+      "tropical-flowers",
+      "best-sellers",
+      "signature-collection",
+      "seasonal-deluxe",
+      "thank-you"
+    ]
+  },
+  "collectionDuplicates": {
+    "seoTitle": [],
+    "seoDescription": []
+  },
+  "wedding": {
+    "liveProducts": [
+      {
+        "handle": "long-stem-red-roses",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "long-stem-ivory-roses",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "long-stem-pink-roses",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "assorted-spray-roses",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "ivory-garden-roses",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "dendrobium-orchid-stems",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "cymbidium-orchid-stems",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "phalaenopsis-orchid-stems",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "oriental-lilies-white",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "calla-lilies-ivory",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "white-hydrangeas",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "antique-blue-hydrangeas",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "pink-hydrangeas",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "spray-mini-carnations",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "anthurium-stems",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "heliconia",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "torch-ginger",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "bird-of-paradise",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "seeded-eucalyptus",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "silver-dollar-eucalyptus",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "israeli-ruscus",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "palm-leather-leaf",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "babys-breath-gypsophila",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "wax-flower",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "statice",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "solidago",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "bridal-bouquet-ivory-garden",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "bridal-bouquet-cascading-blush",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "bridesmaid-bouquet",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "low-reception-centerpiece",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "elevated-reception-centerpiece",
+        "status": "DRAFT"
+      },
+      {
+        "handle": "ceremony-aisle-arch-arrangement",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "sweetheart-table-arrangement",
+        "status": "ACTIVE"
+      },
+      {
+        "handle": "intimate-wedding-flower-package",
+        "status": "ACTIVE"
+      }
+    ],
+    "liveCollections": [
+      "wedding-flowers",
+      "bridal-bouquets"
+    ],
+    "visibleToShoppers": [
+      "long-stem-ivory-roses",
+      "ivory-garden-roses",
+      "dendrobium-orchid-stems",
+      "cymbidium-orchid-stems",
+      "phalaenopsis-orchid-stems",
+      "calla-lilies-ivory",
+      "anthurium-stems",
+      "torch-ginger",
+      "israeli-ruscus",
+      "palm-leather-leaf",
+      "babys-breath-gypsophila"
+    ]
+  },
+  "confirmationRequired": {
+    "sourceFlagged": 59,
+    "matchedLive": 59,
+    "missingFromLive": []
+  },
+  "priorityCollections": [
+    {
+      "label": "Corporate Gifting",
+      "present": true,
+      "collections": [
+        {
+          "handle": "corporate-flowers",
+          "title": "Corporate Flowers",
+          "products": 0,
+          "seoTitle": false,
+          "seoDesc": false,
+          "body": false,
+          "imageAlt": false
+        },
+        {
+          "handle": "corporate-gifting",
+          "title": "Corporate Gifting",
+          "products": 40,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        },
+        {
+          "handle": "corporate-gifts",
+          "title": "Corporate Gifts",
+          "products": 40,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        }
+      ]
+    },
+    {
+      "label": "Sympathy / Funeral",
+      "present": true,
+      "collections": [
+        {
+          "handle": "sympathy",
+          "title": "Sympathy",
+          "products": 0,
+          "seoTitle": false,
+          "seoDesc": false,
+          "body": false,
+          "imageAlt": false
+        },
+        {
+          "handle": "sympathy-and-funeral",
+          "title": "Sympathy and Funeral",
+          "products": 33,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        }
+      ]
+    },
+    {
+      "label": "Wholesale / Bulk",
+      "present": true,
+      "collections": [
+        {
+          "handle": "bulk-flowers",
+          "title": "Bulk Flowers",
+          "products": 189,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        },
+        {
+          "handle": "wholesale-roses",
+          "title": "Wholesale Roses",
+          "products": 4,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        },
+        {
+          "handle": "wholesale-greenery",
+          "title": "Wholesale Greenery",
+          "products": 5,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        }
+      ]
+    },
+    {
+      "label": "Arrangements",
+      "present": false,
+      "collections": []
+    },
+    {
+      "label": "Retail Flowers",
+      "present": true,
+      "collections": [
+        {
+          "handle": "all-flowers",
+          "title": "All Flowers",
+          "products": 116,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        }
+      ]
+    },
+    {
+      "label": "Supplies",
+      "present": true,
+      "collections": [
+        {
+          "handle": "florist-essentials",
+          "title": "Florist Essentials",
+          "products": 42,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        },
+        {
+          "handle": "floral-supplies",
+          "title": "Floral Supplies",
+          "products": 10,
+          "seoTitle": true,
+          "seoDesc": true,
+          "body": true,
+          "imageAlt": false
+        }
+      ]
+    }
+  ],
+  "drift": {
+    "liveOnlyProducts": [
+      "alstroemeria-purple",
+      "alstroemeria-lavender",
+      "alstroemeria-orange",
+      "alstroemeria-pink",
+      "alstroemeria-red",
+      "alstroemeria-white",
+      "alstroemeria-yellow",
+      "asters-lavender",
+      "asters-pink",
+      "asters-purple",
+      "asters-white",
+      "babys-breath-white",
+      "calla-lilies-orange",
+      "calla-lilies-pink",
+      "calla-lilies-purple",
+      "calla-lilies-white",
+      "calla-lilies-yellow",
+      "carnations-burgundy",
+      "carnations-lavender",
+      "carnations-peach",
+      "carnations-pink",
+      "carnations-red",
+      "carnations-white",
+      "carnations-yellow",
+      "chrysanthemums-bronze",
+      "chrysanthemums-pink",
+      "chrysanthemums-purple",
+      "chrysanthemums-red",
+      "chrysanthemums-white",
+      "chrysanthemums-yellow",
+      "delphinium-blue",
+      "delphinium-pink",
+      "delphinium-purple",
+      "delphinium-white",
+      "eucalyptus-baby-blue",
+      "eucalyptus-parvifolia",
+      "eucalyptus-seeded",
+      "eucalyptus-silver-dollar",
+      "eucalyptus-willow",
+      "fillers-green",
+      "fillers-limonium",
+      "fillers-solidago",
+      "fillers-statice-purple",
+      "fillers-wax-flower-pink",
+      "fillers-white",
+      "gerbera-daisies-orange",
+      "gerbera-daisies-pink",
+      "gerbera-daisies-red",
+      "gerbera-daisies-white",
+      "gerbera-daisies-yellow",
+      "gift-bouquets-bright",
+      "gift-bouquets-mixed",
+      "gift-bouquets-pastel",
+      "greenery-bear-grass",
+      "greenery-leatherleaf-fern",
+      "greenery-mixed",
+      "greenery-pittosporum",
+      "greenery-ruscus",
+      "greenery-salal",
+      "hydrangea-blue",
+      "hydrangea-green",
+      "hydrangea-pink",
+      "hydrangea-purple",
+      "hydrangea-white",
+      "hypericum-burgundy",
+      "hypericum-green",
+      "hypericum-ivory",
+      "hypericum-peach",
+      "hypericum-pink",
+      "hypericum-red",
+      "lilies-orange",
+      "lilies-pink",
+      "lilies-white",
+      "lilies-yellow",
+      "lisianthus-lavender",
+      "lisianthus-pink",
+      "lisianthus-purple",
+      "lisianthus-white",
+      "novelties-billy-balls",
+      "novelties-celosia",
+      "novelties-mixed",
+      "novelties-scabiosa-pods",
+      "orchids-green",
+      "orchids-pink",
+      "orchids-purple",
+      "orchids-white",
+      "orchids-yellow",
+      "ranunculus-orange",
+      "ranunculus-pink",
+      "ranunculus-red",
+      "ranunculus-white",
+      "ranunculus-yellow",
+      "roses-in-stock-lavender",
+      "roses-in-stock-orange",
+      "roses-in-stock-peach",
+      "roses-in-stock-pink",
+      "roses-in-stock-red",
+      "roses-in-stock-white",
+      "roses-in-stock-yellow",
+      "snapdragon-pink",
+      "snapdragon-purple",
+      "snapdragon-red",
+      "snapdragon-white",
+      "snapdragon-yellow",
+      "spray-roses-peach",
+      "spray-roses-pink",
+      "spray-roses-red",
+      "spray-roses-white",
+      "spray-roses-yellow",
+      "stock-lavender",
+      "stock-pink",
+      "stock-purple",
+      "stock-white",
+      "tropicals-anthurium-pink",
+      "tropicals-anthurium-red",
+      "tropicals-bird-of-paradise",
+      "tropicals-ginger",
+      "tropicals-heliconia",
+      "tropicals-mixed",
+      "tropicals-protea",
+      "tulips-orange",
+      "tulips-pink",
+      "tulips-purple",
+      "tulips-red",
+      "tulips-white",
+      "tulips-yellow",
+      "grand-red-rose-arrangement",
+      "white-orchid-elegance",
+      "blush-romance-luxe",
+      "golden-celebration-bouquet",
+      "luxury-mixed-garden-bouquet",
+      "royal-hydrangea-arrangement",
+      "classic-white-sympathy-arrangement",
+      "sunshine-birthday-bouquet",
+      "luxury-tropical-arrangement",
+      "premium-mothers-day-bouquet",
+      "signature-ivory-blush-bouquet",
+      "red-rose-romance-luxe",
+      "congratulations-brights-bouquet",
+      "get-well-luxe",
+      "new-baby-soft-pastels-bouquet",
+      "corporate-elegance-arrangement",
+      "bridal-white-bouquet",
+      "thank-you-peach-bouquet",
+      "seasonal-luxe-bouquet",
+      "rouge-amour-rose-heart-box",
+      "ivory-elegance-rose-bouquet",
+      "grand-crimson-rose-vase",
+      "blue-hour-hydrangea-vase",
+      "amsterdam-ivory-tulip-vase",
+      "white-orchid-serenity-vase",
+      "white-cathedral-lily-vase",
+      "rosette-ranunculus-bouquet",
+      "ruffled-ivory-lisianthus-bouquet",
+      "sculptural-calla-vase",
+      "island-modern-tropical-vase",
+      "ivory-cloud-hydrangea-bouquet",
+      "golden-hour-tulip-bouquet",
+      "sunlit-asiatic-lily-bouquet",
+      "everyday-bloom-alstroemeria-bouquet",
+      "velvet-cloud-carnation-dome",
+      "autumn-ember-chrysanthemum-bouquet",
+      "sunshine-gerbera-bouquet",
+      "cottage-spire-snapdragon-bouquet",
+      "garden-perfume-stock-bouquet",
+      "azure-spire-delphinium-bouquet",
+      "sweetheart-spray-rose-bouquet",
+      "cloud-nine-babys-breath-bouquet",
+      "paradise-tropical-bouquet",
+      "silver-grove-eucalyptus-bunch",
+      "natural-babys-breath-bunch",
+      "blush-tinted-babys-breath-bunch",
+      "ivory-cloud-babys-breath-dome",
+      "babys-breath-gift-bouquet-wrapped",
+      "dried-babys-breath-bunch",
+      "white-lisianthus-stem-bunch",
+      "purple-lisianthus-bouquet",
+      "blush-lisianthus-vase",
+      "lisianthus-garden-bouquet",
+      "ranunculus-stem-bunch",
+      "coral-ranunculus-bouquet",
+      "ivory-ranunculus-vase",
+      "mini-calla-lily-stem-bunch",
+      "mango-calla-lily-bouquet",
+      "plum-calla-lily-vase",
+      "white-spray-rose-bunch",
+      "peach-spray-rose-bouquet",
+      "crimson-spray-rose-vase",
+      "gerbera-daisy-stem-bunch",
+      "pink-gerbera-daisy-bouquet",
+      "green-hydrangea-stem-bunch",
+      "blush-hydrangea-bouquet",
+      "red-tulip-stem-bunch",
+      "blush-tulip-vase"
+    ],
+    "sourceOnlyProducts": [],
+    "seoTitleDrift": 0,
+    "seoDescDrift": 0,
+    "examples": []
+  }
+}
