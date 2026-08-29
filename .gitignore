@@ -40,3 +40,6 @@ public/pilot-review.html
 source-images/collection-heroes/
 source-images/deluxe-demo/
 public/video/hero-raw.mp4
+
+# Live catalogue audit — authoritative raw dumps stay local (never committed)
+catalog/live-audit/raw/
