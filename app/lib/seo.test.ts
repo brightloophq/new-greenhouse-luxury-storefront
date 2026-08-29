@@ -15,9 +15,11 @@ import {join} from 'node:path';
 import {describe, expect, it} from 'vitest';
 import {
   absoluteUrl,
+  breadcrumbSchema,
   canonicalTag,
   catalogueMeta,
   organizationSchema,
+  pageMeta,
   websiteSchema,
 } from './seo';
 
@@ -103,6 +105,79 @@ describe('catalogueMeta', () => {
       (x) => (x as {rel?: string}).rel === 'canonical',
     ) as {href: string};
     expect(c.href).toBe('/supplies');
+  });
+});
+
+describe('pageMeta', () => {
+  const tags = pageMeta({
+    origin: ORIGIN,
+    path: '/retail',
+    title: 'Shop Retail | The New Greenhouse',
+    description: 'Retail flowers, arrangements and supplies in Kingston, Jamaica.',
+  });
+  it('emits an absolute self-canonical to the base path', () => {
+    const c = tags.find(
+      (t) => (t as {rel?: string}).rel === 'canonical',
+    ) as {href: string};
+    expect(c.href).toBe(`${ORIGIN}/retail`);
+  });
+  it('does NOT append a BreadcrumbList (that is catalogueMeta-only)', () => {
+    expect(tags.some((t) => 'script:ld+json' in t)).toBe(false);
+  });
+});
+
+describe('breadcrumbSchema', () => {
+  const crumbs = [
+    {name: 'Home', path: '/'},
+    {name: 'Retail', path: '/retail'},
+    {name: 'Flowers', path: '/retail/flowers'},
+  ];
+  const schema = breadcrumbSchema(ORIGIN, crumbs) as Record<string, unknown>;
+  const items = schema.itemListElement as Array<Record<string, unknown>>;
+
+  it('is a BreadcrumbList with sequential positions', () => {
+    expect(schema['@type']).toBe('BreadcrumbList');
+    expect(items.map((i) => i.position)).toEqual([1, 2, 3]);
+  });
+  it('uses absolute item URLs and the given names', () => {
+    expect(items[0]).toMatchObject({name: 'Home', item: `${ORIGIN}/`});
+    expect(items[2]).toMatchObject({
+      name: 'Flowers',
+      item: `${ORIGIN}/retail/flowers`,
+    });
+  });
+});
+
+describe('catalogueMeta with breadcrumbs', () => {
+  it('appends exactly one BreadcrumbList JSON-LD when breadcrumbs are given', () => {
+    const tags = catalogueMeta({
+      origin: ORIGIN,
+      path: '/retail/flowers',
+      title: 't',
+      description: 'd',
+      breadcrumbs: [
+        {name: 'Home', path: '/'},
+        {name: 'Retail', path: '/retail'},
+        {name: 'Flowers', path: '/retail/flowers'},
+      ],
+    });
+    const ld = tags.filter((t) => 'script:ld+json' in t);
+    expect(ld).toHaveLength(1);
+    expect(
+      ((ld[0] as Record<string, unknown>)['script:ld+json'] as Record<
+        string,
+        unknown
+      >)['@type'],
+    ).toBe('BreadcrumbList');
+  });
+  it('is unchanged (no JSON-LD) when breadcrumbs are omitted', () => {
+    const tags = catalogueMeta({
+      origin: ORIGIN,
+      path: '/retail/flowers',
+      title: 't',
+      description: 'd',
+    });
+    expect(tags.some((t) => 'script:ld+json' in t)).toBe(false);
   });
 });
 
@@ -212,5 +287,48 @@ describe('route wiring (source guards)', () => {
   it('design-system stays noindex', () => {
     const src = stripComments(read('app/routes/($locale).design-system.tsx'));
     expect(src).toMatch(/robots.*noindex/);
+  });
+});
+
+describe('Sprint 2 — commercial on-page wiring (source guards)', () => {
+  it('catalogue routes emit BreadcrumbList trails', () => {
+    const routes = [
+      'retail.flowers.tsx',
+      'retail.supplies.tsx',
+      'supplies.$category.tsx',
+      'arrangements._index.tsx',
+      'arrangements.mixed.tsx',
+      'arrangements.occasion.$occasion.tsx',
+      'arrangements.premium-deluxe.$category.tsx',
+    ];
+    for (const r of routes) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} should pass breadcrumbs`).toContain('breadcrumbs:');
+    }
+  });
+
+  it('the /retail and /wholesale landings now carry description + canonical', () => {
+    for (const r of ['retail._index.tsx', 'wholesale._index.tsx']) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} should use catalogueMeta`).toContain('catalogueMeta(');
+    }
+  });
+
+  it('the /flowers guide routes use absolute canonicals (origin-based)', () => {
+    for (const r of [
+      '($locale).flowers._index.tsx',
+      '($locale).flowers.$family.tsx',
+    ]) {
+      const src = stripComments(read(join('app/routes', r)));
+      expect(src, `${r} should canonicalTag on origin`).toContain(
+        'canonicalTag(data?.origin',
+      );
+    }
+  });
+
+  it('the footer links the previously weakly-linked Delivery + Journal pages', () => {
+    const src = stripComments(read('app/components/Footer.tsx'));
+    expect(src).toContain("to: '/pages/delivery-information'");
+    expect(src).toContain("to: '/blogs'");
   });
 });

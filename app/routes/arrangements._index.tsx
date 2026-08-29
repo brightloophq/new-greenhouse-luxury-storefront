@@ -9,6 +9,10 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
     title: 'Flower Arrangements | The New Greenhouse',
     description:
       'Hand-crafted floral arrangements from The New Greenhouse in Kingston, Jamaica — premium and deluxe, mixed bouquets and arrangements by occasion.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Arrangements', path: '/arrangements'},
+    ],
   });
 
 /** Origin only — powers the absolute self-canonical for this landing page. */

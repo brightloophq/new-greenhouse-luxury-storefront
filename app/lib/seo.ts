@@ -49,10 +49,16 @@ export function canonicalTag(
   return {tagName: 'link', rel: 'canonical', href: absoluteUrl(origin, path)};
 }
 
-export interface CatalogueSeoInput {
+/** One step in a breadcrumb trail. `path` is a clean site-relative route path. */
+export interface BreadcrumbItem {
+  name: string;
+  path: string;
+}
+
+export interface PageSeoInput {
   /** Request origin, from the loader (`new URL(request.url).origin`). */
   origin: string | undefined;
-  /** Clean base path for this catalogue, e.g. `/retail/flowers` (no query). */
+  /** Clean base path for this page, e.g. `/retail/flowers` (no query). */
   path: string;
   /** Full document title (already includes the brand). */
   title: string;
@@ -62,13 +68,22 @@ export interface CatalogueSeoInput {
   image?: string;
 }
 
+export interface CatalogueSeoInput extends PageSeoInput {
+  /**
+   * Optional breadcrumb trail (Home → … → current). When present, a
+   * `BreadcrumbList` JSON-LD node is appended. Built from the route hierarchy —
+   * no fabricated data.
+   */
+  breadcrumbs?: BreadcrumbItem[];
+}
+
 /**
- * Reusable metadata for a public catalogue route: title, description, an ABSOLUTE
- * self-canonical to the base path (facets stripped), and Open-Graph / Twitter
- * tags. Used by the retail / supplies / arrangements CatalogueView routes so they
- * stop shipping a bare `<title>`.
+ * Base metadata for any public page: title, description, an ABSOLUTE
+ * self-canonical to the base path (query/facets stripped), and Open-Graph /
+ * Twitter tags. Used by informational/landing routes so they stop falling back
+ * to the generic root defaults.
  */
-export function catalogueMeta(input: CatalogueSeoInput): MetaDescriptor[] {
+export function pageMeta(input: PageSeoInput): MetaDescriptor[] {
   const {origin, path, title, description} = input;
   const url = absoluteUrl(origin, path);
   const image = input.image
@@ -89,6 +104,41 @@ export function catalogueMeta(input: CatalogueSeoInput): MetaDescriptor[] {
     {name: 'twitter:description', content: description},
     {name: 'twitter:image', content: image},
   ];
+}
+
+/**
+ * `BreadcrumbList` structured data from a route hierarchy. Item URLs are absolute
+ * where the origin is known. Purely positional/navigational — no business facts.
+ */
+export function breadcrumbSchema(
+  origin: string | undefined,
+  items: BreadcrumbItem[],
+): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: absoluteUrl(origin, item.path),
+    })),
+  };
+}
+
+/**
+ * Metadata for a public catalogue route — `pageMeta` plus an optional
+ * `BreadcrumbList`. Output is identical to `pageMeta` when no breadcrumbs are
+ * given, so existing callers are unchanged.
+ */
+export function catalogueMeta(input: CatalogueSeoInput): MetaDescriptor[] {
+  const tags = pageMeta(input);
+  if (input.breadcrumbs && input.breadcrumbs.length > 0) {
+    tags.push({
+      'script:ld+json': breadcrumbSchema(input.origin, input.breadcrumbs),
+    } as MetaDescriptor);
+  }
+  return tags;
 }
 
 /**
