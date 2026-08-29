@@ -1,6 +1,6 @@
 # Shopify LIVE Content SEO Audit
 
-> **Authoritative.** Generated 2026-08-29T22:03:03.583Z from a read-only LIVE Shopify
+> **Authoritative.** Generated 2026-08-29T23:07:29.056Z from a read-only LIVE Shopify
 > export (`catalog/live-audit/raw/`). No Shopify data was modified. The `catalog/`
 > source dataset is referenced only for drift comparison. **No changes were executed.**
 

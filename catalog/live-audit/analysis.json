@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T22:03:03.583Z",
+  "generatedAt": "2026-08-29T23:07:29.056Z",
   "source": "LIVE Shopify export (authoritative). catalog/ used for comparison only.",
   "meta": {
     "exportedAt": "2026-08-29T22:00:41.894Z",
@@ -667,6 +667,1096 @@
       ]
     }
   ],
+  "phase1Extension": {
+    "channelTally": {
+      "New Greenhouse Luxury Storefront": 255,
+      "Online Store": 161
+    },
+    "collectionChannelTally": {
+      "Online Store": 16,
+      "Point of Sale": 12,
+      "New Greenhouse Luxury Storefront": 52
+    },
+    "collectionDetail": [
+      {
+        "handle": "bulk-flowers",
+        "title": "Bulk Flowers",
+        "products": 189,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "all-flowers",
+        "title": "All Flowers",
+        "products": 116,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "white-and-ivory",
+        "title": "White and Ivory",
+        "products": 62,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "same-day-delivery",
+        "title": "Same-Day Delivery",
+        "products": 58,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "mixed-color",
+        "title": "Mixed Color",
+        "products": 57,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "pink",
+        "title": "Pink",
+        "products": 44,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "florist-essentials",
+        "title": "Florist Essentials",
+        "products": 42,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "corporate-gifting",
+        "title": "Corporate Gifting",
+        "products": 40,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "corporate-gifts",
+        "title": "Corporate Gifts",
+        "products": 40,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "yellow-and-orange",
+        "title": "Yellow and Orange",
+        "products": 35,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "sympathy-and-funeral",
+        "title": "Sympathy and Funeral",
+        "products": 33,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "birthday",
+        "title": "Birthday",
+        "products": 27,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "congratulations",
+        "title": "Congratulations",
+        "products": 27,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "red",
+        "title": "Red",
+        "products": 25,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "purple",
+        "title": "Purple",
+        "products": 23,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "green-flowers",
+        "title": "Green",
+        "products": 23,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "love-and-romance",
+        "title": "Love and Romance",
+        "products": 21,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "thank-you",
+        "title": "Thank You",
+        "products": 21,
+        "channels": [
+          "Online Store",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "anniversary",
+        "title": "Anniversary",
+        "products": 19,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "vases-and-containers",
+        "title": "Vases and Containers",
+        "products": 18,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "new-baby",
+        "title": "New Baby",
+        "products": 15,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "get-well",
+        "title": "Get Well",
+        "products": 15,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "floral-supplies",
+        "title": "Floral Supplies",
+        "products": 10,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "greenery-and-fillers",
+        "title": "Greenery and Fillers",
+        "products": 9,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "premium-vase",
+        "title": "Premium Vase",
+        "products": 7,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "roses",
+        "title": "Roses",
+        "products": 5,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "wholesale-greenery",
+        "title": "Wholesale Greenery",
+        "products": 5,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "best-sellers",
+        "title": "Best Sellers",
+        "products": 5,
+        "channels": [
+          "Online Store",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "luxury-bouquets",
+        "title": "Luxury Bouquets",
+        "products": 4,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "wholesale-roses",
+        "title": "Wholesale Roses",
+        "products": 4,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "signature-collection",
+        "title": "Signature Collection",
+        "products": 4,
+        "channels": [
+          "Online Store",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "plants",
+        "title": "Plants",
+        "products": 3,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "bridal-bouquets",
+        "title": "Bridal Bouquets",
+        "products": 3,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "wrapping-and-packaging",
+        "title": "Wrapping and Packaging",
+        "products": 3,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "seasonal-deluxe",
+        "title": "Seasonal Collection",
+        "products": 3,
+        "channels": [
+          "Online Store",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "premium-handcrafted",
+        "title": "Premium Handcrafted",
+        "products": 3,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "centerpieces",
+        "title": "Centerpieces",
+        "products": 2,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "ribbon",
+        "title": "Ribbon",
+        "products": 2,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "tools-and-accessories",
+        "title": "Tools and Accessories",
+        "products": 2,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "add-ons",
+        "title": "Add-ons",
+        "products": 2,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "frontpage",
+        "title": "Home page",
+        "products": 1,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "lilies",
+        "title": "Lilies",
+        "products": 1,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "premium-heart-box",
+        "title": "Premium Heart Box",
+        "products": 1,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": true,
+        "image": false
+      },
+      {
+        "handle": "birthday-flowers",
+        "title": "Birthday Flowers",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": true
+      },
+      {
+        "handle": "anniversary-flowers",
+        "title": "Anniversary Flowers",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "love-romance",
+        "title": "Love & Romance",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": true
+      },
+      {
+        "handle": "sympathy",
+        "title": "Sympathy",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": true
+      },
+      {
+        "handle": "wedding-flowers",
+        "title": "Wedding Flowers",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": true
+      },
+      {
+        "handle": "corporate-flowers",
+        "title": "Corporate Flowers",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "gift-baskets",
+        "title": "Gift Baskets",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "tropical-flowers",
+        "title": "Tropical Flowers",
+        "products": 0,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": false,
+        "seoDescription": false,
+        "body": false,
+        "image": false
+      },
+      {
+        "handle": "orchids",
+        "title": "Orchids",
+        "products": 0,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": true,
+        "seoDescription": true,
+        "body": true,
+        "image": false
+      }
+    ],
+    "unpublishedBreakdown": {
+      "total": 113,
+      "byStatus": {
+        "DRAFT": 19,
+        "ACTIVE": 94
+      },
+      "bySegment": {
+        "wedding": 23,
+        "premium-retail": 55,
+        "other": 6,
+        "wholesale": 26,
+        "legacy-duplicate": 3
+      },
+      "activeOnNoChannel": [],
+      "activeHeadlessOnly": 94
+    },
+    "imageless": {
+      "total": 33,
+      "groups": {
+        "wholesale": [
+          {
+            "handle": "standing-spray-classic-white",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "long-stem-yellow-roses",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "standing-spray-mixed-tribute",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "sympathy-wreath-ivory-greenery",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "casket-spray-full-ivory",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "tribute-basket-arrangement",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "memorial-vase-arrangement",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "fruit-flower-gift-basket",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "belgian-chocolates-add-on",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "plush-teddy-bear-add-on",
+            "status": "ACTIVE",
+            "onlineStore": false
+          }
+        ],
+        "premium-retail": [],
+        "legacy-duplicate": [],
+        "wedding": [
+          {
+            "handle": "long-stem-red-roses",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "long-stem-pink-roses",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "assorted-spray-roses",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "oriental-lilies-white",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "white-hydrangeas",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "antique-blue-hydrangeas",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "pink-hydrangeas",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "spray-mini-carnations",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "heliconia",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "bird-of-paradise",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "seeded-eucalyptus",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "silver-dollar-eucalyptus",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "wax-flower",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "statice",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "solidago",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "bridal-bouquet-ivory-garden",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "bridal-bouquet-cascading-blush",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "bridesmaid-bouquet",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "low-reception-centerpiece",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "elevated-reception-centerpiece",
+            "status": "DRAFT",
+            "onlineStore": false
+          },
+          {
+            "handle": "ceremony-aisle-arch-arrangement",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "sweetheart-table-arrangement",
+            "status": "ACTIVE",
+            "onlineStore": false
+          },
+          {
+            "handle": "intimate-wedding-flower-package",
+            "status": "ACTIVE",
+            "onlineStore": false
+          }
+        ],
+        "other": []
+      }
+    },
+    "targetVerification": [
+      {
+        "handle": "same-day-delivery",
+        "found": true,
+        "title": "Same-Day Delivery",
+        "products": 58,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": false,
+        "bodyChars": 0,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "plants",
+        "found": true,
+        "title": "Plants",
+        "products": 3,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": false,
+        "bodyChars": 0,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "thank-you",
+        "found": true,
+        "title": "Thank You",
+        "products": 21,
+        "channels": [
+          "Online Store",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": false,
+        "bodyChars": 0,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "luxury-bouquets",
+        "found": true,
+        "title": "Luxury Bouquets",
+        "products": 4,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": true,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": false,
+        "bodyChars": 0,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "premium-handcrafted",
+        "found": true,
+        "title": "Premium Handcrafted",
+        "products": 3,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": true,
+        "bodyChars": 78,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "premium-vase",
+        "found": true,
+        "title": "Premium Vase",
+        "products": 7,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": true,
+        "bodyChars": 66,
+        "image": false,
+        "imageAlt": false
+      },
+      {
+        "handle": "premium-heart-box",
+        "found": true,
+        "title": "Premium Heart Box",
+        "products": 1,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "onlineStorePublished": false,
+        "seoTitle": null,
+        "seoDescription": null,
+        "bodyExists": true,
+        "bodyChars": 72,
+        "image": false,
+        "imageAlt": false
+      }
+    ],
+    "batch1Safety": [
+      {
+        "handle": "premium-handcrafted",
+        "found": true,
+        "currentSeoTitle": null,
+        "currentSeoDescription": null,
+        "bodyChars": 78,
+        "products": 3,
+        "image": false,
+        "onlineStorePublished": false,
+        "preserve": [
+          "descriptionHtml",
+          "products",
+          "image",
+          "resourcePublications",
+          "status",
+          "ruleSet",
+          "sortOrder"
+        ]
+      },
+      {
+        "handle": "premium-vase",
+        "found": true,
+        "currentSeoTitle": null,
+        "currentSeoDescription": null,
+        "bodyChars": 66,
+        "products": 7,
+        "image": false,
+        "onlineStorePublished": false,
+        "preserve": [
+          "descriptionHtml",
+          "products",
+          "image",
+          "resourcePublications",
+          "status",
+          "ruleSet",
+          "sortOrder"
+        ]
+      },
+      {
+        "handle": "premium-heart-box",
+        "found": true,
+        "currentSeoTitle": null,
+        "currentSeoDescription": null,
+        "bodyChars": 72,
+        "products": 1,
+        "image": false,
+        "onlineStorePublished": false,
+        "preserve": [
+          "descriptionHtml",
+          "products",
+          "image",
+          "resourcePublications",
+          "status",
+          "ruleSet",
+          "sortOrder"
+        ]
+      }
+    ]
+  },
   "drift": {
     "liveOnlyProducts": [
       "alstroemeria-purple",

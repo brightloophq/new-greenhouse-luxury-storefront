@@ -1,6 +1,6 @@
 # Live vs Source — Catalogue Summary
 
-> Generated 2026-08-29T22:03:03.583Z from the **authoritative LIVE Shopify export**.
+> Generated 2026-08-29T23:07:29.056Z from the **authoritative LIVE Shopify export**.
 > `catalog/` source data is comparison/planning only. Raw dumps live in
 > `catalog/live-audit/raw/` (gitignored).
 
