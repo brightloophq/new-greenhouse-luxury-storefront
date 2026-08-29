@@ -1,0 +1,67 @@
+name: PR Validation
+
+# Independent CI gate that gives pull requests a real GitHub status.
+# Validation ONLY — this workflow never deploys, never uses the Oxygen
+# deployment token, and never touches Shopify. Production deployment stays
+# entirely inside oxygen-deployment-1000155967.yml (push to `production`).
+on:
+  pull_request:
+    branches:
+      - redesign-v1
+      - production
+  # Also validate the integration branch itself after merges land on it.
+  # This runs checks only — it cannot deploy (deploy lives in the Oxygen
+  # workflow, which triggers solely on push to `production`).
+  push:
+    branches:
+      - redesign-v1
+
+# Cancel superseded runs for the same PR / branch. A distinct group from the
+# Oxygen production-deploy concurrency, so the two never interfere.
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: read the repo, nothing else. No deployments, no writes,
+# no secrets.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate (typecheck / tests / build)
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          check-latest: true
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npx vitest run
+
+      - name: Production build
+        run: npm run build
