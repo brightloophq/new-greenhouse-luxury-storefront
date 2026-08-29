@@ -43,3 +43,6 @@ public/video/hero-raw.mp4
 
 # Live catalogue audit — authoritative raw dumps stay local (never committed)
 catalog/live-audit/raw/
+
+# Batch write backups — raw/operational Shopify data stays local (never committed)
+catalog/live-audit/backups/
