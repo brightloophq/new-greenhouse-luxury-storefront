@@ -65,7 +65,7 @@ function productsQuery(includePublications) {
           featuredImage { url altText }
           images(first: 30) { nodes { url altText } }
           variants(first: 100) { nodes { id title sku price selectedOptions { name value } } }
-          collections(first: 50) { nodes { handle title } }
+          collections(first: 50) { nodes { id handle title } }
           ${pub}
         }
       }
