@@ -321,6 +321,116 @@ These are **multiple distinct controlled batches**, not one mutation batch, sequ
 
 **A — FINAL CATALOGUE CLEANUP PHASE IS NOW JUSTIFIED.** The owner decisions unlocked concrete, commercially meaningful work (removing the corporate duplicate, populating five wanted commercial categories, and building gated wholesale wedding discovery) — not metric-chasing. The phase's **first step is a read-only per-product tag/type export** (no data is guessed); several sub-items (Mixed titles, corporate/sympathy consolidation) are actionable immediately after. Google Business Profile / Search Console / GA4 / AI workstreams can still proceed in parallel.
 
+## Real-Data Merchandising Review — Authoritative Correction (2026-08-30)
+
+> Source: the real Mac-generated classification artifacts
+> `catalog/live-audit/category-classification.{json,md}` (offline, read-only) plus the
+> committed `analysis.json`. This section **supersedes the earlier hypotheses** in §3 and
+> in "Business Decisions Resolved" wherever they conflict — the earlier text is preserved
+> as the historical record. **No Shopify data was read live for this update and none was
+> modified.** Format: earlier assumption → real evidence → corrected decision.
+
+### 1. Duplicate occasion collections (the key correction)
+
+The five "empty" categories are **not** all net-new. Three are **empty duplicates of
+already-populated, SEO-complete collections** — the products live in the twin, not in the
+flagged handle. **Do NOT populate the empty duplicates.**
+
+| Empty (flagged) | Canonical populated twin | Twin members | Twin SEO/body | Planned action |
+|---|---|---|---|---|
+| `birthday-flowers` (0) | **`birthday`** | 27 | ✓ / ✓ | retire/unpublish + 301 → `birthday` |
+| `anniversary-flowers` (0) | **`anniversary`** | 19 | ✓ / ✓ | retire/unpublish + 301 → `anniversary` |
+| `love-romance` (0) | **`love-and-romance`** | 21 | ✓ / ✓ | retire/unpublish + 301 → `love-and-romance` |
+
+The owner's "keep active, populate not retire" intent is **already satisfied** for these
+three by the populated twins; only the redundant empty handle is retired. (Earlier §3
+treated `birthday-flowers`/`anniversary-flowers`/`love-romance` as populate targets — that
+was wrong; corrected here.)
+
+### 2. Retail occasion membership (populated twins are over-broad)
+
+The populated occasion collections use a naive `Tag = occasion:X` smart rule, so they pull
+**wholesale bulk-stems** into what should be retail occasion pages. Merchandising review of
+the real candidates:
+
+| Collection | INCLUDE | OPTIONAL | EXCLUDE | Notes |
+|---|---|---|---|---|
+| `birthday` | 16 | 1 (`plush-teddy-bear-add-on`) | 10 wholesale stems | INCLUDE = retail arrangements only |
+| `anniversary` | 9 | 0 | 10 wholesale stems | a generic rose stem is not a retail anniversary product |
+| `love-and-romance` | 17 | 0 | 5 | 4 wholesale stems + `sweetheart-table-arrangement` (wedding/event inventory, `productType: Wedding Flowers`) |
+
+**Available discriminator (real tags):** `channel:retail` vs `channel:wholesale`;
+`format:bulk-box` marks wholesale loose-stem SKUs; `productType` (Floral Arrangement / Gift
+Basket / Gift Add-on = retail; Fresh Cut Flowers / Fresh Flowers / Floral Filler / Greenery
+= trade stems). Eventual rule concept (not executed): **`occasion:X AND channel:retail AND
+(tag format:bulk-box NOT_EQUALS)`** reproduces the retail INCLUDE sets and drops wholesale
+stems. **Do not execute rule changes yet.**
+
+### 3. Gift Baskets (genuinely empty; no twin)
+
+| Candidate | Confidence | Decision | Reason |
+|---|---|---|---|
+| `fruit-flower-gift-basket` | HIGH | **INCLUDE** | `productType: Gift Basket`, `format:gift-basket` |
+| `tribute-basket-arrangement` | MEDIUM | **EXCLUDE** | `productType: Sympathy Arrangement` — a funeral tribute, not a gift basket |
+| `woven-arrangement-basket` | AMBIGUOUS | **EXCLUDE** | `productType: Floral Supply` — an empty container/supply |
+
+Recommended eventual definition: **Product Type = Gift Basket**. Collection remains thin
+(**1** qualifying product now).
+
+### 4. Tropical Flowers (genuinely empty; no twin) — keep retail-only
+
+- Retail qualifying (3): `luxury-tropical-arrangement`, `island-modern-tropical-vase`,
+  `paradise-tropical-bouquet`.
+- Excluded from public retail (11 wholesale tropical stems): `anthurium-stems`, `heliconia`,
+  `torch-ginger`, `bird-of-paradise`, `tropicals-anthurium-pink`, `tropicals-anthurium-red`,
+  `tropicals-bird-of-paradise`, `tropicals-ginger`, `tropicals-heliconia`, `tropicals-mixed`,
+  `tropicals-protea`.
+- Recommended eventual retail rule concept: **`flower:tropicals AND channel:retail`** (3
+  products; thin). **Do not execute yet.**
+
+### 5. Corporate
+
+Canonical: **`corporate-gifting`**. `corporate-gifting` and `corporate-gifts` both have **40
+members, membership equivalent = true, identical rule `Tag = occasion:corporate`, both
+SEO+body on the storefront channel**. `corporate-flowers` = **0 products**.
+Planned: `corporate-gifts` → retire/unpublish + redirect to `corporate-gifting`;
+`corporate-flowers` → retire/unpublish + redirect to `corporate-gifting`.
+
+### 6. Sympathy
+
+Canonical: **`sympathy-and-funeral`** (**33** products, rule `Tag = occasion:sympathy`,
+SEO+body). `sympathy` = **0 products**.
+Planned: `sympathy` → retire/unpublish + redirect to `sympathy-and-funeral`.
+
+### 7. Wedding / events
+
+- **8** wedding-specific products (`productType: Wedding Flowers`, `customer:event-planner`);
+  **26** multipurpose/event-planner stems (general productType, carry `customer:event-planner`
+  + `occasion:wedding`).
+- Public retail wedding **redirects remain intact**; **no public wedding navigation**.
+- Future discovery belongs **behind the existing wholesale gate**; **`customer:event-planner`**
+  is the primary discovery discriminator.
+- `bridal-bouquets` / `centerpieces` may remain **trade collections**; multipurpose stems
+  remain in `bulk-flowers` and can be surfaced in the gated event-planner discovery layer.
+- **No storefront implementation yet.**
+
+### 8. Final Phase-1 status
+
+**A — evidence complete; controlled execution can now be prepared.** **No additional broad
+catalogue audit is required** before preparing the controlled cleanup batches.
+
+Remaining backlog (tracked, prepared as separate reversible batches — none executed):
+
+1. 4 duplicate `Mixed | The New Greenhouse` product SEO titles.
+2. Collection consolidation (retire/redirect the 6 duplicates: `corporate-gifts`,
+   `corporate-flowers`, `sympathy`, `birthday-flowers`, `anniversary-flowers`, `love-romance`).
+3. Occasion rule tightening (`birthday`, `anniversary`, `love-and-romance` → retail-scoped rule).
+4. `gift-baskets` / `tropical-flowers` population (thin: 1 / 3 products).
+5. SEO/body for the genuinely-empty collections **after** they are non-empty.
+6. Redirects / internal-link cleanup (keep wedding public 301s).
+7. Gated wedding/event discovery architecture (storefront, later).
+8. Image backlog and thin product descriptions as later work where appropriate.
+
 ## Safety / provenance
 
 - Read-only audit. **Shopify writes: 0.** No write script, no catalogue change, no storefront code change.
