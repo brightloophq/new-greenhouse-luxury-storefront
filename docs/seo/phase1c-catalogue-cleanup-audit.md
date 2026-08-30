@@ -204,6 +204,8 @@ Owner catalogue decisions gate a few catalogue cleanups but **do not block** the
 
 ## Owner Decision Section — for Nicola
 
+> **RESOLVED 2026-08-30 — see "Business Decisions Resolved (2026-08-30)" below for the answers and the revised technical recommendations. The questions are preserved here as the original record.**
+
 Plain-language decisions only. Technical actions (redirects, canonicals, metadata, collection architecture) are ours to translate afterwards.
 
 ### Question 1 — Wedding / Event Floristry
@@ -228,6 +230,96 @@ Should each of these remain an active offering the business wants to sell? (Yes 
 - Tropical Flowers — **YES / NO**
 
 ---
+
+## Business Decisions Resolved (2026-08-30)
+
+> These are now authoritative business decisions from the owner. Format below is
+> **original finding → business decision → revised technical recommendation.** The
+> historical audit above is unchanged; nothing here was known during the original
+> read-only audit.
+
+### A. Revised wedding / event architecture — WHOLESALE, not public retail
+
+- **Original finding (§5):** 8 clearly wedding-specific products (5 DRAFT, 3 ACTIVE-not-on-Online-Store), ~23 multipurpose stems tagged into wedding, and 2 collections (`wedding-flowers` 0 products; `bridal-bouquets` 3). Public wedding routes 301 and wedding nav hidden. `collection-plan.csv`: `wedding-flowers` = smart (Type = Wedding Flowers); `bridal-bouquets` = smart (Type = Wedding Flowers AND subtype bridal); `centerpieces` = smart (Tag = format:centerpiece).
+- **Business decision:** YES to wedding/event products, but **for wholesale/event-planner customers only, via the existing wholesale access model.** This is **not** authorization to restore a public retail wedding-shopping experience.
+- **Revised technical recommendation:**
+  - **Public retail behavior:** unchanged — **keep the existing public wedding route 301s and keep wedding nav hidden** from retail. Do not create a public wedding section.
+  - **Approved wholesale behavior:** expose wedding/event products and collections **only** inside the wholesale-gated surface (same gate as the existing wholesale catalogue / `/wholesale` access model). Discovery for event planners lives behind the gate.
+  - **Wedding/event collection strategy:** treat `wedding-flowers` (+ `centerpieces`) as **trade/wholesale collections**, surfaced only in the gated wholesale navigation; do not link them from public retail nav.
+  - **`bridal-bouquets` (3 products):** same — a wholesale/trade collection for event planners, not a public retail collection.
+  - **Wedding-specific products (8):** keep as trade products; align their publication/visibility to the wholesale model (available to the gated wholesale context; not surfaced to public retail browse). No deletion.
+  - **Multipurpose stems (~23):** **keep the wedding tags** (unlike the earlier IF-NO plan, which stripped them) — they now aid event-planner discovery inside the wholesale surface. Ensure the tags drive discovery only within the gated context, not a public retail wedding page.
+  - **Publication/channel implications:** products stay on the storefront channel ("New Greenhouse Luxury Storefront"); wedding *discovery* is gated in **storefront code** (the wholesale gate), not by inventing a public collection. Channel membership alone does not create a public wedding section.
+  - **Route implications:** **current public wedding redirects should remain.** Add wholesale-gated wedding/event navigation (new storefront work) rather than reopening public routes.
+  - **Wholesale discovery improvement:** YES — wholesale/event-planner category discovery needs a dedicated gated "Weddings & Events" surface so approved buyers can find these products. This is **storefront (TECH)** work plus Shopify collection tidy-up, not a public SEO task.
+
+### B. Corporate consolidation plan — canonical `corporate-gifting`
+
+- **Original finding (§4):** `corporate-gifting` (40) and `corporate-gifts` (40) are near-identical live collections with full SEO (accidental duplicate); `corporate-flowers` (0, empty). Plan intent: `corporate-gifting` = Tag occasion:corporate (33); `corporate-gifts` = narrower (occasion:corporate AND Type Plant/Gift Basket/Gift Add-on, 4) — but **live they have converged to the same 40 products**.
+- **Business decision:** "Corporate Gifting" is the approved canonical business-facing concept.
+- **Revised technical recommendation:**
+  - **Canonical collection:** `corporate-gifting`.
+  - **Consolidate / redirect:** `corporate-gifts` and `corporate-flowers` → `corporate-gifting`.
+  - **Product-membership implications:** confirm all products in `corporate-gifts` also resolve into `corporate-gifting` (both are smart collections on `occasion:corporate`; if identical rule, membership already matches — verify before unpublishing). No manual membership moves expected if the smart rule is shared.
+  - **Shopify changes eventually required:** unpublish/retire `corporate-gifts` and `corporate-flowers` after confirming coverage; keep `corporate-gifting` as the single live corporate collection.
+  - **Storefront redirect changes eventually required:** 301 `/collections/corporate-gifts` and `/collections/corporate-flowers` → `/collections/corporate-gifting`.
+  - **Internal-link changes:** update any nav/footer/body links pointing at the secondary handles.
+  - **SEO consequences:** removes a real duplicate-content signal; consolidates authority on one URL.
+  - **Rollback considerations:** capture the secondary collections' full definition (rules, SEO, membership, publication) before unpublish; rollback = re-publish from snapshot. Redirects are reversible by removing the 301.
+
+### C. Five-category population plan — DATA REQUIRED before membership
+
+- **Original finding (§3):** `birthday-flowers`, `anniversary-flowers`, `love-romance`, `gift-baskets`, `tropical-flowers` are all **0 products** yet live on all channels.
+- **Business decision:** keep all five as **active offerings — populate, do not retire.**
+- **Root cause (new evidence from `catalog/collection-plan.csv`):** these are **smart (automated) collections** keyed on tags/types, and they are empty because **live product tagging/type does not match the collection rule** (e.g. `tropical-flowers` rule = `Tag = flower:anthurium/heliconia/…` yet clear tropical products exist live under a different `tropicals-*` scheme). Also the planned handles (`birthday`, `anniversary`, `love-and-romance`) differ from the live handles (`birthday-flowers`, `anniversary-flowers`, `love-romance`) — live diverged from plan. **Populating these is therefore a product-tagging / smart-rule alignment problem, not a manual "add products" problem.**
+- **Name-pattern candidate products (MEDIUM/LOW confidence — from handles only; live tags/type/status NOT yet read):**
+  - **birthday-flowers:** `birthday-brights-bouquet`, `classic-birthday-blooms`, `sunshine-birthday-bouquet` (+ likely others tagged `occasion:birthday`).
+  - **anniversary-flowers:** `anniversary-luxe-arrangement`, `anniversary-rose-bouquet`.
+  - **love-romance:** `red-rose-romance-bouquet`/`-luxe`, `blush-romance-bouquet`/`-luxe`, `rouge-amour-rose-heart-box`.
+  - **gift-baskets:** `fruit-flower-gift-basket`, `gift-bouquets-bright/mixed/pastel`, `woven-arrangement-basket` (ambiguous — some are bouquets, not baskets).
+  - **tropical-flowers:** `anthurium-stems`, `heliconia`, `torch-ginger`, `bird-of-paradise`, `paradise-tropical-bouquet`, `luxury-tropical-arrangement`, `island-modern-tropical-vase`, `tropicals-*` (anthurium/ginger/heliconia/protea/mixed) — strong thematic set.
+- **Confidence:** these are **name-based only.** Actual smart-collection membership depends on live **tags + productType + status**, which are not in the current sanitized snapshot. **Do not assign products to make a collection non-empty; do not fabricate relationships.**
+- **Membership mode:** these are smart collections → prefer fixing **product tags/types (or the smart rule) so the right products flow in automatically**, over manual membership. Decide per collection once tags are known.
+- **Overlap/duplication risk:** Birthday / Anniversary / Love & Romance are distinct occasions (low overlap) **except** roses/romance items that could legitimately sit in both Anniversary and Love & Romance — acceptable faceting, not harmful duplication, provided each has distinct SEO intent.
+- **SEO/body content strategy:** **only after** legitimate products populate each collection (non-empty) — then apply the same safe seo.title + seo.description + descriptionHtml backfill used in Batch 2. **A collection must not receive indexable SEO copy while it remains zero-product.**
+- **MINIMUM READ-ONLY QUERY REQUIRED (do not guess):** a per-product export of `handle, title, productType, tags, status, resourcePublications, collections{handle}` across all 274 products (extend the existing read-only `export-live-audit.js` to emit tags+productType, then analyze offline). This confirms which products carry which `occasion:*` / `flower:*` tags and whether the fix is re-tagging products or adjusting the smart rules.
+
+### D. Sympathy (unchanged decision)
+
+- **Original finding:** `sympathy` (0) is redundant with `sympathy-and-funeral` (33; smart on `occasion:sympathy`).
+- **Decision:** unchanged — keep `sympathy-and-funeral`.
+- **Revised recommendation:** retire/unpublish `sympathy`; 301 `/collections/sympathy` → `/collections/sympathy-and-funeral`; capture a pre-change snapshot for rollback. Shopify (unpublish) + storefront (redirect).
+
+### E. Revised cleanup queue (OWNER status resolved)
+
+| Item | Was | Now | Type |
+|---|---|---|---|
+| Corporate consolidation (`corporate-gifts`, `corporate-flowers` → `corporate-gifting`) | OWNER | resolved | **EXECUTION-CANDIDATE** (Shopify unpublish) + **TECH** (redirects/links) |
+| Sympathy retire → `sympathy-and-funeral` | P1/OWNER | resolved | **EXECUTION-CANDIDATE** (Shopify) + **TECH** (redirect) |
+| Populate 5 commercial categories | OWNER | resolved intent; **needs data** | **EXECUTION-CANDIDATE after a read-only tag/type export** (product re-tag or smart-rule fix) |
+| Category SEO/body backfill (the 5) | — | gated on non-empty | **EXECUTION-CANDIDATE** (only once populated) |
+| "Mixed" 4-way product SEO titles | P2 | unchanged | **EXECUTION-CANDIDATE** (small safe product-SEO batch) |
+| Wedding/event wholesale architecture | OWNER | resolved | **TECH** (wholesale-gated nav + storefront) + minor Shopify tidy |
+| `best-sellers` / `signature-collection` SEO | P2 | unchanged | **BACKLOG** (thin, low value) |
+| Thin premium descriptions (19) | P2/HOLD | unchanged | **BACKLOG** (needs per-product attribute read) |
+| Collection hero images/alt; `seasonal-deluxe` | P2 | unchanged | **BACKLOG** |
+| `frontpage` SEO; luxe-pair title tweaks | SKIP | unchanged | **SKIP** |
+| Source-of-truth: Shopify authoritative | TECH | unchanged | **TECH** |
+
+### F. Is a final catalogue cleanup phase justified? — separated by risk/type
+
+1. **Collection membership changes (populate 5 categories)** — *gated on a read-only tag/type export first.* Then either product re-tagging or smart-rule alignment. Medium scope; its own controlled batch.
+2. **Collection SEO/body backfill (the 5, once populated; + optionally best-sellers/signature)** — low risk; same mechanism as Batch 2; separate batch, only when non-empty.
+3. **Product SEO-title correction ("Mixed" 4-way)** — low risk; small standalone batch (like Batch 1).
+4. **Collection consolidation / unpublication (`corporate-gifts`, `corporate-flowers`, `sympathy`)** — Shopify unpublish; medium risk; requires the redirects in (5) to land first or together.
+5. **Storefront redirects / internal links (corporate, sympathy; keep wedding public 301s)** — storefront code; TECH; coordinate with (4).
+6. **Wholesale wedding/event architecture** — storefront code (wholesale-gated nav) + Shopify collection tidy; largest/most design-dependent; its own workstream.
+
+These are **multiple distinct controlled batches**, not one mutation batch, sequenced: read-only tag export → (3) Mixed titles → (4)+(5) corporate & sympathy consolidation+redirects → (1) category population → (2) category SEO → (6) wholesale wedding architecture.
+
+### G. Final decision (this update)
+
+**A — FINAL CATALOGUE CLEANUP PHASE IS NOW JUSTIFIED.** The owner decisions unlocked concrete, commercially meaningful work (removing the corporate duplicate, populating five wanted commercial categories, and building gated wholesale wedding discovery) — not metric-chasing. The phase's **first step is a read-only per-product tag/type export** (no data is guessed); several sub-items (Mixed titles, corporate/sympathy consolidation) are actionable immediately after. Google Business Profile / Search Console / GA4 / AI workstreams can still proceed in parallel.
 
 ## Safety / provenance
 
