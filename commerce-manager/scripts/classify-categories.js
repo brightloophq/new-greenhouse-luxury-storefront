@@ -48,9 +48,19 @@ export const publicationsOf = (node) => normalizeConnection(node && node.resourc
 export const publishedNames = (node) => publicationsOf(node).filter((n) => n && n.isPublished).map((n) => n.publication?.name);
 /** Per-candidate evidence for the membership review (read-only). */
 export const candidateEvidence = (p) => ({channels: publishedNames(p), memberships: collectionsOf(p).map((c) => c.handle)});
+/** Normalize a Shopify Count. Accepts { count: n } (live shape) or a bare number.
+ *  Returns the integer INCLUDING 0; returns null ONLY for missing/malformed —
+ *  a legitimate 0 must never become null/undefined. */
+export const normalizeCount = (pc) =>
+  typeof pc === 'number' && Number.isFinite(pc)
+    ? pc
+    : pc && typeof pc.count === 'number' && Number.isFinite(pc.count)
+      ? pc.count
+      : null;
+
 /** Secret-free metadata snapshot of a collection for consolidation review. */
 export const collMeta = (c) => (c ? {
-  handle: c.handle, productsCount: c.productsCount?.count ?? null,
+  handle: c.handle, productsCount: normalizeCount(c.productsCount),
   seoTitle: !!c.seo?.title, seoDescription: !!c.seo?.description,
   bodyPresent: String(c.descriptionHtml || '').replace(/<[^>]*>/g, '').trim().length > 0,
   channels: publishedNames(c),
@@ -190,7 +200,7 @@ function main() {
     categories[cat] = {
       handle: cat,
       found: !!coll,
-      productsCount: coll?.productsCount?.count ?? null,
+      productsCount: normalizeCount(coll?.productsCount),
       publication: publishedNames(coll),
       ruleSet,
       currentlySatisfyCount: currentlySatisfy.length,
@@ -228,7 +238,7 @@ function main() {
       .map((p) => ({handle: p.handle, status: p.status, productType: p.productType, weddingTags: tagsOf(p).filter((t) => /wedding|bridal|event/i.test(t)), ...candidateEvidence(p)})),
     collections: WEDDING_COLLECTIONS.map((h) => {
       const c = collByHandle.get(h);
-      return c ? {handle: h, products: c.productsCount?.count ?? null, ruleSet: c.ruleSet, published: publishedNames(c)} : {handle: h, found: false};
+      return c ? {handle: h, products: normalizeCount(c.productsCount), ruleSet: c.ruleSet, published: publishedNames(c)} : {handle: h, found: false};
     }),
   };
 
@@ -266,7 +276,7 @@ function main() {
   }
   console.log(`  cross-category overlap products: ${Object.keys(overlap).length}`);
   console.log(`  wedding: specific=${wedding.specific.length} multipurpose=${wedding.multipurposeStems.length}`);
-  console.log(`  corporate equivalent(gifting==gifts)=${validation.corporate.equivalent} · corporate-flowers=${validation.corporate['corporate-flowers'].count} · sympathy=${validation.sympathy.sympathy.count}`);
+  console.log(`  corporate equivalent(gifting==gifts)=${validation.corporate.equivalent} · corporate-flowers=${validation.corporate['corporate-flowers'].productsCount} · sympathy=${validation.sympathy.sympathy.productsCount}`);
   console.log('\n  wrote: catalog/live-audit/category-classification.json + .md');
   console.log('✓ No network calls. No Shopify operations. Nothing modified.');
 }
@@ -321,9 +331,9 @@ ${overlapRows}
 - Collections: ${a.wedding.collections.map((c) => `${c.handle}=${c.products ?? 'n/a'}`).join(', ')}
 
 ## Corporate / sympathy validation
-- corporate-gifting: ${a.validation.corporate['corporate-gifting'].count} · corporate-gifts: ${a.validation.corporate['corporate-gifts'].count} · corporate-flowers: ${a.validation.corporate['corporate-flowers'].count}
+- corporate-gifting: productsCount ${a.validation.corporate['corporate-gifting'].productsCount} (members ${a.validation.corporate['corporate-gifting'].memberCount}) · corporate-gifts: productsCount ${a.validation.corporate['corporate-gifts'].productsCount} (members ${a.validation.corporate['corporate-gifts'].memberCount}) · corporate-flowers: productsCount ${a.validation.corporate['corporate-flowers'].productsCount}
 - gifting == gifts membership equivalent: **${a.validation.corporate.equivalent}** (only-in-gifting: ${a.validation.corporate.onlyInGifting.length}, only-in-gifts: ${a.validation.corporate.onlyInGifts.length})
-- sympathy: ${a.validation.sympathy.sympathy.count} (expect 0) · sympathy-and-funeral: ${a.validation.sympathy['sympathy-and-funeral'].count}
+- sympathy: productsCount ${a.validation.sympathy.sympathy.productsCount} (expect 0) · sympathy-and-funeral: productsCount ${a.validation.sympathy['sympathy-and-funeral'].productsCount}
 
 _Read-only. No mutation performed._
 `;

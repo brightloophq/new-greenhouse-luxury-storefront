@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import {
   productMatchesRule, productMatchesRuleSet, classifyConfidence, failureReason,
   CATEGORY_SIGNALS, hasTag, hasAnyTag, normalizeConnection, collectionsOf, publishedNames,
-  candidateEvidence, collMeta,
+  candidateEvidence, collMeta, normalizeCount,
 } from './classify-categories.js';
 
 let pass = 0;
@@ -79,6 +79,22 @@ ok('candidateEvidence emits channels + memberships from connection shape', () =>
   };
   assert.deepStrictEqual(candidateEvidence(p), {channels: ['New Greenhouse Luxury Storefront'], memberships: ['all-flowers', 'best-sellers']});
   assert.deepStrictEqual(candidateEvidence({}), {channels: [], memberships: []}); // missing → safe
+});
+ok('[regression] normalizeCount preserves 0 and distinguishes missing', () => {
+  assert.strictEqual(normalizeCount({count: 0}), 0);   // legitimate zero — must NOT become null
+  assert.strictEqual(normalizeCount({count: 40}), 40);
+  assert.strictEqual(normalizeCount(0), 0);            // bare number zero
+  assert.strictEqual(normalizeCount(undefined), null); // missing
+  assert.strictEqual(normalizeCount(null), null);      // null
+  assert.strictEqual(normalizeCount({}), null);        // malformed (no count)
+  assert.strictEqual(normalizeCount({count: 'x'}), null); // malformed type
+});
+ok('[regression] collMeta yields productsCount 0 for an empty collection (not undefined)', () => {
+  const empty = {handle: 'corporate-flowers', productsCount: {count: 0}, seo: {title: null, description: null}, descriptionHtml: '', resourcePublications: {nodes: []}};
+  const m = collMeta(empty);
+  assert.strictEqual(m.productsCount, 0);
+  assert.notStrictEqual(m.productsCount, undefined);
+  assert.notStrictEqual(m.productsCount, null);
 });
 ok('collMeta snapshots collection metadata (no secrets)', () => {
   const c = {handle: 'corporate-gifting', productsCount: {count: 40}, seo: {title: 't', description: 'd'}, descriptionHtml: '<p>x</p>', resourcePublications: {nodes: [{isPublished: true, publication: {name: 'New Greenhouse Luxury Storefront'}}]}};
