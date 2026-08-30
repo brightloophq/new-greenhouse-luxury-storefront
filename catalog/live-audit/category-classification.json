@@ -1,0 +1,3966 @@
+{
+  "generatedAt": "2026-08-30T09:40:08.318Z",
+  "source": "LIVE raw export (authoritative); read-only classification.",
+  "categories": {
+    "birthday-flowers": {
+      "handle": "birthday-flowers",
+      "found": true,
+      "productsCount": 0,
+      "publication": [
+        "Online Store",
+        "Point of Sale",
+        "New Greenhouse Luxury Storefront"
+      ],
+      "ruleSet": null,
+      "currentlySatisfyCount": 0,
+      "candidateCount": 27,
+      "byConfidence": {
+        "HIGH": 27,
+        "MEDIUM": 0,
+        "AMBIGUOUS": 0
+      },
+      "candidates": [
+        {
+          "handle": "birthday-brights-bouquet",
+          "title": "Birthday Brights Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:mixed",
+            "color:pink",
+            "color:yellow-orange",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:gerbera-daisies",
+            "flower:greenery",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:birthday",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "pink",
+            "yellow-and-orange",
+            "mixed-color",
+            "birthday"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "long-stem-pink-roses",
+          "title": "Long-Stem Pink Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:pink",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:rose",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:everyday",
+            "occasion:new-baby",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "roses",
+            "pink",
+            "birthday",
+            "love-and-romance",
+            "new-baby",
+            "bulk-flowers",
+            "wholesale-roses",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "long-stem-yellow-roses",
+          "title": "Long-Stem Yellow Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:yellow-orange",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:rose",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:graduation",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "roses",
+            "yellow-and-orange",
+            "birthday",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "wholesale-roses",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "assorted-spray-roses",
+          "title": "Assorted Spray Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:spray-roses",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:everyday",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "love-and-romance",
+            "congratulations",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "asiatic-lilies-mixed",
+          "title": "Asiatic Lilies (Mixed)",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:lilies",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:get-well",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "congratulations",
+            "get-well",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "pink-hydrangeas",
+          "title": "Pink Hydrangeas",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:pink",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:hydrangea",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:birthday",
+            "occasion:everyday",
+            "occasion:new-baby",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "pink",
+            "birthday",
+            "anniversary",
+            "new-baby",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "button-pompon-chrysanthemums",
+          "title": "Button Pompon Chrysanthemums",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:chrysanthemums",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "standard-carnations-assorted",
+          "title": "Standard Carnations (Assorted)",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:carnations",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "sympathy-and-funeral",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "spray-mini-carnations",
+          "title": "Spray Mini Carnations",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:carnations",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "wax-flower",
+          "title": "Wax Flower",
+          "productType": "Floral Filler",
+          "status": "DRAFT",
+          "tags": [
+            "channel:wholesale",
+            "color:pink",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:wax-flower",
+            "format:bunch",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:seasonal",
+            "type:floral-filler"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "greenery-and-fillers",
+            "pink",
+            "birthday",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "solidago",
+          "title": "Solidago",
+          "productType": "Floral Filler",
+          "status": "DRAFT",
+          "tags": [
+            "channel:wholesale",
+            "color:yellow-orange",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:solidago",
+            "format:bunch",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:floral-filler"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "greenery-and-fillers",
+            "yellow-and-orange",
+            "birthday",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "classic-birthday-blooms",
+          "title": "Classic Birthday Blooms",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:mixed",
+            "color:pink",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:greenery",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:birthday",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "pink",
+            "mixed-color",
+            "birthday"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "plush-teddy-bear-add-on",
+          "title": "Plush Teddy Bear Add-on",
+          "productType": "Gift Add-on",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "format:addon",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:get-well",
+            "occasion:new-baby",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:gift-add-on"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "birthday",
+            "new-baby",
+            "get-well",
+            "bulk-flowers",
+            "add-ons"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "sunshine-birthday-bouquet",
+          "title": "Sunshine Birthday Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "collection:best-seller",
+            "delivery:same-day",
+            "experience:deluxe",
+            "occasion:birthday",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "birthday",
+            "best-sellers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ivory-cloud-hydrangea-bouquet",
+          "title": "Ivory Cloud Hydrangea Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:greenery",
+            "flower:hydrangea",
+            "flower:roses-in-stock",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:get-well",
+            "occasion:new-baby",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "birthday",
+            "new-baby",
+            "get-well",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "golden-hour-tulip-bouquet",
+          "title": "Golden Hour Tulip Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:tulips",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:get-well",
+            "season:seasonal",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "birthday",
+            "congratulations",
+            "get-well"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "sunlit-asiatic-lily-bouquet",
+          "title": "Sunlit Asiatic Lily Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:greenery",
+            "flower:lilies",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:get-well",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "birthday",
+            "congratulations",
+            "get-well"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "everyday-bloom-alstroemeria-bouquet",
+          "title": "Everyday Bloom Alstroemeria Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:mixed",
+            "delivery:same-day",
+            "flower:alstroemeria",
+            "flower:greenery",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:get-well",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "get-well",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "sunshine-gerbera-bouquet",
+          "title": "Sunshine Gerbera Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:mixed",
+            "delivery:same-day",
+            "flower:gerbera-daisies",
+            "flower:greenery",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:get-well",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "congratulations",
+            "get-well"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "babys-breath-gift-bouquet-wrapped",
+          "title": "Baby's Breath Gift Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:babys-breath",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:new-baby",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "birthday",
+            "new-baby",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "purple-lisianthus-bouquet",
+          "title": "Purple Lisianthus Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:purple",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:lisianthus",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "purple",
+            "birthday",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "lisianthus-garden-bouquet",
+          "title": "Lisianthus Garden Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:mixed",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:lisianthus",
+            "flower:spray-roses",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "congratulations"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "coral-ranunculus-bouquet",
+          "title": "Coral Ranunculus Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:ranunculus",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:thank-you",
+            "season:seasonal",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "birthday",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "mango-calla-lily-bouquet",
+          "title": "Mango Calla Lily Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:calla-lilies",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "birthday",
+            "congratulations",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "peach-spray-rose-bouquet",
+          "title": "Peach Spray Rose Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:spray-roses",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:new-baby",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "birthday",
+            "new-baby",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "pink-gerbera-daisy-bouquet",
+          "title": "Pink Gerbera Daisy Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:gerbera-daisies",
+            "flower:greenery",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:get-well",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "birthday",
+            "get-well",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-hydrangea-bouquet",
+          "title": "Blush Hydrangea Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:hydrangea",
+            "format:handcrafted",
+            "occasion:birthday",
+            "occasion:new-baby",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "birthday",
+            "new-baby",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        }
+      ],
+      "recommendation": {
+        "code": "E",
+        "label": "restructure: no smart rule present (manual/empty)"
+      }
+    },
+    "anniversary-flowers": {
+      "handle": "anniversary-flowers",
+      "found": true,
+      "productsCount": 0,
+      "publication": [
+        "Online Store",
+        "Point of Sale",
+        "New Greenhouse Luxury Storefront"
+      ],
+      "ruleSet": null,
+      "currentlySatisfyCount": 0,
+      "candidateCount": 19,
+      "byConfidence": {
+        "HIGH": 19,
+        "MEDIUM": 0,
+        "AMBIGUOUS": 0
+      },
+      "candidates": [
+        {
+          "handle": "long-stem-red-roses",
+          "title": "Long-Stem Red Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:red",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:rose",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "frontpage",
+            "all-flowers",
+            "roses",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "corporate-gifting",
+            "bulk-flowers",
+            "wholesale-roses",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "long-stem-ivory-roses",
+          "title": "Long-Stem Ivory Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:roses-in-stock",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ivory-garden-roses",
+          "title": "Ivory Garden Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:roses-in-stock",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "love-and-romance",
+            "sympathy-and-funeral",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "cymbidium-orchid-stems",
+          "title": "Cymbidium Orchid Stems",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:green",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:orchids",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:seasonal",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "green-flowers",
+            "anniversary",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "phalaenopsis-orchid-stems",
+          "title": "Phalaenopsis Orchid Stems",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:orchids",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "oriental-lilies-white",
+          "title": "Oriental Lilies (White)",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:lily",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "lilies",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "calla-lilies-ivory",
+          "title": "Calla Lilies (Ivory)",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:calla-lilies",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "white-hydrangeas",
+          "title": "White Hydrangeas",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:hydrangea",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "antique-blue-hydrangeas",
+          "title": "Antique Blue Hydrangeas",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:blue",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:hydrangea",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:seasonal",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "anniversary",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "pink-hydrangeas",
+          "title": "Pink Hydrangeas",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:pink",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:hydrangea",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:birthday",
+            "occasion:everyday",
+            "occasion:new-baby",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "pink",
+            "birthday",
+            "anniversary",
+            "new-baby",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "anniversary-rose-bouquet",
+          "title": "Anniversary Rose Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "color:red",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "pink",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "anniversary-luxe-arrangement",
+          "title": "Anniversary Luxe Arrangement",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "color:red",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:retail-shopper",
+            "flower:greenery",
+            "flower:lilies",
+            "flower:roses-in-stock",
+            "format:arrangement",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "red",
+            "pink",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-romance-luxe",
+          "title": "Blush Romance Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "delivery:same-day",
+            "experience:deluxe",
+            "occasion:anniversary",
+            "occasion:romance",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "golden-celebration-bouquet",
+          "title": "Golden Celebration Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "collection:best-seller",
+            "delivery:same-day",
+            "experience:deluxe",
+            "occasion:anniversary",
+            "occasion:congratulations",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "anniversary",
+            "congratulations",
+            "best-sellers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "rouge-amour-rose-heart-box",
+          "title": "Rouge Amour Rose Heart Box",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:roses-in-stock",
+            "format:heart-box",
+            "occasion:anniversary",
+            "occasion:romance",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "wrapping-and-packaging",
+            "premium-heart-box"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ivory-elegance-rose-bouquet",
+          "title": "Ivory Elegance Rose Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:roses-in-stock",
+            "format:handcrafted",
+            "occasion:anniversary",
+            "occasion:sympathy",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "thank-you",
+            "premium-handcrafted"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "grand-crimson-rose-vase",
+          "title": "Grand Crimson Rose Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:roses-in-stock",
+            "format:vase",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:romance",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "corporate-gifting",
+            "vases-and-containers",
+            "corporate-gifts",
+            "premium-vase"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "rosette-ranunculus-bouquet",
+          "title": "Rosette Ranunculus Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:ranunculus",
+            "format:handcrafted",
+            "occasion:anniversary",
+            "occasion:romance",
+            "season:seasonal",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "anniversary",
+            "love-and-romance",
+            "premium-handcrafted"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ruffled-ivory-lisianthus-bouquet",
+          "title": "Ruffled Ivory Lisianthus Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:lisianthus",
+            "format:handcrafted",
+            "occasion:anniversary",
+            "occasion:sympathy",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "sympathy-and-funeral",
+            "thank-you",
+            "premium-handcrafted"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        }
+      ],
+      "recommendation": {
+        "code": "E",
+        "label": "restructure: no smart rule present (manual/empty)"
+      }
+    },
+    "love-romance": {
+      "handle": "love-romance",
+      "found": true,
+      "productsCount": 0,
+      "publication": [
+        "Online Store",
+        "Point of Sale",
+        "New Greenhouse Luxury Storefront"
+      ],
+      "ruleSet": null,
+      "currentlySatisfyCount": 0,
+      "candidateCount": 22,
+      "byConfidence": {
+        "HIGH": 21,
+        "MEDIUM": 1,
+        "AMBIGUOUS": 0
+      },
+      "candidates": [
+        {
+          "handle": "long-stem-red-roses",
+          "title": "Long-Stem Red Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:red",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:rose",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "frontpage",
+            "all-flowers",
+            "roses",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "corporate-gifting",
+            "bulk-flowers",
+            "wholesale-roses",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "long-stem-pink-roses",
+          "title": "Long-Stem Pink Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:pink",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:rose",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:everyday",
+            "occasion:new-baby",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "roses",
+            "pink",
+            "birthday",
+            "love-and-romance",
+            "new-baby",
+            "bulk-flowers",
+            "wholesale-roses",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "assorted-spray-roses",
+          "title": "Assorted Spray Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:spray-roses",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:birthday",
+            "occasion:congratulations",
+            "occasion:everyday",
+            "occasion:romance",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "mixed-color",
+            "birthday",
+            "love-and-romance",
+            "congratulations",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ivory-garden-roses",
+          "title": "Ivory Garden Roses",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:roses-in-stock",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "occasion:sympathy",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "anniversary",
+            "love-and-romance",
+            "sympathy-and-funeral",
+            "bulk-flowers",
+            "florist-essentials"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "anniversary-rose-bouquet",
+          "title": "Anniversary Rose Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "color:red",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "pink",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "anniversary-luxe-arrangement",
+          "title": "Anniversary Luxe Arrangement",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "color:red",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:retail-shopper",
+            "flower:greenery",
+            "flower:lilies",
+            "flower:roses-in-stock",
+            "format:arrangement",
+            "image-status:required",
+            "occasion:anniversary",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "red",
+            "pink",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "red-rose-romance-bouquet",
+          "title": "Red Rose Romance Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-romance-bouquet",
+          "title": "Blush Romance Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:retail-shopper",
+            "flower:roses-in-stock",
+            "format:bouquet",
+            "format:handcrafted",
+            "image-status:required",
+            "occasion:romance",
+            "price-status:placeholder",
+            "season:year-round",
+            "tier:classic",
+            "type:floral-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "all-flowers",
+            "white-and-ivory",
+            "pink",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "sweetheart-table-arrangement",
+          "title": "Sweetheart Table Arrangement",
+          "productType": "Wedding Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:retail-shopper",
+            "format:arrangement",
+            "image-status:required",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:seasonal",
+            "type:wedding-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "MEDIUM",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "grand-red-rose-arrangement",
+          "title": "Grand Red Rose Arrangement",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "collection:best-seller",
+            "delivery:same-day",
+            "experience:deluxe",
+            "flower:roses-in-stock",
+            "occasion:romance",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "love-and-romance",
+            "best-sellers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-romance-luxe",
+          "title": "Blush Romance Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "delivery:same-day",
+            "experience:deluxe",
+            "occasion:anniversary",
+            "occasion:romance",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "anniversary",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "red-rose-romance-luxe",
+          "title": "Red Rose Romance Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "delivery:same-day",
+            "experience:deluxe",
+            "flower:roses-in-stock",
+            "occasion:romance",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "rouge-amour-rose-heart-box",
+          "title": "Rouge Amour Rose Heart Box",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:roses-in-stock",
+            "format:heart-box",
+            "occasion:anniversary",
+            "occasion:romance",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "wrapping-and-packaging",
+            "premium-heart-box"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "grand-crimson-rose-vase",
+          "title": "Grand Crimson Rose Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:roses-in-stock",
+            "format:vase",
+            "occasion:anniversary",
+            "occasion:corporate",
+            "occasion:romance",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "anniversary",
+            "love-and-romance",
+            "corporate-gifting",
+            "vases-and-containers",
+            "corporate-gifts",
+            "premium-vase"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "rosette-ranunculus-bouquet",
+          "title": "Rosette Ranunculus Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:ranunculus",
+            "format:handcrafted",
+            "occasion:anniversary",
+            "occasion:romance",
+            "season:seasonal",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "anniversary",
+            "love-and-romance",
+            "premium-handcrafted"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "sweetheart-spray-rose-bouquet",
+          "title": "Sweetheart Spray Rose Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:spray-roses",
+            "format:handcrafted",
+            "occasion:new-baby",
+            "occasion:romance",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "love-and-romance",
+            "new-baby"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "cloud-nine-babys-breath-bouquet",
+          "title": "Cloud Nine Baby's Breath Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:babys-breath",
+            "format:handcrafted",
+            "occasion:romance",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "love-and-romance"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-lisianthus-vase",
+          "title": "Blush Lisianthus Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:lisianthus",
+            "format:vase",
+            "occasion:romance",
+            "occasion:thank-you",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "love-and-romance",
+            "vases-and-containers",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "ivory-ranunculus-vase",
+          "title": "Ivory Ranunculus Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:white-ivory",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:ranunculus",
+            "format:vase",
+            "occasion:new-baby",
+            "occasion:romance",
+            "season:seasonal",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "white-and-ivory",
+            "love-and-romance",
+            "new-baby",
+            "vases-and-containers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "plum-calla-lily-vase",
+          "title": "Plum Calla Lily Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:purple",
+            "delivery:same-day",
+            "flower:calla-lilies",
+            "flower:greenery",
+            "format:vase",
+            "occasion:romance",
+            "occasion:sympathy",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "purple",
+            "love-and-romance",
+            "sympathy-and-funeral",
+            "vases-and-containers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "crimson-spray-rose-vase",
+          "title": "Crimson Spray Rose Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:eucalyptus",
+            "flower:spray-roses",
+            "format:vase",
+            "occasion:romance",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "love-and-romance",
+            "vases-and-containers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "blush-tulip-vase",
+          "title": "Blush Tulip Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:pink",
+            "delivery:same-day",
+            "flower:tulips",
+            "format:vase",
+            "occasion:get-well",
+            "occasion:romance",
+            "occasion:thank-you",
+            "season:seasonal",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "pink",
+            "love-and-romance",
+            "get-well",
+            "vases-and-containers",
+            "thank-you"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        }
+      ],
+      "recommendation": {
+        "code": "E",
+        "label": "restructure: no smart rule present (manual/empty)"
+      }
+    },
+    "gift-baskets": {
+      "handle": "gift-baskets",
+      "found": true,
+      "productsCount": 0,
+      "publication": [
+        "Online Store",
+        "Point of Sale",
+        "New Greenhouse Luxury Storefront"
+      ],
+      "ruleSet": null,
+      "currentlySatisfyCount": 0,
+      "candidateCount": 3,
+      "byConfidence": {
+        "HIGH": 1,
+        "MEDIUM": 1,
+        "AMBIGUOUS": 1
+      },
+      "candidates": [
+        {
+          "handle": "tribute-basket-arrangement",
+          "title": "Tribute Basket Arrangement",
+          "productType": "Sympathy Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:green",
+            "color:white-ivory",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:retail-shopper",
+            "flower:lilies",
+            "format:arrangement",
+            "image-status:required",
+            "occasion:sympathy",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:sympathy-arrangement"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "white-and-ivory",
+            "green-flowers",
+            "sympathy-and-funeral",
+            "bulk-flowers",
+            "vases-and-containers"
+          ],
+          "confidence": "MEDIUM",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "woven-arrangement-basket",
+          "title": "Woven Arrangement Basket",
+          "productType": "Floral Supply",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:retail-shopper",
+            "format:supply",
+            "image-status:required",
+            "price-status:placeholder",
+            "season:year-round",
+            "supply:basket",
+            "type:floral-supply"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "florist-essentials",
+            "floral-supplies",
+            "vases-and-containers"
+          ],
+          "confidence": "AMBIGUOUS",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "fruit-flower-gift-basket",
+          "title": "Fruit & Flower Gift Basket",
+          "productType": "Gift Basket",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "channel:wholesale",
+            "color:mixed",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:retail-shopper",
+            "format:gift-basket",
+            "image-status:required",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:get-well",
+            "occasion:new-baby",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:gift-basket"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "congratulations",
+            "new-baby",
+            "get-well",
+            "corporate-gifting",
+            "bulk-flowers",
+            "vases-and-containers",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        }
+      ],
+      "recommendation": {
+        "code": "E",
+        "label": "restructure: no smart rule present (manual/empty)"
+      }
+    },
+    "tropical-flowers": {
+      "handle": "tropical-flowers",
+      "found": true,
+      "productsCount": 0,
+      "publication": [
+        "Online Store",
+        "Point of Sale",
+        "New Greenhouse Luxury Storefront"
+      ],
+      "ruleSet": null,
+      "currentlySatisfyCount": 0,
+      "candidateCount": 14,
+      "byConfidence": {
+        "HIGH": 14,
+        "MEDIUM": 0,
+        "AMBIGUOUS": 0
+      },
+      "candidates": [
+        {
+          "handle": "anthurium-stems",
+          "title": "Anthurium Stems",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:red",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:tropicals",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "heliconia",
+          "title": "Heliconia",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:wholesale",
+            "color:red",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:heliconia",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "torch-ginger",
+          "title": "Torch Ginger",
+          "productType": "Fresh Cut Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:red",
+            "content-status:reviewed",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:tropicals",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront",
+            "Online Store"
+          ],
+          "memberships": [
+            "all-flowers",
+            "red",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "bird-of-paradise",
+          "title": "Bird of Paradise",
+          "productType": "Fresh Cut Flowers",
+          "status": "DRAFT",
+          "tags": [
+            "channel:wholesale",
+            "color:yellow-orange",
+            "content-status:reviewed",
+            "customer:corporate",
+            "customer:event-planner",
+            "customer:florist",
+            "customer:hotel",
+            "flower:bird-of-paradise",
+            "format:bulk-box",
+            "image-status:required",
+            "occasion:congratulations",
+            "occasion:corporate",
+            "occasion:everyday",
+            "occasion:wedding",
+            "price-status:placeholder",
+            "season:year-round",
+            "type:fresh-cut-flowers"
+          ],
+          "channels": [],
+          "memberships": [
+            "all-flowers",
+            "yellow-and-orange",
+            "congratulations",
+            "corporate-gifting",
+            "bulk-flowers",
+            "florist-essentials",
+            "corporate-gifts"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-anthurium-pink",
+          "title": "Pink Anthurium",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-anthurium-red",
+          "title": "Red Anthurium",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-bird-of-paradise",
+          "title": "Bird of Paradise",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-ginger",
+          "title": "Ginger",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-heliconia",
+          "title": "Heliconia",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-mixed",
+          "title": "Mixed Tropicals",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "tropicals-protea",
+          "title": "Protea",
+          "productType": "Fresh Flowers",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:wholesale",
+            "color:mixed",
+            "flower:tropicals",
+            "occasion:everyday"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "mixed-color",
+            "bulk-flowers"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "luxury-tropical-arrangement",
+          "title": "Luxury Tropical Arrangement",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "collection:luxury-bouquet",
+            "collection:seasonal",
+            "delivery:same-day",
+            "experience:deluxe",
+            "flower:greenery",
+            "flower:tropicals",
+            "tier:deluxe",
+            "type:luxury-arrangement"
+          ],
+          "channels": [
+            "Online Store",
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "luxury-bouquets",
+            "same-day-delivery",
+            "all-flowers",
+            "seasonal-deluxe"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "island-modern-tropical-vase",
+          "title": "Island Modern Tropical Vase",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:red",
+            "delivery:same-day",
+            "flower:greenery",
+            "flower:tropicals",
+            "format:vase",
+            "occasion:corporate",
+            "season:year-round",
+            "tier:deluxe"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "red",
+            "corporate-gifting",
+            "vases-and-containers",
+            "corporate-gifts",
+            "premium-vase"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        },
+        {
+          "handle": "paradise-tropical-bouquet",
+          "title": "Paradise Tropical Bouquet",
+          "productType": "Floral Arrangement",
+          "status": "ACTIVE",
+          "tags": [
+            "channel:retail",
+            "color:yellow-orange",
+            "delivery:same-day",
+            "flower:greenery",
+            "flower:tropicals",
+            "format:handcrafted",
+            "occasion:congratulations",
+            "season:year-round",
+            "tier:classic"
+          ],
+          "channels": [
+            "New Greenhouse Luxury Storefront"
+          ],
+          "memberships": [
+            "same-day-delivery",
+            "all-flowers",
+            "yellow-and-orange",
+            "congratulations"
+          ],
+          "confidence": "HIGH",
+          "satisfiesRule": false,
+          "failReason": "collection is manual/empty (no smart rule) — product not manually added"
+        }
+      ],
+      "recommendation": {
+        "code": "E",
+        "label": "restructure: no smart rule present (manual/empty)"
+      }
+    }
+  },
+  "overlap": {
+    "long-stem-pink-roses": [
+      "birthday-flowers",
+      "love-romance"
+    ],
+    "assorted-spray-roses": [
+      "birthday-flowers",
+      "love-romance"
+    ],
+    "pink-hydrangeas": [
+      "birthday-flowers",
+      "anniversary-flowers"
+    ],
+    "long-stem-red-roses": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "ivory-garden-roses": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "anniversary-rose-bouquet": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "anniversary-luxe-arrangement": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "blush-romance-luxe": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "rouge-amour-rose-heart-box": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "grand-crimson-rose-vase": [
+      "anniversary-flowers",
+      "love-romance"
+    ],
+    "rosette-ranunculus-bouquet": [
+      "anniversary-flowers",
+      "love-romance"
+    ]
+  },
+  "wedding": {
+    "specific": [
+      {
+        "handle": "bridal-bouquet-ivory-garden",
+        "status": "DRAFT",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [],
+        "memberships": [
+          "roses",
+          "white-and-ivory",
+          "green-flowers",
+          "bridal-bouquets",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "bridal-bouquet-cascading-blush",
+        "status": "DRAFT",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [],
+        "memberships": [
+          "roses",
+          "pink",
+          "green-flowers",
+          "bridal-bouquets",
+          "bulk-flowers",
+          "wholesale-roses"
+        ]
+      },
+      {
+        "handle": "bridesmaid-bouquet",
+        "status": "DRAFT",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [],
+        "memberships": [
+          "mixed-color",
+          "bridal-bouquets",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "low-reception-centerpiece",
+        "status": "DRAFT",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [],
+        "memberships": [
+          "mixed-color",
+          "centerpieces",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "elevated-reception-centerpiece",
+        "status": "DRAFT",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [],
+        "memberships": [
+          "mixed-color",
+          "centerpieces",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "ceremony-aisle-arch-arrangement",
+        "status": "ACTIVE",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberships": [
+          "mixed-color",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "sweetheart-table-arrangement",
+        "status": "ACTIVE",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberships": [
+          "mixed-color",
+          "bulk-flowers"
+        ]
+      },
+      {
+        "handle": "intimate-wedding-flower-package",
+        "status": "ACTIVE",
+        "productType": "Wedding Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding",
+          "type:wedding-flowers"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberships": [
+          "mixed-color",
+          "bulk-flowers"
+        ]
+      }
+    ],
+    "multipurposeStems": [
+      {
+        "handle": "long-stem-red-roses",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "frontpage",
+          "all-flowers",
+          "roses",
+          "red",
+          "anniversary",
+          "love-and-romance",
+          "corporate-gifting",
+          "bulk-flowers",
+          "wholesale-roses",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "long-stem-ivory-roses",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "white-and-ivory",
+          "anniversary",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "long-stem-pink-roses",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "roses",
+          "pink",
+          "birthday",
+          "love-and-romance",
+          "new-baby",
+          "bulk-flowers",
+          "wholesale-roses",
+          "florist-essentials"
+        ]
+      },
+      {
+        "handle": "assorted-spray-roses",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberships": [
+          "all-flowers",
+          "mixed-color",
+          "birthday",
+          "love-and-romance",
+          "congratulations",
+          "bulk-flowers",
+          "florist-essentials"
+        ]
+      },
+      {
+        "handle": "ivory-garden-roses",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "white-and-ivory",
+          "anniversary",
+          "love-and-romance",
+          "sympathy-and-funeral",
+          "bulk-flowers",
+          "florist-essentials"
+        ]
+      },
+      {
+        "handle": "dendrobium-orchid-stems",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "purple",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "cymbidium-orchid-stems",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "green-flowers",
+          "anniversary",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "phalaenopsis-orchid-stems",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "white-and-ivory",
+          "anniversary",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "oriental-lilies-white",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "lilies",
+          "white-and-ivory",
+          "anniversary",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "calla-lilies-ivory",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "white-and-ivory",
+          "anniversary",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "white-hydrangeas",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "white-and-ivory",
+          "anniversary",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "antique-blue-hydrangeas",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "anniversary",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "pink-hydrangeas",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "pink",
+          "birthday",
+          "anniversary",
+          "new-baby",
+          "bulk-flowers",
+          "florist-essentials"
+        ]
+      },
+      {
+        "handle": "spray-mini-carnations",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberships": [
+          "all-flowers",
+          "mixed-color",
+          "birthday",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "anthurium-stems",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "red",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "heliconia",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "red",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "torch-ginger",
+        "status": "ACTIVE",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "red",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "bird-of-paradise",
+        "status": "DRAFT",
+        "productType": "Fresh Cut Flowers",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "yellow-and-orange",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "seeded-eucalyptus",
+        "status": "DRAFT",
+        "productType": "Greenery",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "green-flowers",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "wholesale-greenery",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "silver-dollar-eucalyptus",
+        "status": "DRAFT",
+        "productType": "Greenery",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "green-flowers",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "wholesale-greenery",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "israeli-ruscus",
+        "status": "ACTIVE",
+        "productType": "Greenery",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "green-flowers",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "wholesale-greenery",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "palm-leather-leaf",
+        "status": "ACTIVE",
+        "productType": "Greenery",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "green-flowers",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "wholesale-greenery",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "babys-breath-gypsophila",
+        "status": "ACTIVE",
+        "productType": "Floral Filler",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [
+          "New Greenhouse Luxury Storefront",
+          "Online Store"
+        ],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "white-and-ivory",
+          "sympathy-and-funeral",
+          "new-baby",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "wax-flower",
+        "status": "DRAFT",
+        "productType": "Floral Filler",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "pink",
+          "birthday",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "statice",
+        "status": "DRAFT",
+        "productType": "Floral Filler",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "purple",
+          "sympathy-and-funeral",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      },
+      {
+        "handle": "solidago",
+        "status": "DRAFT",
+        "productType": "Floral Filler",
+        "weddingTags": [
+          "customer:event-planner",
+          "occasion:wedding"
+        ],
+        "channels": [],
+        "memberships": [
+          "all-flowers",
+          "greenery-and-fillers",
+          "yellow-and-orange",
+          "birthday",
+          "congratulations",
+          "corporate-gifting",
+          "bulk-flowers",
+          "florist-essentials",
+          "corporate-gifts"
+        ]
+      }
+    ],
+    "collections": [
+      {
+        "handle": "wedding-flowers",
+        "products": 0,
+        "ruleSet": null,
+        "published": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ]
+      },
+      {
+        "handle": "bridal-bouquets",
+        "products": 3,
+        "ruleSet": {
+          "appliedDisjunctively": false,
+          "rules": [
+            {
+              "column": "TAG",
+              "relation": "EQUALS",
+              "condition": "format:bouquet"
+            },
+            {
+              "column": "TYPE",
+              "relation": "EQUALS",
+              "condition": "Wedding Flowers"
+            }
+          ]
+        },
+        "published": [
+          "New Greenhouse Luxury Storefront"
+        ]
+      },
+      {
+        "handle": "centerpieces",
+        "products": 2,
+        "ruleSet": {
+          "appliedDisjunctively": false,
+          "rules": [
+            {
+              "column": "TAG",
+              "relation": "EQUALS",
+              "condition": "format:centerpiece"
+            }
+          ]
+        },
+        "published": [
+          "New Greenhouse Luxury Storefront"
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "corporate": {
+      "corporate-gifting": {
+        "handle": "corporate-gifting",
+        "productsCount": 40,
+        "seoTitle": true,
+        "seoDescription": true,
+        "bodyPresent": true,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberCount": 40,
+        "ruleSet": {
+          "appliedDisjunctively": false,
+          "rules": [
+            {
+              "column": "TAG",
+              "relation": "EQUALS",
+              "condition": "occasion:corporate"
+            }
+          ]
+        }
+      },
+      "corporate-gifts": {
+        "handle": "corporate-gifts",
+        "productsCount": 40,
+        "seoTitle": true,
+        "seoDescription": true,
+        "bodyPresent": true,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberCount": 40,
+        "ruleSet": {
+          "appliedDisjunctively": false,
+          "rules": [
+            {
+              "column": "TAG",
+              "relation": "EQUALS",
+              "condition": "occasion:corporate"
+            }
+          ]
+        }
+      },
+      "corporate-flowers": {
+        "handle": "corporate-flowers",
+        "productsCount": 0,
+        "seoTitle": false,
+        "seoDescription": false,
+        "bodyPresent": false,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberCount": 0
+      },
+      "onlyInGifting": [],
+      "onlyInGifts": [],
+      "equivalent": true
+    },
+    "sympathy": {
+      "sympathy": {
+        "handle": "sympathy",
+        "productsCount": 0,
+        "seoTitle": false,
+        "seoDescription": false,
+        "bodyPresent": false,
+        "channels": [
+          "Online Store",
+          "Point of Sale",
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberCount": 0
+      },
+      "sympathy-and-funeral": {
+        "handle": "sympathy-and-funeral",
+        "productsCount": 33,
+        "seoTitle": true,
+        "seoDescription": true,
+        "bodyPresent": true,
+        "channels": [
+          "New Greenhouse Luxury Storefront"
+        ],
+        "memberCount": 33,
+        "ruleSet": {
+          "appliedDisjunctively": false,
+          "rules": [
+            {
+              "column": "TAG",
+              "relation": "EQUALS",
+              "condition": "occasion:sympathy"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
