@@ -46,6 +46,15 @@ export const normalizeConnection = (x) => (Array.isArray(x) ? x : x && Array.isA
 export const collectionsOf = (p) => normalizeConnection(p && p.collections);
 export const publicationsOf = (node) => normalizeConnection(node && node.resourcePublications);
 export const publishedNames = (node) => publicationsOf(node).filter((n) => n && n.isPublished).map((n) => n.publication?.name);
+/** Per-candidate evidence for the membership review (read-only). */
+export const candidateEvidence = (p) => ({channels: publishedNames(p), memberships: collectionsOf(p).map((c) => c.handle)});
+/** Secret-free metadata snapshot of a collection for consolidation review. */
+export const collMeta = (c) => (c ? {
+  handle: c.handle, productsCount: c.productsCount?.count ?? null,
+  seoTitle: !!c.seo?.title, seoDescription: !!c.seo?.description,
+  bodyPresent: String(c.descriptionHtml || '').replace(/<[^>]*>/g, '').trim().length > 0,
+  channels: publishedNames(c),
+} : {found: false});
 
 /** Evaluate one Shopify smart-collection rule against a product. */
 export function productMatchesRule(p, rule) {
@@ -173,7 +182,7 @@ function main() {
     const rows = candidates.map((p) => {
       const conf = classifyConfidence(p, cat, relatedByCat[cat]);
       const reason = failureReason(p, ruleSet);
-      return {handle: p.handle, title: p.title, productType: p.productType, status: p.status, tags: tagsOf(p), confidence: conf, satisfiesRule: reason === null, failReason: reason};
+      return {handle: p.handle, title: p.title, productType: p.productType, status: p.status, tags: tagsOf(p), ...candidateEvidence(p), confidence: conf, satisfiesRule: reason === null, failReason: reason};
     });
     // recommendation heuristic
     const highFailing = rows.filter((r) => r.confidence === 'HIGH' && !r.satisfiesRule);
@@ -214,9 +223,9 @@ function main() {
   );
   const wedding = {
     specific: weddingProducts.filter((p) => /wedding|bridal/i.test(p.productType || '') || collectionsOf(p).some((c) => weddingColl.has(c.handle)))
-      .map((p) => ({handle: p.handle, status: p.status, productType: p.productType})),
+      .map((p) => ({handle: p.handle, status: p.status, productType: p.productType, weddingTags: tagsOf(p).filter((t) => /wedding|bridal|event/i.test(t)), ...candidateEvidence(p)})),
     multipurposeStems: weddingProducts.filter((p) => !/wedding|bridal/i.test(p.productType || '') && !collectionsOf(p).some((c) => weddingColl.has(c.handle)))
-      .map((p) => ({handle: p.handle, status: p.status, tags: tagsOf(p).filter((t) => /wedding|bridal|event/i.test(t))})),
+      .map((p) => ({handle: p.handle, status: p.status, productType: p.productType, weddingTags: tagsOf(p).filter((t) => /wedding|bridal|event/i.test(t)), ...candidateEvidence(p)})),
     collections: WEDDING_COLLECTIONS.map((h) => {
       const c = collByHandle.get(h);
       return c ? {handle: h, products: c.productsCount?.count ?? null, ruleSet: c.ruleSet, published: publishedNames(c)} : {handle: h, found: false};
@@ -229,16 +238,16 @@ function main() {
   const cgs = membersOf('corporate-gifts');
   const validation = {
     corporate: {
-      'corporate-gifting': {count: cg.size, ruleSet: collByHandle.get('corporate-gifting')?.ruleSet},
-      'corporate-gifts': {count: cgs.size, ruleSet: collByHandle.get('corporate-gifts')?.ruleSet},
-      'corporate-flowers': {count: membersOf('corporate-flowers').size},
+      'corporate-gifting': {...collMeta(collByHandle.get('corporate-gifting')), memberCount: cg.size, ruleSet: collByHandle.get('corporate-gifting')?.ruleSet},
+      'corporate-gifts': {...collMeta(collByHandle.get('corporate-gifts')), memberCount: cgs.size, ruleSet: collByHandle.get('corporate-gifts')?.ruleSet},
+      'corporate-flowers': {...collMeta(collByHandle.get('corporate-flowers')), memberCount: membersOf('corporate-flowers').size},
       onlyInGifting: [...cg].filter((h) => !cgs.has(h)),
       onlyInGifts: [...cgs].filter((h) => !cg.has(h)),
       equivalent: cg.size === cgs.size && [...cg].every((h) => cgs.has(h)),
     },
     sympathy: {
-      sympathy: {count: membersOf('sympathy').size},
-      'sympathy-and-funeral': {count: membersOf('sympathy-and-funeral').size, ruleSet: collByHandle.get('sympathy-and-funeral')?.ruleSet},
+      sympathy: {...collMeta(collByHandle.get('sympathy')), memberCount: membersOf('sympathy').size},
+      'sympathy-and-funeral': {...collMeta(collByHandle.get('sympathy-and-funeral')), memberCount: membersOf('sympathy-and-funeral').size, ruleSet: collByHandle.get('sympathy-and-funeral')?.ruleSet},
     },
   };
 
@@ -281,16 +290,16 @@ function renderMd(a) {
       : '(no smart rule / manual)';
     const rows = c.candidates
       .sort((x, y) => ({HIGH: 0, MEDIUM: 1, AMBIGUOUS: 2}[x.confidence] - {HIGH: 0, MEDIUM: 1, AMBIGUOUS: 2}[y.confidence]))
-      .map((r) => `| \`${r.handle}\` | ${r.confidence} | ${r.satisfiesRule ? 'in' : 'OUT'} | ${r.status} | ${r.satisfiesRule ? '—' : (r.failReason || '').slice(0, 120)} |`)
+      .map((r) => `| \`${r.handle}\` | ${r.confidence} | ${r.status} | ${(r.channels || []).join('; ') || '—'} | ${r.productType || '—'} | ${(r.tags || []).filter((t) => /occasion:|flower:|wholesale|retail|format:/i.test(t)).join('; ') || '—'} | ${(r.memberships || []).join('; ') || '—'} |`)
       .join('\n');
     return `### ${cat}  (live ${c.productsCount} products)
-- Current smart rule: \`${rule}\`
+- Current rule: \`${rule}\`
 - Candidates: ${c.candidateCount} — HIGH ${c.byConfidence.HIGH} / MEDIUM ${c.byConfidence.MEDIUM} / AMBIGUOUS ${c.byConfidence.AMBIGUOUS}
-- **Recommendation: ${c.recommendation.code} — ${c.recommendation.label}**
+- **Classifier recommendation: ${c.recommendation.code} — ${c.recommendation.label}**
 
-| handle | confidence | rule | status | why it fails (if OUT) |
-|---|---|---|---|---|
-${rows || '| (none) | | | | |'}`;
+| handle | confidence | status | channels | productType | relevant tags | existing memberships |
+|---|---|---|---|---|---|---|
+${rows || '| (none) | | | | | | |'}`;
   };
   const overlapRows = Object.entries(a.overlap).map(([h, cats]) => `- \`${h}\` → ${cats.join(', ')} (merchandising overlap)`).join('\n') || '- none';
   return `# Category Membership Classification (read-only)

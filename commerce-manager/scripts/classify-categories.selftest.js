@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import {
   productMatchesRule, productMatchesRuleSet, classifyConfidence, failureReason,
   CATEGORY_SIGNALS, hasTag, hasAnyTag, normalizeConnection, collectionsOf, publishedNames,
+  candidateEvidence, collMeta,
 } from './classify-categories.js';
 
 let pass = 0;
@@ -70,6 +71,19 @@ ok('normalizeConnection handles {nodes:[...]}, array, null, undefined, missing',
 ok('[regression] REAL GraphQL connection shape classifies without error → HIGH', () => {
   const p = {tags: [], collections: {nodes: [{id: 'gid://shopify/Collection/1', handle: 'love-romance', title: 'Love & Romance'}]}};
   assert.strictEqual(classifyConfidence(p, 'love-romance', new Set(['love-romance'])), 'HIGH');
+});
+ok('candidateEvidence emits channels + memberships from connection shape', () => {
+  const p = {
+    resourcePublications: {nodes: [{isPublished: true, publication: {name: 'New Greenhouse Luxury Storefront'}}]},
+    collections: {nodes: [{handle: 'all-flowers'}, {handle: 'best-sellers'}]},
+  };
+  assert.deepStrictEqual(candidateEvidence(p), {channels: ['New Greenhouse Luxury Storefront'], memberships: ['all-flowers', 'best-sellers']});
+  assert.deepStrictEqual(candidateEvidence({}), {channels: [], memberships: []}); // missing → safe
+});
+ok('collMeta snapshots collection metadata (no secrets)', () => {
+  const c = {handle: 'corporate-gifting', productsCount: {count: 40}, seo: {title: 't', description: 'd'}, descriptionHtml: '<p>x</p>', resourcePublications: {nodes: [{isPublished: true, publication: {name: 'New Greenhouse Luxury Storefront'}}]}};
+  assert.deepStrictEqual(collMeta(c), {handle: 'corporate-gifting', productsCount: 40, seoTitle: true, seoDescription: true, bodyPresent: true, channels: ['New Greenhouse Luxury Storefront']});
+  assert.deepStrictEqual(collMeta(null), {found: false});
 });
 ok('publishedNames reads the connection shape', () =>
   assert.deepStrictEqual(
