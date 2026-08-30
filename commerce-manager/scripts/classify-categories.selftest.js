@@ -2,7 +2,7 @@
 import assert from 'node:assert';
 import {
   productMatchesRule, productMatchesRuleSet, classifyConfidence, failureReason,
-  CATEGORY_SIGNALS, hasTag, hasAnyTag,
+  CATEGORY_SIGNALS, hasTag, hasAnyTag, normalizeConnection, collectionsOf, publishedNames,
 } from './classify-categories.js';
 
 let pass = 0;
@@ -57,10 +57,35 @@ ok('[scenario] tropical product FAILS a mismatched rule, with evidence reason', 
 });
 
 // Confidence classification.
+// Data-shape normalization (the crash was here: live export uses {nodes:[...]}).
+ok('normalizeConnection handles {nodes:[...]}, array, null, undefined, missing', () => {
+  assert.deepStrictEqual(normalizeConnection({nodes: [{handle: 'a'}]}), [{handle: 'a'}]);
+  assert.deepStrictEqual(normalizeConnection([{handle: 'b'}]), [{handle: 'b'}]);
+  assert.deepStrictEqual(normalizeConnection(null), []);
+  assert.deepStrictEqual(normalizeConnection(undefined), []);
+  assert.deepStrictEqual(normalizeConnection({}), []);
+  assert.deepStrictEqual(collectionsOf({}), []);
+  assert.deepStrictEqual(collectionsOf({collections: null}), []);
+});
+ok('[regression] REAL GraphQL connection shape classifies without error → HIGH', () => {
+  const p = {tags: [], collections: {nodes: [{id: 'gid://shopify/Collection/1', handle: 'love-romance', title: 'Love & Romance'}]}};
+  assert.strictEqual(classifyConfidence(p, 'love-romance', new Set(['love-romance'])), 'HIGH');
+});
+ok('publishedNames reads the connection shape', () =>
+  assert.deepStrictEqual(
+    publishedNames({resourcePublications: {nodes: [{isPublished: true, publication: {name: 'New Greenhouse Luxury Storefront'}}, {isPublished: false, publication: {name: 'Online Store'}}]}}),
+    ['New Greenhouse Luxury Storefront'],
+  ));
 ok('HIGH from explicit occasion tag', () =>
   assert.strictEqual(classifyConfidence({tags: ['occasion:birthday']}, 'birthday-flowers', new Set()), 'HIGH'));
-ok('HIGH from related-collection membership', () =>
+ok('HIGH from related-collection membership (connection shape)', () =>
+  assert.strictEqual(classifyConfidence({tags: [], collections: {nodes: [{handle: 'birthday'}]}}, 'birthday-flowers', new Set(['birthday'])), 'HIGH'));
+ok('HIGH from related-collection membership (array fallback)', () =>
   assert.strictEqual(classifyConfidence({tags: [], collections: [{handle: 'birthday'}]}, 'birthday-flowers', new Set(['birthday'])), 'HIGH'));
+ok('missing/null collections do not throw and yield AMBIGUOUS on title-only', () => {
+  assert.strictEqual(classifyConfidence({tags: [], handle: 'sunshine-birthday-bouquet', title: 'Sunshine Birthday Bouquet'}, 'birthday-flowers', new Set()), 'AMBIGUOUS');
+  assert.strictEqual(classifyConfidence({tags: [], collections: null, handle: 'x', title: 'x'}, 'birthday-flowers', new Set()), 'AMBIGUOUS');
+});
 ok('HIGH gift-baskets from productType', () =>
   assert.strictEqual(classifyConfidence({productType: 'Gift Basket', tags: []}, 'gift-baskets', new Set()), 'HIGH'));
 ok('HIGH tropical from canonical flower:tropical-mixed tag', () =>

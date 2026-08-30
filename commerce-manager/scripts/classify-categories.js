@@ -39,6 +39,14 @@ const hasTagPrefix = (p, pre) => tagsOf(p).some((x) => lc(x).startsWith(lc(pre))
 const eqType = (p, t) => lc(p.productType) === lc(t);
 const nameBlob = (p) => lc(`${p.handle} ${p.title}`);
 
+// Admin GraphQL serializes connections as { nodes: [...] }. Normalize any
+// connection-or-array-or-null shape to a plain array. Also tolerates an already
+// normalized array, so both raw exports and fixtures work.
+export const normalizeConnection = (x) => (Array.isArray(x) ? x : x && Array.isArray(x.nodes) ? x.nodes : []);
+export const collectionsOf = (p) => normalizeConnection(p && p.collections);
+export const publicationsOf = (node) => normalizeConnection(node && node.resourcePublications);
+export const publishedNames = (node) => publicationsOf(node).filter((n) => n && n.isPublished).map((n) => n.publication?.name);
+
 /** Evaluate one Shopify smart-collection rule against a product. */
 export function productMatchesRule(p, rule) {
   const col = lc(rule.column);
@@ -101,7 +109,7 @@ const CATEGORY_STRONG = {
 /** Classify a candidate's confidence for a category using catalogue evidence only. */
 export function classifyConfidence(p, cat, relatedCollections) {
   if (CATEGORY_STRONG[cat](p)) return 'HIGH'; // explicit occasion tag / matching productType / strong taxonomy
-  const related = (p.collections || []).some((c) => relatedCollections.has(c.handle));
+  const related = collectionsOf(p).some((c) => relatedCollections.has(c.handle));
   if (related) return 'HIGH'; // already in a strongly-related collection
   // medium: has SOME taxonomy tag in the right family but not the canonical one
   if (cat === 'tropical-flowers' && hasTagPrefix(p, 'flower:')) return 'MEDIUM';
@@ -174,7 +182,7 @@ function main() {
       handle: cat,
       found: !!coll,
       productsCount: coll?.productsCount?.count ?? null,
-      publication: (coll?.resourcePublications?.nodes || []).filter((n) => n.isPublished).map((n) => n.publication?.name),
+      publication: publishedNames(coll),
       ruleSet,
       currentlySatisfyCount: currentlySatisfy.length,
       candidateCount: rows.length,
@@ -202,21 +210,21 @@ function main() {
   const weddingColl = new Set(WEDDING_COLLECTIONS);
   const weddingProducts = products.filter(
     (p) => /wedding|bridal|bride/i.test(p.productType || '') || tagsOf(p).some((t) => /wedding|bridal/i.test(t)) ||
-      (p.collections || []).some((c) => weddingColl.has(c.handle) || /wedding|bridal/i.test(c.handle)),
+      collectionsOf(p).some((c) => weddingColl.has(c.handle) || /wedding|bridal/i.test(c.handle)),
   );
   const wedding = {
-    specific: weddingProducts.filter((p) => /wedding|bridal/i.test(p.productType || '') || (p.collections || []).some((c) => weddingColl.has(c.handle)))
+    specific: weddingProducts.filter((p) => /wedding|bridal/i.test(p.productType || '') || collectionsOf(p).some((c) => weddingColl.has(c.handle)))
       .map((p) => ({handle: p.handle, status: p.status, productType: p.productType})),
-    multipurposeStems: weddingProducts.filter((p) => !/wedding|bridal/i.test(p.productType || '') && !(p.collections || []).some((c) => weddingColl.has(c.handle)))
+    multipurposeStems: weddingProducts.filter((p) => !/wedding|bridal/i.test(p.productType || '') && !collectionsOf(p).some((c) => weddingColl.has(c.handle)))
       .map((p) => ({handle: p.handle, status: p.status, tags: tagsOf(p).filter((t) => /wedding|bridal|event/i.test(t))})),
     collections: WEDDING_COLLECTIONS.map((h) => {
       const c = collByHandle.get(h);
-      return c ? {handle: h, products: c.productsCount?.count ?? null, ruleSet: c.ruleSet, published: (c.resourcePublications?.nodes || []).filter((n) => n.isPublished).map((n) => n.publication?.name)} : {handle: h, found: false};
+      return c ? {handle: h, products: c.productsCount?.count ?? null, ruleSet: c.ruleSet, published: publishedNames(c)} : {handle: h, found: false};
     }),
   };
 
   // corporate / sympathy validation
-  const membersOf = (h) => new Set(products.filter((p) => (p.collections || []).some((c) => c.handle === h)).map((p) => p.handle));
+  const membersOf = (h) => new Set(products.filter((p) => collectionsOf(p).some((c) => c.handle === h)).map((p) => p.handle));
   const cg = membersOf('corporate-gifting');
   const cgs = membersOf('corporate-gifts');
   const validation = {
@@ -268,7 +276,9 @@ function recommend(cat, ruleSet, rows, highFailing) {
 function renderMd(a) {
   const catBlock = (cat) => {
     const c = a.categories[cat];
-    const rule = c.ruleSet ? c.ruleSet.rules.map((r) => `${r.column} ${r.relation} "${r.condition}"`).join(c.ruleSet.appliedDisjunctively ? ' OR ' : ' AND ') : '(no smart rule / manual)';
+    const rule = c.ruleSet && Array.isArray(c.ruleSet.rules)
+      ? c.ruleSet.rules.map((r) => `${r.column} ${r.relation} "${r.condition}"`).join(c.ruleSet.appliedDisjunctively ? ' OR ' : ' AND ')
+      : '(no smart rule / manual)';
     const rows = c.candidates
       .sort((x, y) => ({HIGH: 0, MEDIUM: 1, AMBIGUOUS: 2}[x.confidence] - {HIGH: 0, MEDIUM: 1, AMBIGUOUS: 2}[y.confidence]))
       .map((r) => `| \`${r.handle}\` | ${r.confidence} | ${r.satisfiesRule ? 'in' : 'OUT'} | ${r.status} | ${r.satisfiesRule ? '—' : (r.failReason || '').slice(0, 120)} |`)
