@@ -42,15 +42,19 @@ ok('[gate] a still-duplicate new title is rejected', () =>
 ok('[gate] an over-60 new title is rejected', () =>
   assert.ok(validateNewTitle('X'.repeat(61)).some((e) => /> 60/.test(e))));
 
-ok('buildInput yields EXACTLY { id, seo:{ title } }', () => {
-  const i = buildInput('gid://x', 'New Title');
-  assert.deepStrictEqual(i, {id: 'gid://x', seo: {title: 'New Title'}});
+ok('buildInput yields EXACTLY { id, seo:{ title, description } } (description re-supplied)', () => {
+  const i = buildInput('gid://x', 'New Title', 'Existing description');
+  assert.deepStrictEqual(i, {id: 'gid://x', seo: {title: 'New Title', description: 'Existing description'}});
   assertInputScope(i);
 });
-ok('[gate] extra top-level payload field rejected (seo.description)', () =>
-  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't'}, description: 'HACK'}), /top-level keys must be id,seo/));
-ok('[gate] extra seo field rejected (description in seo)', () =>
-  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't', description: 'HACK'}}), /seo keys must be exactly "title"/));
+ok('[gate] omitting seo.description is REJECTED (the incident cause)', () =>
+  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't'}}), /seo keys must be exactly description,title/));
+ok('[gate] null seo.description is REJECTED (would null it live)', () =>
+  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't', description: null}}), /seo keys must be exactly description,title|must be re-supplied/));
+ok('[gate] extra top-level payload field rejected', () =>
+  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't', description: 'd'}, tags: ['HACK']}), /top-level keys must be id,seo/));
+ok('[gate] extra seo field rejected (keywords)', () =>
+  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't', description: 'd', keywords: 'HACK'}}), /seo keys must be exactly description,title/));
 
 ok('prereqs PASS for all 4 authoritative fixtures', () => {
   for (const a of APPROVED) assert.deepStrictEqual(checkPrereqs(LIVE.get(a.handle), a), [], a.handle);
