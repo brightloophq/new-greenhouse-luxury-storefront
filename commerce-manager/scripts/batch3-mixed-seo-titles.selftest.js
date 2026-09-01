@@ -4,6 +4,7 @@ import {
   APPROVED, ALLOWLIST, EXPECTED_CURRENT_SEO_TITLE, assertAllowed, validateNewTitle,
   buildInput, assertInputScope, checkPrereqs, fingerprint, changedPaths, writeAuthorized, buildPlan,
   repairAuthorized, structuralBackupOk, checkRepairPrereqs, buildRepairPlan,
+  hasRepairFlag, assertNormalRoutingAllowed,
 } from './batch3-mixed-seo-titles.js';
 
 let pass = 0;
@@ -167,6 +168,21 @@ ok('[incident 9] normal-write and repair auth vars are independent', () => {
   // each only fires with its own phrase
   assert.strictEqual(repairAuthorized(argv, {TNG_BATCH3_REPAIR_AUTH: 'AUTHORIZE BATCH3 SEO DESCRIPTION REPAIR'}), true);
   assert.strictEqual(writeAuthorized(argv, {TNG_BATCH3_WRITE_AUTH: 'AUTHORIZE BATCH3 MIXED SEO TITLE WRITE'}), true);
+});
+ok('[routing] normal path is blocked when --repair is present', () => {
+  assert.strictEqual(hasRepairFlag(['--repair', 'dir']), true);
+  assert.strictEqual(hasRepairFlag(['--commit']), false);
+  assert.throws(() => assertNormalRoutingAllowed(['--repair', 'dir', '--commit']), /ROUTING BUG/);
+  assert.doesNotThrow(() => assertNormalRoutingAllowed(['--commit', '--i-understand-this-writes-to-shopify']));
+});
+ok('[routing] repair with live seo.description=null sources description from BACKUP, not live', () => {
+  const {plans: rp, allOk: rok} = buildRepairPlan(DAMAGED, BACKUP); // DAMAGED has live description null
+  assert.strictEqual(rok, true);
+  for (const p of rp) {
+    assert.strictEqual(p.before.seoDescription, null); // live is null (damaged)
+    assert.strictEqual(p.input.seo.description, BACKUP.get(p.handle).seo.description); // payload uses backup
+    assert.notStrictEqual(p.input.seo.description, null);
+  }
 });
 ok('[incident 10] rollback input restores BOTH original seo.title and description', () => {
   const b = BACKUP.get('greenery-mixed');
