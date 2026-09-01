@@ -433,7 +433,19 @@ Remaining backlog (tracked, prepared as separate reversible batches — none exe
 
 ## Gate-1 Incident Note — "Mixed" SEO-title de-duplication (2026-09-01)
 
-> Status: **recovery prepared, NOT yet performed.**
+> Status: **RESOLVED (2026-09-01).** Repair executed and verified live.
+
+**Resolution (verified live):**
+- The initial `seo.title` update succeeded (four unique titles).
+- Post-write verification detected the collateral `seo.description` nulling; a read-only
+  forensic confirmed the `global.description_tag` metafield had been removed.
+- A dedicated one-step `--repair` mode was built and dry-run verified, then executed under its
+  own independent interlock.
+- **Result:** all four original `seo.description` values restored **exactly**; the four approved
+  unique `seo.title` values preserved; `global.description_tag` restored; protected product
+  fields verified identical. **Incident resolved.**
+
+**Original record (unchanged):**
 
 - Gate-1's first write updated the four `*-mixed` products' `seo.title` to unique values
   successfully (`Mixed Gift Bouquet / Greenery / Novelty Flowers / Tropical Flowers | The
