@@ -431,6 +431,30 @@ Remaining backlog (tracked, prepared as separate reversible batches — none exe
 7. Gated wedding/event discovery architecture (storefront, later).
 8. Image backlog and thin product descriptions as later work where appropriate.
 
+## Gate-1 Incident Note — "Mixed" SEO-title de-duplication (2026-09-01)
+
+> Status: **recovery prepared, NOT yet performed.**
+
+- Gate-1's first write updated the four `*-mixed` products' `seo.title` to unique values
+  successfully (`Mixed Gift Bouquet / Greenery / Novelty Flowers / Tropical Flowers | The
+  New Greenhouse`).
+- **Collateral effect:** the mutation used `productUpdate(input:{id, seo:{title}})`. Shopify's
+  `ProductInput.seo` (`SEOInput`) **replaces** the SEO object, so omitting `description` set
+  `seo.description` to **null** on all four, which also removed the backing
+  `global.description_tag` metafield (metafield count 2 → 1).
+- **Verification caught it:** the batch's own post-write fingerprint check flagged
+  `seoDescriptionSha256` and `metafieldsCount` on all four; a read-only forensic then confirmed
+  the descriptions were nulled and `global.description_tag` disappeared.
+- **No broader damage:** forensic found `seo.title` correct, and product title, descriptionHtml,
+  status, productType, tags, publication, variants, images and unrelated metafields unchanged.
+  Forensic mutations = 0.
+- **Recovery prepared (not run):** a dedicated, dry-run-default `--repair` mode restores the exact
+  original `seo.description` from the timestamped pre-write backup while keeping the approved
+  unique `seo.title`. It has its own independent interlock (`TNG_BATCH3_REPAIR_AUTH`).
+- **Writer contract hardened:** all Batch-3 SEO writes now always re-supply the companion
+  `seo.description` (payload `{id, seo:{title, description}}`); a title-only/omitted/null
+  description payload is now rejected. Incident regression tests added.
+
 ## Safety / provenance
 
 - Read-only audit. **Shopify writes: 0.** No write script, no catalogue change, no storefront code change.

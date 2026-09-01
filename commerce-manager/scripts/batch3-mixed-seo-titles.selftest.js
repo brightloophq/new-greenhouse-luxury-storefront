@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import {
   APPROVED, ALLOWLIST, EXPECTED_CURRENT_SEO_TITLE, assertAllowed, validateNewTitle,
   buildInput, assertInputScope, checkPrereqs, fingerprint, changedPaths, writeAuthorized, buildPlan,
+  repairAuthorized, structuralBackupOk, checkRepairPrereqs, buildRepairPlan,
 } from './batch3-mixed-seo-titles.js';
 
 let pass = 0;
@@ -106,6 +107,72 @@ ok('buildPlan: all prereqs pass; 4 payloads scoped to id+seo.title', () => {
   assert.strictEqual(allOk, true);
   assert.strictEqual(plans.length, 4);
   for (const p of plans) assertInputScope(p.input);
+});
+
+/* ---------------------------- incident regression tests (REPAIR mode) ---------------------- */
+// Damaged live state: approved unique title present, seo.description NULLED.
+const damaged = (handle) => mk(handle, {
+  seo: {title: APPROVED.find((a) => a.handle === handle).newSeoTitle, description: null},
+});
+const DAMAGED = new Map(APPROVED.map((a) => [a.handle, damaged(a.handle)]));
+// A structurally valid backup: original duplicate title + non-null description.
+const BACKUP = new Map(APPROVED.map((a) => [a.handle, {
+  handle: a.handle, id: `gid://shopify/Product/${a.handle}`,
+  seo: {title: 'Mixed | The New Greenhouse', description: `Original ${a.handle} description.`},
+}]));
+const backupArr = [...BACKUP.values()];
+
+ok('[incident 1] title-only SEOInput is rejected by the writer', () =>
+  assert.throws(() => assertInputScope({id: 'x', seo: {title: 't'}}), /seo keys must be exactly description,title/));
+ok('[incident 2] repair payload cannot omit description', () => {
+  const {plans: rp} = buildRepairPlan(DAMAGED, BACKUP);
+  for (const p of rp) assert.ok('description' in p.input.seo);
+});
+ok('[incident 3] repair payload cannot use null description', () =>
+  assert.throws(() => assertInputScope(buildInput('gid://x', 'T', null)), /description,title|must be re-supplied/));
+ok('[incident 4] repair refuses wrong current title', () => {
+  const live = new Map([['tropicals-mixed', mk('tropicals-mixed', {seo: {title: 'Wrong Title', description: null}})]]);
+  const fails = checkRepairPrereqs(live.get('tropicals-mixed'), BACKUP.get('tropicals-mixed'), APPROVED[3]);
+  assert.ok(fails.some((f) => /current seo.title .* != approved unique/.test(f)));
+});
+ok('[incident 5] repair refuses non-null current description', () => {
+  const live = mk('tropicals-mixed', {seo: {title: APPROVED[3].newSeoTitle, description: 'still here'}});
+  assert.ok(checkRepairPrereqs(live, BACKUP.get('tropicals-mixed'), APPROVED[3]).some((f) => /current seo.description is NOT null/.test(f)));
+});
+ok('[incident 6] repair refuses live/backup ID mismatch', () => {
+  const live = mk('tropicals-mixed', {id: 'gid://shopify/Product/DIFFERENT', seo: {title: APPROVED[3].newSeoTitle, description: null}});
+  assert.ok(checkRepairPrereqs(live, BACKUP.get('tropicals-mixed'), APPROVED[3]).some((f) => /live id .* != backup id/.test(f)));
+});
+ok('[incident 7] repair refuses incomplete/invalid backup', () => {
+  assert.strictEqual(structuralBackupOk(backupArr), true);
+  assert.strictEqual(structuralBackupOk(backupArr.slice(0, 3)), false); // only 3 entries
+  assert.strictEqual(structuralBackupOk([...backupArr.slice(0, 3), {handle: 'tropicals-mixed', id: 'x', seo: {title: 'Mixed | The New Greenhouse'}}]), false); // missing description
+});
+ok('[incident 8] repair dry-run plan is valid and sends nothing (pure)', () => {
+  const {plans: rp, allOk: rok} = buildRepairPlan(DAMAGED, BACKUP);
+  assert.strictEqual(rok, true);
+  assert.strictEqual(rp.length, 4);
+  for (const p of rp) {
+    assertInputScope(p.input);
+    assert.strictEqual(p.input.seo.title, APPROVED.find((a) => a.handle === p.handle).newSeoTitle);
+    assert.strictEqual(p.input.seo.description, BACKUP.get(p.handle).seo.description);
+  }
+});
+ok('[incident 9] normal-write and repair auth vars are independent', () => {
+  const argv = ['--commit', '--i-understand-this-writes-to-shopify'];
+  // write auth alone does NOT authorize repair
+  assert.strictEqual(repairAuthorized(argv, {TNG_BATCH3_WRITE_AUTH: 'AUTHORIZE BATCH3 MIXED SEO TITLE WRITE'}), false);
+  // repair auth alone does NOT authorize normal write
+  assert.strictEqual(writeAuthorized(argv, {TNG_BATCH3_REPAIR_AUTH: 'AUTHORIZE BATCH3 SEO DESCRIPTION REPAIR'}), false);
+  // each only fires with its own phrase
+  assert.strictEqual(repairAuthorized(argv, {TNG_BATCH3_REPAIR_AUTH: 'AUTHORIZE BATCH3 SEO DESCRIPTION REPAIR'}), true);
+  assert.strictEqual(writeAuthorized(argv, {TNG_BATCH3_WRITE_AUTH: 'AUTHORIZE BATCH3 MIXED SEO TITLE WRITE'}), true);
+});
+ok('[incident 10] rollback input restores BOTH original seo.title and description', () => {
+  const b = BACKUP.get('greenery-mixed');
+  const input = buildInput(b.id, b.seo.title, b.seo.description); // mirrors rollback()
+  assertInputScope(input);
+  assert.deepStrictEqual(input, {id: b.id, seo: {title: 'Mixed | The New Greenhouse', description: 'Original greenery-mixed description.'}});
 });
 
 console.log('\n── simulated DRY-RUN (fixture) ──');
