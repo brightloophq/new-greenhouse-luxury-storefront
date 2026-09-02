@@ -1,27 +1,39 @@
-// batch-e-occasions.js — Phase-1 Batch E: correct membership of the three SMART retail
-// occasion collections (birthday, anniversary, love-and-romance). Dry-run by default.
+// batch-e-occasions.js — Phase-1 Batch E: correct membership of the three SMART retail occasion
+// collections (birthday, anniversary, love-and-romance). Dry-run by default.
 //
-// These are SMART collections, so membership is derived from a rule/tags — you cannot use
-// collectionRemoveProducts. The script selects the SMALLEST SAFE mechanism from the LIVE
-// ruleSet (chooseOccasionMechanism in sprint-lib):
-//   • rule-tighten  — add one AND-clause `TAG = channel:retail` (0 product-tag changes) when
-//                     every removal is excluded solely for not being retail; OR
-//   • tag-correct   — remove ONLY the single matching occasion tag from each wrong product,
-//                     preserving every unrelated tag (full arrays backed up).
-// Never removes legitimate multi-occasion membership; never lets wholesale/wedding/add-ons
-// into a public retail occasion collection; never adds add-ons automatically.
+// Approved mechanism (from the live preview): TAG-CORRECT. Keep the SMART rules unchanged and
+// remove ONLY the relevant occasion classification tag, preserving every unrelated tag.
+//
+// CROSS-COLLECTION OVERLAP SAFETY (the hazard the live preview exposed): a product targeted by
+// more than one collection must receive ONE cumulative product update computed from ONE fresh
+// read — never independent stale before/after writes per collection. This script builds a single
+// cumulative plan PER UNIQUE PRODUCT (union of approved occasion tags to remove) and sends at
+// most one mutation per product.
+//
+// ALLOWLIST — the only removable tags are occasion:birthday / occasion:anniversary /
+// occasion:romance, and only for a product/tag pair present in the fresh validated plan.
+// No other tag is ever added, removed, renamed, reordered, or normalized.
 //
 // Usage:
 //   node scripts/batch-e-occasions.js                 # DRY-RUN (0 mutations)
-//   node scripts/batch-e-occasions.js --live-preview  # DRY-RUN + read-only exact tags/IDs
+//   node scripts/batch-e-occasions.js --live-preview  # DRY-RUN + read-only exact fresh tags
 //   TNG_SPRINT_E_AUTH="AUTHORIZE SPRINT E OCCASION MEMBERSHIP" \
 //     node scripts/batch-e-occasions.js --commit --i-understand-this-writes-to-shopify
 //
-import {OCCASION_CANONICAL, chooseOccasionMechanism, minimalOccasionTagRemoval} from './sprint-lib.js';
+import {
+  OCCASION_CANONICAL,
+  chooseOccasionMechanism,
+  buildCumulativeOccasionRemovalPlan,
+  overlapProducts,
+  applyCumulativeRemoval,
+  REMOVABLE_OCCASION_TAGS,
+} from './sprint-lib.js';
 import {loadState, assertFresh, parseInterlock, backupDir, writeBackup, assertReadOnly, hr, bail} from './sprint-io.js';
 
 const ENV = 'TNG_SPRINT_E_AUTH';
 const PHRASE = 'AUTHORIZE SPRINT E OCCASION MEMBERSHIP';
+const EXPECTED_INTENDED = {birthday: 16, anniversary: 9, 'love-and-romance': 17};
+const EXPECTED_LIVE = {birthday: 27, anniversary: 19, 'love-and-romance': 21};
 
 const PROD_QUERY = `#graphql
   query E_Prod($handle: String!) { productByHandle(handle: $handle) { id handle title tags productType } }
@@ -34,146 +46,131 @@ const COLL_QUERY = `#graphql
 const TAGS_REMOVE = `#graphql
   mutation E_TagsRemove($id: ID!, $tags: [String!]!) { tagsRemove(id: $id, tags: $tags) { userErrors { field message } } }
 `;
-const COLL_UPDATE = `#graphql
-  mutation E_CollUpdate($input: CollectionInput!) {
-    collectionUpdate(input: $input) { collection { id handle ruleSet { appliedDisjunctively rules { column relation condition } } } userErrors { field message } }
-  }
-`;
 
-/** The occasion tag the rule keys on (single tag-equals rule). */
+/** The single occasion tag a collection's SMART rule keys on. */
 function occasionTagOf(ruleSet) {
   const r = (ruleSet?.rules || []).find((x) => String(x.column).toLowerCase() === 'tag' && /^occasion:/i.test(x.condition));
   return r ? r.condition : null;
 }
+/** A collection's rule must be exactly one TAG = occasion:* rule (what tag-correct assumes). */
+function isSingleOccasionTagRule(ruleSet) {
+  return !!(ruleSet && ruleSet.appliedDisjunctively !== true && Array.isArray(ruleSet.rules) && ruleSet.rules.length === 1 &&
+    String(ruleSet.rules[0].column).toLowerCase() === 'tag' && /^occasion:/i.test(ruleSet.rules[0].condition));
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   const gate = parseInterlock(process.argv, ENV, PHRASE);
   const {state, ageHours, fresh} = loadState();
-  console.log(hr('BATCH E — retail occasion membership correction (smart collections)'));
+  console.log(hr('BATCH E — occasion membership correction (tag-correct, overlap-safe)'));
   console.log(gate.report());
   console.log(`  evidence: sprint-state.json (${ageHours.toFixed(1)}h old, fresh=${fresh})`);
 
-  const plans = [];
+  // Assemble per-collection removal sets + confirm mechanism is tag-correct and the rule shape.
+  const perCollection = [];
   for (const h of OCCASION_CANONICAL) {
     const occ = state.occasion?.[h];
     const coll = state.collections?.[h];
     if (!occ || !coll?.found) bail(`missing evidence for occasion ${h}`);
-    if (occ.toAdd?.length) bail(`Batch E does not auto-add (occasion ${h} toAdd=${occ.toAdd.length}); investigate before proceeding`);
-    const ruleSet = coll.ruleSet;
-    const mech = chooseOccasionMechanism(ruleSet, occ.toRemoveReasons || occ.toRemove?.map((x) => ({handle: x})) || []);
-    const occTag = occasionTagOf(ruleSet);
-    plans.push({
-      handle: h,
-      id: coll.id,
-      isSmart: coll.isSmart,
-      rule: coll.rule,
-      ruleSet,
-      liveCount: occ.liveMemberCount,
-      intended: occ.intendedMemberCount,
-      toRemove: occ.toRemove || [],
-      reasons: occ.toRemoveReasons || [],
-      mechanism: mech,
-      occasionTag: occTag,
-    });
+    if (occ.toAdd?.length) bail(`Batch E does not auto-add (occasion ${h} toAdd=${occ.toAdd.length}); investigate`);
+    const mech = chooseOccasionMechanism(coll.ruleSet, occ.toRemoveReasons || occ.toRemove?.map((x) => ({handle: x})) || []);
+    if (mech.mechanism !== 'tag-correct') bail(`Batch E authorized as tag-correct, but ${h} resolves to "${mech.mechanism}" — re-confirm mechanism before proceeding`);
+    if (!isSingleOccasionTagRule(coll.ruleSet)) bail(`${h}: rule is not a single occasion TAG rule — tag-correct is unsafe; STOP`);
+    if (occ.intendedMemberCount !== EXPECTED_INTENDED[h]) bail(`${h}: intended ${occ.intendedMemberCount} != expected ${EXPECTED_INTENDED[h]} — evidence drift; STOP`);
+    perCollection.push({handle: h, occasionTag: occasionTagOf(coll.ruleSet), toRemove: occ.toRemove || [], id: coll.id, ruleSet: coll.ruleSet, liveCount: occ.liveMemberCount});
   }
 
-  console.log('\n' + hr('PLAN (per collection)'));
-  for (const p of plans) {
-    console.log(`\n  ▸ ${p.handle}  id=${p.id}  [${p.isSmart ? 'SMART' : 'manual'}]`);
-    console.log(`      rule: ${p.rule}`);
-    console.log(`      membership: live=${p.liveCount} → intended=${p.intended}  (remove ${p.toRemove.length}, add 0)`);
-    console.log(`      mechanism: ${p.mechanism.mechanism} — ${p.mechanism.reason}`);
-    console.log(`      blast radius: ${JSON.stringify(p.mechanism.blastRadius || {})}`);
-    if (p.mechanism.mechanism === 'rule-tighten') {
-      console.log(`      proposed rule change: ADD AND-clause ${JSON.stringify(p.mechanism.addRule)} (touches 0 product tags)`);
-    } else if (p.mechanism.mechanism === 'tag-correct') {
-      console.log(`      occasion tag to remove per product: ${p.occasionTag || '(UNKNOWN — rule not single occasion tag; BLOCKER)'}`);
-    }
-    console.log(`      affected products (remove) — ${p.toRemove.length}:`);
-    for (const r of p.reasons) {
-      const why = [r.wedding && 'wedding', r.addOn && 'add-on', r.notRetailMember && 'not-retail-member'].filter(Boolean).join(', ') || 'not a retail occasion member';
-      const change = p.mechanism.mechanism === 'rule-tighten' ? 'excluded by tightened rule (tag unchanged)' : `remove tag "${p.occasionTag}" (preserve all others)`;
-      console.log(`        - ${r.handle}: reason=${why} → ${change}`);
-    }
-  }
+  // ONE cumulative plan per unique product.
+  const cumulative = buildCumulativeOccasionRemovalPlan(perCollection);
+  const overlaps = overlapProducts(cumulative);
+  const plannedRemovals = perCollection.reduce((n, c) => n + c.toRemove.length, 0);
+
+  console.log('\n' + hr('CUMULATIVE PLAN'));
+  console.log(`  planned collection-membership removals: ${plannedRemovals}`);
+  console.log(`  UNIQUE products actually mutated       : ${cumulative.length}`);
+  console.log(`  overlap products (>1 collection)       : ${overlaps.length}`);
+  for (const c of perCollection) console.log(`    ${c.handle}: rule TAG="${c.occasionTag}" · live=${c.liveCount} → intended=${EXPECTED_INTENDED[c.handle]} · remove ${c.toRemove.length}`);
+
+  console.log('\n' + hr('OVERLAP TABLE'));
+  if (!overlaps.length) console.log('  (none in evidence)');
+  for (const o of overlaps) console.log(`  ${o.handle}  ← ${o.fromCollections.join(' + ')}  ⇒ remove [${o.removeTags.join(', ')}]  (ONE cumulative update)`);
+
+  console.log('\n' + hr('PER-PRODUCT CUMULATIVE REMOVALS'));
+  for (const p of cumulative) console.log(`  ${p.handle}: remove [${p.removeTags.join(', ')}]  (from ${p.fromCollections.join(', ')})`);
 
   if (gate.dryRun) {
     if (gate.livePreview) {
       const {adminGraphQL} = await import('../src/shopify-admin.js');
-      console.log('\n' + hr('LIVE PREVIEW (read-only exact tags)'));
-      for (const p of plans) {
-        for (const r of p.reasons) {
-          const d = await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: r.handle});
-          const prod = d.productByHandle;
-          if (!prod) { console.log(`        ${r.handle}: NOT FOUND live`); continue; }
-          if (p.mechanism.mechanism === 'tag-correct' && p.occasionTag) {
-            const {before, after, removed, unrelatedPreserved} = minimalOccasionTagRemoval(prod.tags, p.occasionTag);
-            console.log(`        ${r.handle} id=${prod.id}\n            before: [${before.join(', ')}]\n            after : [${after.join(', ')}]  (removed ${JSON.stringify(removed)}, unrelatedPreserved=${unrelatedPreserved})`);
-          } else {
-            console.log(`        ${r.handle} id=${prod.id} tags=[${prod.tags.join(', ')}] (rule-tighten: no tag change)`);
-          }
-        }
+      console.log('\n' + hr('LIVE PREVIEW (read-only exact fresh tags)'));
+      for (const p of cumulative) {
+        const prod = (await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: p.handle})).productByHandle;
+        if (!prod) { console.log(`  ${p.handle}: NOT FOUND live`); continue; }
+        const {before, after, removed, missing, unrelatedPreserved} = applyCumulativeRemoval(prod.tags, p.removeTags);
+        console.log(`  ${p.handle} id=${prod.id}`);
+        console.log(`      before: [${before.join(', ')}]`);
+        console.log(`      after : [${after.join(', ')}]`);
+        console.log(`      remove ${JSON.stringify(removed)}${missing.length ? ` · ⚠ MISSING (drift): ${JSON.stringify(missing)}` : ''} · unrelatedPreserved=${unrelatedPreserved}`);
       }
     }
     console.log('\n' + hr('DRY-RUN COMPLETE'));
     console.log('  Shopify mutations sent: 0');
-    const anyUnknown = plans.some((p) => p.mechanism.mechanism === 'tag-correct' && !p.occasionTag);
-    if (anyUnknown) console.log('  BLOCKER: a tag-correct collection has no single occasion-tag rule — resolve mechanism before --commit.');
     console.log(`  To execute: set ${ENV} and pass --commit --i-understand-this-writes-to-shopify`);
     return;
   }
 
-  // ---- LIVE WRITE PATH ----
+  // ---- LIVE WRITE PATH (cumulative, one mutation per unique product) ----
   assertFresh({fresh, ageHours});
   const {adminGraphQL} = await import('../src/shopify-admin.js');
   const dir = backupDir('batch-e-occasions');
 
-  for (const p of plans) {
-    // re-verify collection id + rule live
-    const cv = await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: p.handle});
-    if (cv.collectionByHandle?.id !== p.id) bail(`${p.handle}: live id drift — abort`);
-
-    if (p.mechanism.mechanism === 'rule-tighten') {
-      const original = cv.collectionByHandle.ruleSet;
-      await writeBackup(dir, `ruleset.${p.handle}.before.json`, {handle: p.handle, id: p.id, ruleSet: original});
-      const newRules = [...original.rules.map((r) => ({column: r.column, relation: r.relation, condition: r.condition})), {column: 'TAG', relation: 'EQUALS', condition: 'channel:retail'}];
-      const res = await adminGraphQL(COLL_UPDATE, {input: {id: p.id, ruleSet: {appliedDisjunctively: original.appliedDisjunctively, rules: newRules}}});
-      const errs = res.collectionUpdate?.userErrors || [];
-      if (errs.length) bail(`${p.handle}: collectionUpdate errors ${JSON.stringify(errs)} — STOP`);
-      // verify member count == intended
-      const after = await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: p.handle});
-      const cnt = after.collectionByHandle?.productsCount?.count;
-      if (cnt !== p.intended) bail(`${p.handle}: after rule-tighten count=${cnt} != intended ${p.intended} — STOP (rollback ruleset from backup)`);
-      console.log(`  ✓ ${p.handle}: rule tightened, membership ${p.liveCount} → ${cnt}`);
-    } else if (p.mechanism.mechanism === 'tag-correct') {
-      if (!p.occasionTag) bail(`${p.handle}: no occasion tag resolved — abort`);
-      const before = [];
-      // backup full tag arrays first
-      for (const r of p.reasons) {
-        const d = await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: r.handle});
-        if (!d.productByHandle) bail(`${r.handle}: not found live — abort`);
-        before.push({handle: r.handle, id: d.productByHandle.id, tags: d.productByHandle.tags});
-      }
-      await writeBackup(dir, `tags.${p.handle}.before.json`, before);
-      for (const b of before) {
-        const {removed, after: expectedAfter, unrelatedPreserved} = minimalOccasionTagRemoval(b.tags, p.occasionTag);
-        if (!removed.length) { console.log(`  · ${b.handle}: tag ${p.occasionTag} already absent — skip`); continue; }
-        if (!unrelatedPreserved) bail(`${b.handle}: refusing — computed change would touch unrelated tags`);
-        const res = await adminGraphQL(TAGS_REMOVE, {id: b.id, tags: removed});
-        const errs = res.tagsRemove?.userErrors || [];
-        if (errs.length) bail(`${b.handle}: tagsRemove errors ${JSON.stringify(errs)} — STOP`);
-        // verify exact resulting tags
-        const v = await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: b.handle});
-        const now = v.productByHandle.tags;
-        if (now.map((t) => t.toLowerCase()).includes(p.occasionTag.toLowerCase())) bail(`${b.handle}: tag still present after removal — STOP`);
-        if (now.slice().sort().join('|') !== expectedAfter.slice().sort().join('|')) bail(`${b.handle}: resulting tags != expected (unrelated tag changed) — STOP`);
-        console.log(`  ✓ ${b.handle}: removed ${JSON.stringify(removed)}, ${now.length} tags preserved`);
-      }
-    } else {
-      bail(`${p.handle}: unsupported mechanism ${p.mechanism.mechanism} — resolve manually`);
-    }
+  // 1) refresh collections: verify ids, rule shape unchanged, live counts as expected
+  for (const c of perCollection) {
+    const cv = (await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: c.handle})).collectionByHandle;
+    if (cv?.id !== c.id) bail(`${c.handle}: live id drift — abort`);
+    if (!isSingleOccasionTagRule(cv.ruleSet) || occasionTagOf(cv.ruleSet).toLowerCase() !== c.occasionTag.toLowerCase()) bail(`${c.handle}: SMART rule changed — abort`);
+    if (cv.productsCount?.count !== EXPECTED_LIVE[c.handle]) bail(`${c.handle}: live count ${cv.productsCount?.count} != expected ${EXPECTED_LIVE[c.handle]} — drift; STOP before first mutation`);
   }
-  console.log(`\n  ✓ Batch E complete. Rollback: restore ruleset/tags from ${dir}`);
+
+  // 2) fresh-read every unique product ONCE; verify ids + approved tags present; backup FULL arrays
+  const resolved = [];
+  for (const p of cumulative) {
+    const prod = (await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: p.handle})).productByHandle;
+    if (!prod) bail(`${p.handle}: not found live — STOP`);
+    const {removed, missing, unrelatedPreserved} = applyCumulativeRemoval(prod.tags, p.removeTags);
+    if (missing.length) bail(`${p.handle}: approved removal tag(s) ${JSON.stringify(missing)} not present live — precondition drift; STOP before first mutation`);
+    if (!unrelatedPreserved) bail(`${p.handle}: computed change would alter an unrelated tag — STOP`);
+    resolved.push({handle: p.handle, id: prod.id, originalTags: prod.tags, removeTags: removed, fromCollections: p.fromCollections});
+  }
+  await writeBackup(dir, 'tags.before.json', resolved.map((r) => ({handle: r.handle, id: r.id, tags: r.originalTags})));
+  console.log(`\n  backup written: ${dir}/tags.before.json (${resolved.length} unique products)`);
+
+  // 3) at most ONE mutation per unique product
+  for (const r of resolved) {
+    const res = await adminGraphQL(TAGS_REMOVE, {id: r.id, tags: r.removeTags});
+    const errs = res.tagsRemove?.userErrors || [];
+    if (errs.length) bail(`${r.handle}: tagsRemove errors ${JSON.stringify(errs)} — STOP`);
+    // verify this product immediately
+    const now = (await adminGraphQL(assertReadOnly(PROD_QUERY), {handle: r.handle})).productByHandle.tags;
+    const nowLc = new Set(now.map((t) => t.toLowerCase()));
+    for (const t of r.removeTags) if (nowLc.has(t.toLowerCase())) bail(`${r.handle}: ${t} still present after removal — STOP`);
+    const expectedAfter = r.originalTags.filter((t) => !r.removeTags.map((x) => x.toLowerCase()).includes(t.toLowerCase()));
+    if (now.slice().sort().join('|') !== expectedAfter.slice().sort().join('|')) bail(`${r.handle}: resulting tags != expected (unrelated tag changed) — STOP`);
+    console.log(`  ✓ ${r.handle}: removed ${JSON.stringify(r.removeTags)} · ${now.length} tags preserved`);
+  }
+
+  // 4) post-write: prove collection counts (smart re-evaluation may lag → bounded poll)
+  console.log('\n' + hr('POST-WRITE VERIFICATION'));
+  for (const c of perCollection) {
+    let cnt = null;
+    for (let i = 0; i < 6; i++) {
+      cnt = (await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: c.handle})).collectionByHandle?.productsCount?.count;
+      if (cnt === EXPECTED_INTENDED[c.handle]) break;
+      await sleep(2000);
+    }
+    if (cnt !== EXPECTED_INTENDED[c.handle]) bail(`${c.handle}: post-write count ${cnt} != intended ${EXPECTED_INTENDED[c.handle]} — investigate (rollback available in ${dir})`);
+    console.log(`  ✓ ${c.handle} = ${cnt}`);
+  }
+  console.log(`\n  ✓ Batch E complete. Rollback: for each product in ${dir}/tags.before.json, tagsAdd the removed occasion tags (restores the exact original set).`);
 }
 
 main().catch(async (e) => {

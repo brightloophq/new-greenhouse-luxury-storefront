@@ -36,7 +36,7 @@ function runBatch(name, args) {
 
 const cases = [
   {name: 'Batch B (retire)', file: 'batch-b-retire.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'birthday-flowers', 'corporate-gifts', 'New Greenhouse Luxury Storefront', 'LEAVE untouched']},
-  {name: 'Batch E (occasions)', file: 'batch-e-occasions.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'rule-tighten', 'remove 11', 'add 0']},
+  {name: 'Batch E (occasions)', file: 'batch-e-occasions.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'UNIQUE products actually mutated', 'OVERLAP TABLE', 'long-stem-pink-roses']},
   {name: 'Batch F1 (gift baskets)', file: 'batch-f-populate.js', args: ['--target', 'gift-baskets'], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'fruit-flower-gift-basket']},
   {name: 'Batch F2 (tropical)', file: 'batch-f-populate.js', args: ['--target', 'tropical-flowers'], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'luxury-tropical-arrangement', 'stay excluded']},
   {name: 'Batch G (content)', file: 'batch-g-content.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'gift-baskets', 'tropical-flowers', 'BOTH companion fields']},
@@ -68,6 +68,24 @@ for (const c of cases) {
   ok('Batch B: Point of Sale is left untouched (birthday-flowers)', /Point of Sale/.test(planFor['birthday-flowers']?.leave || ''));
   ok('Batch B: Point of Sale never appears in an unpublish list', Object.values(planFor).every((p) => !/Point of Sale/.test(p.unpublish)));
   ok('Batch B: multi-channel target unpublishes from both Online Store and Hydrogen', /Online Store/.test(planFor['birthday-flowers']?.unpublish || '') && /New Greenhouse Luxury Storefront/.test(planFor['birthday-flowers']?.unpublish || ''));
+}
+
+// Batch E cross-collection overlap regressions (the hazard the live preview exposed).
+{
+  const {out} = runBatch('batch-e-occasions.js', []);
+  const uniq = (out.match(/UNIQUE products actually mutated\s*:\s*(\d+)/) || [])[1];
+  const planned = (out.match(/planned collection-membership removals:\s*(\d+)/) || [])[1];
+  const overlaps = (out.match(/overlap products \(>1 collection\)\s*:\s*(\d+)/) || [])[1];
+  ok('Batch E: planned removals = 25', planned === '25');
+  ok('Batch E: unique products != 25 (overlaps collapsed)', uniq === '20');
+  ok('Batch E: 5 overlap products detected', overlaps === '5');
+  // a two-collection product gets ONE cumulative line with BOTH occasion tags
+  ok('Batch E: long-stem-pink-roses cumulative removes birthday + romance', /long-stem-pink-roses: remove \[occasion:birthday, occasion:romance\]/.test(out));
+  ok('Batch E: pink-hydrangeas cumulative removes birthday + anniversary', /pink-hydrangeas: remove \[occasion:anniversary, occasion:birthday\]/.test(out));
+  ok('Batch E: long-stem-red-roses cumulative removes anniversary + romance', /long-stem-red-roses: remove \[occasion:anniversary, occasion:romance\]/.test(out));
+  // each overlap product appears exactly once in the per-product section (one update, not two)
+  const perProduct = out.slice(out.indexOf('PER-PRODUCT CUMULATIVE REMOVALS'));
+  ok('Batch E: overlap product listed exactly once (single update)', (perProduct.match(/long-stem-pink-roses: remove/g) || []).length === 1);
 }
 
 // Batch H is read-only by construction — verify it declares itself so and needs no auth.

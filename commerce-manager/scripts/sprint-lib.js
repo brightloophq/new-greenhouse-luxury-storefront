@@ -233,6 +233,66 @@ export function minimalOccasionTagRemoval(currentTags, occasionTag) {
   return {before, after, removed, unrelatedPreserved: before.length - removed.length === after.length};
 }
 
+/* ---- Batch E: cumulative per-product removal (cross-collection overlap safe) ---------- */
+// The ONLY tag values Batch E may remove — and only for a product/tag pair that appears in the
+// freshly-validated intended-removal plan. Nothing else may ever be added/removed/renamed.
+export const REMOVABLE_OCCASION_TAGS = Object.freeze(['occasion:birthday', 'occasion:anniversary', 'occasion:romance']);
+
+/**
+ * Collapse the three occasion collections' independent removal sets into ONE cumulative plan
+ * per UNIQUE product, so a product targeted by two collections receives a single combined
+ * update (never two stale before/after writes). Pure — no I/O.
+ *
+ * @param perCollection [{handle, occasionTag, toRemove:[productHandle,...]}, ...]
+ * @returns array of {handle, removeTags:[sorted occasion tags], fromCollections:[collHandles]}
+ *          deduped by product; removeTags is a set (a duplicate removal request collapses).
+ * @throws if a collection's occasionTag is not on REMOVABLE_OCCASION_TAGS.
+ */
+export function buildCumulativeOccasionRemovalPlan(perCollection) {
+  const byProduct = new Map();
+  for (const c of perCollection || []) {
+    const tag = lc(c.occasionTag);
+    if (!REMOVABLE_OCCASION_TAGS.includes(tag)) throw new Error(`Batch E: "${c.occasionTag}" is not a removable occasion tag (allowlist: ${REMOVABLE_OCCASION_TAGS.join(', ')})`);
+    for (const h of c.toRemove || []) {
+      if (!byProduct.has(h)) byProduct.set(h, {handle: h, removeTags: new Set(), fromCollections: []});
+      const e = byProduct.get(h);
+      e.removeTags.add(tag);
+      if (!e.fromCollections.includes(c.handle)) e.fromCollections.push(c.handle);
+    }
+  }
+  return [...byProduct.values()]
+    .map((e) => ({handle: e.handle, removeTags: [...e.removeTags].sort(), fromCollections: e.fromCollections.slice()}))
+    .sort((a, b) => a.handle.localeCompare(b.handle));
+}
+
+/** Products in the cumulative plan targeted by more than one collection. */
+export function overlapProducts(cumulativePlan) {
+  return (cumulativePlan || []).filter((p) => p.fromCollections.length > 1);
+}
+
+/**
+ * Compute the ONE final tag array for a product from its FRESH current tags and the approved
+ * occasion tags to remove. Enforces the allowlist and preserves every unrelated tag exactly.
+ * @throws if any approved tag is outside REMOVABLE_OCCASION_TAGS.
+ * @returns {before, after, removed, missing, unrelatedPreserved}
+ *   • removed  — approved tags actually present and dropped
+ *   • missing  — approved tags NOT currently present (precondition drift — caller must STOP)
+ */
+export function applyCumulativeRemoval(currentTags, approvedRemoveTags) {
+  const approved = (approvedRemoveTags || []).map(lc);
+  for (const t of approved) if (!REMOVABLE_OCCASION_TAGS.includes(t)) throw new Error(`Batch E: illegal removal tag "${t}" — not on allowlist`);
+  const approvedSet = new Set(approved);
+  const before = Array.isArray(currentTags) ? [...currentTags] : [];
+  const after = before.filter((t) => !approvedSet.has(lc(t)));
+  const removed = before.filter((t) => approvedSet.has(lc(t)));
+  const presentLc = new Set(before.map(lc));
+  const missing = approved.filter((t) => !presentLc.has(t));
+  // every tag that is NOT an approved-and-present removal must survive, unchanged and in order
+  const expectedSurvivors = before.filter((t) => !approvedSet.has(lc(t)));
+  const unrelatedPreserved = after.length === expectedSurvivors.length && after.every((t, i) => t === expectedSurvivors[i]);
+  return {before, after, removed, missing, unrelatedPreserved};
+}
+
 /* ---- redirect map shape guard (code-level, since write_url_redirects is not granted) --- */
 /** The storefront redirect map must be exactly the 6 retired handles → canonical paths. */
 export function assertRedirectMapComplete(map) {

@@ -43,6 +43,10 @@ import {
   assertRetirementPlanSafe,
   assertCanonicalPublic,
   HYDROGEN_PUBLICATION,
+  buildCumulativeOccasionRemovalPlan,
+  overlapProducts,
+  applyCumulativeRemoval,
+  REMOVABLE_OCCASION_TAGS,
 } from './sprint-lib.js';
 
 let passed = 0;
@@ -235,6 +239,54 @@ throws('assertRetirementPlanSafe REJECTS nothing-to-unpublish', () => assertReti
 
 noThrow('assertCanonicalPublic ok when canonical is on Hydrogen', () => assertCanonicalPublic('birthday', ['Online Store', 'Point of Sale', HYDROGEN_PUBLICATION]));
 throws('assertCanonicalPublic REJECTS a canonical not on Hydrogen', () => assertCanonicalPublic('birthday', ['Online Store', 'Point of Sale']));
+
+/* ---- 16. Batch E cumulative cross-collection removal ---------------------------------- */
+const perColl = [
+  {handle: 'birthday', occasionTag: 'occasion:birthday', toRemove: ['long-stem-pink-roses', 'pink-hydrangeas', 'birthday-only-1']},
+  {handle: 'anniversary', occasionTag: 'occasion:anniversary', toRemove: ['pink-hydrangeas', 'long-stem-red-roses', 'anniv-only-1']},
+  {handle: 'love-and-romance', occasionTag: 'occasion:romance', toRemove: ['long-stem-pink-roses', 'long-stem-red-roses']},
+];
+const cum = buildCumulativeOccasionRemovalPlan(perColl);
+ok('cumulative plan: 5 planned removals collapse to 5 unique products', cum.length === 5);
+const byH = Object.fromEntries(cum.map((p) => [p.handle, p]));
+ok('two-way overlap (birthday+romance) merges into one product with both tags', sameSet(byH['long-stem-pink-roses'].removeTags, ['occasion:birthday', 'occasion:romance']));
+ok('two-way overlap (birthday+anniversary) merges', sameSet(byH['pink-hydrangeas'].removeTags, ['occasion:birthday', 'occasion:anniversary']));
+ok('two-way overlap (anniversary+romance) merges', sameSet(byH['long-stem-red-roses'].removeTags, ['occasion:anniversary', 'occasion:romance']));
+ok('single-collection product keeps a single tag', sameSet(byH['birthday-only-1'].removeTags, ['occasion:birthday']));
+ok('overlapProducts returns exactly the multi-collection products', sameSet(overlapProducts(cum).map((p) => p.handle), ['long-stem-pink-roses', 'pink-hydrangeas', 'long-stem-red-roses']));
+ok('each overlap product appears exactly once (one cumulative update)', cum.filter((p) => p.handle === 'long-stem-pink-roses').length === 1);
+
+// three-way overlap generically
+const threeWay = buildCumulativeOccasionRemovalPlan([
+  {handle: 'birthday', occasionTag: 'occasion:birthday', toRemove: ['tri']},
+  {handle: 'anniversary', occasionTag: 'occasion:anniversary', toRemove: ['tri']},
+  {handle: 'love-and-romance', occasionTag: 'occasion:romance', toRemove: ['tri']},
+]);
+ok('three-way overlap merges to one product with all three tags', threeWay.length === 1 && sameSet(threeWay[0].removeTags, REMOVABLE_OCCASION_TAGS));
+
+// duplicate removal request dedupes
+const dup = buildCumulativeOccasionRemovalPlan([
+  {handle: 'birthday', occasionTag: 'occasion:birthday', toRemove: ['x', 'x']},
+  {handle: 'birthday', occasionTag: 'occasion:birthday', toRemove: ['x']},
+]);
+ok('duplicate removal requests collapse to a single tag', dup.length === 1 && sameSet(dup[0].removeTags, ['occasion:birthday']));
+
+// allowlist enforcement
+throws('cumulative plan rejects a non-allowlisted occasion tag', () => buildCumulativeOccasionRemovalPlan([{handle: 'x', occasionTag: 'occasion:wedding', toRemove: ['p']}]));
+
+// applyCumulativeRemoval preserves unrelated tags and reports drift
+const acr = applyCumulativeRemoval(['occasion:birthday', 'occasion:romance', 'occasion:wedding', 'channel:retail', 'channel:wholesale', 'flower:rose'], ['occasion:birthday', 'occasion:romance']);
+ok('cumulative removal drops exactly the two approved occasion tags', sameSet(acr.removed, ['occasion:birthday', 'occasion:romance']));
+ok('cumulative removal preserves wedding + channel + flower tags', sameSet(acr.after, ['occasion:wedding', 'channel:retail', 'channel:wholesale', 'flower:rose']));
+ok('cumulative removal preserves tag order of survivors', acr.after.join('|') === ['occasion:wedding', 'channel:retail', 'channel:wholesale', 'flower:rose'].join('|'));
+ok('cumulative removal reports unrelatedPreserved', acr.unrelatedPreserved === true);
+ok('cumulative removal flags a stale/missing approved tag (precondition drift)', applyCumulativeRemoval(['channel:retail'], ['occasion:birthday']).missing.length === 1);
+throws('applyCumulativeRemoval rejects a non-allowlisted tag', () => applyCumulativeRemoval(['occasion:birthday'], ['channel:retail']));
+ok('applyCumulativeRemoval never touches wedding/wholesale/channel tags', applyCumulativeRemoval(['occasion:wedding', 'channel:wholesale', 'customer:event-planner', 'format:bulk-box'], ['occasion:birthday']).after.length === 4);
+// rollback invariant: after ∪ removed restores the exact original tag set (backup sufficiency)
+const orig = ['occasion:birthday', 'occasion:romance', 'occasion:wedding', 'channel:retail', 'flower:rose'];
+const acr2 = applyCumulativeRemoval(orig, ['occasion:birthday', 'occasion:romance']);
+ok('rollback (after + removed) restores the exact original tag set', sameSet([...acr2.after, ...acr2.removed], orig));
 
 /* ---- summary -------------------------------------------------------------------------- */
 console.log(`\nsprint-lib.selftest: ${passed} passed, ${failed} failed`);

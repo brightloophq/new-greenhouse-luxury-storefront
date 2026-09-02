@@ -30,8 +30,11 @@ function coll(handle, id, count, {smartRule = null, seo = true, body = true, pub
   };
 }
 
-// wholesale-only removal reasons → exercises the rule-tighten mechanism path
-const wholesaleRemoval = (handle) => ({handle, wedding: false, addOn: false, notRetailMember: true});
+// removal-reason shapes. A set that is all-wholesale would select rule-tighten; a set with any
+// wedding/add-on retail item selects tag-correct (the live-approved mechanism). Overlap products
+// appear in more than one collection's removal set and must collapse to ONE cumulative update.
+const wholesale = (handle) => ({handle, wedding: false, addOn: false, notRetailMember: true});
+const wedding = (handle) => ({handle, wedding: true, addOn: false, notRetailMember: true});
 
 export function makeFixture() {
   // Real live publication state (from Mac live preview): the public storefront is the Hydrogen
@@ -76,10 +79,17 @@ export function makeFixture() {
     revalidate: 'confirm live before Batch B',
   }));
 
+  // Cross-collection overlaps (mirrors the real live preview): rose/hydrangea products carrying
+  // more than one occasion tag. long-stem-red-roses is a wedding item (forces tag-correct);
+  // the rest are wholesale. Each collection also has unique-only removals.
+  const birthdayRemove = ['long-stem-pink-roses', 'assorted-spray-roses', 'pink-hydrangeas', 'birthday-wedding-1', ...Array.from({length: 7}, (_, i) => `birthday-only-${i + 1}`)];
+  const anniversaryRemove = ['pink-hydrangeas', 'ivory-garden-roses', 'long-stem-red-roses', ...Array.from({length: 7}, (_, i) => `anniversary-only-${i + 1}`)];
+  const romanceRemove = ['long-stem-pink-roses', 'assorted-spray-roses', 'ivory-garden-roses', 'long-stem-red-roses'];
+  const reasonFor = (h) => (h === 'birthday-wedding-1' || h === 'long-stem-red-roses' ? wedding(h) : wholesale(h));
   const occasion = {
-    birthday: {liveMemberCount: 27, intendedMemberCount: 16, toAdd: [], toRemove: Array.from({length: 11}, (_, i) => `wholesale-birthday-${i + 1}`), toRemoveReasons: Array.from({length: 11}, (_, i) => wholesaleRemoval(`wholesale-birthday-${i + 1}`)), isSmart: true, rule: 'TAG EQUALS "occasion:birthday"'},
-    anniversary: {liveMemberCount: 19, intendedMemberCount: 9, toAdd: [], toRemove: Array.from({length: 10}, (_, i) => `wholesale-anniv-${i + 1}`), toRemoveReasons: Array.from({length: 10}, (_, i) => wholesaleRemoval(`wholesale-anniv-${i + 1}`)), isSmart: true, rule: 'TAG EQUALS "occasion:anniversary"'},
-    'love-and-romance': {liveMemberCount: 21, intendedMemberCount: 17, toAdd: [], toRemove: Array.from({length: 4}, (_, i) => `wholesale-love-${i + 1}`), toRemoveReasons: Array.from({length: 4}, (_, i) => wholesaleRemoval(`wholesale-love-${i + 1}`)), isSmart: true, rule: 'TAG EQUALS "occasion:romance"'},
+    birthday: {liveMemberCount: 27, intendedMemberCount: 16, toAdd: [], toRemove: birthdayRemove, toRemoveReasons: birthdayRemove.map(reasonFor), isSmart: true, rule: 'TAG EQUALS "occasion:birthday"'},
+    anniversary: {liveMemberCount: 19, intendedMemberCount: 9, toAdd: [], toRemove: anniversaryRemove, toRemoveReasons: anniversaryRemove.map(reasonFor), isSmart: true, rule: 'TAG EQUALS "occasion:anniversary"'},
+    'love-and-romance': {liveMemberCount: 21, intendedMemberCount: 17, toAdd: [], toRemove: romanceRemove, toRemoveReasons: romanceRemove.map(reasonFor), isSmart: true, rule: 'TAG EQUALS "occasion:romance"'},
   };
 
   const giftBaskets = {
