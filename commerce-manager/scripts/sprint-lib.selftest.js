@@ -33,6 +33,11 @@ import {
   isRetailTropical,
   isWholesaleTropicalStem,
   assertSeoInputComplete,
+  assertRetireAllowed,
+  assertSafeToRetire,
+  chooseOccasionMechanism,
+  minimalOccasionTagRemoval,
+  assertRedirectMapComplete,
 } from './sprint-lib.js';
 
 let passed = 0;
@@ -152,6 +157,42 @@ throws('null title is REJECTED', () => assertSeoInputComplete({title: null, desc
 throws('extra keys are REJECTED', () => assertSeoInputComplete({title: 'A', description: 'B', foo: 1}));
 throws('empty object is REJECTED', () => assertSeoInputComplete({}));
 throws('non-object is REJECTED', () => assertSeoInputComplete(null));
+
+/* ---- 11. Batch B retirement guards ---------------------------------------------------- */
+noThrow('assertRetireAllowed ok for a retire handle', () => assertRetireAllowed('birthday-flowers'));
+throws('assertRetireAllowed rejects a canonical', () => assertRetireAllowed('birthday'));
+throws('assertRetireAllowed rejects an unknown handle', () => assertRetireAllowed('roses'));
+const safeEntry = {retire: 'birthday-flowers', canonical: 'birthday', retireFound: true, canonicalFound: true, productsOnlyInRetire: [], safeToRetire: true};
+noThrow('assertSafeToRetire ok for a provably-safe entry', () => assertSafeToRetire(safeEntry));
+throws('assertSafeToRetire rejects wrong canonical', () => assertSafeToRetire({...safeEntry, canonical: 'anniversary'}));
+throws('assertSafeToRetire rejects missing canonical', () => assertSafeToRetire({...safeEntry, canonicalFound: false}));
+throws('assertSafeToRetire rejects onlyInRetire > 0', () => assertSafeToRetire({...safeEntry, productsOnlyInRetire: ['x']}));
+throws('assertSafeToRetire rejects safeToRetire=false', () => assertSafeToRetire({...safeEntry, safeToRetire: false}));
+
+/* ---- 12. Batch E mechanism selection -------------------------------------------------- */
+const singleTagRule = {appliedDisjunctively: false, rules: [{column: 'TAG', relation: 'EQUALS', condition: 'occasion:birthday'}]};
+const wholesaleOnly = [{handle: 'a', wedding: false, addOn: false, notRetailMember: true}, {handle: 'b', wedding: false, addOn: false, notRetailMember: true}];
+const mixedReasons = [{handle: 'a', wedding: true, addOn: false, notRetailMember: true}, {handle: 'b', wedding: false, addOn: true, notRetailMember: false}];
+ok('rule-tighten chosen when every removal is wholesale-only + single tag rule', chooseOccasionMechanism(singleTagRule, wholesaleOnly).mechanism === 'rule-tighten');
+ok('rule-tighten adds channel:retail AND-clause, 0 tag mutations', chooseOccasionMechanism(singleTagRule, wholesaleOnly).blastRadius.productTagMutations === 0);
+ok('tag-correct chosen when reasons are mixed (wedding/add-on retail items)', chooseOccasionMechanism(singleTagRule, mixedReasons).mechanism === 'tag-correct');
+ok('no removals → mechanism none', chooseOccasionMechanism(singleTagRule, []).mechanism === 'none');
+ok('manual collection (no ruleSet) → manual mechanism', chooseOccasionMechanism(null, wholesaleOnly).mechanism === 'manual');
+ok('rule already has channel:retail → not rule-tighten again', chooseOccasionMechanism({appliedDisjunctively: false, rules: [{column: 'TAG', relation: 'EQUALS', condition: 'occasion:birthday'}, {column: 'TAG', relation: 'EQUALS', condition: 'channel:retail'}]}, wholesaleOnly).mechanism === 'tag-correct');
+ok('disjunctive (OR) rule is not safe to tighten with AND → tag-correct', chooseOccasionMechanism({appliedDisjunctively: true, rules: [{column: 'TAG', relation: 'EQUALS', condition: 'occasion:birthday'}]}, wholesaleOnly).mechanism === 'tag-correct');
+
+/* ---- 13. minimal tag removal preserves unrelated tags --------------------------------- */
+const mt = minimalOccasionTagRemoval(['occasion:birthday', 'channel:wholesale', 'flower:rose'], 'occasion:birthday');
+ok('minimal removal drops only the occasion tag', sameSet(mt.after, ['channel:wholesale', 'flower:rose']));
+ok('minimal removal records what was removed', sameSet(mt.removed, ['occasion:birthday']));
+ok('minimal removal preserves every unrelated tag', mt.unrelatedPreserved === true);
+ok('minimal removal is case-insensitive on the target', minimalOccasionTagRemoval(['Occasion:Birthday', 'flower:rose'], 'occasion:birthday').after.length === 1);
+ok('minimal removal no-ops when tag absent', minimalOccasionTagRemoval(['flower:rose'], 'occasion:birthday').removed.length === 0);
+
+/* ---- 14. redirect map completeness ---------------------------------------------------- */
+noThrow('assertRedirectMapComplete ok for the exact 6-handle map', () => assertRedirectMapComplete({'birthday-flowers': '/collections/birthday', 'anniversary-flowers': '/collections/anniversary', 'love-romance': '/collections/love-and-romance', 'corporate-gifts': '/collections/corporate-gifting', 'corporate-flowers': '/collections/corporate-gifting', sympathy: '/collections/sympathy-and-funeral'}));
+throws('assertRedirectMapComplete rejects a missing handle', () => assertRedirectMapComplete({'birthday-flowers': '/collections/birthday'}));
+throws('assertRedirectMapComplete rejects a wrong target', () => assertRedirectMapComplete({'birthday-flowers': '/collections/anniversary', 'anniversary-flowers': '/collections/anniversary', 'love-romance': '/collections/love-and-romance', 'corporate-gifts': '/collections/corporate-gifting', 'corporate-flowers': '/collections/corporate-gifting', sympathy: '/collections/sympathy-and-funeral'}));
 
 /* ---- summary -------------------------------------------------------------------------- */
 console.log(`\nsprint-lib.selftest: ${passed} passed, ${failed} failed`);
