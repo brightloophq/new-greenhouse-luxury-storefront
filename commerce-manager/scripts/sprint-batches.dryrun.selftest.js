@@ -35,7 +35,7 @@ function runBatch(name, args) {
 }
 
 const cases = [
-  {name: 'Batch B (retire)', file: 'batch-b-retire.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'birthday-flowers', 'corporate-gifts', 'publishableUnpublish']},
+  {name: 'Batch B (retire)', file: 'batch-b-retire.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'birthday-flowers', 'corporate-gifts', 'New Greenhouse Luxury Storefront', 'LEAVE untouched']},
   {name: 'Batch E (occasions)', file: 'batch-e-occasions.js', args: [], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'rule-tighten', 'remove 11', 'add 0']},
   {name: 'Batch F1 (gift baskets)', file: 'batch-f-populate.js', args: ['--target', 'gift-baskets'], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'fruit-flower-gift-basket']},
   {name: 'Batch F2 (tropical)', file: 'batch-f-populate.js', args: ['--target', 'tropical-flowers'], expect: ['DRY-RUN', 'Shopify mutations sent: 0', 'luxury-tropical-arrangement', 'stay excluded']},
@@ -47,6 +47,27 @@ for (const c of cases) {
   ok(`${c.name}: exit 0`, code === 0);
   ok(`${c.name}: never LIVE WRITE`, !/MODE: LIVE WRITE/.test(out));
   for (const token of c.expect) ok(`${c.name}: output contains "${token}"`, out.includes(token));
+}
+
+// Batch B publication-targeting regressions (the bug the live preview caught).
+{
+  const {out} = runBatch('batch-b-retire.js', []);
+  // Parse the per-target "UNPUBLISH from ..." lines against their preceding handle line.
+  const lines = out.split('\n');
+  const planFor = {};
+  let cur = null;
+  for (const ln of lines) {
+    const m = ln.match(/^\s*•\s+(\S+)\s+id=/);
+    if (m) { cur = m[1]; planFor[cur] = {unpublish: '', leave: ''}; continue; }
+    if (cur && /UNPUBLISH from\s*:/.test(ln)) planFor[cur].unpublish = ln;
+    if (cur && /LEAVE untouched\s*:/.test(ln)) planFor[cur].leave = ln;
+  }
+  ok('Batch B: Hydrogen publication included in retirement (birthday-flowers)', /New Greenhouse Luxury Storefront/.test(planFor['birthday-flowers']?.unpublish || ''));
+  ok('Batch B: corporate-gifts unpublishes from Hydrogen (NOT Online-Store-only)', /New Greenhouse Luxury Storefront/.test(planFor['corporate-gifts']?.unpublish || ''));
+  ok('Batch B: corporate-gifts does NOT attempt Online Store (not published there)', !/Online Store/.test(planFor['corporate-gifts']?.unpublish || ''));
+  ok('Batch B: Point of Sale is left untouched (birthday-flowers)', /Point of Sale/.test(planFor['birthday-flowers']?.leave || ''));
+  ok('Batch B: Point of Sale never appears in an unpublish list', Object.values(planFor).every((p) => !/Point of Sale/.test(p.unpublish)));
+  ok('Batch B: multi-channel target unpublishes from both Online Store and Hydrogen', /Online Store/.test(planFor['birthday-flowers']?.unpublish || '') && /New Greenhouse Luxury Storefront/.test(planFor['birthday-flowers']?.unpublish || ''));
 }
 
 // Batch H is read-only by construction — verify it declares itself so and needs no auth.

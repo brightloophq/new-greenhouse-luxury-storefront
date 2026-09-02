@@ -116,6 +116,71 @@ export function assertSafeToRetire(entry) {
   return true;
 }
 
+/* ---- Batch B: publication-target planning (Hydrogen-aware, POS-protected) ------------- */
+// The PUBLIC storefront for this project is the Hydrogen channel published under this name.
+export const HYDROGEN_PUBLICATION = 'New Greenhouse Luxury Storefront';
+export const ONLINE_STORE_PUBLICATION = 'Online Store';
+export const POINT_OF_SALE_PUBLICATION = 'Point of Sale';
+// Public web publications a retirement removes the collection from.
+export const PUBLIC_STOREFRONT_PUBLICATIONS = Object.freeze([HYDROGEN_PUBLICATION, ONLINE_STORE_PUBLICATION]);
+// Publications retirement must NEVER touch without explicit business justification.
+export const PROTECTED_PUBLICATIONS = Object.freeze([POINT_OF_SALE_PUBLICATION]);
+
+/** Classify a publication by name: 'hydrogen' | 'online-store' | 'protected' | 'unknown'. */
+export function classifyPublication(name) {
+  const n = lc(name);
+  if (n === lc(HYDROGEN_PUBLICATION)) return 'hydrogen';
+  if (n === lc(ONLINE_STORE_PUBLICATION)) return 'online-store';
+  if (PROTECTED_PUBLICATIONS.some((p) => lc(p) === n)) return 'protected';
+  return 'unknown';
+}
+
+/**
+ * Build the exact retirement unpublish plan for ONE collection from the channels it is
+ * CURRENTLY published to. Pure — no I/O.
+ * @param currentPublished array of {id, name} the collection is currently published to.
+ * @returns {unpublishFrom, leaveUntouched, unknown, hydrogenPresent, onlineStorePresent, safe}
+ *   • unpublishFrom   — public web publications to remove (Hydrogen + Online Store where present)
+ *   • leaveUntouched  — protected publications (POS) left as-is
+ *   • unknown         — publications we do not recognize → require a human decision (unsafe)
+ */
+export function buildRetirementPublicationPlan(currentPublished) {
+  const cur = Array.isArray(currentPublished) ? currentPublished : [];
+  const unpublishFrom = [];
+  const leaveUntouched = [];
+  const unknown = [];
+  for (const p of cur) {
+    const kind = classifyPublication(p.name);
+    if (kind === 'hydrogen' || kind === 'online-store') unpublishFrom.push({...p, kind});
+    else if (kind === 'protected') leaveUntouched.push({...p, kind});
+    else unknown.push({...p, kind});
+  }
+  const hydrogenPresent = unpublishFrom.some((p) => p.kind === 'hydrogen');
+  const onlineStorePresent = unpublishFrom.some((p) => p.kind === 'online-store');
+  return {unpublishFrom, leaveUntouched, unknown, hydrogenPresent, onlineStorePresent, safe: unknown.length === 0};
+}
+
+/**
+ * Fail-closed assertion for a single collection's retirement publication plan.
+ * Throws unless: no unknown publication is present; the collection is actually exposed on at
+ * least one public web publication (so retirement is meaningful); and — because Hydrogen is
+ * THE public storefront — the Hydrogen publication is among the channels being removed.
+ */
+export function assertRetirementPlanSafe(handle, plan) {
+  if (plan.unknown.length) throw new Error(`RETIRE ${handle}: unknown publication(s) [${plan.unknown.map((p) => p.name).join(', ')}] — human decision required, refuse`);
+  if (plan.unpublishFrom.length === 0) throw new Error(`RETIRE ${handle}: not published to any public web publication — nothing to retire; investigate`);
+  if (!plan.hydrogenPresent) throw new Error(`RETIRE ${handle}: not published to the Hydrogen storefront ("${HYDROGEN_PUBLICATION}") — an Online-Store-only action would NOT retire it publicly; refuse`);
+  return true;
+}
+
+/** The canonical destination must remain live on the Hydrogen storefront. */
+export function assertCanonicalPublic(canonicalHandle, publishedNames) {
+  const names = (publishedNames || []).map(lc);
+  if (!names.includes(lc(HYDROGEN_PUBLICATION)))
+    throw new Error(`CANONICAL ${canonicalHandle}: not published to the Hydrogen storefront ("${HYDROGEN_PUBLICATION}") — refuse to retire its duplicate`);
+  return true;
+}
+
 /* ---- Batch E: smallest-safe occasion mechanism (pure decision) ------------------------ */
 /**
  * Decide the smallest, safest mechanism to correct a SMART occasion collection's membership.

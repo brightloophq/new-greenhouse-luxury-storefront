@@ -38,6 +38,11 @@ import {
   chooseOccasionMechanism,
   minimalOccasionTagRemoval,
   assertRedirectMapComplete,
+  classifyPublication,
+  buildRetirementPublicationPlan,
+  assertRetirementPlanSafe,
+  assertCanonicalPublic,
+  HYDROGEN_PUBLICATION,
 } from './sprint-lib.js';
 
 let passed = 0;
@@ -193,6 +198,43 @@ ok('minimal removal no-ops when tag absent', minimalOccasionTagRemoval(['flower:
 noThrow('assertRedirectMapComplete ok for the exact 6-handle map', () => assertRedirectMapComplete({'birthday-flowers': '/collections/birthday', 'anniversary-flowers': '/collections/anniversary', 'love-romance': '/collections/love-and-romance', 'corporate-gifts': '/collections/corporate-gifting', 'corporate-flowers': '/collections/corporate-gifting', sympathy: '/collections/sympathy-and-funeral'}));
 throws('assertRedirectMapComplete rejects a missing handle', () => assertRedirectMapComplete({'birthday-flowers': '/collections/birthday'}));
 throws('assertRedirectMapComplete rejects a wrong target', () => assertRedirectMapComplete({'birthday-flowers': '/collections/anniversary', 'anniversary-flowers': '/collections/anniversary', 'love-romance': '/collections/love-and-romance', 'corporate-gifts': '/collections/corporate-gifting', 'corporate-flowers': '/collections/corporate-gifting', sympathy: '/collections/sympathy-and-funeral'}));
+
+/* ---- 15. Batch B publication targeting (Hydrogen-aware, POS-protected) ----------------- */
+ok('classifyPublication: Hydrogen storefront', classifyPublication(HYDROGEN_PUBLICATION) === 'hydrogen');
+ok('classifyPublication: Online Store', classifyPublication('Online Store') === 'online-store');
+ok('classifyPublication: Point of Sale is protected', classifyPublication('Point of Sale') === 'protected');
+ok('classifyPublication: unknown channel', classifyPublication('Some Marketplace') === 'unknown');
+
+const pub = (name) => ({id: `gid://pub/${name}`, name});
+const multi = [pub('Online Store'), pub('Point of Sale'), pub(HYDROGEN_PUBLICATION)];
+const hydroOnly = [pub(HYDROGEN_PUBLICATION)];
+const onlineOnly = [pub('Online Store')];
+const withUnknown = [pub(HYDROGEN_PUBLICATION), pub('Mystery Channel')];
+
+const planMulti = buildRetirementPublicationPlan(multi);
+ok('plan(multi): unpublishes from Hydrogen + Online Store', planMulti.unpublishFrom.map((x) => x.name).sort().join('|') === ['New Greenhouse Luxury Storefront', 'Online Store'].sort().join('|'));
+ok('plan(multi): leaves Point of Sale untouched', planMulti.leaveUntouched.length === 1 && planMulti.leaveUntouched[0].name === 'Point of Sale');
+ok('plan(multi): Hydrogen present', planMulti.hydrogenPresent === true);
+ok('plan(multi): safe (no unknown)', planMulti.safe === true);
+ok('plan(multi): POS never in unpublish list', !planMulti.unpublishFrom.some((x) => x.name === 'Point of Sale'));
+
+const planHydro = buildRetirementPublicationPlan(hydroOnly);
+ok('plan(corporate-gifts case): unpublishes from Hydrogen', planHydro.unpublishFrom.length === 1 && planHydro.unpublishFrom[0].name === HYDROGEN_PUBLICATION);
+ok('plan(corporate-gifts case): does NOT touch Online Store', !planHydro.onlineStorePresent);
+
+const planOnline = buildRetirementPublicationPlan(onlineOnly);
+ok('plan(online-only): no Hydrogen present', planOnline.hydrogenPresent === false);
+throws('assertRetirementPlanSafe REJECTS an Online-Store-only action (no Hydrogen)', () => assertRetirementPlanSafe('x', planOnline));
+noThrow('assertRetirementPlanSafe ok for multi-channel plan', () => assertRetirementPlanSafe('birthday-flowers', planMulti));
+noThrow('assertRetirementPlanSafe ok for Hydrogen-only plan', () => assertRetirementPlanSafe('corporate-gifts', planHydro));
+
+const planUnknown = buildRetirementPublicationPlan(withUnknown);
+ok('plan(unknown): flagged unsafe', planUnknown.safe === false);
+throws('assertRetirementPlanSafe REJECTS an unknown publication', () => assertRetirementPlanSafe('x', planUnknown));
+throws('assertRetirementPlanSafe REJECTS nothing-to-unpublish', () => assertRetirementPlanSafe('x', buildRetirementPublicationPlan([pub('Point of Sale')])));
+
+noThrow('assertCanonicalPublic ok when canonical is on Hydrogen', () => assertCanonicalPublic('birthday', ['Online Store', 'Point of Sale', HYDROGEN_PUBLICATION]));
+throws('assertCanonicalPublic REJECTS a canonical not on Hydrogen', () => assertCanonicalPublic('birthday', ['Online Store', 'Point of Sale']));
 
 /* ---- summary -------------------------------------------------------------------------- */
 console.log(`\nsprint-lib.selftest: ${passed} passed, ${failed} failed`);

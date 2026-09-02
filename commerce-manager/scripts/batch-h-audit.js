@@ -22,6 +22,8 @@ import {
   isBulkBox,
   isWholesaleTagged,
   isRetailTagged,
+  PUBLIC_STOREFRONT_PUBLICATIONS,
+  HYDROGEN_PUBLICATION,
 } from './sprint-lib.js';
 import {loadState, assertReadOnly} from './sprint-io.js';
 
@@ -48,7 +50,11 @@ function check(name, cond, detail = '') {
   (cond ? pass++ : fail++);
   results.push(`  ${cond ? '✓' : '✗'} ${name}${detail ? ' — ' + detail : ''}`);
 }
-const publishedOnline = (c) => (c?.resourcePublications?.nodes || []).some((n) => n.isPublished && /online store/i.test(n.publication?.name || ''));
+const publishedNamesOf = (c) => (c?.resourcePublications?.nodes || []).filter((n) => n.isPublished).map((n) => n.publication?.name || '');
+const lcEq = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+// Publicly exposed on the web = published to ANY public storefront publication (Hydrogen or Online Store).
+const publiclyExposed = (c) => publishedNamesOf(c).some((n) => PUBLIC_STOREFRONT_PUBLICATIONS.some((p) => lcEq(p, n)));
+const onHydrogen = (c) => publishedNamesOf(c).some((n) => lcEq(n, HYDROGEN_PUBLICATION));
 
 async function main() {
   const {adminGraphQL} = await import('../src/shopify-admin.js');
@@ -65,14 +71,15 @@ async function main() {
 
   console.log('════════════ BATCH H — FINAL AUDIT (READ-ONLY) ════════════');
 
-  // 1) retired collections no longer publicly exposed; 2) canonicals survive
+  // 1) retired collections no longer publicly exposed (Hydrogen or Online Store); 2) canonicals survive on Hydrogen
   for (const h of RETIRE_HANDLES) {
     const c = (await q(h)).collectionByHandle;
-    check(`retired ${h} not on Online Store`, !c || !publishedOnline(c), c ? (publishedOnline(c) ? 'STILL PUBLISHED' : 'unpublished') : 'absent');
+    const exposed = c ? publiclyExposed(c) : false;
+    check(`retired ${h} not on any public storefront`, !exposed, c ? (exposed ? `STILL PUBLIC: [${publishedNamesOf(c).join(', ')}]` : `unpublished (remaining: [${publishedNamesOf(c).join(', ') || 'none'}])`) : 'absent');
   }
   for (const h of CANONICAL_SURVIVORS) {
     const c = (await q(h)).collectionByHandle;
-    check(`canonical ${h} survives + published`, !!c && publishedOnline(c), c ? `count=${c.productsCount?.count}` : 'MISSING');
+    check(`canonical ${h} survives on Hydrogen storefront`, !!c && onHydrogen(c), c ? `count=${c.productsCount?.count} published=[${publishedNamesOf(c).join(', ')}]` : 'MISSING');
   }
 
   // 3) redirect map covers all six retired handles (code-level, since write_url_redirects absent)

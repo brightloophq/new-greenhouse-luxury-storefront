@@ -34,23 +34,28 @@ function coll(handle, id, count, {smartRule = null, seo = true, body = true, pub
 const wholesaleRemoval = (handle) => ({handle, wedding: false, addOn: false, notRetailMember: true});
 
 export function makeFixture() {
+  // Real live publication state (from Mac live preview): the public storefront is the Hydrogen
+  // channel "New Greenhouse Luxury Storefront"; most collections are also on Online Store + POS,
+  // but corporate-gifts is on the Hydrogen storefront ONLY.
+  const PUBLIC3 = ['Online Store', 'Point of Sale', 'New Greenhouse Luxury Storefront'];
+  const HYDRO_ONLY = ['New Greenhouse Luxury Storefront'];
   const collections = {
     // retired duplicates (empty or fully-shadowed)
-    'birthday-flowers': coll('birthday-flowers', 5001, 0),
-    'anniversary-flowers': coll('anniversary-flowers', 5002, 0),
-    'love-romance': coll('love-romance', 5003, 0),
-    'corporate-gifts': coll('corporate-gifts', 5004, 40),
-    'corporate-flowers': coll('corporate-flowers', 5005, 0),
-    sympathy: coll('sympathy', 5006, 0),
-    // canonicals (survive, already have SEO/body)
-    birthday: coll('birthday', 6001, 27, {smartRule: smart('occasion:birthday')}),
-    anniversary: coll('anniversary', 6002, 19, {smartRule: smart('occasion:anniversary')}),
-    'love-and-romance': coll('love-and-romance', 6003, 21, {smartRule: smart('occasion:romance')}),
-    'corporate-gifting': coll('corporate-gifting', 6004, 40),
-    'sympathy-and-funeral': coll('sympathy-and-funeral', 6005, 33),
+    'birthday-flowers': coll('birthday-flowers', 5001, 0, {published: PUBLIC3}),
+    'anniversary-flowers': coll('anniversary-flowers', 5002, 0, {published: PUBLIC3}),
+    'love-romance': coll('love-romance', 5003, 0, {published: PUBLIC3}),
+    'corporate-gifts': coll('corporate-gifts', 5004, 40, {published: HYDRO_ONLY}),
+    'corporate-flowers': coll('corporate-flowers', 5005, 0, {published: PUBLIC3}),
+    sympathy: coll('sympathy', 5006, 0, {published: PUBLIC3}),
+    // canonicals (survive, already have SEO/body) — must stay live on Hydrogen
+    birthday: coll('birthday', 6001, 27, {smartRule: smart('occasion:birthday'), published: PUBLIC3}),
+    anniversary: coll('anniversary', 6002, 19, {smartRule: smart('occasion:anniversary'), published: PUBLIC3}),
+    'love-and-romance': coll('love-and-romance', 6003, 21, {smartRule: smart('occasion:romance'), published: PUBLIC3}),
+    'corporate-gifting': coll('corporate-gifting', 6004, 40, {published: PUBLIC3}),
+    'sympathy-and-funeral': coll('sympathy-and-funeral', 6005, 33, {published: PUBLIC3}),
     // categories to populate (fresh SEO/body gaps)
-    'gift-baskets': coll('gift-baskets', 7001, 0, {smartRule: {appliedDisjunctively: false, rules: [{column: 'TYPE', relation: 'EQUALS', condition: 'Gift Basket'}]}, seo: false, body: false}),
-    'tropical-flowers': coll('tropical-flowers', 7002, 0, {smartRule: {appliedDisjunctively: false, rules: [{column: 'TAG', relation: 'EQUALS', condition: 'flower:tropicals'}]}, seo: false, body: false}),
+    'gift-baskets': coll('gift-baskets', 7001, 0, {smartRule: {appliedDisjunctively: false, rules: [{column: 'TYPE', relation: 'EQUALS', condition: 'Gift Basket'}]}, seo: false, body: false, published: PUBLIC3}),
+    'tropical-flowers': coll('tropical-flowers', 7002, 0, {smartRule: {appliedDisjunctively: false, rules: [{column: 'TAG', relation: 'EQUALS', condition: 'flower:tropicals'}]}, seo: false, body: false, published: PUBLIC3}),
   };
 
   const consolidation = [
