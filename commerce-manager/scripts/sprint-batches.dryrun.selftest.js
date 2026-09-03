@@ -93,7 +93,10 @@ for (const c of cases) {
 import {readFileSync} from 'node:fs';
 const hSrc = readFileSync(join(HERE, 'batch-h-audit.js'), 'utf8');
 ok('Batch H: declares READ-ONLY', /READ-ONLY/.test(hSrc) && /MUTATIONS SENT: 0/.test(hSrc));
-ok('Batch H: sends no mutation document', !/\bmutation\b/i.test(hSrc.replace(/refuses to send a mutation|no mutation|not a mutation/gi, '')));
+// No actual GraphQL mutation OPERATION (the word "mutation" appears in prose; an operation is
+// `mutation Name(` or `mutation {`). Assert none of those exist and every H query is guarded.
+ok('Batch H: sends no GraphQL mutation operation', !/\bmutation\s+[A-Za-z_]*\s*[({]/.test(hSrc));
+ok('Batch H: routes reads through assertReadOnly', /assertReadOnly\(COLL_QUERY\)/.test(hSrc));
 
 console.log(`\nsprint-batches.dryrun.selftest: ${passed} passed, ${failed} failed`);
 if (failed) { console.error('FAILURES:\n  - ' + fails.join('\n  - ')); process.exit(1); }

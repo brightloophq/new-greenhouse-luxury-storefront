@@ -47,6 +47,8 @@ import {
   overlapProducts,
   applyCumulativeRemoval,
   REMOVABLE_OCCASION_TAGS,
+  seoCompanionStatus,
+  seoCompanionOk,
 } from './sprint-lib.js';
 
 let passed = 0;
@@ -287,6 +289,22 @@ ok('applyCumulativeRemoval never touches wedding/wholesale/channel tags', applyC
 const orig = ['occasion:birthday', 'occasion:romance', 'occasion:wedding', 'channel:retail', 'flower:rose'];
 const acr2 = applyCumulativeRemoval(orig, ['occasion:birthday', 'occasion:romance']);
 ok('rollback (after + removed) restores the exact original tag set', sameSet([...acr2.after, ...acr2.removed], orig));
+
+/* ---- 17. SEO companion truth table (Batch H semantics) -------------------------------- */
+ok('companion status: both present', seoCompanionStatus({title: 'T', description: 'D'}) === 'both-present');
+ok('companion status: both absent', seoCompanionStatus({title: null, description: null}) === 'both-absent');
+ok('companion status: title only', seoCompanionStatus({title: 'T', description: null}) === 'title-only');
+ok('companion status: description only', seoCompanionStatus({title: null, description: 'D'}) === 'description-only');
+ok('companion status: empty strings count as absent', seoCompanionStatus({title: '   ', description: ''}) === 'both-absent');
+ok('companion status: title + empty description = title only', seoCompanionStatus({title: 'T', description: '  '}) === 'title-only');
+ok('companion status: missing seo object → both absent', seoCompanionStatus(null) === 'both-absent');
+// truth table: both present = PASS, both absent = allowed, title-only = FAIL, description-only = FAIL
+ok('companion OK: both present PASSES', seoCompanionOk({title: 'T', description: 'D'}) === true);
+ok('companion OK: both absent PASSES (allowed by default)', seoCompanionOk({title: null, description: null}) === true);
+ok('companion OK: both absent FAILS when not allowed', seoCompanionOk({title: null, description: null}, {allowBothAbsent: false}) === false);
+ok('companion OK: title-only FAILS', seoCompanionOk({title: 'T', description: null}) === false);
+ok('companion OK: description-only FAILS', seoCompanionOk({title: null, description: 'D'}) === false);
+ok('companion OK: the live canonical case (title, no description) is NOT intact', seoCompanionOk({title: 'Birthday | The New Greenhouse', description: null}) === false);
 
 /* ---- summary -------------------------------------------------------------------------- */
 console.log(`\nsprint-lib.selftest: ${passed} passed, ${failed} failed`);

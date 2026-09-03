@@ -1,12 +1,17 @@
-// batch-h-audit.js — Phase-1 Batch H: READ-ONLY final audit. Proves the sprint's intended
-// end-state after Batches B/C/E/F/G. Sends QUERIES ONLY; refuses to send a mutation; mutates
-// nothing. Run after the writes to certify the catalogue is clean.
+// batch-h-audit.js — Phase-1 Batch H: READ-ONLY final audit. Sends QUERIES ONLY; refuses to send
+// a mutation; mutates nothing. Certifies the AUTHORIZED Shopify closure (F2 + G) and separately
+// reports two non-closure categories so they are never confused with catalogue-mutation failures:
 //
-// Also usable BEFORE writes as a readiness check (it simply reports current vs expected).
+//   A. SHOPIFY CLOSURE (drives PASS/FAIL + exit code): retirement, canonicals, occasion counts,
+//      gift-baskets/tropical-flowers membership + SEO/body, zero leakage, no companion loss on
+//      the collections Batch G actually writes.
+//   B. PENDING CODE RELEASE (reported, never fails closure): the six retired→canonical redirect
+//      mappings live in storefront CODE (app/lib/collectionRedirects.ts) — Batch C, activated by
+//      a deploy, not by a Shopify mutation.
+//   C. ADDITIONAL SEO FINDINGS outside Batch G (reported, never fails closure, never mutated):
+//      canonical collections whose seo pair is title-only / description-only.
 //
-// Usage (local Mac):
-//   cd commerce-manager
-//   node scripts/batch-h-audit.js
+// Usage (local Mac):  cd commerce-manager && node scripts/batch-h-audit.js
 //
 import {readFileSync, existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
@@ -24,13 +29,16 @@ import {
   isRetailTagged,
   PUBLIC_STOREFRONT_PUBLICATIONS,
   HYDROGEN_PUBLICATION,
+  seoCompanionStatus,
 } from './sprint-lib.js';
 import {loadState, assertReadOnly} from './sprint-io.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..', '..');
-const REDIRECT_FILE = join(ROOT, 'app', 'routes', '($locale).collections.$handle.tsx');
-const RETAIL_COLLECTIONS = [...OCCASION_CANONICAL, 'gift-baskets', 'tropical-flowers'];
+// The redirect map now lives in the storefront lib (Batch C); the route imports it.
+const REDIRECT_LIB = join(ROOT, 'app', 'lib', 'collectionRedirects.ts');
+const GIFT_TROP = ['gift-baskets', 'tropical-flowers'];
+const RETAIL_COLLECTIONS = [...OCCASION_CANONICAL, ...GIFT_TROP];
 
 const COLL_QUERY = `#graphql
   query H_Coll($handle: String!) {
@@ -44,6 +52,7 @@ const COLL_QUERY = `#graphql
   }
 `;
 
+// Category A — Shopify closure (drives PASS/FAIL)
 let pass = 0, fail = 0;
 const results = [];
 function check(name, cond, detail = '') {
@@ -52,15 +61,23 @@ function check(name, cond, detail = '') {
 }
 const publishedNamesOf = (c) => (c?.resourcePublications?.nodes || []).filter((n) => n.isPublished).map((n) => n.publication?.name || '');
 const lcEq = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
-// Publicly exposed on the web = published to ANY public storefront publication (Hydrogen or Online Store).
 const publiclyExposed = (c) => publishedNamesOf(c).some((n) => PUBLIC_STOREFRONT_PUBLICATIONS.some((p) => lcEq(p, n)));
 const onHydrogen = (c) => publishedNamesOf(c).some((n) => lcEq(n, HYDROGEN_PUBLICATION));
 
-async function main() {
+// Read-only query source. Production imports the live Admin client; an offline test may inject a
+// deterministic fixture (handle → collection) via TNG_H_FIXTURE. Neither path ever mutates.
+async function getQuery() {
+  if (process.env.TNG_H_FIXTURE) {
+    const data = JSON.parse(readFileSync(process.env.TNG_H_FIXTURE, 'utf8'));
+    return (h) => Promise.resolve({collectionByHandle: data[h] || null});
+  }
   const {adminGraphQL} = await import('../src/shopify-admin.js');
-  const q = (h) => adminGraphQL(assertReadOnly(COLL_QUERY), {handle: h});
+  return (h) => adminGraphQL(assertReadOnly(COLL_QUERY), {handle: h});
+}
 
-  // expected end-state numbers — prefer fresh evidence, fall back to the approved sprint targets
+async function main() {
+  const q = await getQuery();
+
   let expected = {birthday: 16, anniversary: 9, 'love-and-romance': 17, 'gift-baskets': 1, 'tropical-flowers': 3};
   try {
     const {state} = loadState();
@@ -71,7 +88,7 @@ async function main() {
 
   console.log('════════════ BATCH H — FINAL AUDIT (READ-ONLY) ════════════');
 
-  // 1) retired collections no longer publicly exposed (Hydrogen or Online Store); 2) canonicals survive on Hydrogen
+  // A1) retired collections not publicly exposed; A2) canonicals survive on Hydrogen
   for (const h of RETIRE_HANDLES) {
     const c = (await q(h)).collectionByHandle;
     const exposed = c ? publiclyExposed(c) : false;
@@ -79,23 +96,10 @@ async function main() {
   }
   for (const h of CANONICAL_SURVIVORS) {
     const c = (await q(h)).collectionByHandle;
-    check(`canonical ${h} survives on Hydrogen storefront`, !!c && onHydrogen(c), c ? `count=${c.productsCount?.count} published=[${publishedNamesOf(c).join(', ')}]` : 'MISSING');
+    check(`canonical ${h} survives on Hydrogen storefront`, !!c && onHydrogen(c), c ? `count=${c.productsCount?.count}` : 'MISSING');
   }
 
-  // 3) redirect map covers all six retired handles (code-level, since write_url_redirects absent)
-  if (existsSync(REDIRECT_FILE)) {
-    const src = readFileSync(REDIRECT_FILE, 'utf8');
-    for (const h of RETIRE_HANDLES) {
-      const want = `/collections/${CONSOLIDATION[h]}`;
-      const has = src.includes(`'${h}'`) || src.includes(`"${h}"`);
-      const toCanonical = src.includes(want);
-      check(`redirect map has ${h} → ${want}`, has && toCanonical);
-    }
-  } else {
-    check('redirect map file present', false, 'collections.$handle.tsx not found');
-  }
-
-  // 4) membership counts + 5) leakage in every retail collection
+  // A3) membership counts + leakage in every retail collection
   for (const h of RETAIL_COLLECTIONS) {
     const c = (await q(h)).collectionByHandle;
     if (!c) { check(`${h} exists`, false); continue; }
@@ -108,30 +112,69 @@ async function main() {
     check(`${h} wholesale leakage == 0`, wholesaleLeak.length === 0, wholesaleLeak.map((p) => p.handle).join(', '));
     check(`${h} wedding leakage == 0`, weddingLeak.length === 0, weddingLeak.map((p) => p.handle).join(', '));
     check(`${h} add-on not introduced`, addonLeak.length === 0, addonLeak.map((p) => p.handle).join(', '));
-    // occasion collections: every member is a legitimate retail occasion member
     if (OCCASION_CANONICAL.includes(h)) {
       const nonMembers = members.filter((p) => !isRetailOccasionMember(p));
       check(`${h} every member is a retail occasion member`, nonMembers.length === 0, nonMembers.map((p) => p.handle).join(', '));
     }
   }
 
-  // 6) gift-baskets + tropical SEO/body complete; 7) no SEO companion-field loss anywhere checked
-  for (const h of ['gift-baskets', 'tropical-flowers']) {
+  // A4) gift-baskets + tropical-flowers SEO/body complete (Batch G targets) — BOTH companion fields
+  for (const h of GIFT_TROP) {
     const c = (await q(h)).collectionByHandle;
-    check(`${h} SEO complete (both fields)`, !!(c?.seo?.title && c?.seo?.description));
+    const status = seoCompanionStatus(c?.seo);
+    check(`${h} SEO companion (both title+description)`, status === 'both-present', `status=${status}`);
     check(`${h} body present`, String(c?.descriptionHtml || '').replace(/<[^>]*>/g, '').trim().length > 0);
   }
+
+  // ---- Category C — canonical SEO companion findings (report accurately, DO NOT mutate) ----
+  const seoFindings = [];
   for (const h of CANONICAL_SURVIVORS) {
     const c = (await q(h)).collectionByHandle;
-    // if a canonical has a title, it must still have a description (no companion loss)
-    if (c?.seo?.title) check(`${h} SEO companion intact`, !!c.seo.description, 'title present without description!' );
+    const status = seoCompanionStatus(c?.seo);
+    if (status === 'title-only') seoFindings.push(`${h}: seo.title present, seo.description MISSING (companion NOT intact)`);
+    else if (status === 'description-only') seoFindings.push(`${h}: seo.description present, seo.title MISSING (companion NOT intact)`);
   }
 
+  // ---- Category B — code-side redirect map (Batch C), reported, never fails closure ----
+  const redirectRows = [];
+  let redirectPresent = 0;
+  if (existsSync(REDIRECT_LIB)) {
+    const src = readFileSync(REDIRECT_LIB, 'utf8');
+    for (const h of RETIRE_HANDLES) {
+      const want = `/collections/${CONSOLIDATION[h]}`;
+      const keyRe = new RegExp(`(['"]?)${h.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\1\\s*:`);
+      const okc = keyRe.test(src) && src.includes(want);
+      if (okc) redirectPresent++;
+      redirectRows.push(`  ${okc ? '•' : '·'} ${h} → ${want} ${okc ? 'present in code' : 'MISSING in code'}`);
+    }
+  } else {
+    for (const h of RETIRE_HANDLES) redirectRows.push(`  · ${h} → /collections/${CONSOLIDATION[h]} — redirect lib not found`);
+  }
+
+  // ---- Output ----
   console.log(results.join('\n'));
+
+  const closurePass = fail === 0;
   console.log('\n════════════ SUMMARY ════════════');
-  console.log(`  checks: ${pass} passed, ${fail} failed`);
-  console.log('  MUTATIONS SENT: 0 (read-only audit)');
-  if (fail) process.exit(1);
+  console.log(`  SHOPIFY CLOSURE: ${closurePass ? 'PASS' : 'FAIL'}  (${pass} passed, ${fail} failed — catalogue mutations only)`);
+
+  console.log(`\n  PENDING CODE RELEASE (Batch C — not a Shopify mutation):`);
+  console.log(`    ${redirectPresent}/${RETIRE_HANDLES.length} retired→canonical redirect mappings present in app/lib/collectionRedirects.ts`);
+  console.log(`    → ${redirectPresent === RETIRE_HANDLES.length ? 'code complete; still requires a deploy to activate the 6 redirects' : `${RETIRE_HANDLES.length - redirectPresent} mapping(s) missing in code`}`);
+  console.log(redirectRows.join('\n'));
+
+  console.log(`\n  ADDITIONAL SEO FINDINGS (outside Batch G scope — reported, NOT mutated):`);
+  if (seoFindings.length === 0) {
+    console.log('    none — all canonical collections have an intact SEO companion pair');
+  } else {
+    console.log(`    ${seoFindings.length} canonical collection(s) have seo.title without seo.description:`);
+    for (const f of seoFindings) console.log(`      - ${f}`);
+    console.log('    NOTE: global SEO is NOT fully complete. These are an audit finding, not authorized Batch G targets (Batch G = gift-baskets, tropical-flowers ONLY).');
+  }
+
+  console.log('\n  MUTATIONS SENT: 0 (read-only audit)');
+  // Exit code reflects the AUTHORIZED Shopify closure only. Category B/C are informational.
+  if (!closurePass) process.exit(1);
 }
 
 main().catch(async (e) => {

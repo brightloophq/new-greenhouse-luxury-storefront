@@ -293,6 +293,26 @@ export function applyCumulativeRemoval(currentTags, approvedRemoveTags) {
   return {before, after, removed, missing, unrelatedPreserved};
 }
 
+/* ---- SEO companion truth table (Batch H audit semantics) ------------------------------ */
+const hasStr = (v) => v != null && String(v).trim() !== '';
+/** Classify a collection/product seo object: 'both-present' | 'both-absent' | 'title-only' | 'description-only'. */
+export function seoCompanionStatus(seo) {
+  const t = hasStr(seo && seo.title);
+  const d = hasStr(seo && seo.description);
+  if (t && d) return 'both-present';
+  if (!t && !d) return 'both-absent';
+  return t ? 'title-only' : 'description-only';
+}
+/**
+ * A companion pair is OK only when BOTH fields are present, or BOTH are absent when that is
+ * explicitly permitted by the audit contract. Exactly one present (title-only/description-only)
+ * is NEVER intact.
+ */
+export function seoCompanionOk(seo, {allowBothAbsent = true} = {}) {
+  const s = seoCompanionStatus(seo);
+  return s === 'both-present' || (s === 'both-absent' && allowBothAbsent);
+}
+
 /* ---- Phase-1 closure orchestrator: Stage-0 precondition guard (pure) ------------------ */
 // Confirmed state before the remaining Shopify-side work (F2, G, H). Batches B/E/F1 are done.
 export const PHASE1_EXPECTED = Object.freeze({
