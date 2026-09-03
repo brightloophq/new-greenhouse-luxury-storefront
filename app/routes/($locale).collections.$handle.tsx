@@ -8,6 +8,7 @@ import type {
   ProductSortKeys,
 } from '@shopify/hydrogen/storefront-api-types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {retiredCollectionTarget} from '~/lib/collectionRedirects';
 import {breadcrumbSchema} from '~/lib/seo';
 import {
   parseCatalogSearchParams,
@@ -203,6 +204,12 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   if (!handle) {
     throw redirect('/collections');
+  }
+
+  // Phase-1: retired duplicate collections 301 to their canonical (see ~/lib/collectionRedirects).
+  const retiredTarget = retiredCollectionTarget(handle);
+  if (retiredTarget) {
+    throw redirect(retiredTarget, 301);
   }
 
   const url = new URL(request.url);
