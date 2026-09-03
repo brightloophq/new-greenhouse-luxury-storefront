@@ -17,7 +17,7 @@
 //     node scripts/batch-f-populate.js --target gift-baskets --commit --i-understand-this-writes-to-shopify
 //
 import {isTrueGiftBasket, isRetailTropical} from './sprint-lib.js';
-import {loadState, assertFresh, parseInterlock, backupDir, writeBackup, assertReadOnly, hr, bail} from './sprint-io.js';
+import {loadState, assertFresh, parseInterlock, backupDir, writeBackup, assertReadOnly, pollForConvergence, hr, bail} from './sprint-io.js';
 
 const TARGETS = {
   'gift-baskets': {env: 'TNG_SPRINT_F_GIFT_AUTH', phrase: 'AUTHORIZE SPRINT F GIFT BASKETS', stateKey: 'giftBaskets', candKey: 'candidates', predicate: isTrueGiftBasket, label: 'F1 Gift Baskets'},
@@ -152,9 +152,12 @@ async function main() {
     console.log(`  ✓ added ${resolved.length} product(s) to ${targetHandle}`);
   }
 
-  // verify final count == intended
-  const after = await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: targetHandle});
-  console.log(`  final count: ${after.collectionByHandle?.productsCount?.count} (intended ${(block?.[cfg.candKey] || []).length})`);
+  // verify final count == intended (SMART membership may lag → bounded convergence poll)
+  const intended = (block?.[cfg.candKey] || []).length;
+  const readCount = async () => (await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: targetHandle})).collectionByHandle?.productsCount?.count;
+  const {converged, attempts, lastValue, history} = await pollForConvergence(readCount, intended, {attempts: 8, baseDelayMs: 1000, maxDelayMs: 8000});
+  if (!converged) bail(`${targetHandle}: MEMBERSHIP PROPAGATION TIMEOUT — additions SUCCEEDED, but the collection reports ${lastValue} (want ${intended}) after ${attempts} polls [${history.join(' → ')}]. NOT a mutation failure; re-run the read-only preflight to confirm before any action.`);
+  console.log(`  final count: ${lastValue} (intended ${intended}, converged after ${attempts} poll(s))`);
   console.log(`\n  ✓ Batch ${cfg.label} complete. Rollback: remove added tags / collectionRemoveProducts from ${dir}`);
 }
 

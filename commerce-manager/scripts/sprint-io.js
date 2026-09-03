@@ -102,6 +102,31 @@ export function assertReadOnly(op) {
   return op;
 }
 
+/* ---- smart-collection convergence poll (bounded, backoff) ----------------------------- */
+export const defaultWait = (ms) => new Promise((r) => setTimeout(r, ms));
+/**
+ * Poll a read function until it returns the target, with bounded retries and exponential
+ * backoff (capped). Shopify smart-collection membership re-evaluates asynchronously after a
+ * tag mutation, so a single immediate read can race it. Pure control-flow — `readFn` and
+ * `waitFn` are injected, so this is fully testable offline with no real delay.
+ *
+ * @param readFn  async () => currentValue (e.g. a productsCount)
+ * @param target  the value that means "converged"
+ * @param opts    { attempts=8, baseDelayMs=1000, maxDelayMs=8000, waitFn=defaultWait }
+ * @returns { converged, attempts, lastValue, history }
+ */
+export async function pollForConvergence(readFn, target, {attempts = 8, baseDelayMs = 1000, maxDelayMs = 8000, waitFn = defaultWait} = {}) {
+  const history = [];
+  let lastValue = null;
+  for (let i = 0; i < attempts; i++) {
+    lastValue = await readFn();
+    history.push(lastValue);
+    if (lastValue === target) return {converged: true, attempts: i + 1, lastValue, history};
+    if (i < attempts - 1) await waitFn(Math.min(baseDelayMs * 2 ** i, maxDelayMs));
+  }
+  return {converged: false, attempts, lastValue, history};
+}
+
 /* ---- pretty helpers ------------------------------------------------------------------- */
 export const hr = (s = '') => `──────── ${s} ────────`;
 export function bail(msg) {

@@ -28,7 +28,7 @@ import {
   applyCumulativeRemoval,
   REMOVABLE_OCCASION_TAGS,
 } from './sprint-lib.js';
-import {loadState, assertFresh, parseInterlock, backupDir, writeBackup, assertReadOnly, hr, bail} from './sprint-io.js';
+import {loadState, assertFresh, parseInterlock, backupDir, writeBackup, assertReadOnly, pollForConvergence, hr, bail} from './sprint-io.js';
 
 const ENV = 'TNG_SPRINT_E_AUTH';
 const PHRASE = 'AUTHORIZE SPRINT E OCCASION MEMBERSHIP';
@@ -57,7 +57,6 @@ function isSingleOccasionTagRule(ruleSet) {
   return !!(ruleSet && ruleSet.appliedDisjunctively !== true && Array.isArray(ruleSet.rules) && ruleSet.rules.length === 1 &&
     String(ruleSet.rules[0].column).toLowerCase() === 'tag' && /^occasion:/i.test(ruleSet.rules[0].condition));
 }
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   const gate = parseInterlock(process.argv, ENV, PHRASE);
@@ -158,17 +157,19 @@ async function main() {
     console.log(`  ✓ ${r.handle}: removed ${JSON.stringify(r.removeTags)} · ${now.length} tags preserved`);
   }
 
-  // 4) post-write: prove collection counts (smart re-evaluation may lag → bounded poll)
-  console.log('\n' + hr('POST-WRITE VERIFICATION'));
+  // 4) post-write: prove collection counts. SMART membership re-evaluates asynchronously after
+  //    a tag mutation, so poll with bounded exponential backoff. A tag mutation that SUCCEEDED
+  //    but whose membership has not converged in the window is a PROPAGATION TIMEOUT — reported
+  //    distinctly from a mutation failure, and NOT a trigger for rollback on its own.
+  console.log('\n' + hr('POST-WRITE VERIFICATION (bounded convergence poll)'));
+  const readCount = (h) => async () => (await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: h})).collectionByHandle?.productsCount?.count;
   for (const c of perCollection) {
-    let cnt = null;
-    for (let i = 0; i < 6; i++) {
-      cnt = (await adminGraphQL(assertReadOnly(COLL_QUERY), {handle: c.handle})).collectionByHandle?.productsCount?.count;
-      if (cnt === EXPECTED_INTENDED[c.handle]) break;
-      await sleep(2000);
+    const target = EXPECTED_INTENDED[c.handle];
+    const {converged, attempts, lastValue, history} = await pollForConvergence(readCount(c.handle), target, {attempts: 8, baseDelayMs: 1000, maxDelayMs: 8000});
+    if (!converged) {
+      bail(`${c.handle}: MEMBERSHIP PROPAGATION TIMEOUT — the tag mutations SUCCEEDED, but the smart collection still reports ${lastValue} (want ${target}) after ${attempts} polls [${history.join(' → ')}]. This is NOT a mutation failure and NOT a rollback trigger. Re-run the read-only preflight to confirm convergence before any further action.`);
     }
-    if (cnt !== EXPECTED_INTENDED[c.handle]) bail(`${c.handle}: post-write count ${cnt} != intended ${EXPECTED_INTENDED[c.handle]} — investigate (rollback available in ${dir})`);
-    console.log(`  ✓ ${c.handle} = ${cnt}`);
+    console.log(`  ✓ ${c.handle} = ${lastValue} (converged after ${attempts} poll(s))`);
   }
   console.log(`\n  ✓ Batch E complete. Rollback: for each product in ${dir}/tags.before.json, tagsAdd the removed occasion tags (restores the exact original set).`);
 }
