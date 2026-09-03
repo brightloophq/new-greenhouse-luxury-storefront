@@ -293,6 +293,50 @@ export function applyCumulativeRemoval(currentTags, approvedRemoveTags) {
   return {before, after, removed, missing, unrelatedPreserved};
 }
 
+/* ---- Phase-1 closure orchestrator: Stage-0 precondition guard (pure) ------------------ */
+// Confirmed state before the remaining Shopify-side work (F2, G, H). Batches B/E/F1 are done.
+export const PHASE1_EXPECTED = Object.freeze({
+  occasion: Object.freeze({birthday: 16, anniversary: 9, 'love-and-romance': 17}),
+  giftBaskets: Object.freeze({count: 1, member: 'fruit-flower-gift-basket'}),
+  catalogue: Object.freeze({products: 274, collections: 52}),
+  tropical: Object.freeze({handle: 'tropical-flowers', intended: 3}),
+});
+
+/**
+ * Fail-closed Stage-0 guard evaluated against a FRESH preflight state. Confirms the catalogue,
+ * scopes, and the already-completed batches (E occasion counts + no residual removals, F1
+ * gift-baskets=1 with the exact member) have not drifted before any remaining mutation. Pure.
+ * @throws with an itemized message if anything drifted.
+ */
+export function assertPhase1Preconditions(state) {
+  const errs = [];
+  if (!state || typeof state !== 'object') throw new Error('PHASE-1 PRECONDITION: state missing');
+  if (!state.store) errs.push('store/domain target missing from evidence');
+  // catalogue counts
+  if (state.counts?.products !== PHASE1_EXPECTED.catalogue.products) errs.push(`products ${state.counts?.products} != ${PHASE1_EXPECTED.catalogue.products}`);
+  if (state.counts?.collections !== PHASE1_EXPECTED.catalogue.collections) errs.push(`collections ${state.counts?.collections} != ${PHASE1_EXPECTED.catalogue.collections}`);
+  // required scope for F2/G writes
+  if (!(state.scopes?.all || []).includes('write_products')) errs.push('missing required scope write_products');
+  // Batch E: occasion canonicals settled at intended counts, no residual removals
+  for (const [h, exp] of Object.entries(PHASE1_EXPECTED.occasion)) {
+    const occ = state.occasion?.[h];
+    if (!occ) { errs.push(`occasion ${h} missing from evidence`); continue; }
+    if (occ.liveMemberCount !== exp) errs.push(`occasion ${h} live ${occ.liveMemberCount} != ${exp} (Batch E drift)`);
+    if ((occ.toRemove || []).length !== 0) errs.push(`occasion ${h} still has ${occ.toRemove.length} pending removal(s) (Batch E not settled)`);
+  }
+  // Batch F1: gift-baskets exactly one member = fruit-flower-gift-basket
+  const gb = state.collections?.['gift-baskets'];
+  if (!gb?.found) errs.push('gift-baskets collection missing from evidence');
+  else {
+    if (gb.productsCount !== PHASE1_EXPECTED.giftBaskets.count) errs.push(`gift-baskets count ${gb.productsCount} != ${PHASE1_EXPECTED.giftBaskets.count}`);
+    const members = gb.liveMembers || [];
+    if (!members.includes(PHASE1_EXPECTED.giftBaskets.member)) errs.push(`gift-baskets missing member ${PHASE1_EXPECTED.giftBaskets.member}`);
+    if (members.length !== 1) errs.push(`gift-baskets has ${members.length} members != 1`);
+  }
+  if (errs.length) throw new Error('PHASE-1 PRECONDITION DRIFT — STOP before first mutation:\n    - ' + errs.join('\n    - '));
+  return true;
+}
+
 /* ---- redirect map shape guard (code-level, since write_url_redirects is not granted) --- */
 /** The storefront redirect map must be exactly the 6 retired handles → canonical paths. */
 export function assertRedirectMapComplete(map) {

@@ -136,3 +136,30 @@ export function makeFixture() {
     note: 'SYNTHETIC — offline test fixture.',
   };
 }
+
+/**
+ * The catalogue state AFTER Batches B/E/F1 (the point the phase1-close orchestrator runs):
+ * occasion collections settled at 16/9/17 with no residual removals, gift-baskets MANUAL with
+ * exactly one member (fruit-flower-gift-basket), tropical-flowers still empty (F2 pending),
+ * gift-baskets & tropical-flowers SEO/body gaps still open (G pending).
+ */
+export function makeClosedFixture() {
+  const s = makeFixture();
+  for (const [h, n] of Object.entries({birthday: 16, anniversary: 9, 'love-and-romance': 17})) {
+    s.occasion[h].liveMemberCount = n;
+    s.occasion[h].toRemove = [];
+    s.occasion[h].toRemoveReasons = [];
+    s.occasion[h].toAdd = [];
+    s.collections[h].productsCount = n;
+  }
+  // Batch F1 done: gift-baskets is MANUAL with the single approved member.
+  s.collections['gift-baskets'].productsCount = 1;
+  s.collections['gift-baskets'].liveMembers = ['fruit-flower-gift-basket'];
+  s.collections['gift-baskets'].isSmart = false;
+  s.collections['gift-baskets'].rule = '(manual / no smart rule)';
+  s.collections['gift-baskets'].ruleSet = null;
+  s.giftBaskets.liveCount = 1;
+  s.giftBaskets.candidates = [{...s.giftBaskets.candidates[0], alreadyMember: true}];
+  s.source = 'SYNTHETIC CLOSED FIXTURE (post B/E/F1) — offline orchestrator tests only.';
+  return s;
+}
