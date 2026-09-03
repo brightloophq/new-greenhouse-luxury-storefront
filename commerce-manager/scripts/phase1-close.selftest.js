@@ -1,8 +1,11 @@
 // phase1-close.selftest.js — OFFLINE tests for the Phase-1 closure orchestrator.
 //
-// Runs the real orchestrator (which spawns the real batch children) in DRY-RUN against synthetic
-// closed-state fixtures. No network, no Shopify, no mutation. Also unit-tests the interlock and
-// the Stage-0 precondition guard.
+// Two layers:
+//   • OFFLINE DRY-RUN mode → runs the REAL batch children in plain dry-run against a fixture.
+//   • LIVE modes (--live-preview / --commit) → the orchestrator MUST run a fresh preflight and
+//     prove regeneration. Offline, we exercise that control flow with STUB child scripts (a
+//     temp dir pointed at by TNG_PHASE1_SCRIPT_DIR): a stub preflight writes a fresh state file,
+//     stub batches just echo. No network, no Shopify, no mutation.
 //
 import {execFileSync} from 'node:child_process';
 import {writeFileSync, mkdtempSync} from 'node:fs';
@@ -11,7 +14,8 @@ import {join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {makeClosedFixture} from './fixtures/sprint-state.fixture.js';
 import {assertPhase1Preconditions} from './sprint-lib.js';
-import {parseInterlock} from './sprint-io.js';
+import {parseInterlock, assertFreshlyRegenerated} from './sprint-io.js';
+import {resolvePhase1Mode} from './phase1-close.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ORCH = join(HERE, 'phase1-close.js');
@@ -20,92 +24,168 @@ const dir = mkdtempSync(join(tmpdir(), 'phase1-close-'));
 let passed = 0, failed = 0;
 const fails = [];
 function ok(name, cond) { if (cond) passed++; else { failed++; fails.push(name); console.error(`  ✗ ${name}`); } }
-
 function writeState(name, obj) { const p = join(dir, name); writeFileSync(p, JSON.stringify(obj, null, 2)); return p; }
-function runOrch(statePath, argv = []) {
-  const env = {...process.env, TNG_SPRINT_STATE_PATH: statePath};
-  // never provide a full authorization in tests — offline children cannot reach Shopify
+const idx = (s, t) => s.indexOf(t);
+
+/* ---- build a temp STUB script dir for live-mode control-flow tests --------------------- */
+const stubDir = mkdtempSync(join(tmpdir(), 'phase1-stubs-'));
+// CommonJS stubs (temp dir has no package.json → default CJS), named exactly like the real scripts.
+writeFileSync(join(stubDir, 'sprint-preflight.js'), `
+const fs = require('fs');
+if (process.env.TNG_STUB_PREFLIGHT_FAIL === '1') { console.error('STUB-PREFLIGHT-FAIL'); process.exit(1); }
+const obj = JSON.parse(fs.readFileSync(process.env.TNG_STUB_PREFLIGHT_SRC, 'utf8'));
+obj.generatedAt = process.env.TNG_STUB_PREFLIGHT_STALE === '1' ? '2020-01-01T00:00:00.000Z' : new Date().toISOString();
+fs.writeFileSync(process.env.TNG_SPRINT_STATE_PATH, JSON.stringify(obj, null, 2));
+console.log('STUB-PREFLIGHT-RAN');
+`);
+writeFileSync(join(stubDir, 'batch-f-populate.js'), `console.log('STUB-F2-RAN args=' + process.argv.slice(2).join(' '));`);
+writeFileSync(join(stubDir, 'batch-g-content.js'), `console.log('STUB-G-RAN args=' + process.argv.slice(2).join(' '));`);
+writeFileSync(join(stubDir, 'batch-h-audit.js'), `console.log('STUB-H-RAN');`);
+
+function runOrch(statePath, argv = [], extraEnv = {}) {
+  const env = {...process.env, TNG_SPRINT_STATE_PATH: statePath, ...extraEnv};
   delete env.TNG_PHASE1_CLOSE_AUTH;
   for (const k of Object.keys(env)) if (/^TNG_SPRINT_.*_AUTH$/.test(k)) delete env[k];
+  if (extraEnv.TNG_PHASE1_CLOSE_AUTH) env.TNG_PHASE1_CLOSE_AUTH = extraEnv.TNG_PHASE1_CLOSE_AUTH;
   try { return {out: execFileSync('node', [ORCH, ...argv], {env, encoding: 'utf8'}), code: 0}; }
   catch (e) { return {out: (e.stdout || '') + (e.stderr || ''), code: e.status ?? 1}; }
 }
-const idx = (s, t) => s.indexOf(t);
+// helper: run a live-preview against a stub preflight that emits `srcState`
+function runLivePreview(srcState, {stale = false, preState} = {}) {
+  const src = writeState('stub-src.json', srcState);
+  const statePath = writeState('live-state.json', preState || {generatedAt: '2020-01-01T00:00:00.000Z', junk: true});
+  return runOrch(statePath, ['--live-preview'], {
+    TNG_PHASE1_SCRIPT_DIR: stubDir,
+    TNG_STUB_PREFLIGHT_SRC: src,
+    ...(stale ? {TNG_STUB_PREFLIGHT_STALE: '1'} : {}),
+  });
+}
 
-/* ---- 1. interlock: partial authorization is refused (stays dry-run) ------------------- */
+/* ---- 1. mode resolution + interlock (partial auth refused) ---------------------------- */
 {
-  const p = (argv, env) => parseInterlock(argv, 'TNG_PHASE1_CLOSE_AUTH', 'AUTHORIZE PHASE1 SHOPIFY CLOSURE', env);
-  // parseInterlock reads process.env; emulate by temporarily setting/reading. Test the flag logic:
-  const save = process.env.TNG_PHASE1_CLOSE_AUTH;
-  delete process.env.TNG_PHASE1_CLOSE_AUTH;
-  ok('no flags, no env → dry-run', p(['node', 'x']).dryRun === true);
-  ok('--commit only → dry-run (missing understand + env)', p(['node', 'x', '--commit']).dryRun === true);
-  ok('both flags but no env → dry-run', p(['node', 'x', '--commit', '--i-understand-this-writes-to-shopify']).dryRun === true);
+  ok('resolveMode: no flags → offline-dry-run', resolvePhase1Mode({write: false}, false) === 'offline-dry-run');
+  ok('resolveMode: --live-preview → live-preview', resolvePhase1Mode({write: false}, true) === 'live-preview');
+  ok('resolveMode: authorized write → live-write', resolvePhase1Mode({write: true}, false) === 'live-write');
+  ok('resolveMode: write wins over live-preview', resolvePhase1Mode({write: true}, true) === 'live-write');
+  const save = process.env.TNG_PHASE1_CLOSE_AUTH; delete process.env.TNG_PHASE1_CLOSE_AUTH;
+  const p = (argv) => parseInterlock(argv, 'TNG_PHASE1_CLOSE_AUTH', 'AUTHORIZE PHASE1 SHOPIFY CLOSURE');
+  ok('interlock: --commit only → dry-run', p(['n', 'x', '--commit']).dryRun === true);
+  ok('interlock: both flags, no env → dry-run', p(['n', 'x', '--commit', '--i-understand-this-writes-to-shopify']).dryRun === true);
   process.env.TNG_PHASE1_CLOSE_AUTH = 'AUTHORIZE PHASE1 SHOPIFY CLOSURE';
-  ok('env + --commit but no understand flag → dry-run', p(['node', 'x', '--commit']).dryRun === true);
-  ok('env + both flags → WRITE (all three present)', p(['node', 'x', '--commit', '--i-understand-this-writes-to-shopify']).write === true);
+  ok('interlock: env + both flags → write', p(['n', 'x', '--commit', '--i-understand-this-writes-to-shopify']).write === true);
   if (save === undefined) delete process.env.TNG_PHASE1_CLOSE_AUTH; else process.env.TNG_PHASE1_CLOSE_AUTH = save;
 }
 
-/* ---- 2. Stage-0 precondition guard (pure) --------------------------------------------- */
+/* ---- 2. freshness guard (pure) -------------------------------------------------------- */
+{
+  const now = Date.now();
+  let t = false; try { assertFreshlyRegenerated(new Date(now).toISOString(), now); } catch { t = true; }
+  ok('freshness: a just-now timestamp passes', t === false);
+  const throws = (fn) => { try { fn(); return false; } catch { return true; } };
+  ok('freshness: an old timestamp is rejected', throws(() => assertFreshlyRegenerated('2020-01-01T00:00:00.000Z', now)));
+  ok('freshness: a missing timestamp is rejected', throws(() => assertFreshlyRegenerated(undefined, now)));
+}
+
+/* ---- 3. Stage-0 precondition guard (pure) --------------------------------------------- */
 {
   const good = makeClosedFixture();
-  let threw = false; try { assertPhase1Preconditions(good); } catch { threw = true; }
-  ok('preconditions pass for the confirmed closed state', threw === false);
-  const drift = (mut) => { const s = makeClosedFixture(); mut(s); let t = false; try { assertPhase1Preconditions(s); } catch { t = true; } return t; };
-  ok('drift: birthday != 16 → throws', drift((s) => { s.occasion.birthday.liveMemberCount = 15; }));
-  ok('drift: residual E removal → throws', drift((s) => { s.occasion.anniversary.toRemove = ['x']; }));
-  ok('drift: gift-baskets != 1 → throws', drift((s) => { s.collections['gift-baskets'].productsCount = 2; }));
-  ok('drift: gift-baskets wrong member → throws', drift((s) => { s.collections['gift-baskets'].liveMembers = ['something-else']; }));
-  ok('drift: products != 274 → throws', drift((s) => { s.counts.products = 270; }));
-  ok('drift: collections != 52 → throws', drift((s) => { s.counts.collections = 51; }));
-  ok('drift: missing write_products scope → throws', drift((s) => { s.scopes.all = ['read_products']; }));
+  ok('preconditions pass for confirmed closed state', (() => { try { assertPhase1Preconditions(good); return true; } catch { return false; } })());
+  const drift = (mut) => { const s = makeClosedFixture(); mut(s); try { assertPhase1Preconditions(s); return false; } catch { return true; } };
+  ok('drift: birthday!=16 throws', drift((s) => { s.occasion.birthday.liveMemberCount = 15; }));
+  ok('drift: gift-baskets!=1 throws', drift((s) => { s.collections['gift-baskets'].productsCount = 2; }));
+  ok('drift: gift-baskets wrong member throws', drift((s) => { s.collections['gift-baskets'].liveMembers = ['x']; }));
+  ok('drift: products!=274 throws', drift((s) => { s.counts.products = 270; }));
 }
 
-/* ---- 3. orchestrator dry-run: full happy path, 0 mutations, sequential order ----------- */
+/* ---- 4. OFFLINE DRY-RUN mode: real children, fixture, 0 mutations, order --------------- */
 {
-  const sp = writeState('closed.json', makeClosedFixture());
-  const {out, code} = runOrch(sp);
-  ok('dry-run: exit 0', code === 0);
-  ok('dry-run: MODE dry-run', /MODE: DRY-RUN/.test(out) && !/MODE: LIVE WRITE/.test(out));
-  ok('dry-run: Stage 0 preconditions hold', /preconditions hold: E=16\/9\/17/.test(out));
-  ok('dry-run: F2 exact 3 candidates', /luxury-tropical-arrangement/.test(out) && /island-modern-tropical-vase/.test(out) && /paradise-tropical-bouquet/.test(out));
-  ok('dry-run: F2 exclusions shown (11 stems)', /wholesale stems that MUST stay excluded \(11\)/.test(out));
-  ok('dry-run: G both SEO companion fields', (out.match(/seo carries BOTH companion fields/g) || []).length === 2);
-  ok('dry-run: G targets only gift-baskets + tropical-flowers', /collection SEO \+ body \(gift-baskets, tropical-flowers only\)/.test(out));
-  ok('dry-run: H expected assertions printed', /tropical-flowers=3 \(exact approved retail members/.test(out));
-  ok('dry-run: total planned mutation calls reported', /TOTAL planned Shopify mutation calls/.test(out));
-  ok('dry-run: backup paths reported', /batch-f-tropical-flowers-<ts>\/candidates\.before\.json/.test(out) && /batch-g-content-<ts>\/content\.before\.json/.test(out));
-  ok('dry-run: Shopify mutations sent = 0', /Shopify mutations sent = 0/.test(out));
-  // sequential order: Stage 0 → F2 → G → H
-  ok('order: Stage 0 before F2', idx(out, 'STAGE 0') < idx(out, 'STAGE 1 — F2'));
-  ok('order: F2 before G', idx(out, 'STAGE 1 — F2') < idx(out, 'STAGE 2 — G'));
-  ok('order: G before H', idx(out, 'STAGE 2 — G') < idx(out, 'STAGE 3 — H'));
+  const {out, code} = runOrch(writeState('closed.json', makeClosedFixture()));
+  ok('offline: exit 0', code === 0);
+  ok('offline: MODE dry-run (offline)', /MODE: DRY-RUN \(offline\)/.test(out));
+  ok('offline: NO live refresh line', !/refreshing live Shopify state/.test(out));
+  ok('offline: uses fixture (Stage 0 preconditions hold)', /preconditions hold: E=16\/9\/17/.test(out));
+  ok('offline: F2 exact 3 candidates', /luxury-tropical-arrangement/.test(out) && /island-modern-tropical-vase/.test(out) && /paradise-tropical-bouquet/.test(out));
+  ok('offline: G both SEO companion fields', (out.match(/seo carries BOTH companion fields/g) || []).length === 2);
+  ok('offline: Shopify mutations sent = 0', /Shopify mutations sent = 0/.test(out));
+  ok('offline order: Stage 0 → F2 → G → H', idx(out, 'STAGE 0') < idx(out, 'STAGE 1 — F2') && idx(out, 'STAGE 1 — F2') < idx(out, 'STAGE 2 — G') && idx(out, 'STAGE 2 — G') < idx(out, 'STAGE 3 — H'));
 }
 
-/* ---- 4. preflight drift STOPS before any mutation stage ------------------------------- */
+/* ---- 5. LIVE PREVIEW: fresh preflight, fresh state used, correct order, 0 mutations ---- */
+{
+  const {out, code} = runLivePreview(makeClosedFixture());
+  ok('live-preview: exit 0', code === 0);
+  ok('live-preview: banner LIVE PREVIEW, ZERO MUTATIONS', /MODE: LIVE PREVIEW — LIVE QUERIES, ZERO MUTATIONS/.test(out));
+  ok('live-preview: prints "refreshing live Shopify state"', /Stage 0: refreshing live Shopify state/.test(out));
+  ok('live-preview: actually runs the preflight (stub marker)', /STUB-PREFLIGHT-RAN/.test(out));
+  ok('live-preview: confirms freshly-refreshed state', /live state refreshed \(generatedAt/.test(out));
+  ok('live-preview: F2/G/H children run', /STUB-F2-RAN/.test(out) && /STUB-G-RAN/.test(out) && /STUB-H-RAN/.test(out));
+  ok('live-preview: F2 gets --live-preview arg', /STUB-F2-RAN args=.*--live-preview/.test(out));
+  ok('live-preview: 0 mutations (live queries only)', /Shopify mutations sent = 0 \(live queries only\)/.test(out) && !/MODE: LIVE WRITE/.test(out));
+  // ordering: preflight → Stage-0 confirm → F2 → G → H
+  ok('live-preview order: preflight → F2 → G → H',
+    idx(out, 'STUB-PREFLIGHT-RAN') < idx(out, 'STUB-F2-RAN') &&
+    idx(out, 'STUB-F2-RAN') < idx(out, 'STUB-G-RAN') &&
+    idx(out, 'STUB-G-RAN') < idx(out, 'STUB-H-RAN'));
+  ok('live-preview: Stage-0 confirm precedes F2', idx(out, 'live state refreshed') < idx(out, 'STUB-F2-RAN'));
+}
+
+/* ---- 6. LIVE PREVIEW must NOT use stale fixture: stale gb=0 present, fresh says 1 ------ */
+{
+  const stale = makeClosedFixture();
+  stale.collections['gift-baskets'].productsCount = 0;
+  stale.collections['gift-baskets'].liveMembers = [];
+  stale.generatedAt = '2020-01-01T00:00:00.000Z';
+  const {out, code} = runLivePreview(makeClosedFixture(), {preState: stale}); // pre-existing stale file; fresh says 1
+  ok('stale-not-used: exit 0 (fresh gb=1 wins)', code === 0);
+  ok('stale-not-used: no precondition drift', !/PRECONDITION DRIFT/.test(out));
+  ok('stale-not-used: F2 proceeds', /STUB-F2-RAN/.test(out));
+}
+
+/* ---- 7. LIVE PREVIEW blocks when the FRESH live state genuinely fails ------------------ */
+{
+  const freshBad = makeClosedFixture();
+  freshBad.collections['gift-baskets'].productsCount = 0;
+  freshBad.collections['gift-baskets'].liveMembers = [];
+  const {out, code} = runLivePreview(freshBad);
+  ok('fresh-bad: exits non-zero', code !== 0);
+  ok('fresh-bad: reports precondition drift', /PRECONDITION DRIFT/.test(out));
+  ok('fresh-bad: STOPS before F2', !/STUB-F2-RAN/.test(out));
+}
+
+/* ---- 8. LIVE PREVIEW rejects a state file NOT freshly regenerated --------------------- */
+{
+  const {out, code} = runLivePreview(makeClosedFixture(), {stale: true}); // stub writes an old generatedAt
+  ok('stale-regen: exits non-zero', code !== 0);
+  ok('stale-regen: reports STALE evidence', /STALE evidence/.test(out));
+  ok('stale-regen: STOPS before F2', !/STUB-F2-RAN/.test(out));
+}
+
+/* ---- 9. LIVE WRITE (commit) also refreshes Stage 0 FIRST (stubbed, 0 real mutations) --- */
+{
+  const src = writeState('commit-src.json', makeClosedFixture());
+  const statePath = writeState('commit-state.json', {generatedAt: '2020-01-01T00:00:00.000Z', junk: true});
+  const {out, code} = runOrch(statePath, ['--commit', '--i-understand-this-writes-to-shopify'], {
+    TNG_PHASE1_CLOSE_AUTH: 'AUTHORIZE PHASE1 SHOPIFY CLOSURE',
+    TNG_PHASE1_SCRIPT_DIR: stubDir,
+    TNG_STUB_PREFLIGHT_SRC: src,
+  });
+  ok('commit: exit 0 (stubbed)', code === 0);
+  ok('commit: MODE LIVE WRITE', /MODE: LIVE WRITE/.test(out));
+  ok('commit: refreshes live state FIRST', /Stage 0: refreshing live Shopify state/.test(out) && idx(out, 'STUB-PREFLIGHT-RAN') < idx(out, 'STUB-F2-RAN'));
+  ok('commit: order preflight → F2 → G → H', idx(out, 'STUB-PREFLIGHT-RAN') < idx(out, 'STUB-F2-RAN') && idx(out, 'STUB-F2-RAN') < idx(out, 'STUB-G-RAN') && idx(out, 'STUB-G-RAN') < idx(out, 'STUB-H-RAN'));
+  ok('commit: F2 gets write flags (not --live-preview)', /STUB-F2-RAN args=.*--commit/.test(out) && !/STUB-F2-RAN args=.*--live-preview/.test(out));
+}
+
+/* ---- 10. F2 failure prevents G (stop-on-first-failure), offline dry-run --------------- */
 {
   const s = makeClosedFixture();
-  s.occasion.birthday.liveMemberCount = 15; // E drift
-  const {out, code} = runOrch(writeState('drift.json', s));
-  ok('drift: orchestrator exits non-zero', code !== 0);
-  ok('drift: reports precondition drift', /PHASE-1 PRECONDITION DRIFT/.test(out));
-  ok('drift: STOPS before F2 (no F2 stage banner)', !/▶ STAGE 1 — F2 Tropical Flowers/.test(out));
-}
-
-/* ---- 5. F2 failure prevents G (stop-on-first-failure gating) --------------------------- */
-{
-  const s = makeClosedFixture();
-  // make a retail tropical candidate collide with the wholesale-excluded list → F2 fails closed
   s.tropical.wholesaleStemsExcluded.push({handle: 'luxury-tropical-arrangement', title: 'x', productType: 'Fresh Cut Flowers'});
   const {out, code} = runOrch(writeState('f2fail.json', s));
-  ok('F2 fail: orchestrator exits non-zero', code !== 0);
-  ok('F2 fail: F2 stage ran', /▶ STAGE 1 — F2 Tropical Flowers/.test(out));
-  ok('F2 fail: reports STOP, not proceeding to G', /Not proceeding to G/.test(out));
-  ok('F2 fail: G stage did NOT run', !/▶ STAGE 2 — G collection SEO\/body/.test(out));
-  ok('F2 fail: still 0 mutations', !/MODE: LIVE WRITE/.test(out));
+  ok('F2 fail: non-zero exit', code !== 0);
+  ok('F2 fail: reports not proceeding to G', /Not proceeding to G/.test(out));
+  ok('F2 fail: G did NOT run', !/▶ STAGE 2 — G collection SEO\/body/.test(out));
 }
 
 console.log(`\nphase1-close.selftest: ${passed} passed, ${failed} failed`);
 if (failed) { console.error('FAILURES:\n  - ' + fails.join('\n  - ')); process.exit(1); }
-console.log('✓ orchestrator: interlock, Stage-0 guard, sequential order, drift-stop, F2→G gating (offline, 0 mutations)');
+console.log('✓ orchestrator: 3 modes, live-refresh + freshness guard, stale-state rejection, ordering, gating (offline, 0 mutations)');

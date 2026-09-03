@@ -38,6 +38,18 @@ export function assertFresh(meta, maxAgeHours = 24) {
   return true;
 }
 
+/**
+ * Fail-closed proof that a preflight actually REGENERATED the state file during THIS invocation.
+ * `generatedAt` must parse and be at/after the moment (sinceMs) captured just before the live
+ * preflight ran. A stale file left over from an earlier run predates that moment → throw.
+ */
+export function assertFreshlyRegenerated(generatedAt, sinceMs, {toleranceMs = 1000, label = 'sprint-state.json'} = {}) {
+  const t = Date.parse(generatedAt);
+  if (!Number.isFinite(t)) throw new Error(`${label}: missing/invalid generatedAt after live preflight — fail closed`);
+  if (t < sinceMs - toleranceMs) throw new Error(`${label}: STALE evidence — generatedAt (${generatedAt}) predates this invocation; the live preflight did not refresh it. Fail closed.`);
+  return true;
+}
+
 /* ---- three-part dry-run interlock ----------------------------------------------------- */
 /**
  * @param argv       process.argv

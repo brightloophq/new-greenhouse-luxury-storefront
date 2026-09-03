@@ -26,13 +26,14 @@
 //     node scripts/phase1-close.js --commit --i-understand-this-writes-to-shopify
 //
 import {spawnSync} from 'node:child_process';
-import {existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {dirname, join} from 'node:path';
 import {assertPhase1Preconditions, PHASE1_EXPECTED} from './sprint-lib.js';
-import {loadState, parseInterlock, hr, bail} from './sprint-io.js';
+import {loadState, parseInterlock, assertFreshlyRegenerated, hr, bail} from './sprint-io.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
+// Scripts directory — overridable to a stub dir for offline orchestration tests only.
+const SCRIPT_DIR = process.env.TNG_PHASE1_SCRIPT_DIR || HERE;
 const ENV = 'TNG_PHASE1_CLOSE_AUTH';
 const PHRASE = 'AUTHORIZE PHASE1 SHOPIFY CLOSURE';
 // Child auth phrases (must match each batch's own interlock).
@@ -44,7 +45,7 @@ const WRITE_FLAGS = ['--commit', '--i-understand-this-writes-to-shopify'];
 
 function runChild(label, file, args, {write, childAuth, extraArgs = []} = {}) {
   const env = {...process.env};
-  const argv = [join(HERE, file), ...args, ...extraArgs];
+  const argv = [join(SCRIPT_DIR, file), ...args, ...extraArgs];
   if (write && childAuth) {
     env[childAuth.name] = childAuth.phrase;
     argv.push(...WRITE_FLAGS);
@@ -54,33 +55,59 @@ function runChild(label, file, args, {write, childAuth, extraArgs = []} = {}) {
   return r.status ?? 1;
 }
 
+/** Resolve exactly one of three modes. */
+export function resolvePhase1Mode(gate, livePreview) {
+  if (gate.write) return 'live-write';
+  if (livePreview) return 'live-preview';
+  return 'offline-dry-run';
+}
+
 async function main() {
   const gate = parseInterlock(process.argv, ENV, PHRASE);
-  const write = gate.write;
   const livePreview = process.argv.includes('--live-preview');
-  const usingFixture = !!process.env.TNG_SPRINT_STATE_PATH;
-  const childPreviewArgs = !write && livePreview ? ['--live-preview'] : [];
+  const mode = resolvePhase1Mode(gate, livePreview);
+  const isLive = mode === 'live-write' || mode === 'live-preview'; // both hit live Shopify (preview = reads only)
+  const write = mode === 'live-write';
+  // child arg posture per mode
+  const childExtraArgs = mode === 'live-preview' ? ['--live-preview'] : [];
 
   console.log(hr('PHASE-1 SHOPIFY CLOSURE ORCHESTRATOR'));
+  const banner = {
+    'live-write': 'MODE: LIVE WRITE — LIVE QUERIES + MUTATIONS (authorized)',
+    'live-preview': 'MODE: LIVE PREVIEW — LIVE QUERIES, ZERO MUTATIONS',
+    'offline-dry-run': 'MODE: DRY-RUN (offline) — no live queries, may use fixture/existing state, ZERO MUTATIONS',
+  }[mode];
+  console.log('  ' + banner);
   console.log(gate.report());
   console.log('  bundle: F2 Tropical Flowers → G collection content → H final audit (read-only)');
   console.log('  excluded: Batch C redirects (code-side) · no merge · no deploy · no production change');
 
-  /* ---------- STAGE 0 — fresh live preflight + drift guard (read-only) ---------- */
-  console.log('\n' + hr('STAGE 0 — fresh live preflight + drift guard'));
-  if (write && !usingFixture) {
-    // refresh sprint-state.json from LIVE Shopify (read-only, secret-scanned by the preflight)
-    const pf = runChild('preflight (read-only refresh)', 'sprint-preflight.js', [], {});
-    if (pf !== 0) bail('Stage 0: live preflight refresh failed — STOP before any mutation.');
-  } else {
-    console.log('  (dry-run/fixture: validating existing sprint-state.json without a live refresh)');
-  }
+  /* ---------- STAGE 0 — preflight + drift guard ---------- */
+  console.log('\n' + hr('STAGE 0 — preflight + drift guard'));
   let state;
-  try {
-    ({state} = loadState());
-  } catch (e) {
-    bail('Stage 0: ' + (e?.message || e));
+  if (isLive) {
+    // BOTH live-preview and live-write MUST refresh sprint-state.json from LIVE Shopify and then
+    // prove it was regenerated during THIS invocation. Never fall back to stale/fixture state.
+    console.log('  Stage 0: refreshing live Shopify state...');
+    const t0 = Date.now();
+    const pf = runChild('preflight (read-only live refresh)', 'sprint-preflight.js', [], {});
+    if (pf !== 0) bail('Stage 0: live preflight refresh FAILED — STOP (no queries trusted, no mutation).');
+    try {
+      ({state} = loadState());
+      assertFreshlyRegenerated(state.generatedAt, t0);
+    } catch (e) {
+      bail('Stage 0: ' + (e?.message || e));
+    }
+    console.log(`  ✓ live state refreshed (generatedAt ${state.generatedAt})`);
+  } else {
+    console.log('  (offline: validating existing sprint-state.json / fixture — deterministic local test path)');
+    try {
+      ({state} = loadState());
+    } catch (e) {
+      bail('Stage 0: ' + (e?.message || e));
+    }
   }
+  if (!state.store) bail('Stage 0: store/API identity missing from evidence — fail closed.');
   console.log(`  store: ${state.store} · api: ${state.apiVersion} · products: ${state.counts?.products} · collections: ${state.counts?.collections}`);
   console.log(`  scopes: ${(state.scopes?.all || []).join(', ') || '(none)'}`);
   try {
@@ -111,21 +138,26 @@ async function main() {
   console.log('     catalog/live-audit/backups/batch-f-tropical-flowers-<ts>/candidates.before.json');
   console.log('     catalog/live-audit/backups/batch-g-content-<ts>/content.before.json');
 
-  /* ---------- STAGE 1+2 — F2 Tropical Flowers (write + own verifier) ---------- */
-  const f2 = runChild('STAGE 1 — F2 Tropical Flowers', 'batch-f-populate.js', ['--target', 'tropical-flowers'], {write, childAuth: CHILD_AUTH.f2, extraArgs: childPreviewArgs});
-  if (f2 !== 0) bail(`F2 ${write ? 'write/verify' : 'dry-run'} failed (exit ${f2}) — STOP. Not proceeding to G.`);
+  /* ---------- STAGE 1 — F2 Tropical Flowers (write+verify | live preview | offline dry-run) ---------- */
+  const f2 = runChild('STAGE 1 — F2 Tropical Flowers', 'batch-f-populate.js', ['--target', 'tropical-flowers'], {write, childAuth: CHILD_AUTH.f2, extraArgs: childExtraArgs});
+  if (f2 !== 0) bail(`F2 ${mode} failed (exit ${f2}) — STOP. Not proceeding to G.`);
 
-  /* ---------- STAGE 3 — G collection content (write + own verifier) ---------- */
-  const g = runChild('STAGE 2 — G collection SEO/body', 'batch-g-content.js', [], {write, childAuth: CHILD_AUTH.g, extraArgs: childPreviewArgs});
-  if (g !== 0) bail(`G ${write ? 'write/verify' : 'dry-run'} failed (exit ${g}) — STOP. Not continuing to final success state.`);
+  /* ---------- STAGE 2 — G collection content (write+verify | live preview | offline dry-run) ---------- */
+  const g = runChild('STAGE 2 — G collection SEO/body', 'batch-g-content.js', [], {write, childAuth: CHILD_AUTH.g, extraArgs: childExtraArgs});
+  if (g !== 0) bail(`G ${mode} failed (exit ${g}) — STOP. Not continuing to final success state.`);
 
-  /* ---------- STAGE 4 — H final read-only audit ---------- */
+  /* ---------- STAGE 3 — H final read-only audit ---------- */
   console.log('\n' + hr('STAGE 3 — H final audit (read-only)'));
-  if (write) {
+  if (mode === 'live-write') {
     const h = runChild('STAGE 3 — H final audit', 'batch-h-audit.js', [], {});
     if (h !== 0) bail(`H final audit reported FAIL (exit ${h}) — investigate. No rollback triggered by the audit alone.`);
+  } else if (mode === 'live-preview') {
+    // read-only, live — a PRE-write snapshot; pending items (tropical=0, SEO gaps) are EXPECTED,
+    // so a non-zero result is informational here, never a stop.
+    const h = runChild('STAGE 3 — H read-only pre-write snapshot', 'batch-h-audit.js', [], {});
+    console.log(`  (live preview) H read-only snapshot exit=${h} — pending items before the writes are expected; not a stop condition.`);
   } else {
-    console.log('  (dry-run) H will assert, read-only, after the writes:');
+    console.log('  (offline dry-run) H will assert, read-only, after the writes:');
     console.log('     • 274 products / 52 collections · secret scan clean');
     console.log('     • birthday=16 · anniversary=9 · love-and-romance=17');
     console.log('     • gift-baskets=1 (fruit-flower-gift-basket)');
@@ -134,17 +166,20 @@ async function main() {
     console.log('     • retired handles still unpublished (no republish) · no product tag/type drift');
   }
 
-  console.log('\n' + hr(write ? 'CLOSURE COMPLETE' : 'DRY-RUN COMPLETE'));
-  if (!write) {
-    console.log('  Shopify mutations sent = 0');
-    console.log(`  To execute: ${ENV}="${PHRASE}" node scripts/phase1-close.js --commit --i-understand-this-writes-to-shopify`);
-  } else {
+  console.log('\n' + hr(write ? 'CLOSURE COMPLETE' : (mode === 'live-preview' ? 'LIVE PREVIEW COMPLETE' : 'DRY-RUN COMPLETE')));
+  if (write) {
     console.log('  ✓ F2 + G written and verified; H audit passed. No merge, no deploy.');
+  } else {
+    console.log(`  Shopify mutations sent = 0${mode === 'live-preview' ? ' (live queries only)' : ''}`);
+    console.log(`  To execute: ${ENV}="${PHRASE}" node scripts/phase1-close.js --commit --i-understand-this-writes-to-shopify`);
   }
 }
 
-main().catch(async (e) => {
-  let msg = e?.message || String(e);
-  try { const {redact} = await import('../src/config.js'); msg = redact(msg); } catch {}
-  bail(msg);
-});
+// Run only when invoked directly (spawned), not when imported by the self-test for unit checks.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch(async (e) => {
+    let msg = e?.message || String(e);
+    try { const {redact} = await import('../src/config.js'); msg = redact(msg); } catch {}
+    bail(msg);
+  });
+}
