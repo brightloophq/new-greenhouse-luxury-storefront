@@ -91,6 +91,10 @@ jobs:
         run: npm ci
 
       - name: Build and Publish to Oxygen
-        run: npx shopify hydrogen deploy
+        # Explicitly target the Oxygen Production environment by handle.
+        # The Oxygen Production environment is linked to `redesign-v1`, while this
+        # workflow is triggered from the Git `production` branch. A bare deploy can
+        # therefore resolve to the wrong Oxygen target.
+        run: npx shopify hydrogen deploy --env production
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000155967 }}
