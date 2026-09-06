@@ -1,0 +1,30 @@
+{
+  "_note": "Priority Collection Landing-Page SEO — PROPOSED descriptionHtml only. SEO title/description are intentionally NOT included (KEEP). Each descriptionHtml preserves the existing first sentence verbatim as paragraph 1 (the hero lede); paragraphs 2+ render below the product grid. Consumed by scripts/collection-seo-writes.js (dry-run default).",
+  "collections": [
+    {
+      "handle": "birthday",
+      "gid": "gid://shopify/Collection/339490930867",
+      "descriptionHtml": "<p>Bright, joyful flowers to make any birthday feel special.</p><p>From cheerful bouquets to fuller arrangements, our birthday flowers are chosen to bring colour and warmth to the celebration — whether it is for a close friend, a parent, a colleague, or someone who simply deserves flowers today.</p><p>As a family florist with more than four decades of floral experience in Kingston, we know how much a well-chosen arrangement can mean, and we prepare every order with that same care.</p><p>We offer regular delivery across Kingston and St. Andrew, so a birthday surprise is easy to arrange. Marking a milestone or a romance as well? Explore our <a href=\"/collections/anniversary\">Anniversary</a> and <a href=\"/collections/love-and-romance\">Love &amp; Romance</a> collections.</p>"
+    },
+    {
+      "handle": "anniversary",
+      "gid": "gid://shopify/Collection/339490963635",
+      "descriptionHtml": "<p>Romantic roses and refined arrangements to mark the milestones that matter.</p><p>An anniversary is a quiet kind of achievement, and our flowers are chosen to honour it — classic roses, elegant blooms and refined arrangements suited to first years and fiftieths alike.</p><p>As a family florist with more than four decades of floral experience in Kingston, we help you say something considered, whether the gesture is grand or simply heartfelt.</p><p>We offer regular delivery across Kingston and St. Andrew. For lavish rose designs, you may also like our <a href=\"/collections/love-and-romance\">Love &amp; Romance</a> collection.</p>"
+    },
+    {
+      "handle": "love-and-romance",
+      "gid": "gid://shopify/Collection/339490996403",
+      "descriptionHtml": "<p>Roses and romantic blends for the ones you love.</p><p>Some feelings are easier to show than to say. Our Love &amp; Romance collection gathers roses and romantic blends for the moments that matter most — a new relationship, a reunion, or simply a reminder that someone is loved.</p><p>Each arrangement is made by our family florist with an eye for elegance rather than excess, so the gesture feels personal rather than predictable. We offer regular delivery across Kingston and St. Andrew.</p><p>Celebrating a milestone together? Our <a href=\"/collections/anniversary\">Anniversary</a> collection is made for the years worth marking.</p>"
+    },
+    {
+      "handle": "sympathy-and-funeral",
+      "gid": "gid://shopify/Collection/339491029171",
+      "descriptionHtml": "<p>Dignified flowers to express comfort and remembrance — bouquets, tributes, wreaths and sprays.</p><p>In times of loss, flowers offer a quiet way to express what words often cannot. Our sympathy and funeral collection includes bouquets, tributes, wreaths and sprays, each prepared with care and discretion.</p><p>Whether for a service, a place of worship, or a family home, every arrangement is made thoughtfully. We offer regular delivery across Kingston and St. Andrew.</p><p>If you would like help choosing an appropriate tribute, our team is glad to assist — please <a href=\"/pages/contact\">contact us</a> and we will guide you personally.</p>"
+    },
+    {
+      "handle": "corporate-gifting",
+      "gid": "gid://shopify/Collection/339491160243",
+      "descriptionHtml": "<p>Polished flowers, plants and gifts for clients, offices and corporate occasions.</p><p>Thoughtful flowers make a considered impression in business. This collection brings together polished flowers, plants and gifts suited to client appreciation, office and reception spaces, and the corporate occasions and milestones worth marking.</p><p>As a family florist that also works with businesses through our wholesale service, we understand professional gifting and approach every order with the same care. We offer regular delivery across Kingston and St. Andrew.</p><p>For larger or business orders, we are glad to help — simply <a href=\"/pages/contact\">get in touch</a>.</p>"
+    }
+  ]
+}

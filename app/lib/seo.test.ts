@@ -52,6 +52,19 @@ describe('canonicalTag', () => {
       href: `${ORIGIN}/supplies`,
     });
   });
+
+  it('produces an absolute, facet-free collection canonical', () => {
+    // The collections route feeds canonicalTag a clean `/collections/<handle>`
+    // path (never search params), so the canonical is always absolute and has
+    // no query/facet parameters.
+    const tag = canonicalTag(ORIGIN, '/collections/birthday') as {href: string};
+    expect(tag.href).toBe(`${ORIGIN}/collections/birthday`);
+    expect(tag.href.startsWith('https://')).toBe(true);
+    expect(tag.href).not.toContain('?');
+    for (const p of ['sort_by', 'sort', 'flower', 'filter', 'cursor']) {
+      expect(tag.href).not.toContain(p + '=');
+    }
+  });
 });
 
 describe('catalogueMeta', () => {
@@ -329,6 +342,32 @@ describe('route wiring (source guards)', () => {
     );
     expect(src).toContain("rel: 'canonical', href: url");
     expect(src).toContain("'@id': `${url}#product`");
+  });
+
+  it('the collection canonical is absolute (canonicalTag) with exactly one canonical and the 301 guard intact', () => {
+    const src = stripComments(
+      read('app/routes/($locale).collections.$handle.tsx'),
+    );
+    // Absolute via the shared helper — NOT the old hand-rolled relative tag.
+    expect(src).toContain('canonicalTag(origin, path)');
+    expect(src).not.toContain("rel: 'canonical', href: path");
+    // Exactly one canonical is emitted from this route's meta.
+    const canonicalEmitters = src.match(/canonicalTag\(|rel: 'canonical'/g) ?? [];
+    expect(canonicalEmitters.length).toBe(1);
+    // The base path carries no query string (facets can never enter the canonical).
+    expect(src).toContain('`/collections/${data.collection.handle}`');
+    // Retired-handle → 301 redirect guard is unchanged.
+    expect(src).toContain('retiredCollectionTarget(handle)');
+    expect(src).toContain('throw redirect(retiredTarget, 301)');
+  });
+
+  it('the collection route renders a below-grid editorial body from descriptionHtml', () => {
+    const src = stripComments(
+      read('app/routes/($locale).collections.$handle.tsx'),
+    );
+    expect(src).toContain('descriptionHtml'); // queried
+    expect(src).toContain('splitCollectionDescription(');
+    expect(src).toContain('<CollectionBody');
   });
 
   it('root renders Organization + WebSite JSON-LD site-wide', () => {
