@@ -9,7 +9,8 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {retiredCollectionTarget} from '~/lib/collectionRedirects';
-import {breadcrumbSchema} from '~/lib/seo';
+import {breadcrumbSchema, canonicalTag} from '~/lib/seo';
+import {splitCollectionDescription} from '~/lib/collectionDescription';
 import {
   parseCatalogSearchParams,
   buildProductFilters,
@@ -25,6 +26,7 @@ import type {CatalogImage, CatalogProduct} from '~/components/catalog/types';
 import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
 import {CLASSIC_SUPPLY_COLLECTIONS} from '~/lib/experienceClassify';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
+import {CollectionBody} from '~/components/catalog/CollectionBody';
 import {
   FilterPanel,
   FilterDrawer,
@@ -174,9 +176,9 @@ export const meta: Route.MetaFunction = ({data}) => {
     // Canonical to the base collection: filtered/faceted views (?flower=…,
     // ?sort=…) canonicalize here so they aren't indexed as duplicates. The
     // per-variety /flowers/$family routes carry the indexable variety SEO.
-    ...(path
-      ? [{tagName: 'link' as const, rel: 'canonical', href: path}]
-      : []),
+    // Absolute (via canonicalTag) to match the site-wide canonical architecture;
+    // `path` is built from the handle only, so query/facets are always stripped.
+    ...(path ? [canonicalTag(origin, path)] : []),
     // BreadcrumbList (Home → collection). No `/collections` index exists (it
     // 301s to /retail), so the trail is two levels, pointing at the base path.
     ...(path
@@ -340,8 +342,8 @@ export default function Collection() {
   // Safety net (Part 11/16): even within a curated Shopify collection, never
   // render a product that belongs to the other experience — filter members by
   // central classification. Ambiguous/unknown products show in neither.
-  const filteredNodes = (rawConnection.nodes ?? []).filter((node) =>
-    productInExperience(node, experience),
+  const filteredNodes = ((rawConnection.nodes ?? []) as CatalogProduct[]).filter(
+    (node) => productInExperience(node, experience),
   );
   const productConnection = {...rawConnection, nodes: filteredNodes};
   const products = filteredNodes as CatalogProduct[];
@@ -374,13 +376,23 @@ export default function Collection() {
       : [{label: collection.title}]),
   ];
 
+  // Concise hero lede (first paragraph) vs the richer editorial body rendered
+  // below the grid. Only the base collection view shows the body — a flower-hub
+  // or per-variety view is a filtered listing, not the collection landing page.
+  const {lede, bodyHtml} = splitCollectionDescription(
+    collection.descriptionHtml,
+    collection.description,
+  );
+  const heroLede = lede || collection.description || undefined;
+  const showBody = !isHub && bodyHtml.length > 0;
+
   return (
     <div className="ng-catalog-page">
       <CollectionHero
         breadcrumbs={breadcrumbs}
         eyebrow={heroEyebrow}
         title={heading}
-        description={collection.description || undefined}
+        description={heroLede}
         image={collectionHeroImage(experience, collection)}
       />
 
@@ -444,6 +456,8 @@ export default function Collection() {
         </div>
       </div>
 
+      {showBody ? <CollectionBody html={bodyHtml} /> : null}
+
       <FilterDrawer
         filters={applied}
         context={filterContext}
@@ -482,6 +496,7 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      descriptionHtml
       image {
         id
         url
