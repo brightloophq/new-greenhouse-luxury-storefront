@@ -37,7 +37,7 @@ import {CatalogResults} from '~/components/catalog/CatalogResults';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
 import {useExperience} from '~/components/ExperienceProvider';
-import {productInExperience} from '~/lib/experienceClassify';
+import {selectCollectionGridProducts} from '~/lib/experienceClassify';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
@@ -339,11 +339,16 @@ export default function Collection() {
   // filtering); everything else uses the collection's own products.
   const rawConnection =
     isHub && activeFlower && flowerProducts ? flowerProducts : collection.products;
-  // Safety net (Part 11/16): even within a curated Shopify collection, never
-  // render a product that belongs to the other experience — filter members by
-  // central classification. Ambiguous/unknown products show in neither.
-  const filteredNodes = ((rawConnection.nodes ?? []) as CatalogProduct[]).filter(
-    (node) => productInExperience(node, experience),
+  // Trust curated Shopify collection membership: a curated collection renders
+  // exactly what the merchant merchandised into it (Deluxe arrangements, mixed
+  // gifting sets, plants), regardless of the route's green visual theme. The
+  // cross-experience leakage guard is applied ONLY to shared hub collections
+  // (`isHub` = FLOWER_HUBS), whose grid is assembled from catalog-wide product
+  // search and could otherwise surface the other experience's items.
+  const filteredNodes = selectCollectionGridProducts(
+    (rawConnection.nodes ?? []) as CatalogProduct[],
+    experience,
+    isHub,
   );
   const productConnection = {...rawConnection, nodes: filteredNodes};
   const products = filteredNodes as CatalogProduct[];
