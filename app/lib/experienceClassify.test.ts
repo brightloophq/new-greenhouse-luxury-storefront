@@ -5,6 +5,7 @@ import {
   isSupplyProduct,
   collectionInExperience,
   collectionBlockedIn,
+  selectCollectionGridProducts,
 } from './experienceClassify';
 
 describe('classifyProduct', () => {
@@ -107,5 +108,55 @@ describe('experience isolation (collections)', () => {
     expect(collectionBlockedIn('anniversary', 'classic')).toBe(true);
     // shared roses/orchids handles are not blocked in classic
     expect(collectionBlockedIn('anniversary', 'deluxe')).toBe(false);
+  });
+});
+
+describe('selectCollectionGridProducts (production 0-product fix)', () => {
+  // Representative live memberships (Admin capture 2026-09):
+  //  - birthday/anniversary/love-and-romance: 100% Floral Arrangement (Deluxe)
+  //  - sympathy-and-funeral / corporate-gifting: mixed curated
+  const deluxeArrangement = {productType: 'Floral Arrangement'};   // deluxe
+  const giftBasket = {productType: 'Gift Basket'};                 // deluxe
+  const classicGreenery = {productType: 'Greenery'};               // classic
+  const classicFiller = {productType: 'Floral Filler'};            // classic
+  const plant = {productType: 'Plant'};                            // ambiguous
+
+  // The route always renders /collections/* under the 'classic' visual theme.
+  const THEME = 'classic' as const;
+
+  it('1. curated Deluxe collection (guard OFF) keeps Deluxe products on a classic-themed route', () => {
+    const nodes = [deluxeArrangement, deluxeArrangement, deluxeArrangement];
+    // isHub = false for birthday/anniversary/love-and-romance
+    const out = selectCollectionGridProducts(nodes, THEME, false);
+    expect(out).toHaveLength(3);
+    expect(out).toEqual(nodes); // nothing dropped, order preserved
+  });
+
+  it('2. mixed curated collection (guard OFF) keeps Deluxe + Classic + Plant members', () => {
+    const nodes = [deluxeArrangement, classicGreenery, plant, giftBasket, classicFiller];
+    const out = selectCollectionGridProducts(nodes, THEME, false);
+    expect(out).toEqual(nodes); // all five retained, same order
+    // explicit: each experience class survives
+    expect(out).toContain(deluxeArrangement);
+    expect(out).toContain(classicGreenery);
+    expect(out).toContain(plant);
+  });
+
+  it('3. genuine shared/hub collection (guard ON) still blocks cross-experience leakage', () => {
+    const nodes = [deluxeArrangement, classicGreenery, plant, classicFiller];
+    // On a classic-themed hub, only classic-classified products survive; Deluxe
+    // and ambiguous (Plant) are filtered out — leakage guard intact.
+    const classicHub = selectCollectionGridProducts(nodes, 'classic', true);
+    expect(classicHub).toEqual([classicGreenery, classicFiller]);
+    // And under a deluxe context a hub keeps only Deluxe items.
+    const deluxeHub = selectCollectionGridProducts(nodes, 'deluxe', true);
+    expect(deluxeHub).toEqual([deluxeArrangement]);
+  });
+
+  it('5. guard OFF is a pure pass-through (no reorder, no drop, no dedupe) — pagination unaffected', () => {
+    const nodes = [classicFiller, deluxeArrangement, plant];
+    const out = selectCollectionGridProducts(nodes, THEME, false);
+    expect(out).toBe(nodes); // same array reference — no copy, no reorder, no filter
+    expect(out).toHaveLength(nodes.length);
   });
 });

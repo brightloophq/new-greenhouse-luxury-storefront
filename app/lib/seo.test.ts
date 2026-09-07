@@ -370,6 +370,21 @@ describe('route wiring (source guards)', () => {
     expect(src).toContain('<CollectionBody');
   });
 
+  it('the collection grid trusts curated membership and guards only hub collections', () => {
+    const src = stripComments(
+      read('app/routes/($locale).collections.$handle.tsx'),
+    );
+    // Cross-experience guard is applied via the hub-scoped helper …
+    expect(src).toContain('selectCollectionGridProducts(');
+    expect(src).toMatch(/selectCollectionGridProducts\([\s\S]*?isHub,?\s*\)/);
+    // … and the old unconditional per-node experience filter is gone.
+    expect(src).not.toContain('.filter((node) =>');
+    expect(src).not.toContain('productInExperience(node, experience)');
+    // Product retrieval is unchanged: same pagination + no default product filters.
+    expect(src).toContain('getPaginationVariables(request, {pageBy: 12})');
+    expect(src).toContain('buildProductFilters(applied)');
+  });
+
   it('root renders Organization + WebSite JSON-LD site-wide', () => {
     const src = stripComments(read('app/root.tsx'));
     expect(src).toContain('organizationSchema');

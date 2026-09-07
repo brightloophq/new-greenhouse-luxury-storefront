@@ -79,6 +79,31 @@ export function productInExperience(
   return classifyProduct(input) === experience;
 }
 
+/**
+ * Products to render in a collection grid.
+ *
+ * Curated Shopify collections are trusted as merchandised: their full membership
+ * shows (Deluxe arrangements, mixed gifting sets, plants), because a merchant
+ * curated exactly those products into the collection. Only SHARED / HUB
+ * collections — whose grid is assembled from catalog-wide product search rather
+ * than curated membership — keep the cross-experience leakage guard, so wholesale
+ * and Deluxe items cannot bleed into each other there.
+ *
+ * `applyExperienceGuard` is the caller's hub/shared signal (the route passes its
+ * existing `FLOWER_HUBS` membership). When false, nodes are returned untouched —
+ * same order, same length — so nothing curated is dropped and pagination is
+ * unaffected.
+ */
+export function selectCollectionGridProducts<T extends ClassifiableProduct>(
+  nodes: T[],
+  experience: ExperienceMode,
+  applyExperienceGuard: boolean,
+): T[] {
+  return applyExperienceGuard
+    ? nodes.filter((node) => productInExperience(node, experience))
+    : nodes;
+}
+
 /** Within Classic, is this a Floral Supply (vs a wholesale flower)? */
 export function isSupplyProduct(input: ClassifiableProduct): boolean {
   return CLASSIC_SUPPLY_SET.has(input.productType ?? '');
