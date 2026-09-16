@@ -70,12 +70,36 @@ describe('buildProfileMetafields (customer-written mutation payload)', () => {
     );
   });
 
-  it('writes only the profile fields, all under the custom namespace', () => {
-    expect(rows.map((r) => r.key)).toEqual(
-      WHOLESALE_PROFILE_FIELDS.map((f) => f.key),
-    );
+  it('writes only the fields that have a value, all under the custom namespace', () => {
+    // COMPLETE carries the seven required fields (no optional website/notes), so
+    // the payload is exactly those — in field order — never blank placeholders.
+    expect(rows.map((r) => r.key)).toEqual(Object.keys(COMPLETE));
     expect(rows.every((r) => r.namespace === 'custom')).toBe(true);
     expect(rows.every((r) => r.ownerId === OWNER)).toBe(true);
+  });
+
+  it('omits blank / whitespace-only fields — Shopify rejects an empty metafield value', () => {
+    // Regression: a blank OPTIONAL field (website_social / business_notes) used
+    // to be sent as value:"" and metafieldsSet failed the ENTIRE save with
+    // "Value can't be blank". Blank fields must simply be absent from the write.
+    const withBlankOptionals = {
+      ...COMPLETE,
+      website_social: '', // left blank on the form
+      business_notes: '   ', // whitespace only
+      purchase_frequency: 'Weekly', // a filled optional still writes
+    };
+    const out = buildProfileMetafields(OWNER, withBlankOptionals);
+    const keys = out.map((r) => r.key);
+
+    expect(keys).not.toContain('website_social');
+    expect(keys).not.toContain('business_notes');
+    expect(keys).toContain('purchase_frequency');
+    // Every emitted row has a non-empty, trimmed value — never "".
+    expect(out.every((r) => r.value.trim().length > 0)).toBe(true);
+    // The required trade fields are still present.
+    for (const key of REQUIRED_PROFILE_KEYS) {
+      expect(keys).toContain(key);
+    }
   });
 });
 

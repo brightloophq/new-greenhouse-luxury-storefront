@@ -143,18 +143,30 @@ export interface ProfileMetafieldInput {
  * API — exactly the profile fields (including cra_trn_number). It deliberately does
  * NOT include wholesale_status: that is a staff-controlled field with no
  * Customer Account API write access, set only by staff in Shopify admin.
+ *
+ * Only fields with a non-empty value are included. Shopify's `metafieldsSet`
+ * rejects an empty-string value ("Value can't be blank"), so sending a blank
+ * OPTIONAL field (e.g. website_social, business_notes) would fail the ENTIRE
+ * batch — not just that field. Blank fields are simply omitted from the write:
+ * a metafield with no value is represented by its absence, not by `""`.
  */
 export function buildProfileMetafields(
   ownerId: string,
   profile: WholesaleProfile,
 ): ProfileMetafieldInput[] {
-  return WHOLESALE_PROFILE_FIELDS.map((field) => ({
-    ownerId,
-    namespace: 'custom' as const,
-    key: field.key,
-    type: field.type,
-    value: profile[field.key] ?? '',
-  }));
+  return WHOLESALE_PROFILE_FIELDS.flatMap((field) => {
+    const value = (profile[field.key] ?? '').trim();
+    if (!value) return [];
+    return [
+      {
+        ownerId,
+        namespace: 'custom' as const,
+        key: field.key,
+        type: field.type,
+        value,
+      },
+    ];
+  });
 }
 
 /** Metafield rows → a flat {key: value} profile. */
