@@ -37,6 +37,36 @@ and the five supply categories (`vases-and-containers`, `ribbon`,
 
 ---
 
+## 1a. Wholesale supplies collection (trade-priced supplies) — added 2026-09-17
+
+`/wholesale/supplies` **prefers** a dedicated `wholesale-supplies` collection and
+**falls back** to the shared retail `floral-supplies` until that collection
+exists *and has products*. Creating it empty never blanks the page (the fallback
+covers an unfiltered-empty preferred collection).
+
+| Handle | Powers the route | Status |
+|---|---|---|
+| `wholesale-supplies` | `/wholesale/supplies` | **Created — populate + publish** |
+
+**To do:**
+
+1. **Handle must be exactly `wholesale-supplies`** (check Collection →
+   *Search engine listing → Edit*; not `wholesales-supplies` or a `-1` suffix).
+2. **Add trade-priced supply products.** These carry the trade price directly —
+   a wholesale buyer shops as a guest (no account), so a customer discount can't
+   apply. See `docs/IMAGE_SHOT_LIST.md` for product-photo specs that match the
+   existing catalogue cards.
+3. **Publish the collection to the Hydrogen (and/or Online Store) sales
+   channel.** The Storefront API only returns collections published to the
+   channel — without this, the page won't see it even with the right handle and
+   products.
+
+Until it is populated **and** published, `/wholesale/supplies` keeps serving the
+retail `floral-supplies` collection — no blank page, no redeploy. It switches to
+the trade collection automatically once both are done.
+
+---
+
 ## 2. Product tagging (a small gap, not a missing taxonomy)
 
 **Correction to an earlier version of this document.** It claimed no products
@@ -111,12 +141,16 @@ migrated into the nine fields above, or the definition deleted.
 
 ---
 
-## 3a. Wholesale approval status metafield (controls trade access)
+## 3a. Wholesale status metafield (business-account eligibility) — updated 2026-09-17
 
-This is the **single source of truth** for wholesale access. The storefront
-(`app/lib/wholesale.ts`) reads it on every wholesale visit: only **`approved`**
-opens the trade catalogue and pricing. Every other value shows the matching
-customer status page (Under review / Not approved / Action needed).
+**Wholesale shopping is public.** A wholesale buyer purchases as a guest
+(name + email at checkout) — this flag does **not** gate the catalogue, pricing
+or checkout. It is the **single source of truth for optional Business Account
+eligibility** (future benefits such as special pricing and offers). The
+storefront (`app/lib/wholesale.ts`) reads it only to show the right *optional*
+block on `/wholesale`: a signed-out visitor sees the Business Account invite; an
+`approved` customer sees a welcome note; other states see a non-blocking status
+notice. None of these ever stops someone buying.
 
 Create it under **Settings → Custom data → Customers → Add definition**:
 
@@ -133,10 +167,10 @@ Create it under **Settings → Custom data → Customers → Add definition**:
 Add exactly these four values to the definition's **list of allowed values** so
 the admin field becomes a dropdown and free-typed values are rejected:
 
-| Value | Meaning | Customer sees |
+| Value | Meaning | Customer sees (never blocks buying) |
 |---|---|---|
-| `pending` | Awaiting review (also the default for a blank field) | "Your application is under review" |
-| `approved` | Trade account granted | Full wholesale catalogue, pricing & checkout |
+| `pending` | Awaiting review (also the default for a blank field) | "Your Business Account application is under review" |
+| `approved` | Business Account granted | Welcome note; eligible business benefits apply automatically |
 | `rejected` | Application declined | Empathetic "not approved" page + Contact us |
 | `more_information_required` | More detail needed before a decision | "One more step" page + Contact us |
 
@@ -147,7 +181,8 @@ a customer is never auto-approved).
 ### How to approve a customer
 
 Open the customer in Shopify admin → **Metafields → Wholesale Status** → choose
-`approved` → **Save**. Access applies on the customer's next wholesale visit.
+`approved` → **Save**. The welcome note and any eligible business benefits apply
+on the customer's next visit (they could already shop wholesale regardless).
 The internal notification email's **Review & Decide in Shopify** button links
 straight to this record. Leaving the field blank keeps the customer in the
 "under review" state (never granted by default).
