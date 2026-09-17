@@ -208,16 +208,35 @@ describe('loadCatalogueWithFallback', () => {
     expect(sf.query).toHaveBeenCalledTimes(1); // fallback never queried
   });
 
-  it('respects a preferred collection that exists but is EMPTY (no fallback)', async () => {
+  it('falls back when the preferred collection exists but is EMPTY on an unfiltered view', async () => {
+    // A trade collection created ahead of its products must not blank the page.
     const sf = byHandle({
       'wholesale-supplies': {products: {nodes: []}},
       'floral-supplies': {products: {nodes: [PRODUCT]}},
     });
     const result = await loadCatalogueWithFallback(sf, HANDLES, req(), 'wholesale-supplies');
 
+    expect(result.products).toHaveLength(1); // served from the fallback
+    expect(sf.query).toHaveBeenCalledTimes(2); // preferred (empty) → fallback
+  });
+
+  it('respects a shopper zero-result FILTER on the real collection (no fallback)', async () => {
+    // The preferred collection HAS products; the shopper's keyword just matches
+    // none — that empty result is honest, not a reason to show retail supplies.
+    const sf = byHandle({
+      'wholesale-supplies': {products: {nodes: [{...PRODUCT, title: 'Trade Vase'}]}},
+      'floral-supplies': {products: {nodes: [PRODUCT]}},
+    });
+    const result = await loadCatalogueWithFallback(
+      sf,
+      HANDLES,
+      req('?q=zzzznomatch'),
+      'wholesale-supplies',
+    );
+
     expect(result.missing).toBe(false);
-    expect(result.products).toEqual([]);
-    expect(sf.query).toHaveBeenCalledTimes(1); // the owner's empty answer stands
+    expect(result.products).toEqual([]); // real collection, filtered to nothing
+    expect(sf.query).toHaveBeenCalledTimes(1); // fallback never queried
   });
 
   it('surfaces a FAILED preferred query without masking it via the fallback', async () => {

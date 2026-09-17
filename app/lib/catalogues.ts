@@ -237,18 +237,33 @@ export async function loadCatalogue<
   }
 }
 
+/** True when the shopper has narrowed the catalogue (search, a facet or price). */
+function hasNarrowingFilters(f: AppliedFilters): boolean {
+  return Boolean(
+    f.q ||
+      f.flower ||
+      f.color ||
+      f.occasion ||
+      f.channel ||
+      f.minPrice != null ||
+      f.maxPrice != null,
+  );
+}
+
 /**
  * Load a catalogue that PREFERS a dedicated collection but FALLS BACK to a
- * shared one when the preferred handle doesn't exist in Shopify yet.
+ * shared one when the preferred one isn't ready.
  *
- * This lets a route point at a not-yet-created collection safely: today the
- * page serves the fallback, and the moment the owner creates the preferred
- * collection it takes over automatically — no code change, no empty page.
+ * This lets a route point at a not-yet-created (or still-being-populated)
+ * collection safely: the page serves the fallback until the preferred one has
+ * products, then takes it over automatically — no code change, no blank page.
  *
- * Only a genuine "collection not found" (`missing`) triggers the fallback. A
- * query failure surfaces as-is (never masked by the fallback), and a preferred
- * collection that exists but is empty is respected — the owner made it, so its
- * emptiness is the honest answer.
+ * The fallback triggers when the preferred collection is MISSING, or exists but
+ * shows NOTHING on an UNFILTERED view (e.g. a trade collection created empty and
+ * populated later). Two cases never fall back: a query FAILURE surfaces as-is
+ * (never masked), and a genuine zero-result FILTER on the real collection is
+ * respected — an empty result the shopper asked for is the honest answer, not a
+ * reason to show unrelated fallback products.
  */
 export async function loadCatalogueWithFallback<
   T extends {
@@ -269,7 +284,13 @@ export async function loadCatalogueWithFallback<
     request,
     context,
   );
-  if (!primary.missing) return primary;
+  // A failed query, or a real collection with products, is served as-is.
+  if (primary.failed) return primary;
+  if (!primary.missing && primary.products.length > 0) return primary;
+  // Empty preferred result: respect a shopper's own zero-result filter, but for
+  // an unfiltered empty (or a missing collection) fall back so the page never
+  // blanks while the trade collection is still being populated.
+  if (!primary.missing && hasNarrowingFilters(primary.filters)) return primary;
   return loadCatalogue<T>(storefront, handles.fallback, request, context);
 }
 
