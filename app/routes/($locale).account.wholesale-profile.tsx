@@ -32,10 +32,11 @@ import {
 } from '~/lib/wholesaleNotify';
 
 /**
- * Wholesale business profile. The customer is authenticated (the account layout
- * gates this) and already has wholesale access — this collects the trade
- * details we need before opening the wholesale catalogue, one typed customer
- * metafield per field.
+ * Business Account profile. The customer is authenticated (the account layout
+ * gates this). Wholesale shopping needs no account — this form is the OPTIONAL
+ * Business Account application: it collects the trade details we review for
+ * benefit eligibility, one typed customer metafield per field. It never gates
+ * the wholesale catalogue, which is public to everyone.
  */
 export const meta: MetaFunction = () => [
   {title: 'Business profile | The New Greenhouse'},
@@ -204,12 +205,12 @@ export default function WholesaleProfile() {
   return (
     <div className="ng-wsprofile">
       <div className="ng-wsprofile-head">
-        <p className="ng-wsprofile-eyebrow">Wholesale</p>
+        <p className="ng-wsprofile-eyebrow">Business Account</p>
         <h2 className="ng-wsprofile-title">Your business profile</h2>
         <p className="ng-wsprofile-sub">
           {gated
-            ? 'One step before the trade catalogue — tell us about your business.'
-            : 'Keep your trade details current so we can serve you better.'}
+            ? 'Tell us about your business to complete your Business Account application.'
+            : 'Keep your business details current so we can serve you better.'}
           {name ? ` Signed in as ${name}.` : null}
         </p>
       </div>
