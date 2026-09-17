@@ -219,11 +219,11 @@ function renderView(state: ViewState | undefined) {
       return (
         <div>
           <h1 style={{fontSize: 20}}>
-            Wholesale application {state.action === 'approved' ? 'approved' : 'rejected'}.
+            Business Account application {state.action === 'approved' ? 'approved' : 'rejected'}.
           </h1>
           <p>
             {state.action === 'approved'
-              ? `${state.businessName || 'This business'} now has approved wholesale status.`
+              ? `${state.businessName || 'This business'} now has an approved Business Account.`
               : 'The application status has been updated.'}
           </p>
         </div>
@@ -280,7 +280,7 @@ function Confirm({state}: {state: ViewState}) {
   return (
     <div>
       <h1 style={{fontSize: 20, marginTop: 0}}>
-        {isApprove ? 'Approve wholesale application?' : 'Reject wholesale application?'}
+        {isApprove ? 'Approve Business Account application?' : 'Reject Business Account application?'}
       </h1>
       <p style={{color: '#4a4a4a', fontSize: 14}}>
         Confirm that you have manually reviewed the submitted business information and CRA/TRN.

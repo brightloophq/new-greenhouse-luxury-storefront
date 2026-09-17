@@ -1,7 +1,7 @@
 /**
- * Wholesale application — internal team notification (manual workflow).
+ * Business Account application — internal team notification (manual workflow).
  *
- * Server-side only. After the customer's wholesale profile metafields save to
+ * Server-side only. After the customer's business profile metafields save to
  * Shopify, an internal email is sent via Resend so the team can manually review
  * the CRA/TRN and set custom.wholesale_status in Shopify admin. The customer
  * mutation NEVER writes wholesale_status — it is a staff-controlled field with
@@ -193,7 +193,7 @@ export function buildWholesaleNotificationEmail(
   // FULL CRA/TRN (plain + copyable). It is never masked here; it must never
   // appear in the subject, any URL, logs, or errors.
   const textLines = [
-    'A new wholesale account application has been submitted and is ready for review.',
+    'A new Business Account application has been submitted and is ready for review.',
     '',
     `Business Name: ${payload.businessName}`,
     `Business Type: ${payload.businessType}`,
@@ -225,7 +225,7 @@ export function buildWholesaleNotificationEmail(
   textLines.push('', instruction);
   textLines.push(
     '',
-    'You are receiving this email because you manage wholesale approvals for The New Greenhouse.',
+    'You are receiving this email because you manage Business Account approvals for The New Greenhouse.',
   );
   const text = textLines.join('\n');
 
@@ -314,7 +314,7 @@ export function buildWholesaleNotificationEmail(
   const divider = (space: string) =>
     `<tr><td style="padding:${space} 32px 0;"><div style="height:1px;line-height:1px;font-size:0;background:#e2d8c8;">&nbsp;</div></td></tr>`;
 
-  const html = `<!-- New Wholesale Application -->
+  const html = `<!-- New Business Account Application -->
 <div style="margin:0;padding:0;background:#f1ece2;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1ece2;">
     <tr><td align="center" style="padding:28px 12px;">
@@ -324,9 +324,9 @@ export function buildWholesaleNotificationEmail(
           <div style="width:38px;height:2px;line-height:2px;font-size:0;background:#c8a96a;margin:12px auto 0;">&nbsp;</div>
         </td></tr>
         <tr><td style="padding:22px 32px 0;text-align:center;">
-          <div style="font-family:${bodyFont};font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a6a2a;">Wholesale Application</div>
-          <h1 style="margin:10px 0 0;font-family:${headFont};font-size:27px;font-weight:600;line-height:1.15;color:#2f4a37;">New Wholesale Application</h1>
-          <p style="margin:12px auto 0;max-width:400px;font-family:${bodyFont};font-size:15px;line-height:1.6;color:#565049;">A new wholesale account application has been submitted and is ready for review.</p>
+          <div style="font-family:${bodyFont};font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a6a2a;">Business Account Application</div>
+          <h1 style="margin:10px 0 0;font-family:${headFont};font-size:27px;font-weight:600;line-height:1.15;color:#2f4a37;">New Business Account Application</h1>
+          <p style="margin:12px auto 0;max-width:400px;font-family:${bodyFont};font-size:15px;line-height:1.6;color:#565049;">A new Business Account application has been submitted and is ready for review.</p>
         </td></tr>
         ${divider('24px')}
         <tr><td style="padding:22px 32px 0;">
@@ -337,7 +337,7 @@ export function buildWholesaleNotificationEmail(
         ${instructionRow}
         ${divider('26px')}
         <tr><td style="padding:16px 32px 34px;text-align:center;">
-          <p style="margin:0;font-family:${bodyFont};font-size:12px;line-height:1.55;color:#5a6b58;">You are receiving this email because you manage wholesale approvals for The New Greenhouse.</p>
+          <p style="margin:0;font-family:${bodyFont};font-size:12px;line-height:1.55;color:#5a6b58;">You are receiving this email because you manage Business Account approvals for The New Greenhouse.</p>
         </td></tr>
       </table>
     </td></tr>
@@ -348,7 +348,7 @@ export function buildWholesaleNotificationEmail(
     from: config.from,
     to: config.recipient,
     reply_to: config.replyTo,
-    subject: 'New Wholesale Application',
+    subject: 'New Business Account Application',
     text,
     html,
   };
@@ -525,7 +525,7 @@ export function resolveWholesaleStatus(
 export function wholesaleStatusLabel(status: WholesaleStatus): string {
   switch (status) {
     case 'approved':
-      return 'Approved (existing wholesale account)';
+      return 'Approved (existing Business Account)';
     case 'rejected':
       return 'Rejected (existing decision)';
     case 'more_information_required':

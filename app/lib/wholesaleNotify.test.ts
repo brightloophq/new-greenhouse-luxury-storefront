@@ -61,7 +61,7 @@ describe('email builder', () => {
     expect(email.from).toBe(CONFIG.from);
     expect(email.reply_to).toBe('wholesale@thenewgreenhouseja.com');
     expect(email.to).toBe('wholesale@thenewgreenhouseja.com');
-    expect(email.subject).toBe('New Wholesale Application');
+    expect(email.subject).toBe('New Business Account Application');
   });
 
   it('includes every required field with the FULL CRA/TRN in the body', () => {
@@ -78,7 +78,7 @@ describe('email builder', () => {
   });
 
   it('never puts the CRA/TRN in the subject', () => {
-    expect(email.subject).toBe('New Wholesale Application');
+    expect(email.subject).toBe('New Business Account Application');
     expect(email.subject).not.toContain('123-456-789');
     expect(email.subject).not.toContain('123456789');
   });
@@ -88,7 +88,7 @@ describe('email builder', () => {
       {...PAYLOAD, status: 'approved'},
       CONFIG,
     );
-    expect(approved.text).toContain('Status: Approved (existing wholesale account)');
+    expect(approved.text).toContain('Status: Approved (existing Business Account)');
     const rejected = buildWholesaleNotificationEmail(
       {...PAYLOAD, status: 'rejected'},
       CONFIG,
@@ -273,15 +273,15 @@ describe('premium email redesign (reuses storefront design tokens)', () => {
   it('shows the brand lockup, eyebrow, heading and description', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
     expect(email.html).toContain('The New Greenhouse');
-    expect(email.html).toContain('Wholesale Application');
-    expect(email.html).toContain('New Wholesale Application');
+    expect(email.html).toContain('Business Account Application');
+    expect(email.html).toContain('New Business Account Application');
     expect(email.html).toContain('ready for review');
   });
 
   it('carries the required footer in both HTML and text', () => {
     const email = buildWholesaleNotificationEmail(PAYLOAD, CONFIG);
     const footer =
-      'You are receiving this email because you manage wholesale approvals for The New Greenhouse.';
+      'You are receiving this email because you manage Business Account approvals for The New Greenhouse.';
     expect(email.html).toContain(footer);
     expect(email.text).toContain(footer);
   });
@@ -357,7 +357,7 @@ describe('Phase-1 email decisions flag (send path)', () => {
     expect(email.text).not.toContain('/internal/wholesale/review');
     // full CRA/TRN still present in the internal email; never in the subject
     expect(email.text).toContain('CRA/TRN: 123-456-789');
-    expect(email.subject).toBe('New Wholesale Application');
+    expect(email.subject).toBe('New Business Account Application');
     expect(email.subject).not.toContain('123-456-789');
   });
 
@@ -392,7 +392,7 @@ describe('wholesaleStatusLabel', () => {
 
   it('labels each staff-set status distinctly', () => {
     expect(wholesaleStatusLabel('approved')).toBe(
-      'Approved (existing wholesale account)',
+      'Approved (existing Business Account)',
     );
     expect(wholesaleStatusLabel('rejected')).toBe('Rejected (existing decision)');
     expect(wholesaleStatusLabel('more_information_required')).toBe(
