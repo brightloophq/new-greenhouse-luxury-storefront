@@ -65,10 +65,35 @@ export const CATALOGUE_QUERY = `#graphql
   }
 ` as const;
 
-/** Wholesale (auth-required) and Retail (guest) catalogues. */
+/**
+ * Wholesale and Retail catalogues. Both are PUBLIC — a wholesale buyer shops as
+ * a guest (name + email at checkout); the Business Account is a separate,
+ * optional relationship (see `/wholesale`). Trade pricing lives on the Shopify
+ * product, so each side points at its own collection and prices can diverge.
+ *
+ * Flowers: `bulk-flowers` (wholesale bunches/boxes) vs `all-flowers` (retail) —
+ * genuinely different products, so two collections is right.
+ *
+ * Supplies: the same physical item (a vase, a spool of ribbon) at a trade
+ * price — NOT a different product. Cloning `floral-supplies` into a parallel
+ * collection would force every supply to be maintained twice. So the wholesale
+ * supplies route PREFERS a dedicated wholesale-priced collection but FALLS BACK
+ * to the shared retail one until the owner creates it — see
+ * `loadCatalogueWithFallback`. Pointing at the preferred handle is safe even
+ * before it exists: the page serves the fallback today and auto-upgrades the
+ * moment the collection appears in Shopify, with no code change.
+ *
+ * OWNER-DEPENDENT: create a wholesale-priced supplies collection in Shopify. If
+ * you name it something other than `wholesale-supplies`, tell me the handle —
+ * it's a one-line change to `wholesaleSupplies` below. No pricing is invented
+ * here; the numbers come entirely from whatever collection you create.
+ */
 export const TRADE_COLLECTIONS = {
   wholesaleFlowers: 'bulk-flowers',
-  wholesaleSupplies: 'floral-supplies',
+  /** Preferred dedicated wholesale supplies collection (may not exist yet). */
+  wholesaleSupplies: 'wholesale-supplies',
+  /** Served until the dedicated wholesale supplies collection exists. */
+  wholesaleSuppliesFallback: 'floral-supplies',
   retailFlowers: 'all-flowers',
   retailSupplies: 'floral-supplies',
 } as const;
@@ -210,6 +235,42 @@ export async function loadCatalogue<
     console.error(`[catalogue] query failed for "${handle}"`, error);
     return {products: [], missing: false, failed: true, ...base};
   }
+}
+
+/**
+ * Load a catalogue that PREFERS a dedicated collection but FALLS BACK to a
+ * shared one when the preferred handle doesn't exist in Shopify yet.
+ *
+ * This lets a route point at a not-yet-created collection safely: today the
+ * page serves the fallback, and the moment the owner creates the preferred
+ * collection it takes over automatically — no code change, no empty page.
+ *
+ * Only a genuine "collection not found" (`missing`) triggers the fallback. A
+ * query failure surfaces as-is (never masked by the fallback), and a preferred
+ * collection that exists but is empty is respected — the owner made it, so its
+ * emptiness is the honest answer.
+ */
+export async function loadCatalogueWithFallback<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  handles: {preferred: string; fallback: string},
+  request: Request,
+  context: FilterContext,
+): Promise<CatalogueLoadResult<T>> {
+  const primary = await loadCatalogue<T>(
+    storefront,
+    handles.preferred,
+    request,
+    context,
+  );
+  if (!primary.missing) return primary;
+  return loadCatalogue<T>(storefront, handles.fallback, request, context);
 }
 
 export function findBySlug<T extends {slug: string}>(

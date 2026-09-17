@@ -4,16 +4,17 @@ import {useReveal} from '~/lib/useReveal';
 import type {WholesaleDecision} from '~/lib/wholesale';
 
 /**
- * Shown to a signed-in customer whose wholesale application has NOT been
- * approved. The owner reviews the CRA/TRN from the notification email and sets
- * `custom.wholesale_status` in Shopify Admin; until it reads "approved" the
- * trade catalogue and its pricing stay closed and this notice explains why.
+ * Shown on /wholesale to a signed-in customer whose BUSINESS ACCOUNT application
+ * has not yet been approved. It is INFORMATIONAL ONLY and never blocks shopping:
+ * the wholesale catalogue above stays open to everyone regardless of this state.
+ * The owner reviews the CRA/TRN from the notification email and sets
+ * `custom.wholesale_status` in Shopify Admin; that flag governs eligibility for
+ * future business benefits (special pricing, offers), not access to wholesale.
  *
- * `pending` is also the fallback for a blank/unknown status or a failed status
- * read — a customer is never shown wholesale pricing by default.
+ * `pending` is also the fallback for a blank/unknown status or a failed read.
  *
  * Presentation only: it reuses the storefront's trade-gate layout, tokens and
- * reveal animation so it reads as the same room as the signed-out gate.
+ * reveal animation so it reads as part of the same page.
  */
 type DeniedStatus = Exclude<WholesaleDecision, 'approved'>;
 
@@ -80,14 +81,18 @@ export function WholesaleStatusNotice({status}: {status: DeniedStatus}) {
             <span className="ng-trade-status-dot" aria-hidden="true" />
             {copy.pill}
           </p>
-          <h1
+          <h2
             id="ng-trade-notice-title"
             className="ng-trade-gate-title ng-editorial-title"
           >
             {copy.title}
-          </h1>
+          </h2>
           <p className="ng-trade-gate-lead">{copy.lead}</p>
           {copy.note ? <p className="ng-trade-gate-note">{copy.note}</p> : null}
+          <p className="ng-trade-gate-note">
+            You can keep shopping wholesale anytime — this only affects business
+            benefits, not your ability to buy.
+          </p>
           <div className="ng-trade-gate-actions">
             {copy.contact ? (
               <Link className="ng-trade-btn" to="/contact" prefetch="intent">

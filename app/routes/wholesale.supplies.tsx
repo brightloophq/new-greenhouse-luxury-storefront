@@ -1,23 +1,26 @@
-import {redirect, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
+import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
-import {getWholesaleAccess} from '~/lib/wholesale';
-import {requireWholesaleProfile} from '~/lib/wholesaleProfile';
+import {TRADE_COLLECTIONS, loadCatalogueWithFallback} from '~/lib/catalogues';
 
 export const meta: MetaFunction = () => [
   {title: 'Wholesale Supplies | The New Greenhouse'},
 ];
 
 export async function loader({context, request}: LoaderFunctionArgs) {
-  // Approval-gated: only "approved" customers reach the wholesale catalogue.
-  const {access} = await getWholesaleAccess(context.customerAccount);
-  if (access !== 'approved') throw redirect('/wholesale');
-  await requireWholesaleProfile(context.customerAccount, request);
-
-  return loadCatalogue<CatalogueProduct>(
+  // Open to everyone — guest wholesale purchasing, no account/approval required.
+  // The optional Business Account (see /wholesale) governs benefit eligibility
+  // only; it never gates browsing or checkout.
+  //
+  // Prefer the dedicated wholesale-priced supplies collection; serve the shared
+  // retail supplies collection until the owner creates it in Shopify. Auto-
+  // upgrades with no code change once the dedicated collection exists.
+  return loadCatalogueWithFallback<CatalogueProduct>(
     context.storefront,
-    TRADE_COLLECTIONS.wholesaleSupplies,
+    {
+      preferred: TRADE_COLLECTIONS.wholesaleSupplies,
+      fallback: TRADE_COLLECTIONS.wholesaleSuppliesFallback,
+    },
     request,
     'wholesale-supplies',
   );

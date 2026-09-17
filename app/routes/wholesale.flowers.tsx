@@ -1,23 +1,17 @@
-import {redirect, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
+import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
-import {getWholesaleAccess} from '~/lib/wholesale';
-import {requireWholesaleProfile} from '~/lib/wholesaleProfile';
 
 export const meta: MetaFunction = () => [
   {title: 'Wholesale Flowers | The New Greenhouse'},
 ];
 
 export async function loader({context, request}: LoaderFunctionArgs) {
-  // Wholesale is approval-gated: sign-in is required, and the owner must have
-  // set the customer's status to "approved". Every other state is sent back to
-  // /wholesale, which shows the matching gate or status notice.
-  const {access} = await getWholesaleAccess(context.customerAccount);
-  if (access !== 'approved') throw redirect('/wholesale');
-  // …and trade buyers must have completed their business profile.
-  await requireWholesaleProfile(context.customerAccount, request);
-
+  // Wholesale is OPEN to everyone — browse and buy as a guest (name + email are
+  // captured at Shopify checkout). No account, business profile or approval is
+  // required to purchase wholesale. A Business Account (see /wholesale) is a
+  // separate, OPTIONAL relationship for future benefits and never gates shopping.
   return loadCatalogue<CatalogueProduct>(
     context.storefront,
     TRADE_COLLECTIONS.wholesaleFlowers,

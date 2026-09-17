@@ -6,78 +6,47 @@ const ROOT = join(__dirname, '..', '..');
 const read = (p: string) => readFileSync(join(ROOT, p), 'utf8');
 
 /**
- * Step 8 — editorial wholesale authentication (presentation only). These lock
- * the behaviour that must survive the redesign: the auth hand-off, the dialog
- * a11y contract, and the untouched approval logic.
+ * Wholesale is PUBLIC — a wholesale buyer purchases as a guest (name + email at
+ * checkout), and the Business Account is a separate, optional relationship. The
+ * old sign-in-wall modal (`WholesaleAuthModal`) has been removed; these guards
+ * lock the new contract in place.
  */
-describe('wholesale invitation modal', () => {
-  const modal = read('app/components/wholesale/WholesaleAuthModal.tsx');
-
-  it('preserves the Shopify auth hand-off (both actions → /account/login)', () => {
-    expect(modal).toMatch(/AUTH_HREF = '\/account\/login'/);
-    // Two actions, both pointing at the hand-off — no in-app credential capture.
-    expect(modal.match(/href=\{AUTH_HREF\}/g)?.length).toBe(2);
-    expect(modal).not.toMatch(/type="password"|<input/); // never collects credentials
-  });
-
-  it('keeps the dialog accessibility contract', () => {
-    expect(modal).toMatch(/role="dialog"/);
-    expect(modal).toMatch(/aria-modal="true"/);
-    expect(modal).toMatch(/aria-labelledby="ng-trade-title"/);
-    expect(modal).toMatch(/aria-label="Close"/);
-  });
-
-  it('traps focus, closes on Escape + backdrop, and returns focus to the opener', () => {
-    expect(modal).toMatch(/event\.key !== 'Tab'/); // Tab focus trap
-    expect(modal).toMatch(/last\.focus\(\)/);
-    expect(modal).toMatch(/first\.focus\(\)/);
-    expect(modal).toMatch(/event\.key === 'Escape'[\s\S]{0,60}requestClose\(\)/);
-    expect(modal).toMatch(/event\.target === event\.currentTarget\) requestClose\(\)/);
-    expect(modal).toMatch(/openerRef\.current = document\.activeElement/);
-    expect(modal).toMatch(/opener\?\.isConnected/);
-  });
-
-  it('locks scroll and reuses the existing dynamic GSAP, guarded by reduced motion', () => {
-    expect(modal).toMatch(/document\.body\.style\.overflow = 'hidden'/);
-    expect(modal).toMatch(/await import\('gsap'\)/); // no new animation library
-    expect(modal).toMatch(/prefersReducedMotion\(\)/);
-  });
-
-  it('shows an editorial loading affordance while the hand-off opens', () => {
-    expect(modal).toMatch(/setStatus\('opening'\)/);
-    expect(modal).toMatch(/status === 'opening'/);
-    expect(modal).toMatch(/ng-trade-loading/);
-  });
-
-  it('carries no mockup branding', () => {
-    expect(modal).not.toMatch(/verdant|wildstem|lorem|placeholder/i);
-  });
-});
-
-describe('wholesale gate (signed-out /wholesale)', () => {
-  const gate = read('app/components/wholesale/WholesaleGate.tsx');
+describe('wholesale is public — optional business account, not a gate', () => {
+  const invite = read('app/components/wholesale/BusinessAccountInvite.tsx');
   const route = read('app/routes/wholesale._index.tsx');
 
-  it('preserves the auth actions and approved trade copy', () => {
-    expect(gate.match(/href="\/account\/login"/g)?.length).toBe(2);
-    expect(gate).toMatch(/florists, event planners, hotels and venues/); // approved body
-    expect(gate).toMatch(/Trade pricing by the bunch/); // approved perk
-    expect(gate).toMatch(/40\+ years supplying Jamaica/);
-    expect(gate).toMatch(/useReveal/); // existing reveal, no new system
+  it('the Business Account invite keeps the Shopify auth hand-off + business copy', () => {
+    expect(invite.match(/href="\/account\/login"/g)?.length).toBe(2); // create + sign in
+    expect(invite).toMatch(/Business Account · optional/);
+    expect(invite).toMatch(/open to everyone/); // wholesale needs no account
+    expect(invite).toMatch(/useReveal/); // existing reveal, no new system
+    // No invented discount promise (no hardcoded percentage off).
+    expect(invite).not.toMatch(/\d+\s*%\s*(off|discount)/i);
   });
 
-  it('gates the signed-out room and the not-yet-approved states', () => {
+  it('the /wholesale route is public: shop for everyone, business account optional', () => {
+    // The shop selector renders unconditionally — never behind an approval gate.
+    expect(route).toMatch(/PathwaySelector/);
+    expect(route).not.toMatch(/access !== 'approved'/); // no shopping gate
+    expect(route).not.toMatch(/throw redirect/); // no gate redirect
+    // Business-account state only tailors the OPTIONAL block below the shop.
     expect(route).toMatch(/getWholesaleAccess/);
-    // Signed-out shoppers see the gate; approved shoppers see the selector;
-    // every other state renders the status notice.
-    expect(route).toMatch(/access === 'guest'/);
-    expect(route).toMatch(/access !== 'approved'/);
-    expect(route).toMatch(/WholesaleGate/);
+    expect(route).toMatch(/access === 'guest'/); // → BusinessAccountInvite
+    expect(route).toMatch(/BusinessAccountInvite/);
     expect(route).toMatch(/WholesaleStatusNotice/);
+  });
+
+  it('the wholesale sub-catalogues no longer require sign-in or approval', () => {
+    for (const p of ['wholesale.flowers.tsx', 'wholesale.supplies.tsx']) {
+      const src = read(join('app/routes', p));
+      expect(src).not.toMatch(/requireWholesaleProfile/);
+      expect(src).not.toMatch(/access !== 'approved'/);
+      expect(src).not.toMatch(/throw redirect\('\/wholesale'\)/);
+    }
   });
 });
 
-describe('approval is gated on the manual wholesale_status decision', () => {
+describe('wholesale_status resolves as an eligibility flag (manual decision)', () => {
   const wholesale = read('app/lib/wholesale.ts');
 
   it('resolves guest + the four manual decision states (no sign-in-only access)', () => {
