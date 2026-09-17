@@ -25,6 +25,7 @@
     "video:hero": "node scripts/images/hero-video.mjs",
     "video:optimize": "node scripts/images/optimize-video.mjs",
     "shopify:collections": "node scripts/shopify/collections.mjs",
+    "shopify:wholesale-supplies": "node scripts/shopify/wholesale-supplies.mjs",
     "shopify:metafields": "node scripts/shopify/metafields.mjs",
     "shopify:tags": "node scripts/shopify/tags.mjs",
     "shopify:varieties": "node scripts/shopify/varieties.mjs",
