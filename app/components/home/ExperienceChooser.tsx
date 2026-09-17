@@ -1,6 +1,5 @@
-import {useRef, useState} from 'react';
+import {useRef} from 'react';
 import {Link} from 'react-router';
-import {WholesaleAuthModal} from '~/components/wholesale/WholesaleAuthModal';
 import {BotanicalSpine} from '~/components/home/BotanicalSpine';
 import {PetalDrift} from '~/components/home/PetalDrift';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
@@ -16,8 +15,8 @@ import {useReveal} from '~/lib/useReveal';
  * image edge and the name set in display serif. Rhythm comes from the
  * alternation and the numerals, not from a grid.
  *
- * Nothing about the flow changes. Wholesale is still a <button> that opens the
- * auth modal without leaving `/`; the other three are still links.
+ * All four are plain links. Wholesale is a public destination (`/wholesale`) —
+ * open to everyone, no sign-in required — so it navigates like the others.
  */
 interface Pathway {
   index: string;
@@ -26,17 +25,16 @@ interface Pathway {
   img: string;
   dir: string;
   to?: string;
-  action?: 'wholesale';
 }
 
 const PATHWAYS: Pathway[] = [
   {
     index: '01',
     title: 'Wholesale',
-    blurb: 'Trade pricing by the box, for florists and venues.',
+    blurb: 'Buy by the bunch or box — florists, venues and trade welcome.',
+    to: '/wholesale',
     img: 'wholesale-flowers',
     dir: 'collections',
-    action: 'wholesale',
   },
   {
     index: '02',
@@ -112,7 +110,6 @@ function BayInner({pathway}: {pathway: Pathway}) {
 }
 
 export function ExperienceChooser() {
-  const [wholesaleOpen, setWholesaleOpen] = useState(false);
   const scope = useRef<HTMLElement>(null);
   useReveal(scope);
 
@@ -150,27 +147,12 @@ export function ExperienceChooser() {
             className={`ng-bay${index === 0 ? ' ng-bay--dominant' : ''}`}
             data-reveal-item
           >
-            {pathway.action === 'wholesale' ? (
-              <button
-                type="button"
-                className="ng-bay-link"
-                onClick={() => setWholesaleOpen(true)}
-              >
-                <BayInner pathway={pathway} />
-              </button>
-            ) : (
-              <Link className="ng-bay-link" to={pathway.to!} prefetch="intent">
-                <BayInner pathway={pathway} />
-              </Link>
-            )}
+            <Link className="ng-bay-link" to={pathway.to!} prefetch="intent">
+              <BayInner pathway={pathway} />
+            </Link>
           </li>
         ))}
       </ol>
-
-      <WholesaleAuthModal
-        open={wholesaleOpen}
-        onClose={() => setWholesaleOpen(false)}
-      />
     </section>
   );
 }

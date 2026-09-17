@@ -307,10 +307,13 @@ describe('mockup UI migration', () => {
     expect(css).toMatch(/\.ng-bays-list \{[\s\S]*?grid-template-columns: 1\.\d+fr 1fr/);
   });
 
-  it('keeps Wholesale a popup trigger and the other three real links', () => {
+  it('makes all four pathways real links — Wholesale is public (/wholesale), no popup', () => {
     const chooser = read('app/components/home/ExperienceChooser.tsx');
-    expect(chooser).toMatch(/setWholesaleOpen\(true\)/);
-    expect(chooser).toMatch(/<button[\s\S]*?className="ng-bay-link"/);
+    // Wholesale now navigates like the others — no auth modal / popup trigger.
+    expect(chooser).toMatch(/to: '\/wholesale'/);
+    expect(chooser).not.toMatch(/setWholesaleOpen/);
+    expect(chooser).not.toMatch(/WholesaleAuthModal/);
+    expect(chooser).not.toMatch(/<button[\s\S]*?className="ng-bay-link"/);
     expect(chooser).toMatch(/<Link className="ng-bay-link" to=\{pathway\.to!\}/);
   });
 

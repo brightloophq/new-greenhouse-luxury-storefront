@@ -7,6 +7,7 @@ import {
   TRADE_COLLECTIONS,
   findBySlug,
   loadCatalogue,
+  loadCatalogueWithFallback,
 } from './catalogues';
 import {FACETS} from './catalog';
 
@@ -167,5 +168,66 @@ describe('loadCatalogue', () => {
     expect(result.products).toHaveLength(1);
     expect(result.products[0].title).toBe('Red Roses');
     expect(result.filters.q).toBe('roses');
+  });
+});
+
+describe('loadCatalogueWithFallback', () => {
+  const HANDLES = {preferred: 'wholesale-supplies', fallback: 'floral-supplies'};
+
+  /** A storefront whose returned collection depends on the queried handle. */
+  function byHandle(map: Record<string, unknown>) {
+    return {
+      query: vi.fn((_q: string, opts?: {variables?: {handle?: string}}) =>
+        Promise.resolve({collection: map[opts?.variables?.handle ?? ''] ?? null}),
+      ),
+    };
+  }
+
+  it('serves the fallback when the preferred collection does not exist yet', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const sf = byHandle({
+      // 'wholesale-supplies' absent → missing → fall back to 'floral-supplies'.
+      'floral-supplies': {products: {nodes: [PRODUCT]}},
+    });
+    const result = await loadCatalogueWithFallback(sf, HANDLES, req(), 'wholesale-supplies');
+
+    expect(result.missing).toBe(false);
+    expect(result.products).toHaveLength(1);
+    expect(sf.query).toHaveBeenCalledTimes(2); // preferred, then fallback
+    warn.mockRestore();
+  });
+
+  it('serves the preferred collection the moment it exists — no fallback query', async () => {
+    const sf = byHandle({
+      'wholesale-supplies': {products: {nodes: [{...PRODUCT, title: 'Trade Vase'}]}},
+      'floral-supplies': {products: {nodes: [PRODUCT]}},
+    });
+    const result = await loadCatalogueWithFallback(sf, HANDLES, req(), 'wholesale-supplies');
+
+    expect(result.products[0].title).toBe('Trade Vase');
+    expect(sf.query).toHaveBeenCalledTimes(1); // fallback never queried
+  });
+
+  it('respects a preferred collection that exists but is EMPTY (no fallback)', async () => {
+    const sf = byHandle({
+      'wholesale-supplies': {products: {nodes: []}},
+      'floral-supplies': {products: {nodes: [PRODUCT]}},
+    });
+    const result = await loadCatalogueWithFallback(sf, HANDLES, req(), 'wholesale-supplies');
+
+    expect(result.missing).toBe(false);
+    expect(result.products).toEqual([]);
+    expect(sf.query).toHaveBeenCalledTimes(1); // the owner's empty answer stands
+  });
+
+  it('surfaces a FAILED preferred query without masking it via the fallback', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sf = {query: vi.fn().mockRejectedValue(new Error('network'))};
+    const result = await loadCatalogueWithFallback(sf, HANDLES, req(), 'wholesale-supplies');
+
+    expect(result.failed).toBe(true);
+    expect(result.missing).toBe(false);
+    expect(sf.query).toHaveBeenCalledTimes(1); // a real error is not a missing collection
+    error.mockRestore();
   });
 });

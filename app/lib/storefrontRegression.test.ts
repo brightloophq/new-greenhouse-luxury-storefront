@@ -172,31 +172,20 @@ describe('global navigation', () => {
 /* -------------------------------------------------------------------------- */
 
 describe('wholesale entry', () => {
-  it('opens the auth modal from the homepage card instead of navigating', () => {
-    expect(CHOOSER).toMatch(/action: 'wholesale'/);
-    expect(CHOOSER).toMatch(/WholesaleAuthModal/);
-    // Wholesale must render a <button> that opens the modal, never a <Link>.
-    // Asserted on the branch's SHAPE rather than the loop variable's name, so
-    // renaming `card` → `pathway` in a redesign doesn't read as a regression.
-    expect(CHOOSER).toMatch(
-      /\.action === 'wholesale' \?[\s\S]{0,200}<button[\s\S]{0,200}onClick=\{\(\) => set\w+\(true\)\}/,
-    );
-    // …and the other destinations stay links.
+  it('navigates to the public /wholesale page like the other pathways', () => {
+    // Wholesale is open to everyone now — the homepage card is a plain link, not
+    // an auth-modal trigger. No sign-in wall between a shopper and wholesale.
+    expect(CHOOSER).toMatch(/to: '\/wholesale'/);
+    expect(CHOOSER).not.toMatch(/action: 'wholesale'/);
+    expect(CHOOSER).not.toMatch(/WholesaleAuthModal/);
+    expect(CHOOSER).not.toMatch(/onClick=\{\(\) => set\w+\(true\)\}/);
+    // …and every destination is a link.
     expect(CHOOSER).toMatch(/<Link[\s\S]{0,160}to=\{\w+\.to!\}/);
   });
 
-  it('returns focus to the element that opened it', () => {
-    const modal = read('app/components/wholesale/WholesaleAuthModal.tsx');
-    expect(modal).toMatch(/openerRef/);
-    // Captured before focus moves into the dialog, restored in cleanup.
-    expect(modal).toMatch(/openerRef\.current = document\.activeElement/);
-    expect(modal).toMatch(/opener\?\.isConnected.*\n?.*opener\.focus\(\)/);
-  });
-
-  it('renders the Wholesale button identically to the anchor cards', () => {
-    // Wholesale is a <button> and the other three are <a>. Without an explicit
-    // reset the button inherits the design system's uppercase button styling,
-    // and Wholesale alone shouts in ALL CAPS across the homepage's main row.
+  it('keeps the homepage pathway cards visually consistent', () => {
+    // All four pathways are anchor cards now (Wholesale is a public link too),
+    // so none inherits the design system's uppercase button styling.
     const css = read('app/styles/home.css');
     const rule = css.slice(
       css.indexOf('.ng-chooser-card {'),
