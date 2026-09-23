@@ -2,6 +2,7 @@ import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 import {experienceEntryResponse} from '~/lib/experienceEntry';
+import {canonicalHostRedirect} from '~/lib/canonicalHost';
 
 /**
  * Export a fetch handler in module format.
@@ -13,6 +14,11 @@ export default {
     executionContext: ExecutionContext,
   ): Promise<Response> {
     try {
+      // Canonical host: fold the bare apex (and www) into shop.thenewgreenhouseja.com
+      // with a 301 before anything else, so the store is indexed on one host only.
+      const hostRedirect = canonicalHostRedirect(request);
+      if (hostRedirect) return hostRedirect;
+
       // Experience entry policy: /classic, /deluxe and their deep links set the
       // ng_experience cookie and 302 to the canonical store path. Resolved here
       // (before routing) so nested /classic/collections/* deep links can't
