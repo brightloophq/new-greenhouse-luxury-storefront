@@ -13,6 +13,13 @@ import {
   type AppliedFilters,
   type FilterContext,
 } from '~/lib/catalog';
+import {isSupplyProduct} from '~/lib/experienceClassify';
+
+/** Flower shopping contexts: their grids must never show Floral Supply products. */
+const FLOWER_CONTEXTS = new Set<FilterContext>([
+  'retail-flowers',
+  'wholesale-flowers',
+]);
 
 export const CATALOGUE_QUERY = `#graphql
   query CatalogueCollection(
@@ -222,9 +229,13 @@ export async function loadCatalogue<
       return {products: [], missing: true, failed: false, ...base};
     }
     const nodes = (collection.products?.nodes ?? []) as T[];
+    const dropSupplies = FLOWER_CONTEXTS.has(context);
     return {
       products: nodes.filter(
-        (node) => matchesFacetTags(node, filters) && matchesQuery(node, filters.q),
+        (node) =>
+          matchesFacetTags(node, filters) &&
+          matchesQuery(node, filters.q) &&
+          !(dropSupplies && isSupplyProduct(node)),
       ),
       missing: false,
       failed: false,

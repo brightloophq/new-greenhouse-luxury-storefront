@@ -159,6 +159,27 @@ describe('loadCatalogue', () => {
     expect(result.products).toHaveLength(1);
   });
 
+  it('drops Floral Supply from a flower context but keeps it for supplies', async () => {
+    const nodes = [
+      {...PRODUCT, title: 'Red Roses', productType: 'Fresh Flowers'},
+      {...PRODUCT, id: 'gid://v', title: 'Glass Vase', productType: 'Floral Supply'},
+    ];
+    const flowers = await loadCatalogue(
+      storefront({products: {nodes}}),
+      'all-flowers',
+      req(),
+      'retail-flowers',
+    );
+    expect(flowers.products.map((p) => p.title)).toEqual(['Red Roses']); // vase removed
+    const supplies = await loadCatalogue(
+      storefront({products: {nodes}}),
+      'floral-supplies',
+      req(),
+      'retail-supplies',
+    );
+    expect(supplies.products.map((p) => p.title)).toEqual(['Red Roses', 'Glass Vase']);
+  });
+
   it('narrows the loaded page by keyword search', async () => {
     const sf = storefront({
       products: {nodes: [PRODUCT, {...PRODUCT, id: 'gid://2', title: 'White Lilies'}]},
