@@ -1,7 +1,7 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {TRADE_COLLECTIONS, loadCatalogueWithFallback} from '~/lib/catalogues';
+import {loadSupplyCatalogue} from '~/lib/catalogues';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data}) =>
@@ -23,19 +23,16 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   // The optional Business Account (see /wholesale) governs benefit eligibility
   // only; it never gates browsing or checkout.
   //
-  // Prefer the dedicated wholesale-priced supplies collection; serve the shared
-  // retail supplies collection until it exists AND has products. Creating the
-  // collection empty (then adding products later) never blanks this page — the
-  // fallback covers an unfiltered-empty preferred collection. Auto-upgrades with
-  // no code change once the dedicated collection has stock.
-  return loadCatalogueWithFallback<CatalogueProduct>(
+  // Sourced by product type (Floral Supply), scoped to the wholesale channel,
+  // rather than curated collection membership — so the page fills from the
+  // catalogue. Every supply carries both channels today, so this shows the full
+  // set; the channel scope is forward-compatible with a future wholesale-priced
+  // split.
+  return loadSupplyCatalogue<CatalogueProduct>(
     context.storefront,
-    {
-      preferred: TRADE_COLLECTIONS.wholesaleSupplies,
-      fallback: TRADE_COLLECTIONS.wholesaleSuppliesFallback,
-    },
     request,
     'wholesale-supplies',
+    {channel: 'wholesale'},
   );
 }
 
