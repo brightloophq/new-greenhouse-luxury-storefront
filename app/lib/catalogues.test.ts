@@ -8,6 +8,8 @@ import {
   findBySlug,
   loadCatalogue,
   loadCatalogueWithFallback,
+  loadFlowerVarietyCatalogue,
+  loadOccasionCatalogue,
 } from './catalogues';
 import {FACETS} from './catalog';
 
@@ -269,5 +271,75 @@ describe('loadCatalogueWithFallback', () => {
     expect(result.missing).toBe(false);
     expect(sf.query).toHaveBeenCalledTimes(1); // a real error is not a missing collection
     error.mockRestore();
+  });
+});
+
+/** A storefront whose top-level product search returns a fixed node list. */
+function productSearch(nodes: unknown[]) {
+  return {query: vi.fn().mockResolvedValue({products: {nodes}})};
+}
+
+/** The Shopify search `query:` string a single call was issued with. */
+function queryArg(sf: {query: ReturnType<typeof vi.fn>}): string {
+  return sf.query.mock.calls[0][1].variables.query;
+}
+
+describe('loadFlowerVarietyCatalogue', () => {
+  const stem = {...PRODUCT, title: 'Red Carnations', productType: 'Fresh Flowers'};
+  const greenery = {...PRODUCT, id: 'gid://g', title: 'Salal', productType: 'Greenery'};
+  const vase = {...PRODUCT, id: 'gid://v', title: 'Glass Vase', productType: 'Floral Supply'};
+
+  it('searches by the flower tag AND constrains to fresh-flower product types', async () => {
+    const sf = productSearch([stem]);
+    await loadFlowerVarietyCatalogue(sf, req('?flower=carnations'), 'retail-flowers');
+
+    const q = queryArg(sf);
+    expect(q).toContain("tag:'flower:carnations'");
+    expect(q).toContain("product_type:'Fresh Flowers'");
+    expect(q).toContain("product_type:'Greenery'");
+  });
+
+  it('keeps fresh stems and greenery but always drops supplies', async () => {
+    const sf = productSearch([stem, greenery, vase]);
+    const result = await loadFlowerVarietyCatalogue(sf, req('?flower=carnations'), 'retail-flowers');
+    expect(result.products.map((p) => p.title)).toEqual(['Red Carnations', 'Salal']);
+    expect(result.missing).toBe(false);
+    expect(result.failed).toBe(false);
+  });
+
+  it('reports a FAILED search without crashing the route', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sf = {query: vi.fn().mockRejectedValue(new Error('network'))};
+    const result = await loadFlowerVarietyCatalogue(sf, req('?flower=carnations'), 'retail-flowers');
+    expect(result.failed).toBe(true);
+    expect(result.products).toEqual([]);
+    error.mockRestore();
+  });
+});
+
+describe('loadOccasionCatalogue', () => {
+  const arrangement = {...PRODUCT, title: 'Sympathy Bouquet', productType: 'Sympathy Arrangement'};
+  const stem = {...PRODUCT, id: 'gid://s', title: 'White Lilies', productType: 'Fresh Flowers'};
+  const vase = {...PRODUCT, id: 'gid://v', title: 'Glass Vase', productType: 'Floral Supply'};
+
+  it('searches by the occasion tag (no fresh-only constraint)', async () => {
+    const sf = productSearch([arrangement, stem]);
+    await loadOccasionCatalogue(sf, 'sympathy', req(), 'arrangements');
+
+    const q = queryArg(sf);
+    expect(q).toContain("tag:'occasion:sympathy'");
+    expect(q).not.toContain('product_type:'); // arrangements + fresh both welcome
+  });
+
+  it('keeps arrangements AND fresh stems, dropping only supplies', async () => {
+    const sf = productSearch([arrangement, stem, vase]);
+    const result = await loadOccasionCatalogue(sf, 'sympathy', req(), 'arrangements');
+    expect(result.products.map((p) => p.title)).toEqual(['Sympathy Bouquet', 'White Lilies']);
+  });
+
+  it('adds an applied colour facet to the search', async () => {
+    const sf = productSearch([arrangement]);
+    await loadOccasionCatalogue(sf, 'sympathy', req('?color=red'), 'arrangements');
+    expect(queryArg(sf)).toContain("tag:'color:red'");
   });
 });

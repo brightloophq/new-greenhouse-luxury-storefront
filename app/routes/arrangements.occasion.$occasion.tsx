@@ -1,7 +1,7 @@
 import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {OCCASIONS, findBySlug, loadCatalogue} from '~/lib/catalogues';
+import {OCCASIONS, findBySlug, loadOccasionCatalogue} from '~/lib/catalogues';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data: d}) =>
@@ -27,9 +27,13 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
   const occasion = findBySlug(OCCASIONS, params.occasion);
   if (!occasion) throw data('Occasion not found', {status: 404});
 
-  const result = await loadCatalogue<CatalogueProduct>(
+  // Source from the occasion TAG (everything tagged, minus supplies) via the
+  // reliable product search, not the curated Shopify collection — the collection
+  // is often empty or mis-membered while the products are correctly tagged, which
+  // left these pages showing one or two items (or none).
+  const result = await loadOccasionCatalogue<CatalogueProduct>(
     context.storefront,
-    occasion.handle,
+    occasion.slug,
     request,
     'arrangements',
   );
