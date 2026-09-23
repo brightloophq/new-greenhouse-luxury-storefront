@@ -27,6 +27,7 @@ import type {CatalogImage, CatalogProduct} from '~/components/catalog/types';
 import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
 import {
   CLASSIC_SUPPLY_COLLECTIONS,
+  isSupplyProduct,
   selectCollectionGridProducts,
 } from '~/lib/experienceClassify';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
@@ -44,6 +45,25 @@ import {useExperience} from '~/components/ExperienceProvider';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
+
+/**
+ * Occasion collections whose curated Shopify membership is empty or thin while
+ * the products are correctly tagged (`occasion:<slug>`). We populate their grid
+ * from the reliable occasion-tag product search instead — everything tagged for
+ * the occasion, minus supplies — the same mechanism the flower hub uses. Value is
+ * the occasion tag suffix (the facet slug, which can differ from the handle).
+ */
+const OCCASION_COLLECTIONS: Record<string, string> = {
+  anniversary: 'anniversary',
+  'love-and-romance': 'romance',
+  birthday: 'birthday',
+  'sympathy-and-funeral': 'sympathy',
+  'thank-you': 'thank-you',
+  'get-well': 'get-well',
+  'new-baby': 'new-baby',
+  congratulations: 'congratulations',
+  'corporate-gifting': 'corporate',
+};
 
 /** Which filter set a collection page uses (Phase 4/5), by experience + type. */
 function filterContextFor(
@@ -257,7 +277,26 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         })
       : Promise.resolve(null);
 
-  const [{collection}, flowerResult] = await Promise.all([
+  // Occasion collections are populated from their occasion TAG (reliable search),
+  // not their curated membership, which is empty/thin while the products are
+  // tagged. Everything tagged shows (fresh + arrangements); supplies are dropped
+  // in the component.
+  const occasionTag = OCCASION_COLLECTIONS[handle];
+  const occasionPromise = occasionTag
+    ? storefront.query(HUB_PRODUCTS_QUERY, {
+        variables: {
+          // Occasion tag + any facet the shopper applied (colour, price).
+          query: [`tag:'occasion:${occasionTag}'`, buildProductQueryString(applied)]
+            .filter(Boolean)
+            .join(' AND '),
+          sortKey: catSort.sortKey as ProductSortKeys,
+          reverse: catSort.reverse,
+          ...paginationVariables,
+        },
+      })
+    : Promise.resolve(null);
+
+  const [{collection}, flowerResult, occasionResult] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {
         handle,
@@ -268,6 +307,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       },
     }),
     flowerPromise,
+    occasionPromise,
   ]);
 
   if (!collection) {
@@ -300,6 +340,8 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
         filterContext,
         flowerLabel: undefined,
         flowerProducts: null,
+        occasionProducts: null,
+        origin: url.origin,
       };
     }
     throw new Response(`Collection ${handle} not found`, {status: 404});
@@ -314,6 +356,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     filterContext,
     flowerLabel: flowerLabelFor(applied.flower),
     flowerProducts: flowerResult?.products ?? null,
+    occasionProducts: occasionResult?.products ?? null,
     origin: url.origin,
   };
 }
@@ -323,8 +366,15 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection, applied, sort, filterContext, flowerLabel, flowerProducts} =
-    useLoaderData<typeof loader>();
+  const {
+    collection,
+    applied,
+    sort,
+    filterContext,
+    flowerLabel,
+    flowerProducts,
+    occasionProducts,
+  } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [quickProduct, setQuickProduct] = useState<CatalogProduct | null>(null);
@@ -346,10 +396,17 @@ export default function Collection() {
       : 'Wholesale Flowers'
     : 'The Collection';
 
-  // Hub flower views use the top-level product search connection (reliable tag
-  // filtering); everything else uses the collection's own products.
+  // An occasion collection is filled from its occasion-tag search (its curated
+  // membership is empty/thin); a flower hub variety view uses the reliable flower
+  // search; everything else uses the collection's own curated products.
+  const isOccasion = Boolean(occasionProducts);
   const rawConnection =
-    isHub && activeFlower && flowerProducts ? flowerProducts : collection.products;
+    isHub && activeFlower && flowerProducts
+      ? flowerProducts
+      : isOccasion && occasionProducts
+        ? occasionProducts
+        : collection.products;
+  const rawNodes = (rawConnection.nodes ?? []) as CatalogProduct[];
   // Trust curated Shopify collection membership: a curated collection renders
   // exactly what the merchant merchandised into it (Deluxe arrangements, mixed
   // gifting sets, plants), regardless of the route's green visual theme. The
@@ -360,11 +417,11 @@ export default function Collection() {
   // always uses the classic (fresh-flower) selection — otherwise a Deluxe shopper
   // would have every fresh stem filtered out, leaving only stray arrangements.
   const gridExperience = isHub && activeFlower ? 'classic' : experience;
-  const filteredNodes = selectCollectionGridProducts(
-    (rawConnection.nodes ?? []) as CatalogProduct[],
-    gridExperience,
-    isHub,
-  );
+  // Occasion grids show everything tagged for the occasion (fresh + arrangements)
+  // and only drop supplies; every other grid runs the standard selection.
+  const filteredNodes = isOccasion
+    ? rawNodes.filter((node) => !isSupplyProduct(node))
+    : selectCollectionGridProducts(rawNodes, gridExperience, isHub);
   const productConnection = {...rawConnection, nodes: filteredNodes};
   const products = filteredNodes as CatalogProduct[];
 
