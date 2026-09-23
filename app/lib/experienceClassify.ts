@@ -99,13 +99,20 @@ export function selectCollectionGridProducts<T extends ClassifiableProduct>(
   experience: ExperienceMode,
   applyExperienceGuard: boolean,
 ): T[] {
+  // The guard runs only on flower hubs (all-flowers, bulk-flowers). There it
+  // keeps this experience's items AND drops Floral Supply products: supplies are
+  // Classic-typed, so the experience filter alone would let them sit among the
+  // flowers — but a vase belongs on the supplies pages, never in a flower grid.
   return applyExperienceGuard
-    ? nodes.filter((node) => productInExperience(node, experience))
+    ? nodes.filter(
+        (node) => productInExperience(node, experience) && !isSupplyProduct(node),
+      )
     : nodes;
 }
 
-/** Within Classic, is this a Floral Supply (vs a wholesale flower)? */
-export function isSupplyProduct(input: ClassifiableProduct): boolean {
+/** Within Classic, is this a Floral Supply (vs a wholesale flower)? Reads only
+ *  productType, so it accepts any product-shaped node (e.g. a catalogue node). */
+export function isSupplyProduct(input: {productType?: string | null}): boolean {
   return CLASSIC_SUPPLY_SET.has(input.productType ?? '');
 }
 

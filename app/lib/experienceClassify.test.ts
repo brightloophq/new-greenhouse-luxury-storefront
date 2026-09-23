@@ -153,6 +153,15 @@ describe('selectCollectionGridProducts (production 0-product fix)', () => {
     expect(deluxeHub).toEqual([deluxeArrangement]);
   });
 
+  it('4. a flower hub (guard ON) drops Floral Supply — vases never sit among flowers', () => {
+    const vase = {productType: 'Floral Supply'}; // Classic-typed, but a supply
+    const nodes = [classicGreenery, vase, classicFiller];
+    const out = selectCollectionGridProducts(nodes, 'classic', true);
+    expect(out).toEqual([classicGreenery, classicFiller]); // supply removed
+    // guard OFF (a curated supplies collection) still keeps the supply
+    expect(selectCollectionGridProducts([vase], 'classic', false)).toEqual([vase]);
+  });
+
   it('5. guard OFF is a pure pass-through (no reorder, no drop, no dedupe) — pagination unaffected', () => {
     const nodes = [classicFiller, deluxeArrangement, plant];
     const out = selectCollectionGridProducts(nodes, THEME, false);
