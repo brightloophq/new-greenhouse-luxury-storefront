@@ -1,14 +1,27 @@
 import {useRef} from 'react';
-import type {MetaFunction} from 'react-router';
+import type {LoaderFunctionArgs, MetaFunction} from 'react-router';
 import {HOME_CONTENT, HOMEPAGE_REVIEW_RATING} from '~/lib/homeContent';
 import {useReveal} from '~/lib/useReveal';
 import {GlasshouseDivider} from '~/components/GlasshouseDivider';
 import {EditorialCrossSell} from '~/components/editorial/EditorialCrossSell';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Reviews | The New Greenhouse'},
-  {name: 'description', content: 'What our customers say about The New Greenhouse.'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/reviews',
+    title: 'Customer Reviews | The New Greenhouse',
+    description:
+      'What our customers say about The New Greenhouse — a luxury florist in Kingston, Jamaica, for fresh flowers, arrangements and wholesale.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Reviews', path: '/reviews'},
+    ],
+  });
+
+export async function loader({request}: LoaderFunctionArgs) {
+  return {origin: new URL(request.url).origin};
+}
 
 /**
  * Reviews — the trust archive, in the editorial page language. The testimonials

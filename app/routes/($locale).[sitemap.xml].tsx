@@ -10,7 +10,21 @@ export async function loader({
     request,
   });
 
-  response.headers.set('Cache-Control', `max-age=${60 * 60 * 24}`);
+  // Shopify's sitemap index lists only Shopify resources (products, collections,
+  // pages, blogs). Append our hand-built landing pages (/retail, /wholesale, …)
+  // so they're submitted for indexing too — see /sitemap-static.xml.
+  const origin = new URL(request.url).origin;
+  const xml = await response.text();
+  const staticEntry = `<sitemap><loc>${origin}/sitemap-static.xml</loc></sitemap>`;
+  const merged = xml.includes('</sitemapindex>')
+    ? xml.replace('</sitemapindex>', `${staticEntry}</sitemapindex>`)
+    : xml;
 
-  return response;
+  return new Response(merged, {
+    status: response.status,
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': `max-age=${60 * 60 * 24}`,
+    },
+  });
 }

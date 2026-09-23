@@ -2,10 +2,21 @@ import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-r
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
 import {TRADE_COLLECTIONS, loadCatalogueWithFallback} from '~/lib/catalogues';
+import {catalogueMeta} from '~/lib/seo';
 
-export const meta: MetaFunction = () => [
-  {title: 'Wholesale Supplies | The New Greenhouse'},
-];
+export const meta: MetaFunction<typeof loader> = ({data}) =>
+  catalogueMeta({
+    origin: data?.origin,
+    path: '/wholesale/supplies',
+    title: 'Wholesale Florist Supplies | The New Greenhouse',
+    description:
+      'Wholesale florist and studio supplies from The New Greenhouse in Kingston, Jamaica — vases, ribbon, tools and packaging by the case, no account required. Trade buyers welcome.',
+    breadcrumbs: [
+      {name: 'Home', path: '/'},
+      {name: 'Wholesale', path: '/wholesale'},
+      {name: 'Supplies', path: '/wholesale/supplies'},
+    ],
+  });
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   // Open to everyone — guest wholesale purchasing, no account/approval required.
