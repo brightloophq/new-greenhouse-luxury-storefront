@@ -1,7 +1,12 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
+import {
+  TRADE_COLLECTIONS,
+  loadCatalogue,
+  loadFlowerVarietyCatalogue,
+} from '~/lib/catalogues';
+import {parseCatalogSearchParams} from '~/lib/catalog';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data}) =>
@@ -23,6 +28,21 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   // captured at Shopify checkout). No account, business profile or approval is
   // required to purchase wholesale. A Business Account (see /wholesale) is a
   // separate, OPTIONAL relationship for future benefits and never gates shopping.
+  //
+  // A flower-variety facet (?flower=…) resolves through the reliable product
+  // search (the collection's tag filter is ignored by Shopify); the unfiltered
+  // view keeps the curated wholesale collection.
+  const {filters} = parseCatalogSearchParams(
+    new URL(request.url).searchParams,
+    'wholesale-flowers',
+  );
+  if (filters.flower) {
+    return loadFlowerVarietyCatalogue<CatalogueProduct>(
+      context.storefront,
+      request,
+      'wholesale-flowers',
+    );
+  }
   return loadCatalogue<CatalogueProduct>(
     context.storefront,
     TRADE_COLLECTIONS.wholesaleFlowers,

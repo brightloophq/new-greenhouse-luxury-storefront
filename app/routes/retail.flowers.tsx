@@ -1,7 +1,12 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
+import {
+  TRADE_COLLECTIONS,
+  loadCatalogue,
+  loadFlowerVarietyCatalogue,
+} from '~/lib/catalogues';
+import {parseCatalogSearchParams} from '~/lib/catalog';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data}) =>
@@ -19,6 +24,21 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
   });
 
 export async function loader({context, request}: LoaderFunctionArgs) {
+  // A flower-variety facet (?flower=…) must resolve through the reliable product
+  // search — the collection's own tag filter is ignored by Shopify, so it would
+  // return a sparse subset of the first page with component-tagged arrangements
+  // mixed in. The unfiltered department view keeps the curated collection.
+  const {filters} = parseCatalogSearchParams(
+    new URL(request.url).searchParams,
+    'retail-flowers',
+  );
+  if (filters.flower) {
+    return loadFlowerVarietyCatalogue<CatalogueProduct>(
+      context.storefront,
+      request,
+      'retail-flowers',
+    );
+  }
   return loadCatalogue<CatalogueProduct>(
     context.storefront,
     TRADE_COLLECTIONS.retailFlowers,

@@ -11,6 +11,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {retiredCollectionTarget} from '~/lib/collectionRedirects';
 import {breadcrumbSchema, canonicalTag} from '~/lib/seo';
 import {splitCollectionDescription} from '~/lib/collectionDescription';
+import {FRESH_FLOWER_TYPE_QUERY} from '~/lib/catalogues';
 import {
   parseCatalogSearchParams,
   buildProductFilters,
@@ -24,7 +25,10 @@ import {
 } from '~/lib/catalog';
 import type {CatalogImage, CatalogProduct} from '~/components/catalog/types';
 import {getExperienceFromRequest, type ExperienceMode} from '~/lib/experience';
-import {CLASSIC_SUPPLY_COLLECTIONS} from '~/lib/experienceClassify';
+import {
+  CLASSIC_SUPPLY_COLLECTIONS,
+  selectCollectionGridProducts,
+} from '~/lib/experienceClassify';
 import {CollectionHero} from '~/components/catalog/CollectionHero';
 import {CollectionBody} from '~/components/catalog/CollectionBody';
 import {
@@ -37,7 +41,6 @@ import {CatalogResults} from '~/components/catalog/CatalogResults';
 import {FlowerCategoryGrid} from '~/components/catalog/FlowerCategoryGrid';
 import {QuickView} from '~/components/catalog/QuickView';
 import {useExperience} from '~/components/ExperienceProvider';
-import {selectCollectionGridProducts} from '~/lib/experienceClassify';
 
 /** Collections that use the visual category-browser experience. */
 const FLOWER_HUBS = new Set(['bulk-flowers', 'all-flowers']);
@@ -47,6 +50,10 @@ function filterContextFor(
   experience: ExperienceMode,
   handle: string,
 ): FilterContext {
+  // A flower hub is always shopped by stem, so it keeps the flower facet in BOTH
+  // experiences — otherwise a Deluxe shopper's `?flower=…` would be stripped at
+  // parse time and every variety page would collapse to the same "All Flowers".
+  if (FLOWER_HUBS.has(handle)) return 'classic-wholesale';
   if (experience === 'deluxe') return 'deluxe';
   return CLASSIC_SUPPLY_COLLECTIONS.has(handle)
     ? 'classic-supply'
@@ -238,7 +245,11 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     isHub && applied.flower
       ? storefront.query(HUB_PRODUCTS_QUERY, {
           variables: {
-            query: buildProductQueryString(applied),
+            // Constrain to fresh-flower product types so pagination returns the
+            // variety's stems, never component-tagged arrangements.
+            query: [buildProductQueryString(applied), FRESH_FLOWER_TYPE_QUERY]
+              .filter(Boolean)
+              .join(' AND '),
             sortKey: catSort.sortKey as ProductSortKeys,
             reverse: catSort.reverse,
             ...paginationVariables,
@@ -345,9 +356,13 @@ export default function Collection() {
   // cross-experience leakage guard is applied ONLY to shared hub collections
   // (`isHub` = FLOWER_HUBS), whose grid is assembled from catalog-wide product
   // search and could otherwise surface the other experience's items.
+  // A flower-variety view is a fresh-stem page in either experience, so its grid
+  // always uses the classic (fresh-flower) selection — otherwise a Deluxe shopper
+  // would have every fresh stem filtered out, leaving only stray arrangements.
+  const gridExperience = isHub && activeFlower ? 'classic' : experience;
   const filteredNodes = selectCollectionGridProducts(
     (rawConnection.nodes ?? []) as CatalogProduct[],
-    experience,
+    gridExperience,
     isHub,
   );
   const productConnection = {...rawConnection, nodes: filteredNodes};

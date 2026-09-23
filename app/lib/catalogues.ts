@@ -6,14 +6,16 @@
 
 import {
   buildProductFilters,
+  buildProductQueryString,
   matchesFacetTags,
   matchesQuery,
   parseCatalogSearchParams,
+  toCatalogSort,
   toCollectionSort,
   type AppliedFilters,
   type FilterContext,
 } from '~/lib/catalog';
-import {isSupplyProduct} from '~/lib/experienceClassify';
+import {CLASSIC_FLOWER_TYPES, isSupplyProduct} from '~/lib/experienceClassify';
 
 /** Flower shopping contexts: their grids must never show Floral Supply products. */
 const FLOWER_CONTEXTS = new Set<FilterContext>([
@@ -174,8 +176,71 @@ interface StorefrontLike {
   query(
     query: string,
     options?: {variables?: Record<string, unknown>},
-  ): Promise<{collection?: {products?: {nodes?: unknown[]}} | null}>;
+  ): Promise<{
+    collection?: {products?: {nodes?: unknown[]}} | null;
+    products?: {nodes?: unknown[]} | null;
+  }>;
 }
+
+/**
+ * The four fresh-flower product types. A flower-VARIETY page (e.g. "Carnations",
+ * "Eucalyptus") is a by-the-stem concept: it must show the fresh single-variety
+ * products, never arrangements that merely list the flower as a component
+ * ingredient. Constraining the search to these types keeps arrangements out
+ * regardless of how they are tagged. Single source of truth: experienceClassify.
+ */
+export const FRESH_FLOWER_TYPE_QUERY = `(${CLASSIC_FLOWER_TYPES.map(
+  (t) => `product_type:'${t}'`,
+).join(' OR ')})`;
+
+/**
+ * Top-level product search. Unlike `collection.products(filters:)` — whose `tag`
+ * filters Shopify SILENTLY IGNORES unless they are enabled in Search & Discovery
+ * (so a collection-based facet only ever filters the first page it fetched, and
+ * returns a sparse, arbitrary subset) — this connection filters SERVER-SIDE across
+ * the whole catalogue, so a tag query is both complete and exact. It is the same
+ * mechanism the flower hub uses.
+ */
+export const PRODUCT_SEARCH_QUERY = `#graphql
+  query CatalogueProductSearch(
+    $query: String!
+    $first: Int!
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
+      nodes {
+        id
+        handle
+        title
+        vendor
+        productType
+        tags
+        availableForSale
+        featuredImage {
+          url
+          altText
+          width
+          height
+        }
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        compareAtPriceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+  }
+` as const;
 
 /** How many products one catalogue page requests. */
 const CATALOGUE_PAGE_SIZE = 48;
@@ -303,6 +368,107 @@ export async function loadCatalogueWithFallback<
   // blanks while the trade collection is still being populated.
   if (!primary.missing && hasNarrowingFilters(primary.filters)) return primary;
   return loadCatalogue<T>(storefront, handles.fallback, request, context);
+}
+
+/**
+ * Load a catalogue whose membership is defined by a fixed TAG, assembled from the
+ * reliable top-level product search (see `PRODUCT_SEARCH_QUERY`) rather than a
+ * curated collection. Supplies are always excluded — these surfaces (flower
+ * varieties, occasions) never sell vases. Filters/sort come from the URL; the
+ * caller supplies the tag query via `buildQuery`.
+ */
+async function loadTaggedProducts<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  request: Request,
+  context: FilterContext,
+  buildQuery: (filters: AppliedFilters) => string,
+): Promise<CatalogueLoadResult<T>> {
+  const url = new URL(request.url);
+  const {filters, sort} = parseCatalogSearchParams(url.searchParams, context);
+  const {sortKey, reverse} = toCatalogSort(sort);
+  const base = {filters, sort, origin: url.origin};
+
+  try {
+    const {products} = await storefront.query(PRODUCT_SEARCH_QUERY, {
+      variables: {
+        query: buildQuery(filters),
+        first: CATALOGUE_PAGE_SIZE,
+        sortKey,
+        reverse,
+      },
+    });
+    const nodes = (products?.nodes ?? []) as T[];
+    return {
+      products: nodes.filter(
+        (node) => matchesQuery(node, filters.q) && !isSupplyProduct(node),
+      ),
+      missing: false,
+      failed: false,
+      ...base,
+    };
+  } catch (error) {
+
+    console.error('[catalogue] product search failed', error);
+    return {products: [], missing: false, failed: true, ...base};
+  }
+}
+
+/**
+ * The fresh single-variety products for the applied flower facet (e.g.
+ * `?flower=carnations`) — reliable and complete, and arrangement-free (a variety
+ * page shows stems, not the bouquets that merely contain them). Call only when a
+ * flower facet is applied; the base collection view stays on `loadCatalogue`.
+ */
+export function loadFlowerVarietyCatalogue<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  request: Request,
+  context: FilterContext,
+): Promise<CatalogueLoadResult<T>> {
+  return loadTaggedProducts<T>(storefront, request, context, (filters) =>
+    [buildProductQueryString(filters), FRESH_FLOWER_TYPE_QUERY]
+      .filter(Boolean)
+      .join(' AND '),
+  );
+}
+
+/**
+ * Everything tagged for an occasion (fresh stems AND arrangements), minus
+ * supplies. Sourced from the occasion TAG, not a curated collection, so the page
+ * fills from the catalogue even when the Shopify occasion collection is empty or
+ * mis-membered. Any exposed facet (colour, price) narrows it further.
+ */
+export function loadOccasionCatalogue<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  occasionSlug: string,
+  request: Request,
+  context: FilterContext,
+): Promise<CatalogueLoadResult<T>> {
+  return loadTaggedProducts<T>(storefront, request, context, (filters) =>
+    [`tag:'occasion:${occasionSlug}'`, buildProductQueryString(filters)]
+      .filter(Boolean)
+      .join(' AND '),
+  );
 }
 
 export function findBySlug<T extends {slug: string}>(
