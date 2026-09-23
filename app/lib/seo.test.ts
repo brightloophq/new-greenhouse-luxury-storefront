@@ -377,9 +377,13 @@ describe('route wiring (source guards)', () => {
     // Cross-experience guard is applied via the hub-scoped helper …
     expect(src).toContain('selectCollectionGridProducts(');
     expect(src).toMatch(/selectCollectionGridProducts\([\s\S]*?isHub,?\s*\)/);
-    // … and the old unconditional per-node experience filter is gone.
-    expect(src).not.toContain('.filter((node) =>');
+    // … and the old unconditional per-node experience filter is gone (a hub-scoped
+    // helper, not a per-node experience predicate, does the guarding).
     expect(src).not.toContain('productInExperience(node, experience)');
+    // Occasion collections are populated from the occasion tag (their curated
+    // membership is empty/thin) and only drop supplies from that tagged set.
+    expect(src).toContain('OCCASION_COLLECTIONS');
+    expect(src).toMatch(/filter\(\((\w+)\) => !isSupplyProduct\(\1\)\)/);
     // Product retrieval is unchanged: same pagination + no default product filters.
     expect(src).toContain('getPaginationVariables(request, {pageBy: 12})');
     expect(src).toContain('buildProductFilters(applied)');
