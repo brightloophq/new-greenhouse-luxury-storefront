@@ -1,7 +1,7 @@
 import {useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {TRADE_COLLECTIONS, loadCatalogue} from '~/lib/catalogues';
+import {loadSupplyCatalogue} from '~/lib/catalogues';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data}) =>
@@ -19,11 +19,13 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
   });
 
 export async function loader({context, request}: LoaderFunctionArgs) {
-  return loadCatalogue<CatalogueProduct>(
+  // Sourced by product type (Floral Supply), scoped to the retail channel, rather
+  // than curated collection membership — so the page fills from the catalogue.
+  return loadSupplyCatalogue<CatalogueProduct>(
     context.storefront,
-    TRADE_COLLECTIONS.retailSupplies,
     request,
     'retail-supplies',
+    {channel: 'retail'},
   );
 }
 

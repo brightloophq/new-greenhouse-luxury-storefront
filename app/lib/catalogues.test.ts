@@ -10,6 +10,8 @@ import {
   loadCatalogueWithFallback,
   loadFlowerVarietyCatalogue,
   loadOccasionCatalogue,
+  loadSupplyCatalogue,
+  loadSupplyCategoryCatalogue,
 } from './catalogues';
 import {FACETS} from './catalog';
 
@@ -341,5 +343,48 @@ describe('loadOccasionCatalogue', () => {
     const sf = productSearch([arrangement]);
     await loadOccasionCatalogue(sf, 'sympathy', req('?color=red'), 'arrangements');
     expect(queryArg(sf)).toContain("tag:'color:red'");
+  });
+});
+
+describe('loadSupplyCatalogue', () => {
+  const vase = {...PRODUCT, title: 'Glass Vase', productType: 'Floral Supply'};
+
+  it('searches by the Floral Supply product type and KEEPS supplies', async () => {
+    const sf = productSearch([vase]);
+    const result = await loadSupplyCatalogue(sf, req(), 'retail-supplies', {
+      channel: 'retail',
+    });
+    const q = queryArg(sf);
+    expect(q).toContain("product_type:'Floral Supply'");
+    expect(q).toContain("tag:'channel:retail'");
+    expect(result.products.map((p) => p.title)).toEqual(['Glass Vase']); // kept
+  });
+
+  it('scopes wholesale to the wholesale channel', async () => {
+    const sf = productSearch([vase]);
+    await loadSupplyCatalogue(sf, req(), 'wholesale-supplies', {channel: 'wholesale'});
+    expect(queryArg(sf)).toContain("tag:'channel:wholesale'");
+  });
+});
+
+describe('loadSupplyCategoryCatalogue', () => {
+  const vase = {...PRODUCT, title: 'Glass Vase', productType: 'Floral Supply'};
+
+  it('ORs the category subtype tags with the supply type', async () => {
+    const sf = productSearch([vase]);
+    await loadSupplyCategoryCatalogue(sf, 'vases-and-containers', req(), 'supplies');
+    const q = queryArg(sf);
+    expect(q).toContain("product_type:'Floral Supply'");
+    expect(q).toContain("tag:'supply:vase'");
+    expect(q).toContain("tag:'supply:basket'");
+    expect(q).toContain(' OR '); // subtypes are an OR-group
+  });
+
+  it('falls back to the type query alone for an unknown category (never empty)', async () => {
+    const sf = productSearch([vase]);
+    await loadSupplyCategoryCatalogue(sf, 'not-a-category', req(), 'supplies');
+    const q = queryArg(sf);
+    expect(q).toContain("product_type:'Floral Supply'");
+    expect(q).not.toContain('supply:');
   });
 });

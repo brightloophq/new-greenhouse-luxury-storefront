@@ -15,7 +15,11 @@ import {
   type AppliedFilters,
   type FilterContext,
 } from '~/lib/catalog';
-import {CLASSIC_FLOWER_TYPES, isSupplyProduct} from '~/lib/experienceClassify';
+import {
+  CLASSIC_FLOWER_TYPES,
+  CLASSIC_SUPPLY_TYPES,
+  isSupplyProduct,
+} from '~/lib/experienceClassify';
 
 /** Flower shopping contexts: their grids must never show Floral Supply products. */
 const FLOWER_CONTEXTS = new Set<FilterContext>([
@@ -158,6 +162,21 @@ export const SUPPLY_CATEGORIES = [
   {slug: 'florist-essentials', label: 'Florist Essentials', handle: 'florist-essentials', img: '/images/supplies/essentials'},
 ] as const;
 
+/**
+ * Which `supply:<subtype>` tags belong in each supply category. Supply products
+ * carry a precise `supply:<subtype>` tag (vase, basket, ribbon, wrap, box, tools,
+ * tape, foam…); a category page is the union of its subtypes. Used to populate
+ * category pages from tags rather than curated collection membership (which is
+ * empty/thin), the same reliable pattern as flowers and occasions.
+ */
+export const SUPPLY_CATEGORY_TAGS: Record<string, string[]> = {
+  'vases-and-containers': ['vase', 'basket'],
+  ribbon: ['ribbon'],
+  'wrapping-and-packaging': ['wrap', 'box'],
+  'tools-and-accessories': ['tools', 'tape'],
+  'florist-essentials': ['foam'],
+};
+
 export interface CatalogueLoadResult<T> {
   products: T[];
   /** True when the Shopify collection handle does not exist (not merely empty). */
@@ -190,6 +209,15 @@ interface StorefrontLike {
  * regardless of how they are tagged. Single source of truth: experienceClassify.
  */
 export const FRESH_FLOWER_TYPE_QUERY = `(${CLASSIC_FLOWER_TYPES.map(
+  (t) => `product_type:'${t}'`,
+).join(' OR ')})`;
+
+/**
+ * The Floral Supply product type. Supply pages are populated by this type (plus a
+ * `supply:<subtype>` tag on category pages), so they fill from the catalogue even
+ * when the curated supply collections are empty or mis-membered.
+ */
+export const SUPPLY_TYPE_QUERY = `(${CLASSIC_SUPPLY_TYPES.map(
   (t) => `product_type:'${t}'`,
 ).join(' OR ')})`;
 
@@ -373,9 +401,9 @@ export async function loadCatalogueWithFallback<
 /**
  * Load a catalogue whose membership is defined by a fixed TAG, assembled from the
  * reliable top-level product search (see `PRODUCT_SEARCH_QUERY`) rather than a
- * curated collection. Supplies are always excluded — these surfaces (flower
- * varieties, occasions) never sell vases. Filters/sort come from the URL; the
- * caller supplies the tag query via `buildQuery`.
+ * curated collection. Filters/sort come from the URL; the caller supplies the tag
+ * query via `buildQuery`. Supplies are excluded by default (flower/occasion
+ * surfaces never sell vases); supply pages pass `keepSupplies` to keep them.
  */
 async function loadTaggedProducts<
   T extends {
@@ -389,6 +417,7 @@ async function loadTaggedProducts<
   request: Request,
   context: FilterContext,
   buildQuery: (filters: AppliedFilters) => string,
+  options: {keepSupplies?: boolean} = {},
 ): Promise<CatalogueLoadResult<T>> {
   const url = new URL(request.url);
   const {filters, sort} = parseCatalogSearchParams(url.searchParams, context);
@@ -407,7 +436,9 @@ async function loadTaggedProducts<
     const nodes = (products?.nodes ?? []) as T[];
     return {
       products: nodes.filter(
-        (node) => matchesQuery(node, filters.q) && !isSupplyProduct(node),
+        (node) =>
+          matchesQuery(node, filters.q) &&
+          (options.keepSupplies || !isSupplyProduct(node)),
       ),
       missing: false,
       failed: false,
@@ -468,6 +499,77 @@ export function loadOccasionCatalogue<
     [`tag:'occasion:${occasionSlug}'`, buildProductQueryString(filters)]
       .filter(Boolean)
       .join(' AND '),
+  );
+}
+
+/**
+ * All florist supplies (product type Floral Supply), sourced by TYPE rather than
+ * curated collection membership so the page fills from the catalogue. Optionally
+ * scoped to a channel (retail/wholesale) — today every supply carries both, so
+ * both departments show the full set; the scope is forward-compatible with a
+ * future channel split. Supplies are KEPT (this is a supply surface).
+ */
+export function loadSupplyCatalogue<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  request: Request,
+  context: FilterContext,
+  options: {channel?: 'retail' | 'wholesale'} = {},
+): Promise<CatalogueLoadResult<T>> {
+  return loadTaggedProducts<T>(
+    storefront,
+    request,
+    context,
+    (filters) =>
+      [
+        SUPPLY_TYPE_QUERY,
+        options.channel ? `tag:'channel:${options.channel}'` : '',
+        buildProductQueryString(filters),
+      ]
+        .filter(Boolean)
+        .join(' AND '),
+    {keepSupplies: true},
+  );
+}
+
+/**
+ * One supply category (e.g. "vases-and-containers"), sourced by TYPE + the
+ * category's `supply:<subtype>` tags (see `SUPPLY_CATEGORY_TAGS`) rather than
+ * curated collection membership. An unknown handle yields the type query alone
+ * (all supplies) rather than an empty page. Supplies are KEPT.
+ */
+export function loadSupplyCategoryCatalogue<
+  T extends {
+    title?: string | null;
+    productType?: string | null;
+    vendor?: string | null;
+    tags?: readonly string[] | null;
+  },
+>(
+  storefront: StorefrontLike,
+  categoryHandle: string,
+  request: Request,
+  context: FilterContext,
+): Promise<CatalogueLoadResult<T>> {
+  const subtypes = SUPPLY_CATEGORY_TAGS[categoryHandle] ?? [];
+  const subtypeClause = subtypes.length
+    ? `(${subtypes.map((s) => `tag:'supply:${s}'`).join(' OR ')})`
+    : '';
+  return loadTaggedProducts<T>(
+    storefront,
+    request,
+    context,
+    (filters) =>
+      [SUPPLY_TYPE_QUERY, subtypeClause, buildProductQueryString(filters)]
+        .filter(Boolean)
+        .join(' AND '),
+    {keepSupplies: true},
   );
 }
 

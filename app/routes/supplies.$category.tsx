@@ -1,7 +1,11 @@
 import {data, useLoaderData, type LoaderFunctionArgs, type MetaFunction} from 'react-router';
 import {CatalogueView} from '~/components/catalogue/CatalogueView';
 import type {CatalogueProduct} from '~/components/catalogue/CatalogueCard';
-import {SUPPLY_CATEGORIES, findBySlug, loadCatalogue} from '~/lib/catalogues';
+import {
+  SUPPLY_CATEGORIES,
+  findBySlug,
+  loadSupplyCategoryCatalogue,
+} from '~/lib/catalogues';
 import {catalogueMeta} from '~/lib/seo';
 
 export const meta: MetaFunction<typeof loader> = ({data: d}) =>
@@ -23,7 +27,10 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
   const category = findBySlug(SUPPLY_CATEGORIES, params.category);
   if (!category) throw data('Category not found', {status: 404});
 
-  const result = await loadCatalogue<CatalogueProduct>(
+  // Source from the supply TYPE + this category's supply:<subtype> tags, not the
+  // curated collection — the collection is empty/thin while the products are
+  // tagged, which left categories showing the wrong items or none.
+  const result = await loadSupplyCategoryCatalogue<CatalogueProduct>(
     context.storefront,
     category.handle,
     request,
