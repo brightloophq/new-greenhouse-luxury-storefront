@@ -21,6 +21,8 @@
     "images:optimize": "node scripts/images/optimize.mjs",
     "images:integrate": "node scripts/images/integrate.mjs",
     "images:validate": "node scripts/images/validate.mjs",
+    "images:products": "node scripts/images/products.mjs",
+    "images:products:generate": "node scripts/images/products.mjs --generate",
     "images:flowers": "node scripts/images/flower-library.mjs",
     "video:hero": "node scripts/images/hero-video.mjs",
     "video:optimize": "node scripts/images/optimize-video.mjs",
