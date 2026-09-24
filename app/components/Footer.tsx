@@ -21,7 +21,7 @@ interface FooterProps {
 const COMPANY_LINKS = [
   {to: '/about', label: 'About Us'},
   {to: '/contact', label: 'Contact Us'},
-  {to: '/pages/delivery-information', label: 'Delivery'},
+  {to: '/contact#delivery', label: 'Delivery'},
   {to: '/reviews', label: 'Reviews'},
   {to: '/blogs', label: 'Journal'},
 ];

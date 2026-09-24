@@ -90,7 +90,7 @@ export default function Contact() {
                 <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
               </dd>
             </div>
-            <div>
+            <div id="delivery">
               <dt>Delivery</dt>
               <dd>
                 Kingston &amp; St. Andrew, same day before {DELIVERY_CUTOFF}.

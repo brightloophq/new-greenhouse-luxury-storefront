@@ -455,7 +455,7 @@ const CLASSIC: HomeContent = {
       kicker: 'Delivery & pickup',
       title: 'Fresh stems, delivered across Jamaica.',
       body: 'Same-day delivery and pickup across Kingston & St. Andrew, with island-wide delivery by arrangement and cold-chain handling so every order arrives in peak condition for your build.',
-      cta: {label: 'Delivery & Pickup Details', to: '/pages/delivery-information'},
+      cta: {label: 'Delivery & Pickup Details', to: '/contact#delivery'},
       image: 'botanical',
       alt: 'Fresh floral stems prepared for island-wide delivery',
     },

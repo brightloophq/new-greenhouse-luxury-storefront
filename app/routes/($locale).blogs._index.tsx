@@ -7,8 +7,8 @@ import {catalogueMeta} from '~/lib/seo';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
 
-export const meta: Route.MetaFunction = ({data}) =>
-  catalogueMeta({
+export const meta: Route.MetaFunction = ({data}) => {
+  const tags = catalogueMeta({
     origin: data?.origin,
     path: '/blogs',
     title: 'Journal | The New Greenhouse',
@@ -19,6 +19,13 @@ export const meta: Route.MetaFunction = ({data}) =>
       {name: 'Journal', path: '/blogs'},
     ],
   });
+  // Keep an empty Journal out of the index until it has content (it is still
+  // crawlable/followable, so it starts ranking the moment articles are published).
+  if (!data?.blogs?.nodes?.length) {
+    tags.push({name: 'robots', content: 'noindex, follow'});
+  }
+  return tags;
+};
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
