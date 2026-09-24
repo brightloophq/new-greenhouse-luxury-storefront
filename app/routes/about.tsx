@@ -14,7 +14,7 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
     path: '/about',
     title: 'About Us | The New Greenhouse',
     description:
-      'The New Greenhouse is a family florist in Kingston, Jamaica, with more than four decades of floral experience — fresh flowers, arrangements and florist supplies, for retail and wholesale.',
+      'Family florist in Kingston, Jamaica with four decades of floral craft — fresh flowers, arrangements and florist supplies for retail and wholesale.',
     breadcrumbs: [
       {name: 'Home', path: '/'},
       {name: 'About Us', path: '/about'},

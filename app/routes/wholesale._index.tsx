@@ -11,7 +11,7 @@ export const meta: MetaFunction<typeof loader> = ({data}) =>
     path: '/wholesale',
     title: 'Wholesale Flowers for Florists & Trade | The New Greenhouse',
     description:
-      'Wholesale flowers and florist supplies from The New Greenhouse in Kingston, Jamaica — buy by the bunch or the box, no account required. Florists, event professionals and trade partners welcome.',
+      'Wholesale flowers and florist supplies in Kingston, Jamaica — buy by the bunch or the box, no account required. Florists and event trade welcome.',
     breadcrumbs: [
       {name: 'Home', path: '/'},
       {name: 'Wholesale', path: '/wholesale'},
