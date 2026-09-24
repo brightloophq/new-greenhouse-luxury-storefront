@@ -450,7 +450,9 @@ describe('Sprint 2 — commercial on-page wiring (source guards)', () => {
 
   it('the footer links the previously weakly-linked Delivery + Journal pages', () => {
     const src = stripComments(read('app/components/Footer.tsx'));
-    expect(src).toContain("to: '/pages/delivery-information'");
+    // Delivery links straight to its canonical destination (the delivery details
+    // on /contact), no /pages/* redirect hop.
+    expect(src).toContain("to: '/contact#delivery'");
     expect(src).toContain("to: '/blogs'");
   });
 });

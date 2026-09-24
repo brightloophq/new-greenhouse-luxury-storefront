@@ -290,7 +290,7 @@ export default function Product() {
             <small>
               Volume and standing-order pricing is available for florists,
               planners, hotels and offices.{' '}
-              <Link to="/pages/contact">Ask about trade pricing →</Link>
+              <Link to="/contact">Ask about trade pricing →</Link>
             </small>
           </div>
         )}
